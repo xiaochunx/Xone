@@ -8,6 +8,13 @@ import Account from '../components/iPayment/accountList/account/Index.vue'
 import Record from '../components/iPayment/issuedRecord/Index.vue'
 import NewIssued from '../components/iPayment/issuedRecord/newIssued/Index.vue'
 
+import TransactionList from '../components/report/transactionList/Index.vue'
+import TransactionCount from '../components/report/transactionCount/Index.vue'
+import SettlementRecord from '../components/report/settlementRecord/Index.vue'
+import BillQuery from '../components/report/billQuery/Index.vue'
+import AccountStatement from '../components/report/accountStatement/Index.vue'
+
+
 Vue.use(Router);
 
 export default new Router({
@@ -41,7 +48,36 @@ export default new Router({
           component: NewIssued,
         },
 
-
+        {
+          // 交易列表
+          path: '/report/transactionList',
+          name: '统计报表/交易列表',
+          component: TransactionList,
+        },
+        {
+          // 交易统计
+          path: '/report/transactionCount',
+          name: '统计报表/交易统计',
+          component: TransactionCount,
+        },
+        {
+          // 结算记录
+          path: '/report/settlementRecord',
+          name: '统计报表/结算记录',
+          component: SettlementRecord,
+        },
+        {
+          // 差异账单查询
+          path: '/report/billQuery',
+          name: '统计报表/差异账单查询',
+          component: BillQuery,
+        },
+        {
+          // 对账单
+          path: '/report/accountStatement',
+          name: '统计报表/对账单',
+          component: AccountStatement,
+        },
 
 
 
