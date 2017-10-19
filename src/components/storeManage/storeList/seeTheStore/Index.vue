@@ -7,78 +7,32 @@
           <div class="m-seeAddStore-basic">
             <el-row>
               <el-col :span="16">
-                <div class="m-seeAddStore-basic-message">
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">门店名称:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">天河店</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">门店编码:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">天河店</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">第三方编码:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">天河店</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">所属门店组:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">门店地址</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">门店电话:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">天河店</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">营业时间:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">天河店</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                  <div>
-                    <el-row>
-                      <el-col :span="4">
-                        <div class="m-tr">预结单提示语:</div>
-                      </el-col>
-                      <el-col :span="20">
-                        <div class="m-padding-left">扫一扫快速买单哦，再扫一次还能开发票</div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </div>
+                <el-form ref="form"  label-width="180px">
+                  <el-form-item label="门店名称:">
+                    <span>天河店</span>
+                  </el-form-item>
+                  <el-form-item label="门店编码:">
+                    <span>u9r89ur89</span>
+                  </el-form-item>
+                  <el-form-item label="第三方编码:">
+                    <span>美团  8989</span>
+                  </el-form-item>
+                  <el-form-item label="所属门店组:">
+                    <span>山口组</span>
+                  </el-form-item>
+                  <el-form-item label="门店地址:">
+                    <span>广东省广州市天河区天河路109号</span>
+                  </el-form-item>
+                  <el-form-item label="门店电话:">
+                    <span>020-9849792</span>
+                  </el-form-item>
+                  <el-form-item label="营业时间:">
+                    <span>11：00-23：00</span>
+                  </el-form-item>
+                  <el-form-item label="预结单提示语:">
+                    <span>扫一扫快速买单哦，再扫一次还能开发票！</span>
+                  </el-form-item>
+                </el-form>
               </el-col>
               <el-col :span="8">
                 <div>
@@ -286,7 +240,7 @@
     components: {ElFormItem},
     data() {
       return {
-        activeName: 'fourth',
+        activeName: 'first',
         clientForm: {
           pay: '',
           type: 1,

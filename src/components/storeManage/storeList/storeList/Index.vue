@@ -58,36 +58,32 @@
         </div>
       </el-col>
     </el-row>
-    <div class="m-store">
-      <table width="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr class="m-store-tr">
-          <td>序号</td>
-          <td>门店编码</td>
-          <td>门店名称</td>
-          <td>门店组</td>
-          <td>账户</td>
-          <td>备用账号</td>
-          <td>支付</td>
-          <td>操作</td>
-        </tr>
-        <tr v-for="(item,index) in storeData" :key="index"  class="m-store-tr">
-          <td>{{item.NO}}</td>
-          <td>{{item.storeCode}}</td>
-          <td>{{item.storeName}}</td>
-          <td>{{item.storeGroup}}</td>
-          <td><div v-for="(acc,andex) in item.account" :key="andex">{{acc}}</div></td>
-          <td>{{item.reserveAccount}}</td>
-          <td>{{item.pay}}</td>
-          <td>
-            <div>
-              <el-button type="text" @click="getOneList()">查看</el-button>
-              <el-button type="text">关闭</el-button>
-              <el-button type="text">删除</el-button>
+
+    <div class="margin_t_10 width_100">
+      <el-table :data="storeData" border :height="tableHeight" style="width: 100%;">
+        <el-table-column header-align="center" align="center" prop="NO" label="序号" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="storeCode" label="门店编码" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="storeName" label="门店名称" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="storeGroup" label="门店组" width="80"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="account" label="账户">
+          <template scope="scope">
+            <div v-for="(item,index) in scope.row.account">
+              {{item}}
             </div>
-          </td>
-        </tr>
-      </table>
+          </template>
+        </el-table-column>
+        <el-table-column header-align="center" align="center" prop="reserveAccount" label="备用账号"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="pay" label="支付" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" label="操作"  width="210">
+          <template scope="scope">
+            <el-button size="small" @click="getOneList()">查看</el-button>
+            <el-button size="small">关闭</el-button>
+            <el-button size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+
     <div><xo-pagination></xo-pagination></div>
   </div>
 </template>
@@ -96,6 +92,7 @@
 	export default {
     data() {
       return {
+        tableHeight:0,
         storeGroupData: [{
           value: '选项1',
           label: '全部'
