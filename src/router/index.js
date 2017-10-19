@@ -8,6 +8,11 @@ import Account from '../components/iPayment/accountList/account/Index.vue'
 import Record from '../components/iPayment/issuedRecord/Index.vue'
 import NewIssued from '../components/iPayment/issuedRecord/newIssued/Index.vue'
 
+import StoreList from '../components/storeManage/storeList/storeList/Index.vue'
+import NewAddStore from '../components/storeManage/storeList/newAddStore/Index.vue'
+import SeeTheStore from '../components/storeManage/storeList/seeTheStore/Index.vue'
+import StoreGroup from '../components/storeManage/storesGroup/Index.vue'
+
 import TransactionList from '../components/report/transactionList/Index.vue'
 import TransactionCount from '../components/report/transactionCount/Index.vue'
 import SettlementRecord from '../components/report/settlementRecord/Index.vue'
@@ -49,6 +54,31 @@ export default new Router({
         },
 
         {
+          // 门店管理
+          path: '/storeManage/storeList',
+          name: '门店管理/门店列表',
+          component: StoreList,
+        },
+        {
+          // 新增门店
+          path: '/storeManage/storeList/newAddStore',
+          name: '门店管理/门店列表/新增门店',
+          component: NewAddStore,
+        },
+        {
+          // 查看门店
+          path: '/storeManage/storeList/seeTheStore',
+          name: '门店管理/门店列表/查看门店',
+          component: SeeTheStore,
+        },
+        {
+          // 门店组
+          path: '/storeManage/storeGroup',
+          name: '门店管理/门店组',
+          component: StoreGroup,
+        },
+
+        {
           // 交易列表
           path: '/report/transactionList',
           name: '统计报表/交易列表',
@@ -78,8 +108,6 @@ export default new Router({
           name: '统计报表/对账单',
           component: AccountStatement,
         },
-
-
 
         {
           path: '/login',

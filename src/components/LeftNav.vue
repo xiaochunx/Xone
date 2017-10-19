@@ -120,11 +120,11 @@
             children: [
               {
                 name: '门店列表',
-                route: '/'
+                route: '/storeManage/storeList'
               },
               {
                 name: '门店组',
-                route: '/'
+                route: '/storeManage/storeGroup'
               }
             ]
           },

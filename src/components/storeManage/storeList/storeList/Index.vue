@@ -52,7 +52,7 @@
       </el-col>
       <el-col :span="8">
         <div class="m-newStore">
-         <router-link to="/storeManage/newAddStore">
+         <router-link to="/storeManage/storeList/newAddStore">
           <el-button type="primary">+新增门店</el-button>
         </router-link>
         </div>
@@ -80,7 +80,7 @@
           <td>{{item.pay}}</td>
           <td>
             <div>
-              <el-button type="text">查看</el-button>
+              <el-button type="text" @click="getOneList()">查看</el-button>
               <el-button type="text">关闭</el-button>
               <el-button type="text">删除</el-button>
             </div>
@@ -155,6 +155,11 @@
           reserveAccount:'支付宝  易极付  炳胜（马场店）',
           pay: '开启'
         }]
+      }
+    },
+    methods:{
+      getOneList(){
+        this.$router.push('/storeManage/storeList/seeTheStore')
       }
     }
   }

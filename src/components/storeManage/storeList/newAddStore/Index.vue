@@ -120,7 +120,7 @@
               </el-form-item>
               <el-form-item>
                 <el-button>取消</el-button>
-                <router-link to="/storeManage/seeTheStore">
+                <router-link to="/storeManage/storeList">
                   <el-button type="primary">保存</el-button>
                 </router-link>
               </el-form-item>
