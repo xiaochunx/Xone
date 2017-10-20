@@ -11,82 +11,209 @@
           </el-col>
           <el-form ref="form" :model="form" label-width="120px">
 
-
+            <!-- 账户 -->
             <el-col :span="24" class="cell">
-              <el-form-item label="第三方编码:"
-                            v-for="(domain, index) in form.domains"
-                            :label="'第三方编码 ' + index + ':'"
+              <el-form-item label="账户:"
+                            v-for="(domain, index) in form.account"
+                            :label="'账户 ' + index + ':'"
                             :key="domain.key"
-                            :prop="'domains.' + index + '.value'"
+                            :prop="'account.' + index + '.value'"
               >
-                <el-col :span="7">
-                    <el-input v-model="domain.code1"></el-input>
-                </el-col>
-                <el-col :span="1" style="text-align: center;">
-                  -
-                </el-col>
-                <el-col :span="11">
-                    <el-input v-model="domain.code2"></el-input>
-                </el-col>
+                <el-col :span="24">
+                  <el-col :span="6">
+                    <el-select v-model="domain.value1" placeholder="请选择">
+                      <el-option
+                        v-for="item in domain.options1"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-col>
 
-                <el-col :span="4" :offset="1">
-                  <el-button @click.prevent="removeDomain(domain)" type="danger" style="border-radius: 100px"
-                             size="small" icon="minus"></el-button>
-                  <el-button @click="addDomain" type="primary" icon="plus" style="border-radius: 100px"
-                             size="small"></el-button>
+                  <el-col :span="6">
+                    <el-select v-model="domain.value2" placeholder="请选择">
+                      <el-option
+                        v-for="item in domain.options2"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-col>
+
+                  <el-col :span="6">
+                    <el-select v-model="domain.value3" placeholder="请选择">
+                      <el-option
+                        v-for="item in domain.options3"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-col>
+
+                  <el-col :span="4" :offset="1">
+                    <el-button @click.prevent="removeDomain(domain,'account')" type="danger"
+                               style="border-radius: 100px"
+                               size="small" icon="minus"></el-button>
+                    <el-button @click="addDomain('account')" type="primary" icon="plus" style="border-radius: 100px"
+                               size="small"></el-button>
+                  </el-col>
                 </el-col>
 
               </el-form-item>
             </el-col>
 
 
-            <el-col :span="24" class="cell">
-              <el-col :span="24">
-                <el-form-item>
-                  <el-col :span="7">
-                    <el-select v-model="form.value" placeholder="--省份--">
-                      <el-option
-                        v-for="item in form.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
+            <!-- 备用账户 -->
+            <el-col :span="24">
+              <el-form-item label="备用账户:">
+                <el-radio class="radio" v-model="form.radio" label="1">关闭</el-radio>
+                <el-radio class="radio" v-model="form.radio" label="2">开启</el-radio>
+              </el-form-item>
+
+              <el-form-item v-if="form.radio == 2">
+                <el-form-item v-for="(domain, index) in form.reserveAcc"
+                              :key="domain.key"
+                              :prop="'reserveAcc.' + index + '.value'"
+                >
+                  <el-col :span="24" class="cell-b">
+                    <el-col :span="6">
+                      <el-select v-model="domain.value1" placeholder="请选择">
+                        <el-option
+                          v-for="item in domain.options1"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-select v-model="domain.value2" placeholder="请选择">
+                        <el-option
+                          v-for="item in domain.options2"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-select v-model="domain.value3" placeholder="请选择">
+                        <el-option
+                          v-for="item in domain.options3"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="4" :offset="1">
+                      <el-button @click.prevent="removeDomain(domain,'reserveAcc')" type="danger"
+                                 style="border-radius: 100px"
+                                 size="small" icon="minus"></el-button>
+                      <el-button @click="addDomain('reserveAcc')" type="primary" icon="plus"
+                                 style="border-radius: 100px"
+                                 size="small"></el-button>
+                    </el-col>
                   </el-col>
-                  <el-col :span="7" :offset="1">
-                    <el-select v-model="form.value" placeholder="--城市--">
-                      <el-option
-                        v-for="item in form.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </el-col>
-                  <el-col :span="7" :offset="1">
-                    <el-select v-model="form.value" placeholder="--门店标签--">
-                      <el-option
-                        v-for="item in form.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+
                 </el-form-item>
-                <el-form-item>
-                  <el-col :span="16">
-                    <el-input v-model="form.storeInfo" placeholder="请输入门店关键字"></el-input>
-                  </el-col>
-                  <el-col :span="2" :offset="1">
-                    <el-button>搜索</el-button>
-                  </el-col>
-                </el-form-item>
-                <el-form-item>
-                  <el-transfer v-model="form.data" :data="form.data2" :titles="['门店','已选门店']"></el-transfer>
-                </el-form-item>
-              </el-col>
+              </el-form-item>
             </el-col>
+
+            <!-- 选择门店 -->
+            <el-col :span="24">
+              <el-form-item label="选择门店">
+                <el-row>
+                  <el-col :span="24" class="smallContentMsg">
+                    <el-radio class="radio" v-model="form.shop" label="1">全部门店</el-radio>
+                    <el-radio class="radio" v-model="form.shop" label="2">部分门店</el-radio>
+                    <router-link to="/iPayment/issuedRecord/newIssued/newAdd">
+                      <el-button size="small">新增</el-button>
+                    </router-link>
+                  </el-col>
+                  <el-col :span="24" v-if="form.shop == 2">
+                    <el-col :span="12">
+                      <el-card>
+
+                        <el-tree :data="form.store" :props="defaultProps"
+                                 @node-click="handleNodeClick"
+                                 :default-expanded-keys="[2]" node-key="id"></el-tree>
+                      </el-card>
+                    </el-col>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-col>
+
+            <!-- 下发规则 -->
+            <el-col :span="24">
+              <el-form-item label="下发规则:">
+
+                <el-col :span="6">
+                  <el-radio class="radio" v-model="form.rules" label="1">替换</el-radio>
+                  <el-popover
+                    ref="popover1"
+                    placement="top-start"
+                    title="标题"
+                    width="200"
+                    trigger="hover">
+                    <p>sjdlajflk</p>
+                  </el-popover>
+                  <el-button v-popover:popover1 style="border: none;position: relative" size="small"><i
+                    class="fa fa-question-circle-o icon-style"></i></el-button>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-radio class="radio" v-model="form.rules" label="2">更新</el-radio>
+                  <el-popover
+                    ref="popover2"
+                    placement="top-start"
+                    title="以支付方式为对比依据，例如："
+                    width="200"
+                    trigger="hover">
+                    <p>1、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
+                    <p>2、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
+                    <p>3、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
+                  </el-popover>
+                  <el-button v-popover:popover2 style="border: none;position: relative" size="small"><i
+                    class="fa fa-question-circle-o icon-style"></i></el-button>
+                </el-col>
+              </el-form-item>
+            </el-col>
+
+            <!-- 执行时间 -->
+            <el-col :span="24">
+              <el-form-item label="执行时间">
+                <el-radio class="radio" v-model="form.runTime" label="1">立即执行</el-radio>
+                <el-radio class="radio" v-model="form.runTime" label="2">定时执行</el-radio>
+              </el-form-item>
+              <el-form-item v-if="form.runTime == '2'">
+                <el-col :span="24">
+                  <el-col :span="7">
+                    <div class="block">
+                      <el-date-picker
+                        v-model="form.runTimeValue"
+                        type="datetime"
+                        placeholder="选择日期时间">
+                      </el-date-picker>
+                    </div>
+                  </el-col>
+
+                  <el-col :span="10">
+                    <el-card>
+                      若执行失败，则在
+                      <el-input v-model="delayTime" placeholder="请输入内容"></el-input>
+                      分钟后重新发起执行
+                      (为空则不发起）
+                    </el-card>
+                  </el-col>
+                </el-col>
+              </el-form-item>
+            </el-col>
+
           </el-form>
           <el-col :span="24">
             <el-col :span="12" class="flex-jc">
@@ -99,6 +226,7 @@
         </el-row>
       </el-card>
     </div>
+
   </div>
 </template>
 <script>
@@ -140,9 +268,125 @@
           }],
           value: '',
           storeInfo: '',
-          domains: [{
-            code1: '',
-            code2: ''
+          radio: '1',
+          shop: '1',
+          rules: '1',
+          runTime: '1',
+          runTimeValue: '',
+          delayTime: '',
+          store: [
+            {label: '一级 1', id: 2, children: [{label: '二级 2', id: 11}]},
+            {label: '一级 2', id: 1},
+            {label: '一级 3', id: 3},
+            {label: '一级 4', id: 4},
+          ],
+          account: [{
+            value1: '',
+            value2: '',
+            value3: '',
+            options1: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options2: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options3: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }
+            ],
+          }],
+          reserveAcc: [{
+            value1: '',
+            value2: '',
+            value3: '',
+            options1: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options2: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options3: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }
+            ],
           }]
         }
       }
@@ -157,22 +401,143 @@
       xoNavPath
     },
     methods: {
-      removeDomain(item) {
-
-        if (this.form.domains.length == 1) {
-          this.$message('不能再删啦');
+      removeDomain(item, status) {
+        if (status == 'account') {
+          if (this.form.account.length == 1) {
+            this.$message('不能再删啦');
+          } else {
+            var index = this.form.account.indexOf(item);
+            if (index !== -1) {
+              this.form.account.splice(index, 1)
+            }
+          }
         } else {
-          var index = this.form.domains.indexOf(item);
-          if (index !== -1) {
-            this.form.domains.splice(index, 1)
+          if (this.form.reserveAcc.length == 1) {
+            this.$message('不能再删啦');
+          } else {
+            var index = this.form.reserveAcc.indexOf(item);
+            if (index !== -1) {
+              this.form.reserveAcc.splice(index, 1)
+            }
           }
         }
+
       },
-      addDomain() {
-        this.form.domains.push({
-          value: '',
-          key: Date.now()
-        });
+      addDomain(status) {
+        if (status == 'reserveAcc') {
+          this.form.reserveAcc.push({
+            value1: '',
+            value2: '',
+            value3: '',
+            options1: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options2: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options3: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }
+            ],
+            key: Date.now()
+          });
+        } else {
+          this.form.account.push({
+            value1: '',
+            value2: '',
+            value3: '',
+            options1: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options2: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }],
+            options3: [{
+              value: '选项1',
+              label: '黄金糕'
+            }, {
+              value: '选项2',
+              label: '双皮奶'
+            }, {
+              value: '选项3',
+              label: '蚵仔煎'
+            }, {
+              value: '选项4',
+              label: '龙须面'
+            }, {
+              value: '选项5',
+              label: '北京烤鸭'
+            }
+            ],
+            key: Date.now()
+          });
+        }
+
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
@@ -184,6 +549,9 @@
           }
         });
       },
+      handleNodeClick(data) {
+        console.log(data);
+      }
     }
   }
 </script>
@@ -191,11 +559,26 @@
   .contentMsg {
     padding: 0 0 25px 0;
   }
+
   .selectedStore {
     padding-bottom: 10px;
     border-bottom: 1px solid gainsboro;
   }
+
   .cell {
     margin-top: 20px;
+  }
+
+  .cell-b {
+    margin-bottom: 20px;
+  }
+
+  .icon-style {
+    font-size: 22px;
+    color: red;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translateY(-70%) translateX(65%);
   }
 </style>

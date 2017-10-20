@@ -10,6 +10,7 @@ import NotFound from '@/components/404/NotFound.vue'
 /************************** 支付管理 ***************************/
 import Account from '../components/iPayment/accountList/account/Index.vue'
 import Record from '../components/iPayment/issuedRecord/Index.vue'
+import IssuedAdd from '../components/iPayment/issuedRecord/newIssued/NewAdd/Index.vue'
 import NewIssued from '../components/iPayment/issuedRecord/newIssued/Index.vue'
 import IPayment from '../components/iPayment/accountList/Index.vue'
 
@@ -66,11 +67,18 @@ export default new Router({
           component: Record,
         },
         {
-          // 支付管理/新增下发
+          // 支付管理/下发记录/新增下发
           path: '/iPayment/issuedRecord/newIssued',
           name: '支付管理/下发记录/新增下发',
           component: NewIssued,
         },
+        {
+          // 支付管理/下发记录/新增下发/新增门店
+          path: '/iPayment/issuedRecord/newIssued/newAdd',
+          name: '支付管理/下发记录/新增下发/新增门店',
+          component: IssuedAdd,
+        },
+
 
         /************************** 门店管理 ***************************/
         {

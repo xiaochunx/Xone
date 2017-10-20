@@ -10,6 +10,7 @@ import utility from './components/utility'
 
 // 样式导入
 import 'element-ui/lib/theme-default/index.css'
+import 'font-awesome/css/font-awesome.css'
 
 
 // 修改vue的原型对象

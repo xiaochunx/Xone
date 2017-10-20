@@ -3,15 +3,17 @@
     <div class="contentMsg">
       <xo-nav-path></xo-nav-path>
     </div>
-    <div class="contentMsg">
-      <xo-count-edit></xo-count-edit>
-    </div>
-    <div class="contentMsg">
-      <xo-detail-msg></xo-detail-msg>
-    </div>
-    <div class="contentMsg">
-      <xo-pagination></xo-pagination>
-    </div>
+    <el-card>
+      <div class="contentMsg">
+        <xo-count-edit></xo-count-edit>
+      </div>
+      <div class="contentMsg">
+        <xo-detail-msg></xo-detail-msg>
+      </div>
+      <div class="contentMsg">
+        <xo-pagination></xo-pagination>
+      </div>
+    </el-card>
   </div>
 </template>
 <script>

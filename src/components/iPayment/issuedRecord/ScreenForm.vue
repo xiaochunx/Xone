@@ -11,22 +11,30 @@
       </el-table-column>
 
       <el-table-column
-        prop="paymentMethod"
         label="支付方式"
-        width="93">
+        width="103"
+      >
+        <template scope="scope">
+          <div style="margin-left: 10px" v-for="item in scope.row.paymentMethod">{{ item }}</div>
+        </template>
       </el-table-column>
 
 
       <el-table-column
-        prop="payment"
         label="支付通道"
-        width="93">
+        width="103">
+        <template scope="scope">
+          <div style="margin-left: 10px" v-for="item in scope.row.payment">{{ item }}</div>
+        </template>
       </el-table-column>
 
       <el-table-column
-        prop="account"
         label="账户"
-        width="131">
+        width="144">
+        label="支付通道">
+        <template scope="scope">
+          <div style="margin-left: 10px" v-for="item in scope.row.account">{{ item }}</div>
+        </template>
       </el-table-column>
 
       <el-table-column
@@ -155,6 +163,9 @@
   }
 </script>
 <style scoped>
+  div.cell{
+    text-align: center;
+  }
   p{
     padding: 10px 0 10px 10px;
   }
