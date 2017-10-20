@@ -1,9 +1,9 @@
 <template>
   <div id="xoNavPath">
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/' }">支付管理</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/' }">账户列表</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/' }">活动列表</el-breadcrumb-item>
+      <el-breadcrumb-item>基础设置</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/infrastructure/PayChannels' }">支付通道</el-breadcrumb-item>
+      <el-breadcrumb-item>新增支付通道</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 </template>

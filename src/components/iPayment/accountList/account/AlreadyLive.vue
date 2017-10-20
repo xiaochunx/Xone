@@ -1,39 +1,31 @@
 <template>
-  <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+  <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
     <el-form-item label="账户编码">
       <el-input v-model="ruleForm.accountCode" :disabled="true"></el-input>
     </el-form-item>
 
-    <el-form-item label="第三方编码" v-for="(value,index) in ruleForm.thirdCodes" :key="index">
-      <el-col :span="9">
-        <el-form-item>
-          <el-input v-model="value.code1" placeholder="请输入内容"></el-input>
-        </el-form-item>
+    <el-form-item label="第三方编码:"
+                  v-for="(domain, index) in ruleForm.domains"
+                  :label="'第三方编码 ' + index + ':'"
+                  :key="domain.key"
+                  :prop="'domains.' + index + '.value'"
+    >
+      <el-col :span="7">
+        <el-input v-model="domain.code1"></el-input>
       </el-col>
-      <el-col class="line" :span="2" style="text-align: center">-</el-col>
-      <el-col :span="9">
-        <el-form-item>
-          <el-input v-model="value.code2" placeholder="请输入内容"></el-input>
-        </el-form-item>
+      <el-col :span="1" style="text-align: center;">
+        -
       </el-col>
-      <el-col :span="2" :offset="1">
-        <el-button icon="plus" type="primary" @click="addThirdCode()" v-if="!value.isMin"></el-button>
-        <el-button icon="minus" type="primary" @click="minThirdCode(index)" v-if="value.isMin"></el-button>
+      <el-col :span="11">
+        <el-input v-model="domain.code2"></el-input>
       </el-col>
+
+      <el-col :span="4" :offset="1">
+        <el-button @click.prevent="removeDomain(domain)" type="danger" style="border-radius: 100px" size="small" icon="minus"></el-button>
+        <el-button @click="addDomain" type="primary" icon="plus" style="border-radius: 100px" size="small"></el-button>
+      </el-col>
+
     </el-form-item>
-
-    <!--<el-form-item label="第三方编码" v-for="(value,index) in ruleForm.thirdCodes" :key="index" prop="thirdCode">
-      &lt;!&ndash;<el-col :span="9">
-          <el-input v-model="value.code1" placeholder="请输入内容"></el-input>
-      </el-col>&ndash;&gt;
-      <el-row>
-        <el-col :span="9">
-          <el-input v-model="value.code1"></el-input>
-        </el-col>
-      </el-row>
-    </el-form-item>-->
-
-
 
     <el-form-item label="账户名称" prop="accountName">
       <el-input v-model="ruleForm.accountName"></el-input>
@@ -107,15 +99,12 @@
           delivery: false,
           payKey: '',
           thirdCode: '',
-          thirdCodes: [
-            {
-              code1: '',
-              code2: '',
-              isMin: false
-            }
-          ]
+          domains: [{
+            code1: '',
+            code2: ''
+          }]
         },
-        input: '',
+
         rules: {
           accountName: [
             {required: true, message: '请选择账号名称', trigger: 'change'}
@@ -137,7 +126,7 @@
             {required: true, message: '请选择商户支付秘钥', trigger: 'change'}
           ],
           thirdCode: [
-            {required: true, message: '请选择第三方编码', trigger: 'change'}
+            {required: true, message: '请选择商户支付秘钥', trigger: 'blur'}
           ],
         },
 
@@ -157,13 +146,23 @@
       resetForm(formName) {
         this.$refs[formName].resetFields();
       },
-      addThirdCode(){
-        var obj = {code1:'',code2:'',isMin:true}
-        this.ruleForm.thirdCodes.push(obj);
+      removeDomain(item) {
+
+        if (this.ruleForm.domains.length == 1){
+          this.$message('不能再删啦');
+        }else {
+          var index = this.ruleForm.domains.indexOf(item);
+          if (index !== -1) {
+            this.ruleForm.domains.splice(index, 1)
+          }
+        }
       },
-      minThirdCode(index){
-        this.ruleForm.thirdCodes.splice(index,1);
-      }
+      addDomain() {
+        this.ruleForm.domains.push({
+          value: '',
+          key: Date.now()
+        });
+      },
     }
   }
 </script>

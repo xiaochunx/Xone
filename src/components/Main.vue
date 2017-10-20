@@ -8,9 +8,6 @@
       <el-col :span="20" style="overflow-y: scroll">
         <div :style="{height:ListHeight + 'px'}">
           <div class="content">
-            <xo-nav-path></xo-nav-path>
-          </div>
-          <div class="contentMsg">
             <!--路由视图-->
             <router-view></router-view>
           </div>
@@ -24,6 +21,7 @@
   import {mapGetters, mapActions} from 'vuex'
 
   import xoHeader from './Header.vue'
+  import xoHome from './Home.vue'
   import xoNavPath from './NavPath.vue'
   import xoLeftNav from './LeftNav.vue'
 
@@ -47,6 +45,7 @@
       xoHeader,
       xoNavPath,
       xoLeftNav,
+      xoHome
     },
     methods: {
       handleOpen(key, keyPath) {
@@ -66,8 +65,5 @@
 <style scoped lang="less">
   .content {
     padding: 25px;
-  }
-  .contentMsg{
-    padding: 0 25px 25px 25px;
   }
 </style>

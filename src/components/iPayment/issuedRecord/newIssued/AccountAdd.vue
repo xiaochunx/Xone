@@ -56,7 +56,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button @click="addDomain">新增账号</el-button>
+        <el-button @click="addDomain(false)">新增账号</el-button>
       </el-form-item>
     </el-form>
 
@@ -121,7 +121,7 @@
       </el-form-item>
 
       <el-form-item v-if="radio == '2'">
-        <el-button @click="addDomain">新增账号</el-button>
+        <el-button @click="addDomain(true)">新增账号</el-button>
       </el-form-item>
     </el-form>
 

@@ -1,6 +1,6 @@
 <template>
   <div id="xoMenu" :style="{height:ListHeight+'px'}">
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark">
+    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark" :width="300">
 
      <!-- <el-submenu index="1">
         <template slot="title">支付管理</template>
@@ -99,6 +99,9 @@
   import {mapGetters} from 'vuex'
 
   export default {
+    props: {
+
+    },
     data() {
       return {
         leftList: [
@@ -158,23 +161,23 @@
             children: [
               {
                 name: '商家信息',
-                route: '/'
+                route: '/infrastructure/BusinessInfo'
               },
               {
                 name: '备用账户切换配置',
-                route: '/'
+                route: '/infrastructure/BackupAcc'
               },
               {
-                name: '批量设置',
-                route: '/'
+                name: '客户端批量设置',
+                route: '/infrastructure/VolumeSet'
               },
               {
                 name: '支付方式',
-                route: '/'
+                route: '/infrastructure/PaymentWay'
               },
               {
                 name: '支付通道',
-                route: '/'
+                route: '/infrastructure/PayChannels'
               },
               {
                 name: '权限管理',
@@ -213,5 +216,6 @@
   #xoMenu{
     overflow-y: scroll;
     overflow-x: hidden;
+    background-color: #2A3642;
   }
 </style>

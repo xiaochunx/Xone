@@ -119,7 +119,7 @@
     }
   }
 </script>
-<style>
+<style scoped>
   div.cell{
     text-align: center;
   }

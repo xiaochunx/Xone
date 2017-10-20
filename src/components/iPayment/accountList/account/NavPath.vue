@@ -1,9 +1,9 @@
 <template>
   <div id="xoNavPath">
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/' }">支付管理</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/' }">账户列表</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/' }">活动列表</el-breadcrumb-item>
+      <el-breadcrumb-item>支付管理</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/iPayment/accountList' }">账户列表</el-breadcrumb-item>
+      <el-breadcrumb-item>账户列表</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 </template>
@@ -11,9 +11,6 @@
   import {mapGetters} from 'vuex'
 
   export default {
-    prop(){
-
-    },
     data(){
       return {
 
