@@ -18,7 +18,7 @@ import StoreList from '../components/storeManage/storeList/storeList/Index.vue'
 import NewAddStore from '../components/storeManage/storeList/newAddStore/Index.vue'
 import SeeTheStore from '../components/storeManage/storeList/seeTheStore/Index.vue'
 import StoreGroup from '../components/storeManage/storesGroup/Index.vue'
-
+import EditStoreAccount from '../components/storeManage/storeList/seeTheStore/editStoreAccount/Index.vue'
 
 /************************** 统计报表 ***************************/
 import TransactionList from '../components/report/transactionList/Index.vue'
@@ -91,6 +91,13 @@ export default new Router({
           name: '门店管理/门店列表/查看门店',
           component: SeeTheStore,
         },
+        {
+          // 收款账户编辑
+          path: '/storeManage/storeList/seeTheStore/editStoreAccount',
+          name: '门店管理/门店列表/查看门店/收款账户编辑',
+          component: EditStoreAccount,
+        },
+
         {
           // 门店组
           path: '/storeManage/storeGroup',

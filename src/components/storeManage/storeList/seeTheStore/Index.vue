@@ -85,9 +85,7 @@
               </el-col>
               <el-col :span="8">
                 <div>
-                  <router-link to="/storeManage/redact">
-                    <el-button type="primary">编辑</el-button>
-                  </router-link>
+                  <el-button type="primary" @click="editStoreAccount()">编辑</el-button>
                 </div>
               </el-col>
             </el-row>
@@ -277,6 +275,9 @@
       }
     },
     methods: {
+      editStoreAccount(){
+        this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
+      },
       clientSubmit() {
         console.log(this.clientForm)
       },
