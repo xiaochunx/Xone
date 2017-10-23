@@ -120,43 +120,54 @@
 </style>
 
 <template>
-  <div id="calendar">
-    <div class="month">
-      <ul>
-        <li class="arrow" @click="pickPre(currentYear,currentMonth)">❮</li>
-        <li class="year-month" @click="pickYear(currentYear,currentMonth)">
-          <span class="choose-year">{{ currentYear }}</span>
-          <span class="choose-month">{{ currentMonth }}月</span>
-        </li>
-        <li class="arrow" @click="pickNext(currentYear,currentMonth)">❯</li>
-      </ul>
+  <div>
+    <div class="margin_b_10">
+      <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
-    <ul class="weekdays">
-      <li style="color:red">日</li>
-      <li>一</li>
-      <li>二</li>
-      <li>三</li>
-      <li>四</li>
-      <li>五</li>
-      <li style="color:red">六</li>
+    <div id="calendar">
+      <div class="month">
+        <ul>
+          <li class="arrow" @click="pickPre(currentYear,currentMonth)">❮</li>
+          <li class="year-month" @click="pickYear(currentYear,currentMonth)">
+            <span class="choose-year">{{ currentYear }}</span>
+            <span class="choose-month">{{ currentMonth }}月</span>
+          </li>
+          <li class="arrow" @click="pickNext(currentYear,currentMonth)">❯</li>
+        </ul>
+      </div>
+      <ul class="weekdays">
+        <li style="color:red">日</li>
+        <li>一</li>
+        <li>二</li>
+        <li>三</li>
+        <li>四</li>
+        <li>五</li>
+        <li style="color:red">六</li>
 
-    </ul>
-    <ul class="days">
-      <li v-for="dayobject in days" @click="getEvent(dayobject.day)">
-        <span v-if="dayobject.day.getMonth()+1 != currentMonth" class="other-month">{{ dayobject.day.getDate() }}</span>
-        <span v-else>
+      </ul>
+      <ul class="days">
+        <li v-for="dayobject in days" @click="getEvent(dayobject.day)">
+          <span v-if="dayobject.day.getMonth()+1 != currentMonth" class="other-month">{{ dayobject.day.getDate() }}</span>
+          <span v-else>
           <span
             v-if="dayobject.day.getFullYear() == new Date().getFullYear() && dayobject.day.getMonth() == new Date().getMonth() && dayobject.day.getDate() == new Date().getDate()"
             class="active">{{ dayobject.day.getDate() }}</span>
           <span v-else>{{ dayobject.day.getDate() }}</span>
         </span>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
+
   </div>
+
 </template>
 
 <script>
+  import xoNavPath from '../NavPath.vue'
   export default {
+    components:{
+      xoNavPath
+    },
     data() {
       return {
         currentDay: 1,
@@ -164,11 +175,11 @@
         currentYear: 1970,
         currentWeek: 1,
         days: [],
+        navList:[{name:"统计报表",url:''},{name:"对账单",url:''}],
       }
     },
     computed: {},
     methods: {
-
       initData: function (cur) {
         let date;
         if (cur) {

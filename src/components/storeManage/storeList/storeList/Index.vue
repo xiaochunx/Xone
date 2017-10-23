@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div>门店管理/<span>门店列表</span></div>
+    <div class="margin_b_10">
+      <xo-nav-path :navList="navList"></xo-nav-path>
+    </div>
     <el-row>
       <el-col :span="16">
         <el-row :gutter="16">
@@ -89,10 +91,15 @@
 </template>
 
 <script>
-	export default {
+  import xoNavPath from '../../NavPath.vue'
+  export default {
+    components: {
+      xoNavPath
+    },
     data() {
       return {
         tableHeight:0,
+        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
         storeGroupData: [{
           value: '选项1',
           label: '全部'
@@ -158,6 +165,9 @@
       getOneList(){
         this.$router.push('/storeManage/storeList/seeTheStore')
       }
+    },
+    created(){
+      console.log(this)
     }
   }
 </script>

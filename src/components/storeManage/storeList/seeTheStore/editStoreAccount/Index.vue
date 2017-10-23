@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="title">
-      正在使用中的账户
+    <div class="margin_b_10">
+      <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
     <div class="flex_r margin_b_10" v-for="(item,index) in list" :key="item.id">
       <div class="margin_r_10 ">
@@ -37,8 +37,12 @@
         </el-select>
       </div>
       <div class="flex">
-        <div class="m-storeCode flex pointer" @click="addDomain()">+</div>
-        <div class="m-storeCode flex margin_l_10 pointer" @click="removeDomain(index)">-</div>
+        <div class="m-storeCode flex pointer" @click="addDomain()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+        </div>
+        <div class="m-storeCode flex margin_l_10 pointer" @click="removeDomain(index)">
+          <i class="fa fa-minus-circle" aria-hidden="true"></i>
+        </div>
       </div>
     </div>
 
@@ -79,8 +83,12 @@
         </el-select>
       </div>
       <div class="flex">
-        <div class="m-storeCode flex pointer" @click="subAddDomain()">+</div>
-        <div class="m-storeCode flex margin_l_10 pointer" @click="subRemoveDomain(index)">-</div>
+        <div class="m-storeCode flex pointer" @click="subAddDomain()">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+        </div>
+        <div class="m-storeCode flex margin_l_10 pointer" @click="subRemoveDomain(index)">
+          <i class="fa fa-minus-circle" aria-hidden="true"></i>
+        </div>
       </div>
     </div>
 
@@ -88,9 +96,12 @@
 </template>
 
 <script>
+  import xoNavPath from '../../../NavPath.vue'
   export default {
+    components: {xoNavPath},
     data() {
       return {
+        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeList'},{name: "查看门店", url: '/storeManage/storeList/seeTheStore'},{name: "天河店收款账户编辑", url: ''}],
         list:[
           {id:1,payValue:1,payTypeValue:2,addressValue:1},
           {id:2,payValue:1,payTypeValue:3,addressValue:1},
@@ -148,11 +159,7 @@
   }
 
   .m-storeCode {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    border: 1px solid #000;
-    box-sizing: border-box;
+font-size: 30px;
   }
-  
+
 </style>

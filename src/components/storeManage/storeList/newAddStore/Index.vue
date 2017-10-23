@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div>新增门店管理/门店列表/<span style="font-size: 18px; font-weight: bold;">新增门店门店</span></div>
+    <div class="margin_b_10">
+      <xo-nav-path :navList="navList"></xo-nav-path>
+    </div>
     <div>
       <el-row>
         <el-col :span="12" :offset="6">
@@ -51,9 +53,14 @@
                       </div>
                     </el-col>
                     <el-col :span="6">
-                      <div class="m-storeCode-add-del">
-                        <div class="m-storeCode-add"  @click="addDomain">+</div>
-                        <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode-del" @click.prevent="removeDomain(domain)">-</div>
+                      <div class="flex_a">
+                        <div class="m-storeCode margin_l_10"  @click="addDomain">
+                          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </div>
+
+                        <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10" @click.prevent="removeDomain(domain)">
+                          <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                        </div>
                       </div>
                     </el-col>
                   </el-row>
@@ -133,9 +140,14 @@
 </template>
 
 <script>
+  import xoNavPath from '../../NavPath.vue'
   export default {
+    components: {
+      xoNavPath
+    },
     data() {
       return {
+        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeList'},{name: "新增门店门店", url: ''}],
         form: {
           name: '',
           code: '',
@@ -197,6 +209,9 @@
           key: Date.now()
         });
       }
+    },
+    created(){
+      console.log(this)
     }
   }
 </script>
@@ -207,38 +222,9 @@
     border-bottom: 1px solid #000;
   }
 
-  .m-storeCode-add-del {
-    position: relative;
-    height: 36px;
-  }
 
-  .m-storeCode-add {
-    position: absolute;
-    top: 50%;
-    margin-left: 10px;
-    margin-top: -12.5px;
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
-    border-radius: 50%;
-    border: 1px solid #000;
-    box-sizing: border-box;
-    text-align: center;
-  }
-
-  .m-storeCode-del {
-    position: absolute;
-    top: 50%;
-    left: 35px;
-    margin-left: 20px;
-    margin-top: -12.5px;
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
-    border-radius: 50%;
-    border: 1px solid #000;
-    box-sizing: border-box;
-    text-align: center;
+  .m-storeCode {
+    font-size: 30px;
   }
 
   .m-store-padding {

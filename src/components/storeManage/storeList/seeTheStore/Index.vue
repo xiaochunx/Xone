@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div>查看门店</div>
+    <div class="margin_b_10">
+      <xo-nav-path :navList="navList"></xo-nav-path>
+    </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="基础信息" name="first">
         <div class="m-seeAddStore">
@@ -36,9 +38,7 @@
               </el-col>
               <el-col :span="8">
                 <div>
-                  <router-link to="/storeManage/redact">
-                    <el-button type="primary">编辑</el-button>
-                  </router-link>
+                  <el-button type="primary" @click="editStoreBase()">编辑</el-button>
                 </div>
               </el-col>
             </el-row>
@@ -233,11 +233,12 @@
 
 <script>
   import ElFormItem from "../../../../../node_modules/element-ui/packages/form/src/form-item.vue";
-
+  import xoNavPath from '../../NavPath.vue'
   export default {
-    components: {ElFormItem},
+    components: {ElFormItem,xoNavPath},
     data() {
       return {
+        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeList'},{name: "查看门店", url: ''}],
         activeName: 'first',
         clientForm: {
           pay: '',
@@ -275,6 +276,9 @@
       }
     },
     methods: {
+      editStoreBase(){
+        this.$router.push('/storeManage/storeList/seeTheStore/editStoreBase')
+      },
       editStoreAccount(){
         this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
       },
