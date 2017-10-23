@@ -21,6 +21,8 @@ import SeeTheStore from '../components/storeManage/storeList/seeTheStore/Index.v
 import StoreGroup from '../components/storeManage/storesGroup/Index.vue'
 import EditStoreAccount from '../components/storeManage/storeList/seeTheStore/editStoreAccount/Index.vue'
 import EditStoreBase from '../components/storeManage/storeList/seeTheStore/redact/Index.vue'
+import addGroup from '../components/storeManage/storesGroup/optionGroup/Index.vue'
+
 
 /************************** 统计报表 ***************************/
 import TransactionList from '../components/report/transactionList/Index.vue'
@@ -118,6 +120,12 @@ export default new Router({
           path: '/storeManage/storeGroup',
           name: '门店管理/门店组',
           component: StoreGroup,
+        },
+        {
+          // 新增门店组
+          path: '/storeManage/storeGroup/addGroup',
+          name: '门店管理/门店组',
+          component: addGroup,
         },
 
 

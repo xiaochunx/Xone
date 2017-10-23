@@ -2,7 +2,7 @@
   <div>
     <div class="margin_b_10 flex_sb">
       <xo-nav-path :navList="navList"></xo-nav-path>
-      <el-button size="small" type="primary" @click="">新增门店组</el-button>
+      <el-button size="small" type="primary" @click="addGroup()">新增门店组</el-button>
     </div>
     <div>
       <el-table :data="tableData" border style="width: 100%">
@@ -111,6 +111,9 @@
       },
       handleDelete(index, row) {
         console.log(index, row);
+      },
+      addGroup(){
+        this.$router.push('/storeManage/storeGroup/addGroup')
       }
     }
   }
