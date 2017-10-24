@@ -20,7 +20,9 @@
           <el-tab-pane label="已有账户">
             <xo-already-live></xo-already-live>
           </el-tab-pane>
-          <el-tab-pane label="开户申请">开户申请</el-tab-pane>
+          <el-tab-pane label="开户申请">
+            <xo-new-account></xo-new-account>
+          </el-tab-pane>
         </el-tabs>
       </el-card>
     </div>
@@ -30,6 +32,7 @@
 <script>
   import xoAlreadyLive from './AlreadyLive.vue'
   import xoNavPath from './NavPath.vue'
+  import xoNewAccount from './NewAccount.vue'
 
   export default {
       data(){
@@ -39,7 +42,8 @@
       },
     components: {
       xoAlreadyLive,
-      xoNavPath
+      xoNavPath,
+      xoNewAccount
     }
   }
 </script>

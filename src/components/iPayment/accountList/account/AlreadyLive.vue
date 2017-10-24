@@ -1,9 +1,11 @@
 <template>
   <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+    <!-- 账户编码 -->
     <el-form-item label="账户编码">
       <el-input v-model="ruleForm.accountCode" :disabled="true"></el-input>
     </el-form-item>
 
+    <!-- 第三方编码 -->
     <el-form-item label="第三方编码:"
                   v-for="(domain, index) in ruleForm.domains"
                   :label="'第三方编码 ' + index + ':'"
@@ -21,33 +23,50 @@
       </el-col>
 
       <el-col :span="4" :offset="1">
-        <el-button @click.prevent="removeDomain(domain)" type="danger" style="border-radius: 100px" size="small" icon="minus"></el-button>
-        <el-button @click="addDomain" type="primary" icon="plus" style="border-radius: 100px" size="small"></el-button>
+        <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i class="fa fa-minus-circle"></i></el-button>
+        <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
+
       </el-col>
 
     </el-form-item>
 
-    <el-form-item label="账户名称" prop="accountName">
+    <!-- 账户名称 -->
+    <el-form-item label="账户名称:" prop="accountName">
       <el-input v-model="ruleForm.accountName"></el-input>
     </el-form-item>
 
-    <el-form-item label="支付方式" prop="pay">
-      <el-select v-model="ruleForm.pay" placeholder="请选择支付方式">
-        <el-option label="支付宝" value="Alipay"></el-option>
+    <!-- 支付方式 -->
+    <el-form-item label="支付方式:" prop="pay">
+      <el-select v-model="ruleForm.value1" placeholder="请选择">
+        <el-option
+          v-for="item in ruleForm.option1"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+
+    </el-form-item>
+
+    <!-- 支付通道 -->
+    <el-form-item label="支付通道:" prop="Payment">
+      <el-select v-model="ruleForm.value2" placeholder="请选择">
+        <el-option
+          v-for="item in ruleForm.option2"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
       </el-select>
     </el-form-item>
 
-    <el-form-item label="支付通道" prop="Payment">
-      <el-select v-model="ruleForm.Payment" placeholder="请选择支付通道">
-        <el-option label="民生银行" value="minShengYinHang"></el-option>
-      </el-select>
-    </el-form-item>
-
-    <el-form-item label="商户号" prop="Merchants">
+    <!-- 商户号 -->
+    <el-form-item label="商户号:" prop="Merchants">
       <el-input v-model="ruleForm.Merchants"></el-input>
     </el-form-item>
 
-    <el-form-item label="商户密钥" prop="payKey">
+    <!-- 商户密钥 -->
+    <el-form-item label="商户密钥:" prop="payKey">
       <el-row>
         <el-col :span="2">
           <el-popover trigger="hover" placement="top">
@@ -57,27 +76,41 @@
             </div>
           </el-popover>
         </el-col>
-        <el-col :span="21" :offset="1">
+        <el-col :span="21">
           <el-input v-model="ruleForm.payKey"></el-input>
         </el-col>
       </el-row>
     </el-form-item>
 
-    <el-form-item label="证书apiclient_cert.pem" style="display: flex; align-items: center">
-      <el-row>
-        <el-col>
-          <el-button icon="plus">本地上传</el-button>
-        </el-col>
-      </el-row>
+
+    <!-- 证书 apiclient_cert.pem -->
+    <el-form-item label="证书:" prop="type">
+      <el-upload
+        class="upload-demo"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :file-list="ruleForm.fileList1"
+        list-type="picture">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">apiclient_cert.pem</div>
+      </el-upload>
     </el-form-item>
 
-    <el-form-item label="证书apiclient_key.pem" style="display: flex; align-items: center">
-      <el-row>
-        <el-col>
-          <el-button icon="plus">本地上传</el-button>
-        </el-col>
-      </el-row>
+    <!-- 证书 apiclient_cert.pem -->
+    <el-form-item label="证书:" prop="type">
+      <el-upload
+        class="upload-demo"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :file-list="ruleForm.fileList2"
+        list-type="picture">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">apiclient_cert.pem</div>
+      </el-upload>
     </el-form-item>
+
 
     <el-form-item>
       <el-button @click="resetForm('ruleForm')"> 重置 </el-button>
@@ -90,44 +123,86 @@
     data() {
       return {
         ruleForm: {
-          accountCode: 54252,
-          accountName: '',
-          pay: '',
-          Payment: '',
-          Merchants: '',
-          caption: '我是说明文字',
-          delivery: false,
-          payKey: '',
-          thirdCode: '',
-          domains: [{
+          accountCode: 54252, // 账户编码
+          accountName: '',    // 账户名称
+          Merchants: '',      // 商户号
+          caption: '我是说明文字', // 说明文字
+          payKey: '',         // 商户密钥
+
+          option1: [{     // 支付方式
+            value: '选项1',
+            label: '黄金糕'
+          }, {
+            value: '选项2',
+            label: '双皮奶'
+          }, {
+            value: '选项3',
+            label: '蚵仔煎'
+          }, {
+            value: '选项4',
+            label: '龙须面'
+          }, {
+            value: '选项5',
+            label: '北京烤鸭'
+          }],
+          value1: '',    // 支付方式
+
+          option2: [{     // 支付通道
+            value: '选项1',
+            label: '黄金糕'
+          }, {
+            value: '选项2',
+            label: '双皮奶'
+          }, {
+            value: '选项3',
+            label: '蚵仔煎'
+          }, {
+            value: '选项4',
+            label: '龙须面'
+          }, {
+            value: '选项5',
+            label: '北京烤鸭'
+          }],
+          value2: '',    // 支付通道
+
+          fileList1: [{  // 证书1
+            name: 'food.jpeg',
+            url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+          }],
+          fileList2: [{  // 证书2
+            name: 'food.jpeg',
+            url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+          }],
+
+          domains: [{ // 第三方编码
             code1: '',
             code2: ''
           }]
         },
 
         rules: {
-          accountName: [
+          accountName: [  // 账号名称
             {required: true, message: '请选择账号名称', trigger: 'change'}
           ],
-          name: [
+          name: [   // 活动名称
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
           ],
-          pay: [
-            {required: true, message: '请选择支付方式'}
+          pay: [    // 支付方式
+            {required: true, message: '请选择支付方式', trigger: 'blur'}
           ],
-          Payment: [
-            {required: true, message: '请选择支付通道', trigger: 'change'}
+          Payment: [  // 支付通道
+            {required: true, message: '请选择支付通道', trigger: 'blur'}
           ],
-          Merchants: [
+          Merchants: [  // 商户号
             {required: true, message: '请选择商户号', trigger: 'change'}
           ],
-          payKey: [
+          payKey: [ // 支付秘钥
             {required: true, message: '请选择商户支付秘钥', trigger: 'change'}
           ],
-          thirdCode: [
-            {required: true, message: '请选择商户支付秘钥', trigger: 'blur'}
-          ],
+          type: [   // 开户类型
+            {required: true, message: '请选择活动区域', trigger: 'blur'}
+          ]
         },
 
       };
@@ -147,7 +222,6 @@
         this.$refs[formName].resetFields();
       },
       removeDomain(item) {
-
         if (this.ruleForm.domains.length == 1){
           this.$message('不能再删啦');
         }else {
@@ -163,6 +237,31 @@
           key: Date.now()
         });
       },
+      // 图片上传操作方法
+      handleRemove(file, fileList) {
+        console.log(this.ruleForm.fileList1);
+        console.log(fileList);
+        console.log(file);
+        // console.log(file, fileList);
+      },
+      handlePreview(file) {
+        console.log(file);
+      }
     }
   }
 </script>
+<style scoped>
+  .plusBtn{
+    border: none;
+    color: red;
+    font-size: 35px;
+    padding: 0 9px 0 9px;
+  }
+
+  .minusBtn{
+    border: none;
+    color: deepskyblue;
+    font-size: 35px;
+    padding: 0 9px 0 9px;
+  }
+</style>

@@ -38,8 +38,9 @@
                 </el-col>
 
                 <el-col :span="4" :offset="1">
-                  <el-button @click.prevent="removeDomain(domain)" type="danger" style="border-radius: 100px" size="small" icon="minus"></el-button>
-                  <el-button @click="addDomain" type="primary" icon="plus" style="border-radius: 100px" size="small"></el-button>
+                  <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i class="fa fa-minus-circle"></i></el-button>
+                  <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
+
                 </el-col>
 
               </el-form-item>
@@ -109,5 +110,19 @@
 
   .cell {
     margin-top: 20px;
+  }
+
+  .plusBtn{
+    border: none;
+    color: red;
+    font-size: 35px;
+    padding: 0 9px 0 9px;
+  }
+
+  .minusBtn{
+    border: none;
+    color: deepskyblue;
+    font-size: 35px;
+    padding: 0 9px 0 9px;
   }
 </style>

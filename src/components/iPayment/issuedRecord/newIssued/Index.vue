@@ -54,11 +54,18 @@
                   </el-col>
 
                   <el-col :span="4" :offset="1">
-                    <el-button @click.prevent="removeDomain(domain,'account')" type="danger"
+
+                    <el-button class="plusBtn" @click.prevent="removeDomain(domain,'account')" size="small"><i class="fa fa-minus-circle"></i></el-button>
+                    <el-button class="minusBtn" @click="addDomain('account')" size="small"><i class="fa fa-plus-circle"></i></el-button>
+
+
+                    <!--<el-button @click.prevent="removeDomain(domain,'account')" type="danger"
                                style="border-radius: 100px"
                                size="small" icon="minus"></el-button>
                     <el-button @click="addDomain('account')" type="primary" icon="plus" style="border-radius: 100px"
-                               size="small"></el-button>
+                               size="small"></el-button>-->
+
+
                   </el-col>
                 </el-col>
 
@@ -110,12 +117,10 @@
                       </el-select>
                     </el-col>
                     <el-col :span="4" :offset="1">
-                      <el-button @click.prevent="removeDomain(domain,'reserveAcc')" type="danger"
-                                 style="border-radius: 100px"
-                                 size="small" icon="minus"></el-button>
-                      <el-button @click="addDomain('reserveAcc')" type="primary" icon="plus"
-                                 style="border-radius: 100px"
-                                 size="small"></el-button>
+
+                      <el-button class="plusBtn" @click.prevent="removeDomain(domain,'reserveAcc')" size="small"><i class="fa fa-minus-circle"></i></el-button>
+                      <el-button class="minusBtn" @click="addDomain('reserveAcc')" size="small"><i class="fa fa-plus-circle"></i></el-button>
+
                     </el-col>
                   </el-col>
 
@@ -581,4 +586,19 @@
     right: 50%;
     transform: translateY(-70%) translateX(65%);
   }
+
+  .plusBtn{
+    border: none;
+    color: red;
+    font-size: 35px;
+    padding: 0 9px 0 9px;
+  }
+
+  .minusBtn{
+    border: none;
+    color: deepskyblue;
+    font-size: 35px;
+    padding: 0 9px 0 9px;
+  }
+
 </style>
