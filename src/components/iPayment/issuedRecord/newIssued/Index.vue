@@ -76,11 +76,6 @@
             <!-- 备用账户 -->
             <el-col :span="24">
               <el-form-item label="备用账户:">
-                <el-radio class="radio" v-model="form.radio" label="1">关闭</el-radio>
-                <el-radio class="radio" v-model="form.radio" label="2">开启</el-radio>
-              </el-form-item>
-
-              <el-form-item v-if="form.radio == 2">
                 <el-form-item v-for="(domain, index) in form.reserveAcc"
                               :key="domain.key"
                               :prop="'reserveAcc.' + index + '.value'"
@@ -210,7 +205,7 @@
                   <el-col :span="10">
                     <el-card>
                       若执行失败，则在
-                      <el-input v-model="delayTime" placeholder="请输入内容"></el-input>
+                      <el-input v-model="delayTime" placeholder="请输入执行的时间"></el-input>
                       分钟后重新发起执行
                       (为空则不发起）
                     </el-card>
@@ -273,7 +268,6 @@
           }],
           value: '',
           storeInfo: '',
-          radio: '1',
           shop: '1',
           rules: '1',
           runTime: '1',
