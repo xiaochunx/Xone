@@ -59,12 +59,6 @@
                     <el-button class="minusBtn" @click="addDomain('account')" size="small"><i class="fa fa-plus-circle"></i></el-button>
 
 
-                    <!--<el-button @click.prevent="removeDomain(domain,'account')" type="danger"
-                               style="border-radius: 100px"
-                               size="small" icon="minus"></el-button>
-                    <el-button @click="addDomain('account')" type="primary" icon="plus" style="border-radius: 100px"
-                               size="small"></el-button>-->
-
 
                   </el-col>
                 </el-col>
@@ -140,7 +134,7 @@
 
                         <el-tree :data="form.store" :props="defaultProps"
                                  @node-click="handleNodeClick"
-                                 :default-expanded-keys="[2]" node-key="id"></el-tree>
+                                 :default-expanded-keys="form.data" node-key="id"></el-tree>
                       </el-card>
                     </el-col>
                   </el-col>
@@ -205,7 +199,7 @@
                   <el-col :span="10">
                     <el-card>
                       若执行失败，则在
-                      <el-input v-model="delayTime" placeholder="请输入执行的时间"></el-input>
+                      <el-input v-model="form.delayTime" placeholder="请输入执行的时间"></el-input>
                       分钟后重新发起执行
                       (为空则不发起）
                     </el-card>
@@ -236,7 +230,7 @@
     data() {
       return {
         form: {
-          data: [2], // 已选门店key
+          data: ["ssss"], // 已选门店key
           data2: [
             {
               key: 10,
@@ -274,7 +268,7 @@
           runTimeValue: '',
           delayTime: '',
           store: [
-            {label: '一级 1', id: 2, children: [{label: '二级 2', id: 11}]},
+            {label: '一级 1', id: "ssss", children: [{label: '二级 2', id: 11}]},
             {label: '一级 2', id: 1},
             {label: '一级 3', id: 3},
             {label: '一级 4', id: 4},

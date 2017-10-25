@@ -5,9 +5,6 @@
     </div>
     <el-card>
       <div class="contentMsg">
-        <xo-count-edit></xo-count-edit>
-      </div>
-      <div class="contentMsg">
         <xo-detail-msg></xo-detail-msg>
       </div>
       <div class="contentMsg">
@@ -17,13 +14,17 @@
   </div>
 </template>
 <script>
-  import xoCountEdit from './CountEdit.vue'
+
   import xoDetailMsg from './DetailMsg.vue'
   import xoNavPath from './NavPath.vue'
 
   export default{
+    data(){
+      return {
+        msg: '1'
+      }
+    },
     components: {
-      xoCountEdit,
       xoDetailMsg,
       xoNavPath
     }
