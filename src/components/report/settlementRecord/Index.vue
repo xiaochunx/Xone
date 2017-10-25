@@ -52,7 +52,7 @@
         <el-table-column header-align="center" align="center" prop="refundCount" label="退款笔数" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="netPayment" label="支付净额" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="serviceCharge" label="手续费" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="amount" label="划账金额" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="amountOfAccount" label="划账金额" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="amountTime" label="划账金额到账时间" width="150"></el-table-column>
         <el-table-column header-align="center" align="center" prop="issuingBank" label="发卡行" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="cardNumber" label="卡号" width="70"></el-table-column>
