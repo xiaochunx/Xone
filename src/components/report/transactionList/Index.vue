@@ -70,9 +70,9 @@
           <div class="flex_1 margin_r_10">
             <div>交易状态
             </div>
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="statusValue" placeholder="请选择">
               <el-option
-                v-for="item in options"
+                v-for="item in transactionStatus"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -94,7 +94,7 @@
           </div>
 
           <div class="flex_1 flex_ec margin_r_10">
-            <el-button>查询</el-button>
+            <el-button @click="search()">查询</el-button>
             <el-button type="primary">导出</el-button>
           </div>
 
@@ -105,31 +105,29 @@
     </div>
 
 
-
-
     <div style="width: 100%;">
 
       <el-table :data="tableData" border :height="tableHeight" style="width: 100%;">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="payNo" label="支付单号（款易）" width="150"></el-table-column>
         <el-table-column header-align="center" align="center" prop="shopNo" label="商家单号（pos）" width="150"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="shopAddr" label="门店" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="pay" label="支付方式" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payType" label="支付通道" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="user" label="帐户" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="shopAddress" label="门店" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="paymentMethod" label="支付方式" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="paymentChannel" label="支付通道" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="account" label="帐户" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="payMoney" label="支付金额" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="refund" label="退款金额" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="refundAmount" label="退款金额" width="100"></el-table-column>
 
         <el-table-column header-align="center" align="center" prop="receipts" label="实收金额" width="100"></el-table-column>
 
-        <el-table-column header-align="center" align="center" prop="tranTime" label="交易时间" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="tranType" label="交易状态" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="refundtime" label="退款时间" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="refundMan" label="退款人" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="transactionTime" label="交易时间" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="transactionType" label="交易状态" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="refundTime" label="退款时间" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="refund" label="退款人" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作" fixed="right" width="70">
           <template scope="scope">
             <div class="flex">
-              <el-button size="small">编辑</el-button>
+              <el-button size="small">退款</el-button>
             </div>
           </template>
         </el-table-column>
@@ -169,6 +167,28 @@
           value: '选项2',
           label: '22'
         }],
+        statusValue:1,
+        transactionStatus:[
+          {
+            value: 1,
+            label: '全部'
+          }, {
+            value: 2,
+            label: '支付成功'
+          }, {
+            value: 3,
+            label: '支付失败'
+          }, {
+            value: 4,
+            label: '待支付'
+          }, {
+            value: 5,
+            label: '退款中'
+          }, {
+            value: 6,
+            label: '部分退款成功'
+          }
+        ],
         value: '',
         tableData: [{
           no: '1',
@@ -227,6 +247,9 @@
       }
     },
     methods: {
+      search(){
+        console.log(this)
+      },
       getPage(){},
       getPageSize(){},
 

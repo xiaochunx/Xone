@@ -54,8 +54,8 @@
         <el-table-column header-align="center" align="center" prop="differenceTime" label="差异日期" ></el-table-column>
         <el-table-column header-align="center" align="center" prop="differenceShop" label="差异门店" ></el-table-column>
         <el-table-column header-align="center" align="center" prop="differenceMoney" label="差异金额" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="posMoney" label="pos金额" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payMoney" label="支付金额" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="posAmount" label="pos金额" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="payAmount" label="支付金额" ></el-table-column>
         <el-table-column header-align="center" align="center" prop="payCount" label="交易笔数" ></el-table-column>
 
         <el-table-column header-align="center" align="center" prop="differenceBill" label="差异账单号(pos)" ></el-table-column>

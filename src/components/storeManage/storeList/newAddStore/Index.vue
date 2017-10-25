@@ -108,6 +108,11 @@
                   <el-input placeholder="请输入内容"></el-input>
                 </el-col>
               </el-form-item>
+              <el-form-item label="是否支付:">
+                <el-col :span="14">
+                  <el-switch v-model="form.pay" on-text="" off-text=""></el-switch>
+                </el-col>
+              </el-form-item>
               <el-form-item>
                 <el-button>取消</el-button>
 
@@ -142,7 +147,8 @@
           desc: '',
           thirdPartyCoding: [
             {value: '', value1: ''}
-          ]
+          ],
+          pay:''
         },
         storeGrounpData: [{
           value: '选项1',

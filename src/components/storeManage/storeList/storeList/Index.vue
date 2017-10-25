@@ -75,11 +75,19 @@
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="reserveAccount" label="备用账号"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="pay" label="支付" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="pay" label="支付" width="70">
+
+          <template scope="scope">
+          <div class="flex">
+            <el-switch v-model="scope.row.pay" on-text="" off-text=""></el-switch>
+          </div>
+          </template>
+
+
+        </el-table-column>
         <el-table-column header-align="center" align="center" label="操作"  width="210">
           <template scope="scope">
             <el-button size="small" @click="getOneList()">查看</el-button>
-            <el-button size="small">关闭</el-button>
             <el-button size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -101,28 +109,28 @@
         tableHeight:0,
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
         storeGroupData: [{
-          value: '选项1',
+          value: 1,
           label: '全部'
         }, {
-          value: '选项2',
+          value: 2,
           label: '支付宝'
         }, {
-          value: '选项3',
+          value: 3,
           label: '微信支付'
         }, {
-          value: '选项4',
+          value: 4,
           label: 'QQ钱包'
         }],
-        storeGroup: '全部',
-        payValue: '开启',
+        storeGroup: 1,
+        payValue: 2,
         payValueData: [{
-          value: '选项1',
+          value: 1,
           label: '全部'
         }, {
-          value: '选项2',
+          value: 2,
           label: '开启'
         }, {
-          value: '选项3',
+          value: 3,
           label: '关闭'
         }],
         storeName: '',

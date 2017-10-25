@@ -63,18 +63,18 @@
       <el-table :data="tableData" border :height="tableHeight" style="width: 100%;">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="day" label="日期" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="shopAddr" label="门店" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="shopAddress" label="门店" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="totalPay" label="总支付金额" width="120"></el-table-column>
         <el-table-column header-align="center" align="center" prop="totalPayCount" label="总支付笔数" width="120"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="zfb" label="支付宝" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="zfbCount" label="支付宝笔数" width="120"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="aliPay" label="支付宝" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="aliPayCount" label="支付宝笔数" width="120"></el-table-column>
 
-        <el-table-column header-align="center" align="center" prop="weixin" label="微信支付" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="weiXin" label="微信支付" width="100"></el-table-column>
 
-        <el-table-column header-align="center" align="center" prop="weixinCount" label="微信支付笔数" width="140"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="weiXinCount" label="微信支付笔数" width="140"></el-table-column>
         <el-table-column header-align="center" align="center" prop="qq" label="QQ钱包" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="qqCount" label="QQ钱包笔数" width="140"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="refundMoney" label="退款金额" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="refundAmount" label="退款金额" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="refundCount" label="退款笔数" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="totalMoney" label="实收金额（总）" width="100"></el-table-column>
       </el-table>

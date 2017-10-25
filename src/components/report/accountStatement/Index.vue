@@ -136,13 +136,13 @@
         </ul>
       </div>
       <ul class="weekdays">
-        <li style="color:red">日</li>
-        <li>一</li>
-        <li>二</li>
-        <li>三</li>
-        <li>四</li>
-        <li>五</li>
-        <li style="color:red">六</li>
+        <li style="color:red">星期日</li>
+        <li>星期一</li>
+        <li>星期二</li>
+        <li>星期三</li>
+        <li>星期四</li>
+        <li>星期五</li>
+        <li style="color:red">星期六</li>
 
       </ul>
       <ul class="days">
