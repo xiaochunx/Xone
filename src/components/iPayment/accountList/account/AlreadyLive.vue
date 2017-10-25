@@ -6,29 +6,73 @@
     </el-form-item>
 
     <!-- 第三方编码 -->
-    <el-form-item label="第三方编码:"
-                  v-for="(domain, index) in ruleForm.domains"
-                  :label="'第三方编码 ' + index + ':'"
-                  :key="domain.key"
-                  :prop="'domains.' + index + '.value'"
-    >
-      <el-col :span="7">
-        <el-input v-model="domain.code1"></el-input>
-      </el-col>
-      <el-col :span="1" style="text-align: center;">
-        -
-      </el-col>
-      <el-col :span="11">
-        <el-input v-model="domain.code2"></el-input>
-      </el-col>
+    <el-row>
+      <el-col :span="24" v-for="(domain, index) in ruleForm.domains">
+        <el-col :span="7">
+          <el-form-item label="第三方编码:"
+                        :rules="{
+      required: true, message: '域名不能为空', trigger: 'blur'
+    }"
+          >
+            <el-input v-model="domain.code1"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="1" style="text-align: center;line-height: 36px;">
+          -
+        </el-col>
+        <el-col :span="11">
+          <el-form-item label-width="0"
+                        prop="accountName"
+          >
+            <el-input v-model="domain.code2"></el-input>
+          </el-form-item>
+        </el-col>
 
-      <el-col :span="4" :offset="1">
-        <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i class="fa fa-minus-circle"></i></el-button>
-        <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
+        <el-col :span="4" :offset="1">
+          <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i class="fa fa-minus-circle"></i></el-button>
+          <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
 
+        </el-col>
+
+        <!--<el-form-item label="第三方编码:"
+                      :label="'第三方编码 ' + index + ':'"
+                      :key="domain.key"
+                      :prop="'domains.' + index + '.value'"
+        >
+          <el-col :span="7">
+            <el-form-item label-width="0"
+                          :key="domain.key"
+                          :rules="{
+        required: true, message: '域名不能为空', trigger: 'change'
+      }"
+            >
+              <el-input v-model="domain.code1"></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="11">
+            <el-form-item label-width="0"
+                          :key="domain.key"
+                          :rules="{
+        required: true, message: '域名不能为空', trigger: 'change'
+      }"
+            >
+              <el-input v-model="domain.code2"></el-input>
+            </el-form-item>
+
+          </el-col>
+
+          <el-col :span="4" :offset="1">
+            <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i class="fa fa-minus-circle"></i></el-button>
+            <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
+
+          </el-col>
+
+        </el-form-item>-->
       </el-col>
+    </el-row>
 
-    </el-form-item>
+
 
     <!-- 账户名称 -->
     <el-form-item label="账户名称:" prop="accountName">
@@ -202,6 +246,9 @@
           ],
           type: [   // 开户类型
             {required: true, message: '请选择活动区域', trigger: 'blur'}
+          ],
+          test: [
+            {required: true, message: '请选择账号名称', trigger: 'change'}
           ]
         },
 

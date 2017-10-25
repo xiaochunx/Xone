@@ -6,7 +6,8 @@ import * as types from './type'
 
 const state = {
   height: 0,
-  navPath: []
+  navPath: [],
+  isLoading: false
 };
 
 const mutations = {
@@ -15,6 +16,9 @@ const mutations = {
   },
   [types.NAVPATHCHANGE](state,path){
     state.navPath = path;
+  },
+  [types.UPDATELOADINGSTATUS](state, payload) {
+    state.isLoading = payload.isLoading
   }
 };
 

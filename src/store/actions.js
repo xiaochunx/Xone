@@ -9,5 +9,6 @@ export default {
   },
   NavPathChange({commit},path){
     commit(types.NAVPATHCHANGE,path);
-  }
+  },
+
 }

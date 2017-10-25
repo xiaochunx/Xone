@@ -11,5 +11,9 @@ export default{
   },
   getNavPath(state){
     return state.navPath;
+  },
+  // 获取isLoading状态
+  getLoadingStatus(state){
+    return state.isLoading;
   }
 }

@@ -9,7 +9,7 @@
         <div :style="{height:ListHeight + 'px'}">
           <div class="content">
             <!--路由视图-->
-            <router-view></router-view>
+            <router-view v-loading="getLoadingStatus"></router-view>
           </div>
         </div>
       </el-col>
@@ -35,7 +35,8 @@
     },
     computed: {
       ...mapGetters([
-          'getTopHeight'
+          'getTopHeight',
+          'getLoadingStatus'
       ]),
       getMsg(){
         return this.msg;
