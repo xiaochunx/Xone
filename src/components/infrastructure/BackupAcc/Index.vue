@@ -16,7 +16,10 @@
                 <p class="changeContent">系统接收到报警时，桌面端自动弹出切换提示框，手动确认后触发切换操作</p>
               </div>
               <div class="singleSelect">
-                <el-radio class="radio" v-model="radio" label="1" @click.native="changeBackup(1)" size="large">半自动</el-radio>
+                <el-radio-group v-model="radio" @change="changeBackup">
+                  <el-radio class="radio" v-model="radio" label="1" size="large">半自动</el-radio>
+                </el-radio-group>
+
               </div>
             </el-col>
             <el-col :span="8">
@@ -25,7 +28,10 @@
                 <p class="changeContent">系统接收到报警时，桌面端自动弹出预警信息，手动在桌面端切换支付通道</p>
               </div>
               <div class="singleSelect">
-                <el-radio class="radio" v-model="radio" label="2" @click.native="changeBackup(2)">手动</el-radio>
+                <el-radio-group v-model="radio" @change="changeBackup">
+                  <el-radio class="radio" v-model="radio" label="2" size="large">手动</el-radio>
+                </el-radio-group>
+                <!--<el-radio class="radio" v-model="radio" label="2" @click.native="changeBackup(2)">手动</el-radio>-->
               </div>
             </el-col>
             <el-col :span="8">
@@ -34,7 +40,10 @@
                 <!--<p>系统接收到报警时，桌面端自动弹出切换提示框，手动确认后触发切换操作</p>-->
               </div>
               <div class="singleSelect">
-                <el-radio class="radio" v-model="radio" label="3" @click.native="changeBackup(3)">不切换</el-radio>
+                <el-radio-group v-model="radio" @change="changeBackup">
+                  <el-radio class="radio" v-model="radio" label="3" size="large">不切换</el-radio>
+                </el-radio-group>
+                <!--<el-radio class="radio" v-model="radio" label="3" @click.native="changeBackup(3)">不切换</el-radio>-->
               </div>
             </el-col>
           </el-col>
@@ -58,6 +67,9 @@
       changeBackup(value){
          console.log(value);
       },
+      change(value){
+        console.log(value);
+      }
     }
   }
 </script>
