@@ -45,8 +45,10 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        loader: 'babel-loader',//注意elementUI的源码使用ES6需要解析
+        include: [resolve('src'), resolve('test'),
+          resolve('/node_modules/_element-ui@1.4.7@element-ui/src'),
+          resolve('/node_modules/_element-ui@1.4.7@element-ui/packages')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -74,7 +76,10 @@ module.exports = {
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
-        loader: 'file-loader'
+        loader: 'file-loader',
+        options: {
+          limit: 80000
+        }
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?\S*)?$/,
