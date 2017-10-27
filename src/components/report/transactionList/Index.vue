@@ -3,7 +3,7 @@
     margin-left: 100px;
   }
 
-  .bodyTop{
+  .bodyTop {
     padding-bottom: 10px;
   }
 </style>
@@ -109,20 +109,31 @@
 
       <el-table :data="tableData" border :height="tableHeight" style="width: 100%;">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payNo" label="支付单号（款易）" width="150"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="shopNo" label="商家单号（pos）" width="150"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="shopAddress" label="门店" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="paymentMethod" label="支付方式" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="paymentChannel" label="支付通道" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="payNo" label="支付单号（款易）"
+                         width="150"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="shopNo" label="商家单号（pos）"
+                         width="150"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="shopAddress" label="门店"
+                         width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="paymentMethod" label="支付方式"
+                         width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="paymentChannel" label="支付通道"
+                         width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="account" label="帐户" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payMoney" label="支付金额" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="refundAmount" label="退款金额" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="payMoney" label="支付金额"
+                         width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="refundAmount" label="退款金额"
+                         width="100"></el-table-column>
 
-        <el-table-column header-align="center" align="center" prop="receipts" label="实收金额" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="receipts" label="实收金额"
+                         width="100"></el-table-column>
 
-        <el-table-column header-align="center" align="center" prop="transactionTime" label="交易时间" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="transactionType" label="交易状态" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="refundTime" label="退款时间" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="transactionTime" label="交易时间"
+                         width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="transactionType" label="交易状态"
+                         width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="refundTime" label="退款时间"
+                         width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="refund" label="退款人" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作" fixed="right" width="70">
           <template scope="scope">
@@ -131,7 +142,6 @@
             </div>
           </template>
         </el-table-column>
-
 
 
       </el-table>
@@ -149,17 +159,18 @@
 <script>
   import xoNavPath from '../NavPath.vue'
   import {getScrollHeight} from '../reportComponents/getScrollHeight'
+
   export default {
-    components:{
+    components: {
       xoNavPath
     },
     data() {
       return {
-        width:0,
-        tableHeight:0,
-        navList:[{name:"统计报表",url:''},{name:"交易列表",url:''}],
-        input1:'',
-        input2:'',
+        width: 0,
+        tableHeight: 0,
+        navList: [{name: "统计报表", url: ''}, {name: "交易列表", url: ''}],
+        input1: '',
+        input2: '',
         options: [{
           value: '选项1',
           label: '11'
@@ -167,8 +178,8 @@
           value: '选项2',
           label: '22'
         }],
-        statusValue:1,
-        transactionStatus:[
+        statusValue: 1,
+        transactionStatus: [
           {
             value: 1,
             label: '全部'
@@ -194,84 +205,132 @@
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        },{
+        }, {
           no: '1',
           payNo: '2',
           shopNo: '3'
-        }]
+        }],
+        dateSelected_l: [],
+        dateSelected_r: [],
+        startTime: '',
+        endTime: '',
       }
     },
-    computed:{
-      pageState(){
-        return {page:1}
+    computed: {
+      pageState() {
+        return {page: 1}
       }
     },
     methods: {
-      search(){
-        console.log(this)
-      },
-      getPage(){},
-      getPageSize(){},
+      search() {
 
-      getRadioDate(d){
-        console.log(d)
+        if (this.dateSelected_l[0] === '' && this.dateSelected_r[0] === '' && this.dateSelected_r[1] === '') {
+          this.$message({
+            message: '请选择时间',
+            type: 'warning'
+          });
+        } else {
+          if (this.dateSelected_l[0] !== '') {
+            console.log(new Date(this.dateSelected_l[0]), new Date(this.dateSelected_l[1]));
+          } else {
+            if (this.dateSelected_r[0] === '') {
+              this.$message({
+                message: '开始时间不能为空',
+                type: 'warning'
+              });
+            } else if (this.dateSelected_r[1] === '') {
+              this.$message({
+                message: '结束时间不能为空',
+                type: 'warning'
+              });
+            } else if (this.dateSelected_r[0] > this.dateSelected_r[1]) {
+              this.$message({
+                message: '开始时间不能大于结束时间',
+                type: 'warning'
+              });
+            } else {
+              console.log(new Date(this.dateSelected_r[0]), new Date(this.dateSelected_r[1]))
+            }
+          }
+        }
+
       },
-      getStartTime(d){
-        console.log(d)
+      getPage() {
       },
-      getEndTime(d){
-        console.log(d)
+      getPageSize() {
+      },
+
+      getRadioDate(d) {
+        this.dateSelected_l = d
+      },
+      getStartTime(d) {
+        if (isNaN(d) === false) {
+          this.startTime = d;
+          this.dateSelected_l = ['', '']
+        } else {
+          this.startTime = '';
+        }
+        this.dateSelected_r = [this.startTime, this.endTime];
+      },
+      getEndTime(d) {
+        if (isNaN(d) === false) {
+          this.endTime = d;
+          this.dateSelected_l = ['', '']
+        } else {
+          this.endTime = '';
+        }
+        this.dateSelected_r = [this.startTime, this.endTime];
       },
 
     },
-    created(){
+    created() {
 
     },
-    mounted(){
+    mounted() {
 
     },
-    updated(){
-      getScrollHeight().then((h)=>{
+    updated() {
+      getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
     },
