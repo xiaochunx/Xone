@@ -14,7 +14,7 @@
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-      <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
+      <xo-datePicker @getRadioDate="getRadioDate"></xo-datePicker>
       <div class="padding_t_10">
         <div class="flex_r">
           <div class="flex_1 margin_r_10">
@@ -250,10 +250,7 @@
           payNo: '2',
           shopNo: '3'
         }],
-        dateSelected_l: [],
-        dateSelected_r: [],
-        startTime: '',
-        endTime: '',
+        dateSelected: []
       }
     },
     computed: {
@@ -263,35 +260,31 @@
     },
     methods: {
       search() {
-
-        if (this.dateSelected_l[0] === '' && this.dateSelected_r[0] === '' && this.dateSelected_r[1] === '') {
+        if (this.dateSelected[0] === '' && this.dateSelected[1] ==='') {
           this.$message({
             message: '请选择时间',
             type: 'warning'
           });
         } else {
-          if (this.dateSelected_l[0] !== '') {
-            console.log(new Date(this.dateSelected_l[0]), new Date(this.dateSelected_l[1]));
-          } else {
-            if (this.dateSelected_r[0] === '') {
+            if (this.dateSelected[0] === '') {
               this.$message({
                 message: '开始时间不能为空',
                 type: 'warning'
               });
-            } else if (this.dateSelected_r[1] === '') {
+            } else if (this.dateSelected[1] === '') {
               this.$message({
                 message: '结束时间不能为空',
                 type: 'warning'
               });
-            } else if (this.dateSelected_r[0] > this.dateSelected_r[1]) {
+            } else if (this.dateSelected[0] > this.dateSelected[1]) {
               this.$message({
                 message: '开始时间不能大于结束时间',
                 type: 'warning'
               });
             } else {
-              console.log(new Date(this.dateSelected_r[0]), new Date(this.dateSelected_r[1]))
+              //ok
+              console.log(new Date(this.dateSelected[0]), new Date(this.dateSelected[1]))
             }
-          }
         }
 
       },
@@ -301,25 +294,7 @@
       },
 
       getRadioDate(d) {
-        this.dateSelected_l = d
-      },
-      getStartTime(d) {
-        if (isNaN(d) === false) {
-          this.startTime = d;
-          this.dateSelected_l = ['', '']
-        } else {
-          this.startTime = '';
-        }
-        this.dateSelected_r = [this.startTime, this.endTime];
-      },
-      getEndTime(d) {
-        if (isNaN(d) === false) {
-          this.endTime = d;
-          this.dateSelected_l = ['', '']
-        } else {
-          this.endTime = '';
-        }
-        this.dateSelected_r = [this.startTime, this.endTime];
+        this.dateSelected = d
       },
 
     },
