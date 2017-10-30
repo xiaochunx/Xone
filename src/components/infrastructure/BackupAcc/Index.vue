@@ -65,10 +65,22 @@
     },
     methods: {
       changeBackup(value){
-         console.log(value);
-      },
-      change(value){
-        console.log(value);
+        if (value == 1){
+          this.$message({
+            message: "已切换至半自动模式",
+            type: "success"
+          })
+        }else if (value == 2){
+          this.$message({
+            message: "已切换至手动模式",
+            type: "success"
+          })
+        }else {
+          this.$message({
+            message: "已切换至不切换模式",
+            type: "success"
+          })
+        }
       }
     }
   }

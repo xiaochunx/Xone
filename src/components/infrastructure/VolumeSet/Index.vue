@@ -5,7 +5,7 @@
     </div>
     <div class="contentMsg">
       <el-card>
-        <el-form ref="form" :model="form" label-width="160px">
+        <el-form ref="form" :model="form" label-width="170px" :rules="rules" >
           <el-form-item label="支付开关">
             <el-switch
               v-model="form.paySwitch"
@@ -39,7 +39,9 @@
             </el-switch>
           </el-form-item>
 
-          <el-form-item label="支付成功后跳转的URL">
+          <el-form-item label="支付成功后跳转的URL"
+                        prop="url"
+          >
             <el-input v-model="form.url" placeholder="请输入URL"></el-input>
           </el-form-item>
 
@@ -59,14 +61,15 @@
               </el-col>
               <el-col :span="24" v-if="form.shop == 2">
                 <el-card>
-                  <el-tree :data="form.data" :props="defaultProps" @node-click="handleNodeClick" :default-expanded-keys="[2]" node-key="id"></el-tree>
+                  <el-tree :data="form.data" :props="defaultProps" @node-click="handleNodeClick"
+                           :default-expanded-keys="[2]" node-key="id"></el-tree>
                 </el-card>
               </el-col>
             </el-row>
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">保存</el-button>
+            <el-button type="primary" @click="onSubmit('form')">保存</el-button>
           </el-form-item>
 
         </el-form>
@@ -90,10 +93,16 @@
           code: '1',
           shop: '1',
           data: [
-            {label: '一级 1',id: 2,children:[{label: '二级 2',id: 11}]},
-            {label: '一级 2',id: 1},
-            {label: '一级 3',id: 3},
-            {label: '一级 4',id: 4},
+            {label: '一级 1', id: 2, children: [{label: '二级 2', id: 11}]},
+            {label: '一级 2', id: 1},
+            {label: '一级 3', id: 3},
+            {label: '一级 4', id: 4},
+          ]
+        },
+        rules: {
+          url: [
+            {required: true, message: '请输入url', trigger: 'blur'},
+            {type: 'url', message: '请输入正确的url地址', trigger: 'blur,change'}
           ]
         }
       }
@@ -108,8 +117,18 @@
       xoNavPath
     },
     methods: {
-      onSubmit() {
-        console.log('submit!');
+      onSubmit(ruleForm) {
+        this.$refs[ruleForm].validate((valid) => {
+          if (valid) {
+            this.$message({
+              message: "提交成功",
+              type: "success"
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
       handleNodeClick(data) {
         console.log(data);

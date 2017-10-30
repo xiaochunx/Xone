@@ -58,8 +58,6 @@
                     <el-button class="plusBtn" @click.prevent="removeDomain(domain,'account')" size="small"><i class="fa fa-minus-circle"></i></el-button>
                     <el-button class="minusBtn" @click="addDomain('account')" size="small"><i class="fa fa-plus-circle"></i></el-button>
 
-
-
                   </el-col>
                 </el-col>
 
@@ -535,7 +533,35 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            var flag = true;
+            this.form.account.forEach(function (item) {
+              for (var value in item) {
+                if (item[value] == ""){
+                   flag = false;
+                }
+              }
+            });
+
+            this.form.reserveAcc.forEach(function (item) {
+              for (var value in item) {
+                if (item[value] == ""){
+                  flag = false;
+                }
+              }
+            });
+
+            if (flag){
+               this.$message({
+                 message: "提交成功",
+                 type: "success"
+               })
+            }else {
+              this.$message({
+                message: "所有的表格都要填写",
+                type: "warning"
+              })
+            }
+
           } else {
             console.log('error submit!!');
             return false;

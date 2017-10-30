@@ -8,7 +8,7 @@
             <xo-nav-path></xo-nav-path>
           </el-col>
           <el-col :span="2" :offset="2">
-            <router-link to="/infrastructure/PaymentWay/NewPayment"><el-button size="small" type="primary">查看填写说明</el-button></router-link>
+            <router-link to=""><el-button size="small" type="primary">查看填写说明</el-button></router-link>
           </el-col>
         </el-col>
       </el-row>

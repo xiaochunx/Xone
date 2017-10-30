@@ -33,7 +33,7 @@
             label="支付通道">
           </el-table-column>
 
-          <el-table-column label="操作">
+          <!--<el-table-column label="操作">
             <template scope="scope">
               <el-button
                 size="small"
@@ -43,7 +43,7 @@
                 type="danger"
                 @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
-          </el-table-column>
+          </el-table-column>-->
         </el-table>
         <el-col :span="24" style="padding: 25px 0 25px 0">
           <xo-pagination></xo-pagination>
@@ -80,12 +80,12 @@
       xoNavPath
     },
     methods: {
-      handleEdit(index, row) {
+      /*handleEdit(index, row) {
         console.log(index, row);
       },
       handleDelete(index, row) {
         console.log(index, row);
-      }
+      }*/
     }
   }
 </script>

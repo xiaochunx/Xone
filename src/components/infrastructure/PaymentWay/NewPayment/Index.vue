@@ -11,9 +11,9 @@
           </el-col>
 
           <el-col :span="24" class="cell">
-            <el-form ref="form" :model="form" label-width="100px">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules">
 
-              <el-form-item label="支付方式名称:">
+              <el-form-item label="支付方式名称:" prop="payName">
                 <el-input v-model="form.payName" placeholder="请输入内容"></el-input>
               </el-form-item>
 
@@ -38,22 +38,26 @@
                 </el-col>
 
                 <el-col :span="4" :offset="1">
-                  <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i class="fa fa-minus-circle"></i></el-button>
-                  <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
+                  <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i
+                    class="fa fa-minus-circle"></i></el-button>
+                  <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i>
+                  </el-button>
 
                 </el-col>
 
               </el-form-item>
 
 
-                <el-col :span="24">
-                  <el-col :span="12" class="flex-jc">
-                    <router-link to="/infrastructure/PaymentWay"><el-button>取消</el-button></router-link>
-                  </el-col>
-                  <el-col :span="12" class="flex-jc">
-                    <el-button type="primary">保存</el-button>
-                  </el-col>
+              <el-col :span="24">
+                <el-col :span="12" class="flex-jc">
+                  <router-link to="/infrastructure/PaymentWay">
+                    <el-button>取消</el-button>
+                  </router-link>
                 </el-col>
+                <el-col :span="12" class="flex-jc">
+                  <el-button type="primary" @click="submitForm('form')">保存</el-button>
+                </el-col>
+              </el-col>
 
             </el-form>
           </el-col>
@@ -67,15 +71,20 @@
   import xoNavPath from './NavPath.vue'
 
   export default {
-    data(){
-      return{
+    data() {
+      return {
         form: {
           payName: '',
-          payCode: '',
+          payCode: '11122',
           domains: [{
             code1: '',
             code2: ''
           }]
+        },
+        rules: {
+          payName: [
+            {required: true, message: '请选择账号名称', trigger: 'change'}
+          ]
         }
       }
     },
@@ -91,15 +100,51 @@
       },
       removeDomain(item) {
 
-        if (this.form.domains.length == 1){
+        if (this.form.domains.length == 1) {
           this.$message('不能再删啦');
-        }else {
+        } else {
           var index = this.form.domains.indexOf(item);
           if (index !== -1) {
             this.form.domains.splice(index, 1)
           }
         }
       },
+      submitForm(form) {
+        this.$refs[form].validate((valid) => {
+          if (valid) {
+            var flag = true;
+
+            this.form.domains.forEach(function (item) {
+              for (var value in item) {
+                if (item[value] == "") {
+                  flag = false;
+                }
+              }
+            });
+
+            if (flag) {
+              var _this = this;
+              this.$message({
+                message: "提交成功",
+                onClose() {
+                  _this.$router.push("/infrastructure/PaymentWay")
+                }
+              });
+
+            } else {
+              this.$message({
+                message: "所有表格都必须填写",
+                type: "warning"
+              });
+            }
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+      }
     }
   }
 </script>
@@ -112,14 +157,14 @@
     margin-top: 20px;
   }
 
-  .plusBtn{
+  .plusBtn {
     border: none;
     color: red;
     font-size: 35px;
     padding: 0 9px 0 9px;
   }
 
-  .minusBtn{
+  .minusBtn {
     border: none;
     color: deepskyblue;
     font-size: 35px;
