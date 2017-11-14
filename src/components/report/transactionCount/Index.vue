@@ -14,53 +14,50 @@
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
       <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
-      <div class="padding_t_10">
-        <div class="flex_r">
-          <div class="flex_1 margin_r_10">
-            <div>门店</div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+
+        <div class="flex_es padding_t_10">
+          <div class="flex_a">
+            <div class=" margin_r_10">
+              <div>门店</div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
+
+            <div >
+              <div>支付方式</div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </div>
           </div>
 
-          <div class="flex_1 margin_r_10">
-            <div>支付方式</div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-
-          </div>
-
-
-
-          <div class="flex_1 flex_ec margin_r_10">
+          <div class="flex_ec">
             <el-button>查询</el-button>
             <el-button type="primary">导出</el-button>
           </div>
 
-          <div class="flex_1 flex_ec margin_r_10">
 
-          </div>
 
 
         </div>
 
 
-      </div>
+
     </div>
 
     <div style="width: 100%;">
-      <el-table :data="tableData" border :height="tableHeight" style="width: 100%;">
+      <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="day" label="日期" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="shopAddress" label="门店" width="70"></el-table-column>
@@ -90,7 +87,7 @@
 
 <script>
   import xoNavPath from '../NavPath.vue'
-  import {getScrollHeight} from '../reportComponents/getScrollHeight'
+  import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components:{
       xoNavPath

@@ -8,7 +8,7 @@
     }],
     "stage-2"
   ],
-  "plugins": ["transform-runtime","transform-object-rest-spread"],
+  "plugins": ["transform-runtime","transform-object-rest-spread","transform-vue-jsx"],
   "env": {
     "test": {
       "presets": ["env", "stage-2"],

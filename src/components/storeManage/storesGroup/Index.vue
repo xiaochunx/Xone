@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="margin_b_10 flex_sb">
+    <div class="padding_b_10 flex_sb bodyTop">
       <xo-nav-path :navList="navList"></xo-nav-path>
       <el-button size="small" type="primary" @click="addGroup()">新增门店组</el-button>
     </div>
     <div>
-      <el-table :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border :height="tableHeight" style="width: 100%">
         <el-table-column header-align="center" align="center" label="序号" width="65">
           <template scope="scope">
             <span>{{ scope.row.count }}</span>
@@ -57,13 +57,14 @@
 
 <script>
   import xoNavPath from '../NavPath.vue'
-
+  import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components: {
       xoNavPath
     },
     data() {
       return {
+        tableHeight:0,
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
         tableData: [{
           count: 1,
@@ -115,7 +116,12 @@
       addGroup(){
         this.$router.push('/storeManage/storeGroup/addGroup')
       }
-    }
+    },
+    updated() {
+      getScrollHeight().then((h) => {
+        this.tableHeight = h;
+      })
+    },
   }
 </script>
 
