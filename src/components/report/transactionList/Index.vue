@@ -15,99 +15,95 @@
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
       <xo-datePicker @getRadioDate="getRadioDate"></xo-datePicker>
-      <div class="padding_t_10">
-        <div class="flex_r">
-          <div class="flex_1 margin_r_10">
-            <div>门店</div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </div>
 
-          <div class="flex_1 margin_r_10">
-            <div>支付方式</div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-
-          </div>
-
-          <div class="flex_1 margin_r_10">
-            <div>支付通道</div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-
-          </div>
-          <div class="flex_1 margin_r_10">
-            <div>账户</div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-
-          </div>
-
-          <div class="flex_1 margin_r_10">
-            <div>交易状态
+        <div class="padding_t_10 flex_es">
+          <div class="flex_a">
+            <div class=" margin_r_10">
+              <div>门店</div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </div>
-            <el-select v-model="statusValue" placeholder="请选择">
-              <el-option
-                v-for="item in transactionStatus"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
 
+            <div class=" margin_r_10">
+              <div>支付方式</div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+
+            </div>
+
+            <div class=" margin_r_10">
+              <div>支付通道</div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+
+            </div>
+            <div class=" margin_r_10">
+              <div>账户</div>
+              <el-select v-model="value" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+
+            </div>
+
+            <div class=" margin_r_10">
+              <div>交易状态
+              </div>
+              <el-select v-model="statusValue" placeholder="请选择">
+                <el-option
+                  v-for="item in transactionStatus"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+
+            </div>
+
+            <div class=" margin_r_10">
+              <div>支付单号</div>
+              <el-input v-model="input1" placeholder="请输入内容"></el-input>
+
+            </div>
+
+            <div class=" margin_r_10">
+              <div>商家单号</div>
+              <el-input v-model="input2" placeholder="请输入内容"></el-input>
+            </div>
           </div>
 
-          <div class="flex_1 margin_r_10">
-            <div>支付单号</div>
-            <el-input v-model="input1" placeholder="请输入内容"></el-input>
-
-          </div>
-
-          <div class="flex_1 margin_r_10">
-            <div>商家单号</div>
-            <el-input v-model="input2" placeholder="请输入内容"></el-input>
-
-          </div>
-
-          <div class="flex_1 flex_ec margin_r_10">
+          <div class="flex_ec">
             <el-button @click="search()">查询</el-button>
             <el-button type="primary">导出</el-button>
           </div>
-
         </div>
-
-
-      </div>
     </div>
-
 
     <div style="width: 100%;">
 
-      <el-table :data="tableData" border :height="tableHeight" style="width: 100%;">
+      <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="payNo" label="支付单号（款易）"
                          width="150"></el-table-column>
@@ -158,7 +154,8 @@
 
 <script>
   import xoNavPath from '../NavPath.vue'
-  import {getScrollHeight} from '../reportComponents/getScrollHeight'
+  import {getScrollHeight} from '../../utility/getScrollHeight'
+  import getApi from './transactionList.service';
 
   export default {
     components: {
@@ -298,7 +295,12 @@
       },
 
     },
-    created() {
+   async created() {
+
+      await getApi.getList({ 'action': 'store', 'controller': 'store', 'storeid': 1245, 'btype': 1 })
+        .then((res) => {
+        console.log(res)
+        })
 
     },
     mounted() {

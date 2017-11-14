@@ -1,214 +1,314 @@
 <template>
   <div>
+
     <div class="margin_b_10">
       <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
-    <div>
-      <el-row>
-        <el-col :span="12" :offset="6">
-          <div>
-            <el-form ref="formRules" :model="form" label-width="100px">
-              <el-form-item prop="name" label="门店名称"
-                :rules="[
-                  { required: true, message: '请输入门店名称', trigger: 'blur' }
-                ]">
-                <el-row>
-                  <el-col :span="14">
-                    <el-input v-model="form.name"></el-input>
-                  </el-col>
-                </el-row>
-              </el-form-item>
-              <el-form-item label="门店编码:">
-                <el-row>
-                  <el-col :span="14">
-                    <div>
-                      <el-input v-model="form.code"></el-input>
-                    </div>
-                  </el-col>
-                </el-row>
-              </el-form-item>
 
-              <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-                <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
-                  :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
-                  <div>
-                    <el-row>
-                      <el-col>
-                        <div style="width:150px">
-                          <el-input v-model="domain.value"></el-input>
-                        </div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </el-form-item>
-                <div class="m-rank">
-                  <div class="m-rank-child"></div>
+    <div class="flex_sb">
+      <div class="flex_1">
+
+      </div>
+      <div class="flex_1 flex_ce">
+
+        <el-button type="primary" @click="submitFrom()">保存</el-button>
+      </div>
+    </div>
+
+    <div class="margin_t_10 width_100">
+      <el-table :data="storeData" border :height="tableHeight" style="width: 100%;">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店名称" width="200">
+          <template scope="scope">
+            <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.name" @change="myChange(scope.row,'name','nameClass')" placeholder="请输入内容"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">
+          <template scope="scope">
+            <el-input  :class="{isInput:scope.row.codeClass === true}" v-model="scope.row.code" @change="myChange(scope.row,'code','codeClass')" placeholder="请输入内容"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
+          <template scope="scope">
+            <div v-for="(domain, index) in scope.row.thirdPartyCoding" class="flex_a padding_10">
+              <div style="width:150px">
+                <el-input :class="{isInput:domain.valueClass === true}" v-model="domain.value" @change="myChange(domain,'value','valueClass')" placeholder="请输入内容"></el-input>
+              </div>
+              <div class="m-rank">
+                <div class="m-rank-child"></div>
+              </div>
+              <div style="width:150px">
+                <el-input :class="{isInput:domain.value1Class === true}" v-model="domain.value1" @change="myChange(domain,'value1','value1Class')" placeholder="请输入内容"></el-input>
+              </div>
+              <div class="flex_sb" style="width:80px">
+                <div class="m-storeCode margin_l_10" @click="addDomain(scope.row.thirdPartyCoding)">
+                  <i class="fa fa-plus-circle" aria-hidden="true"></i>
                 </div>
-                <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
-                  :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
-                  <div>
-                    <el-row>
-                      <el-col>
-                        <div style="width:150px">
-                          <el-input v-model="domain.value1"></el-input>
-                        </div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </el-form-item>
-                <div class="flex_sc">
-                  <div class="m-storeCode margin_l_10" @click="addDomain">
-                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                  </div>
-                  <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
-                       @click.prevent="removeDomain(domain)">
-                    <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                  </div>
+                <div v-if="(scope.row.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                     @click.prevent="removeDomain(scope.row.thirdPartyCoding,index)">
+                  <i class="fa fa-minus-circle" aria-hidden="true"></i>
                 </div>
               </div>
+            </div>
+          </template>
+        </el-table-column>
 
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">
+          <template scope="scope">
+            <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.brand" @change="myChange(scope.row,'brand','brandClass')" placeholder="请选择">
+              <el-option
+                v-for="item in brandList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
 
-              <el-form-item label="所属门店组:">
-                <el-row>
-                  <el-col :span="14">
-                    <el-select v-model="storeGroup" filterable placeholder="请选择" style="width: 100%">
-                      <el-option v-for="item in storeGrounpData" :key="item.value" :label="item.label" :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </el-col>
-                </el-row>
-              </el-form-item>
-              <el-form-item label="门店地址:">
-                <el-row>
-                  <el-col :span="5">
-                    <el-cascader placeholder="试试搜索：指南" :options="options" filterable change-on-select></el-cascader>
-                  </el-col>
-                  <el-col :span="5">
-                    <div class="m-store-padding">
-                      <el-cascader placeholder="试试搜索：指南" :options="options" filterable change-on-select></el-cascader>
-                    </div>
-                  </el-col>
-                  <el-col :span="5">
-                    <div class="m-store-padding-right">
-                      <el-cascader placeholder="试试搜索：指南" :options="options" filterable change-on-select></el-cascader>
-                    </div>
-                  </el-col>
-                  <el-col :span="7">
-                    <el-input placeholder="请输入内容"></el-input>
-                  </el-col>
-                </el-row>
-              </el-form-item>
-              <el-form-item label="门店电话:">
-                <el-col :span="14">
-                  <el-input placeholder="请输入内容"></el-input>
-                </el-col>
-              </el-form-item>
-              <el-form-item label="营业时间:">
-                <el-col :span="14">
-                  <el-input placeholder="请输入内容"></el-input>
-                </el-col>
-              </el-form-item>
-              <el-form-item label="是否支付:">
-                <el-col :span="14">
-                  <el-switch v-model="form.pay" on-text="" off-text=""></el-switch>
-                </el-col>
-              </el-form-item>
-              <el-form-item>
-                <el-button>取消</el-button>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店地址" width="600">
+          <template scope="scope">
+            <div class="flex_a">
+              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.province" @change="myChange(scope.row,'province','provinceClass')" placeholder="请选择省">
+                <el-option
+                  v-for="item in provinceList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <div class="margin_l_10">
+                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.city" @change="myChange(scope.row,'city','cityClass')" placeholder="请选择市">
+                  <el-option
+                    v-for="item in cityList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </div>
+              <div class="margin_l_10">
+                <el-select :class="{isSelected:scope.row.areaClass === true}" v-model="scope.row.area" @change="myChange(scope.row,'area','areaClass')" placeholder="请选择区">
+                  <el-option
+                    v-for="item in areaList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </div>
+              <div class="margin_l_10">
+                <el-input :class="{isInput:scope.row.addressClass === true}" v-model="scope.row.address"  @change="myChange(scope.row,'address','addressClass')" placeholder="详细地址"></el-input>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店电话" width="200">
+          <template scope="scope">
+            <el-input :class="{isInput:scope.row.telClass === true}" v-model="scope.row.tel" @change="myChange(scope.row,'tel','telClass')" placeholder="请输入内容"></el-input>
+          </template>
+        </el-table-column>
 
-                <el-button type="primary" @click="submitFrom('formRules')">保存</el-button>
-              </el-form-item>
-            </el-form>
-          </div>
-        </el-col>
-      </el-row>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作">
+          <template scope="scope">
+            <!--<i class="fa fa-plus-circle m-storeCode" aria-hidden="true"></i>-->
+            <!--<i class="el-icon-delete m-storeCode" aria-hidden="true"></i>-->
+            <i v-if="storeData.length === scope.$index+1" class="el-icon-plus m-storeCode" aria-hidden="true"
+               @click="addRow()"></i>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+
+    <!--<div>-->
+    <!--<xo-pagination></xo-pagination>-->
+    <!--</div>-->
   </div>
 </template>
 
 <script>
+
   import xoNavPath from '../../NavPath.vue'
   export default {
     components: {
       xoNavPath
     },
+
     data() {
       return {
-        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeList'}, {name: "新增门店", url: ''}],
-        form: {
-          name: '',
-          code: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: '',
-          thirdPartyCoding: [
-            {value: '', value1: ''}
-          ],
-          pay:''
-        },
-        storeGrounpData: [{
-          value: '选项1',
-          label: '黄金糕'
+        tableHeight: 0,
+        navList: [{name: "门店管理", url: ''}, {name: "新增门店", url: ''}],
+        brandList: [{
+          value: 1,
+          label: '品牌1'
         }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
+          value: 2,
+          label: '品牌2'
         }],
-        storeGroup: '',
-        options: [{
-          value: 'zhinan',
-          label: '指南'
+        value: '',
+        provinceList: [{
+          value: 1,
+          label: '广东省'
         }, {
-          value: 'daohang',
-          label: '导航'
+          value: 2,
+          label: '广西'
+        }],
+        cityList:[{
+          value: 1,
+          label: '广州'
         }, {
-          value: 'zujian',
-          label: '组件'
-        }]
+          value: 2,
+          label: '深圳'
+        }],
+        areaList:[{
+          value: 1,
+          label: '天河区'
+        }, {
+          value: 2,
+          label: '天河区2'
+        }],
+        storeName: '',
+        storeData: [{
+          name: "",
+          nameClass:false,
+          code: '',
+          codeClass:false,
+          brand: '',
+          brandClass:false,
+          province:"",
+          provinceClass:false,
+          city:"",
+          cityClass:false,
+          area:"",
+          areaClass:false,
+          address:"",
+          addressClass:false,
+          tel: "",
+          telClass:false,
+          thirdPartyCoding: [
+            {value: '',valueClass:false, value1: '',value1Class:false}
+          ],
+        }],
+
+        va:""
       }
+    },
+    watch: {
+
     },
     methods: {
-      onSubmit() {
-        console.log('submit!');
-      },
-      removeDomain(item) {
-        var index = this.form.thirdPartyCoding.indexOf(item)
-        if (index !== -1) {
-          this.form.thirdPartyCoding.splice(index, 1)
+      myChange(map,name,className){
+        if(map[name] !== ""){
+          map[className] = false
+        }else {
+          map[className] = true
         }
       },
-      addDomain() {
-        this.form.thirdPartyCoding.push({
-          value: '',
-          key: Date.now()
-        });
-      },
-      submitFrom(formRules) {
-        this.$refs[formRules].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
+      checkSubmit(){
+        for(let map of this.storeData){
+          if (map.name === "") {
+           map.nameClass = true
           }
-        });
+          if (map.code === "") {
+            map.codeClass = true
+          }
+          if (map.brand === "") {
+            map.brandClass = true
+          }
+          if (map.province === "") {
+            map.provinceClass = true
+          }
+          if (map.city === "") {
+            map.cityClass = true
+          }
+          if (map.area === "") {
+            map.areaClass = true
+          }
+          if (map.address === "") {
+            map.addressClass = true
+          }
+          if (map.tel === "") {
+            map.telClass = true
+          }
+          for(let map1 of map.thirdPartyCoding){
+            if (map1.value === "") {
+              map1.valueClass = true
+            }
+            if (map1.value1 === "") {
+              map1.value1Class = true
+            }
+          }
+        }
+      },
+      submitFrom() {
+        this.checkSubmit();
+        outer:
+        for(let map of this.storeData){
+          if (map.name === "" || map.code === "" || map.brand === "" || map.province === "" || map.city === "" || map.area === "" || map.address === "" || map.tel === "") {
+            this.va = "";
+            break
+          }
 
-      }
+          for(let map1 of map.thirdPartyCoding){
+            if (map1.value === "" || map1.value1 === "") {
+              this.va = "";
+              break outer
+            }
+            this.va = "ok"
+          }
+        }
+
+        console.log(this.va )
+      },
+
+      addRow() {
+        this.storeData.push({
+          name: "",
+          nameClass:false,
+          code: '',
+          codeClass:false,
+          brand: '',
+          brandClass:false,
+          province:"",
+          provinceClass:false,
+          city:"",
+          cityClass:false,
+          area:"",
+          areaClass:false,
+          address:"",
+          addressClass:false,
+          tel: "",
+          telClass:false,
+          thirdPartyCoding: [
+            {value: '',valueClass:false, value1: '',value1Class:false}
+          ],
+        })
+      },
+      removeDomain(list, i) {
+        list.splice(i, 1)
+      },
+      addDomain(list) {
+        list.push({value: '',valueClass:false, value1: '',value1Class:false});
+      },
+
+      getOneList() {
+        //this.$router.push('/storeManage/storeList/seeTheStore')
+        console.log(document.querySelectorAll('#all span input'))
+      },
+      edit() {
+
+      },
+      del() {
+
+      },
     },
     created() {
-      console.log(this)
+
+    },
+    mounted() {
+
+    },
+    updated() {
+
     }
   }
 </script>
@@ -217,20 +317,12 @@
   .m-rank {
     width: 40px;
     .m-rank-child {
-      height: 18px;
+      line-height: 18px;
       border-bottom: 1px solid #000;
     }
   }
 
   .m-storeCode {
     font-size: 30px;
-  }
-
-  .m-store-padding {
-    padding: 0 5px;
-  }
-
-  .m-store-padding-right {
-    padding-right: 5px;
   }
 </style>

@@ -15,9 +15,8 @@
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
       <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
-      <div class="padding_t_10">
-        <div class="flex_r">
-          <div class="flex_1 margin_r_10">
+        <div class="padding_t_10 flex_es">
+          <div class="margin_r_10">
             <div>账户</div>
             <el-select v-model="value" placeholder="请选择">
               <el-option
@@ -28,17 +27,15 @@
               </el-option>
             </el-select>
           </div>
-          <div class="flex_1 flex_ec margin_r_10">
+
+          <div class="flex_ec">
             <el-button>查询</el-button>
             <el-button type="primary">导出</el-button>
           </div>
-          <div class="flex_1 flex_ec margin_r_10">
-          </div>
         </div>
-      </div>
     </div>
     <div style="width: 100%;">
-      <el-table :data="tableData" border :height="tableHeight" style="width: 100%;">
+      <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="settlementLot" label="结算批次" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="account" label="账户" width="70"></el-table-column>
@@ -70,7 +67,7 @@
 
 <script>
   import xoNavPath from '../NavPath.vue'
-  import {getScrollHeight} from '../reportComponents/getScrollHeight'
+  import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components:{
       xoNavPath

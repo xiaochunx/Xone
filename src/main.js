@@ -15,7 +15,7 @@ import 'font-awesome/css/font-awesome.css'
 
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
-
+Axios.defaults.baseURL = 'http://ky-test2.lecin.cn/kyapi/';
 // 关闭生产模式下给出的提示
 Vue.config.productionTip = false;
 
