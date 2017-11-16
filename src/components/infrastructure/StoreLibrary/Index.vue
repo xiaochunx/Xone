@@ -1,42 +1,44 @@
 <template>
   <div>
     <div class="bodyTop padding_b_10">
-      <div class="margin_b_10">
-        <xo-nav-path :navList="navList"></xo-nav-path>
-      </div>
+      <!--<div class="padding_b_10">-->
+        <!--<xo-nav-path :navList="navList"></xo-nav-path>-->
+      <!--</div>-->
 
       <div class="flex_es">
         <div>
           <el-button size="small">批量删除</el-button>
-          <el-button size="small" @click="batchAdd()">批量开启</el-button>
+          <el-button size="small" @click="batchAdd()">批量新增</el-button>
           <el-button size="small">批量关闭</el-button>
-          <el-button size="small" @click="setUrl()">批量设置url</el-button>
         </div>
 
         <div class="flex_a">
-          <div class="margin_r_10">
+          <div class="margin_r_10" >
             <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
           </div>
           <el-button size="small">搜索</el-button>
-          <el-button size="small" type="primary">+新增</el-button>
+          <el-button size="small" type="primary">+导入门店</el-button>
         </div>
       </div>
     </div>
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
-        <el-tree
-          :data="data5"
-          :props="defaultProps"
-          node-key="id"
-          default-expand-all
-          :expand-on-click-node="true"
-        >
-        </el-tree>
+        <!--<el-tree-->
+          <!--:data="data5"-->
+          <!--:props="defaultProps"-->
+          <!--node-key="id"-->
+          <!--default-expand-all-->
+          <!--:expand-on-click-node="true"-->
+          <!--:render-content="renderContent">-->
+        <!--</el-tree>-->
+
+        <tree :data='data5' :count=0></tree>
+
       </div>
 
       <div :style="{width:tableWidth + 'px'}">
-        <el-table :data="storeData" border :height="tableHeight">
+        <el-table :data="storeData" border :height="tableHeight"  @row-click="rClick">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="70">
             <template scope="scope">
@@ -48,49 +50,15 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
                            label="编码"
                            width="100"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName"
-                           width="150"
-                           label="门店"></el-table-column>
-
-          <el-table-column header-align="center" align="center" prop="payType" width="140" label="支付方式">
-            <template scope="scope">
-              <div class="flex_a" v-for="(item,index) in scope.row.payType">
-                <div>
-                  <el-checkbox v-model="item.checked">{{item.label}}</el-checkbox>
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column header-align="center" align="center" prop="payChannel" width="140" label="支付通道">
-            <template scope="scope">
-              <div class="flex_a" v-for="(item,index) in scope.row.payChannel">
-                <div>
-                  <el-checkbox v-model="item.checked">{{item.label}}</el-checkbox>
-                </div>
-              </div>
-            </template>
-
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="pay" label="支付"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName" label="门店"></el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="80"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="invoice" label="发票"
-                           width="80"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statistics"
-                           label="数据统计"
-                           width="100"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="url"
-                           label="支付后跳转url"
-                           width="280">
-            <template scope="scope">
-              <el-input v-model="scope.row.url.input" :disabled="scope.row.url.checked"></el-input>
-            </template>
-
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
             <template scope="scope">
               <el-button size="small" type="primary" @click.stop="getOneList()">查看</el-button>
               <el-button size="small" @click.stop="edit()">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
+              <el-button size="small" type="primary" @click.stop="getOneList()">上传资料</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -101,7 +69,42 @@
       </div>
     </div>
     <!--弹窗-->
+    <transition name="myStore">
+      <!--一定要有class,写style无效-->
+      <div v-show="showAside" class="myStore">
+        <div class="padding_10" style="width: 280px">
+          <div>{{showAsideObj.storeName}}</div>
+          <div class="flex_r margin_t_10">
+            <div class="flex_1 flex_ce">地址：</div>
+            <div class="flex_2">广东省广州市天河区天河东路88号</div>
+          </div>
+          <div class="flex_r margin_t_10">
+            <div class="flex_1 flex_ce">门店编码：</div>
+            <div class="flex_2">{{showAsideObj.storeCode}}</div>
+          </div>
 
+          <div class="flex_r margin_t_10">
+            <div class="flex_1 flex_ce">第三方编码：</div>
+            <div class="flex_2">美团  8989</div>
+          </div>
+          <div class="flex_r margin_t_10">
+            <div class="flex_1 flex_ce">所属组：</div>
+            <div class="flex_2">广州运营区</div>
+          </div>
+          <div class="flex_r margin_t_10">
+            <div class="flex_1 flex_ce">门店电话：</div>
+            <div class="flex_2">020-9849792</div>
+          </div>
+
+          <div class="flex_r margin_t_10">
+            <el-button size="mini" type="primary">置顶</el-button>
+            <el-button size="mini" type="primary">修改</el-button>
+            <el-button size="mini" type="primary">停用</el-button>
+            <el-button size="mini" type="primary">更多</el-button>
+          </div>
+        </div>
+      </div>
+    </transition>
     <el-dialog
       title="新建／修改组"
       :visible.sync="dialogVisible"
@@ -176,20 +179,22 @@
 </template>
 
 <script>
-
-  import xoNavPath from '../../NavPath.vue'
-  import {getScrollHeight} from '../../../utility/getScrollHeight'
-
+  let id = 1;
+//  import xoNavPath from '../../NavPath.vue'
+  import tree from './tree.vue'
+  import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components: {
-      xoNavPath
+      tree,
+//      xoNavPath
     },
     data() {
       return {
-        dialogVisible: false,
+        showAside: false,
+        dialogVisible:false,
         tableHeight: 0,
-        tableWidth: 0,
-        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
+        tableWidth:0,
+        navList: [{name: "门店管理", url: ''}, {name: "门店库", url: ''}],
         storeGroupData: [{
           value: 1,
           label: '全部'
@@ -220,67 +225,28 @@
           NO: true,
           storeCode: '83789',
           storeName: '炳胜（马场店）',
-          payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
-          payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
-          pay: '√',
-          invoice: '√',
-          statistics: '√',
-          url: {input: "", checked: true}
-
+          status: '开启'
         }, {
           NO: false,
           storeCode: '837892',
           storeName: '炳胜（马场店）',
-          payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
-          payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
-          pay: '√',
-          invoice: '√',
-          statistics: '√',
-          url: {input: "", checked: true}
-
+          status: '开启'
         }, {
           NO: false,
           storeCode: '837893',
           storeName: '炳胜（马场店）',
-          payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
-          payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
-          pay: '√',
-          invoice: '√',
-          statistics: '√',
-          url: {input: "http://", checked: true}
-
+          status: '开启'
         }],
 
         data5: [{
-          id: 1,
-          label: '民生银行',
-          children: [{
-            id: 4,
-            label: '狮子牌',
-            children: [{
-              id: 9,
-              label: '狮子牌33'
-            }, {
-              id: 10,
-              label: '易极付4444'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '民生银行1',
-          children: [{
-            id: 5,
-            label: '九毛九'
-          }, {
-            id: 6,
-            label: '太二酸菜鱼'
-          }]
+          id: 0,
+          label: '款易',children: []
         }],
         defaultProps: {
           children: 'children',
           label: 'label'
         },
-
+        showAsideObj: {storeName: "", storeCode: ""},//侧滑内容
         form: {
           name: '',
           code: '',
@@ -300,14 +266,24 @@
         }],
       }
     },
-    watch: {},
+    watch: {
+      "showAsideObj": function (n, o) {
+        if (n.storeCode === o.storeCode) {
+          this.showAside = !this.showAside
+        } else {
+          if (this.showAside === false) {
+            this.showAside = true;
+          } else {
+            this.showAside = false;
+            setTimeout(() => {
+              this.showAside = true;
+            }, 500)
+          }
+        }
+      }
+    },
     methods: {
-      setUrl() {
-        this.storeData.forEach((data) => {
-          data.url.checked = false
-        })
-      },
-      batchAdd() {
+      batchAdd(){
         this.$router.push('/storeManage/storeList/newAddStore')
       },
       removeDomain(item) {
@@ -323,28 +299,59 @@
         });
       },
 
+      rClick(row, event, column) {
+        this.showAsideObj = {"storeName": row.storeName, "storeCode": row.storeCode}
+      },
       getOneList() {
         this.$router.push('/storeManage/storeList/seeTheStore')
       },
       edit() {
 
       },
-      editGroup(item) {
+      editGroup(item){
         this.item = item;
         this.dialogVisible = true
       },
       del() {
 
       },
+      append(data) {
+        console.log(data)
+        const newChild = { id: id++, label: 'testtest', children: [] };
+        if (!data.children) {
+          this.$set(data, 'children', []);
+        }
+        data.children.push(newChild);
+        this.clickEvent()
+      },
 
 
+      clickEvent(){
+        let dom = document.querySelectorAll('.clickEvent');
+        dom.forEach((map)=>{
+          map.addEventListener('click',function (event) {
+            event.stopPropagation()
+            event.preventDefault()
+
+          })
+        })
+      },
+      recur(data){
+        data.forEach((map)=>{
+          if(map.children){
+            this.$set(map,"show",true);
+            this.recur(map.children)
+          }
+        })
+      },
     },
     created() {
-
+      let data = this.data5;
+      this.recur(data)
 
     },
-    mounted() {
-
+    mounted(){
+      this.clickEvent()
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -368,7 +375,6 @@
   .m-storeCode {
     font-size: 30px;
   }
-
   .m-storeList {
     height: 50px;
     line-height: 50px;
@@ -410,5 +416,16 @@
     z-index: 100;
     border-radius: 10px;
     border: 1px solid #E5EBF4
+  }
+
+
+
+  /*不能有相同的class名*/
+  .myStore-enter-active, .myStore-leave-active {
+    transition: all .5s;
+  }
+
+  .myStore-enter, .myStore-leave-to {
+    right: -280px;
   }
 </style>

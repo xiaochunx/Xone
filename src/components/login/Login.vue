@@ -55,7 +55,7 @@
             var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
 
             // 跳转路由
-            this.$router.push('/main');
+            this.$router.push('/runningState');
 
             // 提交给后台服务器
             /*requestLogin(loginParams).then(data => {

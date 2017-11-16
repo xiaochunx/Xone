@@ -106,6 +106,17 @@
       return {
         leftList: [
           {
+            name:'运营',
+            children: [
+              {
+                name: '运行状态',
+                route: '/runningState',
+              },
+
+            ]
+          },
+
+          {
             name: '支付管理',
             children: [
               {
@@ -153,6 +164,10 @@
               {
                 name: '对账单',
                 route: '/report/accountStatement'
+              },
+              {
+                name: '发票',
+                route: '/report/invoice'
               }
             ]
           },
@@ -178,6 +193,14 @@
               {
                 name: '支付通道',
                 route: '/infrastructure/PayChannels'
+              },
+              {
+                name: '门店库',
+                route: '/infrastructure/StoreLibrary'
+              },
+              {
+                name: '菜品库',
+                route: '/infrastructure/DishesLibrary'
               },
               {
                 name: '权限管理',

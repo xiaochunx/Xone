@@ -30,7 +30,7 @@ import TransactionCount from '../components/report/transactionCount/Index.vue'
 import SettlementRecord from '../components/report/settlementRecord/Index.vue'
 import BillQuery from '../components/report/billQuery/Index.vue'
 import AccountStatement from '../components/report/accountStatement/Index.vue'
-
+import Invoice from '../components/report/invoice/Index.vue'
 
 /************************** 基础设置 ***************************/
 import BusinessInfo from '@/components/infrastructure/BusinessInfo/Index.vue'
@@ -41,6 +41,14 @@ import PaymentWay from '@/components/infrastructure/PaymentWay/Index.vue'
 import NewPayment from '@/components/infrastructure/PaymentWay/NewPayment/Index.vue'
 import NewPayChannels from '@/components/infrastructure/PayChannels/NewPayChannels/Index.vue'
 import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
+import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
+import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
+
+
+
+
+import RunningState from '../components/runningState/Index.vue'
+
 
 Vue.use(Router);
 
@@ -161,6 +169,12 @@ export default new Router({
           component: AccountStatement,
         },
 
+        {
+          // 发票
+          path: '/report/invoice',
+          name: '统计报表/发票',
+          component: Invoice,
+        },
 
         /**********************基础设置***************************/
         // 基础设置/商家信息
@@ -211,8 +225,24 @@ export default new Router({
           name: '基础设置/支付通道/新增支付通道',
           component: NewPayChannels
         },
-
-
+        //基础设置/菜品库
+        {
+          path: '/infrastructure/DishesLibrary',
+          name: '基础设置/菜品库',
+          component: DishesLibrary
+        },
+        //门店库
+        {
+          path: '/infrastructure/StoreLibrary',
+          name: '基础设置/门店库',
+          component: StoreLibrary
+        },
+        //运行状态
+        {
+          path: '/runningState',
+          name: '运行状态',
+          component: RunningState
+        },
       ]
     },
     {
