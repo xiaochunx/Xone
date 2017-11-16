@@ -43,6 +43,9 @@ import NewPayChannels from '@/components/infrastructure/PayChannels/NewPayChanne
 import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
 import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
 import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
+import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue'
+import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
+
 
 
 
@@ -237,6 +240,19 @@ export default new Router({
           name: '基础设置/门店库',
           component: StoreLibrary
         },
+        //角色管理
+        {
+          path: '/infrastructure/RoleManagement',
+          name: '基础设置/角色管理',
+          component: RoleManagement
+        },
+        //权限管理
+        {
+          path: '/infrastructure/PermissionManagement',
+          name: '基础设置/权限管理',
+          component: PermissionManagement
+        },
+
         //运行状态
         {
           path: '/runningState',

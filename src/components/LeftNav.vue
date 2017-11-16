@@ -203,7 +203,15 @@
                 route: '/infrastructure/DishesLibrary'
               },
               {
+                name: '角色管理',
+                route: '/infrastructure/RoleManagement'
+              },
+              {
                 name: '权限管理',
+                route: '/infrastructure/PermissionManagement'
+              },
+              {
+                name: '根',
                 route: '/'
               },
             ]
