@@ -3,7 +3,7 @@
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
-        <!--<xo-nav-path :navList="navList"></xo-nav-path>-->
+        <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
 
       <div class="flex_sb">
@@ -69,12 +69,10 @@
 
 <script>
 
-  //import xoNavPath from '../NavPath.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
 
   export default {
     components: {
-     // xoNavPath
     },
     data() {
       return {

@@ -110,9 +110,12 @@
             children: [
               {
                 name: '运行状态',
-                route: '/runningState',
+                route: '/operate/runningState',
               },
-
+              {
+                name: '发票配置',
+                route: '/operate/invoiceAllocation',
+              },
             ]
           },
 
@@ -211,9 +214,13 @@
                 route: '/infrastructure/PermissionManagement'
               },
               {
-                name: '根',
-                route: '/'
+                name: '操作日志',
+                route: '/infrastructure/OperationLog'
               },
+//              {
+//                name: '根',
+//                route: '/'
+//              },
             ]
           }
         ],

@@ -45,12 +45,12 @@ import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
 import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
 import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue'
 import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
+import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
 
+/************************** 营运 ***************************/
+import RunningState from '../components/operate/RunningState/Index.vue'
+import InvoiceAllocation from '../components/operate/InvoiceAllocation/Index.vue'
 
-
-
-
-import RunningState from '../components/runningState/Index.vue'
 
 
 Vue.use(Router);
@@ -255,9 +255,22 @@ export default new Router({
 
         //运行状态
         {
-          path: '/runningState',
+          path: '/operate/runningState',
           name: '运行状态',
           component: RunningState
+        },
+        //发票配置
+        {
+          path: '/operate/invoiceAllocation',
+          name: '发票配置',
+          component: InvoiceAllocation
+        },
+
+        //操作日志
+        {
+          path: '/infrastructure/OperationLog',
+          name: '操作日志',
+          component: OperationLog
         },
       ]
     },

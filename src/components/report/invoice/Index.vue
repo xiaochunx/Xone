@@ -54,8 +54,6 @@
       </div>
 
     </div>
-
-    <div style="width: 100%;">
       <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" label="序号" width="70">
           <template scope="scope">
@@ -135,7 +133,7 @@
         </el-table-column>
 
       </el-table>
-    </div>
+
     <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
       <xo-pagination></xo-pagination>
@@ -145,12 +143,11 @@
 </template>
 
 <script>
-  import xoNavPath from '../NavPath.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
 
   export default {
     components: {
-      xoNavPath
+
     },
     data() {
       return {

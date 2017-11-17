@@ -2,7 +2,7 @@
   <div>
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
-        运营状态
+        <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
 
       <div class="flex_es">
@@ -186,14 +186,11 @@
 
 <script>
 
-//  import xoNavPath from '../../NavPath.vue'
-  import {getScrollHeight} from '../utility/getScrollHeight'
-import ElButton from "../../../node_modules/element-ui/packages/button/src/button.vue";
+  import {getScrollHeight} from '../../utility/getScrollHeight'
 
   export default {
     components: {
-      ElButton
-//      xoNavPath
+
     },
     data() {
       return {

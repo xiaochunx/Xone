@@ -96,9 +96,8 @@
 </template>
 
 <script>
-  import xoNavPath from '../../../NavPath.vue'
   export default {
-    components: {xoNavPath},
+    components: {},
     data() {
       return {
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeList'},{name: "查看门店", url: '/storeManage/storeList/seeTheStore'},{name: "天河店收款账户编辑", url: ''}],

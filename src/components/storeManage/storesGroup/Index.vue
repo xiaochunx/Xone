@@ -56,11 +56,10 @@
 </template>
 
 <script>
-  import xoNavPath from '../NavPath.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components: {
-      xoNavPath
+
     },
     data() {
       return {

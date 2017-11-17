@@ -101,8 +101,6 @@
         </div>
     </div>
 
-    <div style="width: 100%;">
-
       <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="payNo" label="支付单号（款易）"
@@ -138,12 +136,9 @@
             </div>
           </template>
         </el-table-column>
-
-
       </el-table>
 
 
-    </div>
     <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
       <xo-pagination></xo-pagination>
@@ -153,13 +148,12 @@
 </template>
 
 <script>
-  import xoNavPath from '../NavPath.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './transactionList.service';
 
   export default {
     components: {
-      xoNavPath
+
     },
     data() {
       return {

@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="bodyTop padding_b_10">
-      <!--<div class="padding_b_10">-->
-        <!--<xo-nav-path :navList="navList"></xo-nav-path>-->
-      <!--</div>-->
+      <div class="padding_b_10">
+        <xo-nav-path :navList="navList"></xo-nav-path>
+      </div>
 
       <div class="flex_es">
         <div>
@@ -180,13 +180,12 @@
 
 <script>
   let id = 1;
-//  import xoNavPath from '../../NavPath.vue'
+
   import tree from './tree.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components: {
       tree,
-//      xoNavPath
     },
     data() {
       return {

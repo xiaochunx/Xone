@@ -232,10 +232,10 @@
 </template>
 
 <script>
-  import ElFormItem from "../../../../../node_modules/element-ui/packages/form/src/form-item.vue";
-  import xoNavPath from '../../NavPath.vue'
   export default {
-    components: {ElFormItem,xoNavPath},
+    components: {
+
+    },
     data() {
       return {
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeList'},{name: "查看门店", url: ''}],

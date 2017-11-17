@@ -163,10 +163,9 @@
 </template>
 
 <script>
-  import xoNavPath from '../NavPath.vue'
   export default {
     components:{
-      xoNavPath
+
     },
     data() {
       return {

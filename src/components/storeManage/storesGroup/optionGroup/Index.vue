@@ -133,7 +133,6 @@
   </div>
 </template>
 <script>
-  import xoNavPath from '../../NavPath.vue'
   export default {
     data() {
       return {
@@ -173,7 +172,7 @@
       }
     },
     components: {
-      xoNavPath
+
     },
     methods: {
       openDialog() {
