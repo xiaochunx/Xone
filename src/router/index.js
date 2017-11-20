@@ -50,6 +50,7 @@ import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
 /************************** 营运 ***************************/
 import RunningState from '../components/operate/RunningState/Index.vue'
 import InvoiceAllocation from '../components/operate/InvoiceAllocation/Index.vue'
+import SchemeDown from '../components/operate/SchemeDown/Index.vue'
 
 
 
@@ -265,7 +266,12 @@ export default new Router({
           name: '发票配置',
           component: InvoiceAllocation
         },
-
+        //方案下发
+        {
+          path: '/operate/schemeDown',
+          name: '方案下发',
+          component: SchemeDown
+        },
         //操作日志
         {
           path: '/infrastructure/OperationLog',

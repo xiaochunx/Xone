@@ -116,6 +116,10 @@
                 name: '发票配置',
                 route: '/operate/invoiceAllocation',
               },
+              {
+                name: '方案下发',
+                route: '/operate/schemeDown',
+              },
             ]
           },
 

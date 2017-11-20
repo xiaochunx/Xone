@@ -68,31 +68,31 @@
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店地址" width="600">
           <template scope="scope">
             <div class="flex_a">
-              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.province" @change="myChange(scope.row,'province','provinceClass')" placeholder="请选择省">
+              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.province" @change="myChange(scope.row,'province','provinceClass','isProvince')" placeholder="请选择省">
                 <el-option
                   v-for="item in provinceList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.name">
                 </el-option>
               </el-select>
               <div class="margin_l_10">
-                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.city" @change="myChange(scope.row,'city','cityClass')" placeholder="请选择市">
+                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.city" @change="myChange(scope.row,'city','cityClass','isCity')" placeholder="请选择市">
                   <el-option
-                    v-for="item in cityList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in scope.row.cityList"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name">
                   </el-option>
                 </el-select>
               </div>
               <div class="margin_l_10">
                 <el-select :class="{isSelected:scope.row.areaClass === true}" v-model="scope.row.area" @change="myChange(scope.row,'area','areaClass')" placeholder="请选择区">
                   <el-option
-                    v-for="item in areaList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in scope.row.areaList"
+                    :key="item"
+                    :label="item"
+                    :value="item">
                   </el-option>
                 </el-select>
               </div>
@@ -126,7 +126,7 @@
 </template>
 
 <script>
-
+import areaList from "../../../utility/areaData"
   export default {
     components: {
 
@@ -144,27 +144,8 @@
           label: '品牌2'
         }],
         value: '',
-        provinceList: [{
-          value: 1,
-          label: '广东省'
-        }, {
-          value: 2,
-          label: '广西'
-        }],
-        cityList:[{
-          value: 1,
-          label: '广州'
-        }, {
-          value: 2,
-          label: '深圳'
-        }],
-        areaList:[{
-          value: 1,
-          label: '天河区'
-        }, {
-          value: 2,
-          label: '天河区2'
-        }],
+        provinceList: [],
+
         storeName: '',
         storeData: [{
           name: "",
@@ -176,8 +157,10 @@
           province:"",
           provinceClass:false,
           city:"",
+          cityList:[],
           cityClass:false,
           area:"",
+          areaList:[],
           areaClass:false,
           address:"",
           addressClass:false,
@@ -195,7 +178,26 @@
 
     },
     methods: {
-      myChange(map,name,className){
+      myChange(map,name,className,str){
+        if(str === 'isProvince'){
+          areaList.forEach((data)=>{
+            if(data.name === map.province){
+              this.$set(map,"city",'');
+              this.$set(map,"area",'');
+              this.$set(map,"cityList",data.city);
+              this.$set(map,"areaList",[]);
+            }
+          })
+        }
+        if(str === 'isCity' && map.city !== ""){
+          map.cityList.forEach((data)=>{
+            if(data.name === map.city){
+              this.$set(map,"area",'');
+              this.$set(map,"areaList",data.area);
+            }
+          })
+        }
+
         if(map[name] !== ""){
           map[className] = false
         }else {
@@ -301,6 +303,7 @@
       },
     },
     created() {
+      this.provinceList = areaList
 
     },
     mounted() {
