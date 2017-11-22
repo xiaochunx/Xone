@@ -7,9 +7,9 @@
 
       <div class="flex_es">
         <div>
-          <el-button size="small">批量删除</el-button>
-          <el-button size="small" @click="batchAdd()">批量开启</el-button>
-          <el-button size="small">批量关闭</el-button>
+          <el-button size="small" @click="addStore()">新增门店</el-button>
+          <el-button size="small" @click="delSelected()">批量删除</el-button>
+          <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
           <el-button size="small" @click="setUrl()">批量设置url</el-button>
         </div>
 
@@ -25,6 +25,9 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
+
+
+
         <el-tree
           :data="data5"
           :props="defaultProps"
@@ -51,7 +54,9 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName"
                            width="150"
                            label="门店"></el-table-column>
-
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account"
+                           width="150"
+                           label="账户"></el-table-column>
           <el-table-column header-align="center" align="center" prop="payType" width="140" label="支付方式">
             <template scope="scope">
               <div class="flex_a" v-for="(item,index) in scope.row.payType">
@@ -75,14 +80,22 @@
                            width="80"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="invoice" label="发票"
                            width="80"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statistics"
-                           label="数据统计"
-                           width="100"></el-table-column>
+
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="url"
                            label="支付后跳转url"
                            width="280">
             <template scope="scope">
               <el-input v-model="scope.row.url.input" :disabled="scope.row.url.checked"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statistics" label="状态"
+                           width="100">
+            <template scope="scope">
+              <el-switch
+                v-model="scope.row.statistics"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
             </template>
 
           </el-table-column>
@@ -172,6 +185,39 @@
       </el-form>
     </el-dialog>
 
+    <el-dialog
+      title="开启/关闭"
+      :visible.sync="dialogVisible1"
+      width="50%" size="tiny">
+      <el-switch
+        v-model="value2"
+        on-color="#13ce66"
+        off-color="#ff4949">
+      </el-switch>
+      <div class="margin_t_10">
+        <el-button>取消</el-button>
+        <el-button type="primary">确认</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="新增门店"
+      :visible.sync="dialogVisible2"
+      width="50%" size="tiny">
+
+      <el-tree
+        :data="data5"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        @setChecked="setChecked"
+        :props="defaultProps">
+      </el-tree>
+      <div class="margin_t_10">
+        <el-button>取消</el-button>
+        <el-button type="primary">确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -185,7 +231,10 @@
     },
     data() {
       return {
+        value2:false,
         dialogVisible: false,
+        dialogVisible1:false,
+        dialogVisible2:false,
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
@@ -219,33 +268,36 @@
           NO: true,
           storeCode: '83789',
           storeName: '炳胜（马场店）',
+          account:"天河北店的账户",
           payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
           payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
           pay: '√',
           invoice: '√',
-          statistics: '√',
+          statistics: false,
           url: {input: "", checked: true}
 
         }, {
           NO: false,
           storeCode: '837892',
           storeName: '炳胜（马场店）',
+          account:"天河北店的账户",
           payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
           payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
           pay: '√',
           invoice: '√',
-          statistics: '√',
+          statistics: false,
           url: {input: "", checked: true}
 
         }, {
           NO: false,
           storeCode: '837893',
           storeName: '炳胜（马场店）',
+          account:"天河北店的账户",
           payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
           payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
           pay: '√',
           invoice: '√',
-          statistics: '√',
+          statistics: false,
           url: {input: "http://", checked: true}
 
         }],
@@ -301,10 +353,33 @@
     },
     watch: {},
     methods: {
+      setChecked(data, checked, deep){
+        console.log(data)
+      },
+      delSelected(){
+        this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'info',
+            message: '删除成功'
+          });
+        }).catch(() => {
+          //
+        });
+      },
+      isSwitch(){
+        this.dialogVisible1 = true
+      },
       setUrl() {
         this.storeData.forEach((data) => {
           data.url.checked = false
         })
+      },
+      addStore(){
+        this.dialogVisible2 = true
       },
       batchAdd() {
         this.$router.push('/storeManage/storeList/newAddStore')
@@ -326,6 +401,7 @@
         this.$router.push('/storeManage/storeList/seeTheStore')
       },
       edit() {
+        this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
 
       },
       editGroup(item) {

@@ -7,17 +7,17 @@
       <el-card>
         <el-row>
           <el-col :span="24" style="border-bottom: 1px solid gainsboro">
-            <h3 style="margin-bottom: 10px;">添加门店组</h3>
+            <h3 style="margin-bottom: 10px;">添加门店标签</h3>
           </el-col>
 
           <el-col :span="24" class="cell">
             <el-form ref="formRules" :model="form" label-width="100px">
 
-              <el-form-item label="门店组编码	:" prop="code" :rules="{required: true, message: '请输入门店编码', trigger: 'blur'}">
+              <el-form-item label="标签名称	:" prop="code" :rules="{required: true, message: '请输入标签名称', trigger: 'blur'}">
                 <el-input v-model="form.code" placeholder="请输入内容"></el-input>
               </el-form-item>
 
-              <el-form-item label="门店组名称	:" prop="name" :rules="{required: true, message: '请输入门店名称', trigger: 'blur'}">
+              <el-form-item label="标签编码	:" prop="name" :rules="{required: true, message: '请输入标签编码', trigger: 'blur'}">
                 <el-input v-model="form.name" placeholder="请输入内容"></el-input>
               </el-form-item>
 
@@ -61,6 +61,34 @@
                 </div>
               </div>
 
+
+              <el-form-item label="门店:" prop="name" :rules="{required: true, message: '请输入门店名称', trigger: 'blur'}">
+                <div class="flex_a margin_b_10">
+                  <el-input class="margin_r_10" v-model="form.name" placeholder="请输入内容"></el-input>
+                  <el-button>搜索</el-button>
+                </div>
+
+
+
+              </el-form-item>
+
+
+              <el-form-item label="" >
+                <el-table :data="searchList" border>
+                  <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号" width="100">
+                    <template scope="scope">
+                      <div>{{scope.$index + 1}}</div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode" label="门店编码">
+                  </el-table-column>
+                  <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName" label="门店名称">
+                  </el-table-column>
+                </el-table>
+              </el-form-item>
+
+
+
               <el-form-item label="门店:">
                 <el-button @click='openDialog()'>添加门店</el-button>
               </el-form-item>
@@ -81,7 +109,7 @@
       </el-card>
     </div>
 
-    <el-dialog title="选择门店" :visible.sync="dialogFormVisible">
+    <el-dialog title="选择门店" :visible.sync="dialogFormVisible" size="small">
 
       <div class="flex_a">
         <div>所在地</div>
@@ -97,29 +125,21 @@
           </el-select>
         </div>
         <div class="margin_l_10 flex_1" >
-          <el-input placeholder="门店名称/编码"></el-input>
+          <el-input placeholder="门店名称/编码" icon="search"></el-input>
         </div>
       </div>
 
       <div class="margin_t_10">
         <el-table :data="storeData" border style="width: 100%;">
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName" label="门店"></el-table-column>
+          <el-table-column :render-header="selectAll"  label-class-name="table_head" header-align="center" align="center" width="100">
+            <template scope="scope">
+              <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName" label="门店">
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="meiTuan" label="美团">
-            <template scope="scope">
-              <el-checkbox v-model="scope.row.meiTuan"></el-checkbox>
-            </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ele" label="饿了么">
-            <template scope="scope">
-              <el-checkbox v-model="scope.row.ele"></el-checkbox>
-            </template>
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="baiDu" label="百度">
-            <template scope="scope">
-              <el-checkbox v-model="scope.row.baiDu"></el-checkbox>
-            </template>
-          </el-table-column>
+
         </el-table>
       </div>
       <div class="margin_t_10">
@@ -133,11 +153,13 @@
   </div>
 </template>
 <script>
+  import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
+
   export default {
     data() {
       return {
         dialogFormVisible: false,
-        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeGroup'}, {name: "门店组", url: ''}],
+        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeGroup'}, {name: "门店标签", url: ''}],
         form: {
           name: '',
           code: '',
@@ -147,6 +169,10 @@
         },
         value1: 1,
         option: [{value: 1, label: '饿了么门店1'}, {value: 2, label: '饿了么门店2'}],
+        searchList:[{
+          storeCode:"123",
+          storeName:"aaa"
+        }],
         storeData: [{
           storeName: '炳胜（马场店）',
           meiTuan:false,
@@ -172,9 +198,68 @@
       }
     },
     components: {
+      ElButton
 
     },
     methods: {
+      handleCheckAll(bool) {
+        if (bool.target.checked === true) {
+          this.storeData.forEach((data) => {
+            data.select = true
+          })
+        } else {
+          this.storeData.forEach((data) => {
+            data.select = false
+          })
+        }
+      },
+      handleChecked(data) {
+        let count =0;
+        this.storeData.forEach((data) => {
+          if (data.select === true) {
+            count += data.select*1
+          }
+        });
+
+        if(count === this.storeData.length){
+          this.selectedAll = true;
+          this.$nextTick(()=>{
+            let all = document.querySelector('#all span');
+            all.classList.add('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = true
+          })
+        }else {
+          this.selectedAll = false;
+          this.$nextTick(()=>{
+            let all = document.querySelector('#all span');
+            all.classList.remove('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = false
+          })
+        }
+
+      },
+      selectAll(h) {
+        return h(
+          'div',
+          {},
+          [
+            h('el-checkbox', {
+                attrs: {id: "all"},
+                'class': {
+                },
+                on: {
+                  change: this.handleCheckAll,
+                  input: (event)=> {
+                  }
+                }
+              }, ['序号']
+            )
+          ]
+        );
+
+      },
       openDialog() {
         this.dialogFormVisible = true;
       },

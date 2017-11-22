@@ -7,7 +7,7 @@ import Axios from 'axios'
 import element from 'element-ui'
 import store from './store'
 import utility from './components/utility'
-
+import localStorage from './components/utility/localStorage'
 // 样式导入
 import 'element-ui/lib/theme-default/index.css'
 import 'font-awesome/css/font-awesome.css'
@@ -15,7 +15,11 @@ import 'font-awesome/css/font-awesome.css'
 
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
-Axios.defaults.baseURL = 'http://ky-test2.lecin.cn/kyapi/';
+Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';
+//打开夸域cookie
+Axios.defaults.withCredentials = true;
+
+Vue.prototype.$localStorage = localStorage;
 // 关闭生产模式下给出的提示
 Vue.config.productionTip = false;
 

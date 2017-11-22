@@ -34,7 +34,6 @@
 
       <el-table :data="storeData" border :height="tableHeight">
         <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-
                          width="100">
           <template scope="scope">
             <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>

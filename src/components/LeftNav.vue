@@ -109,6 +109,10 @@
             name:'运营',
             children: [
               {
+                name: '运营方案',
+                route: '/operate/OperationPlan',
+              },
+              {
                 name: '运行状态',
                 route: '/operate/runningState',
               },
@@ -144,7 +148,7 @@
                 route: '/storeManage/storeList'
               },
               {
-                name: '门店组',
+                name: '门店标签',
                 route: '/storeManage/storeGroup'
               }
             ]
@@ -220,6 +224,10 @@
               {
                 name: '操作日志',
                 route: '/infrastructure/OperationLog'
+              },
+              {
+                name: '公众号管理',
+                route: '/infrastructure/PublicManagement'
               },
 //              {
 //                name: '根',

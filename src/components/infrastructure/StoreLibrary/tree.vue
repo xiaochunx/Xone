@@ -17,9 +17,17 @@
 
   .heightTran {
     overflow: hidden;
-    transition: all .5s
+    transition: all .3s
   }
 
+  .tree-node:hover {
+    background: #e4e8f1;
+  }
+
+  .add {
+    font-size: 5px;
+    margin-left: 2px;
+  }
 </style>
 
 <template>
@@ -162,27 +170,35 @@
       </el-form>
     </el-dialog>
 
-    <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-      <i @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length != 0'
-         :style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}"
-         class="el-icon-caret-right pointer heightTran "></i>
+    <div v-for='(item,index) in data' style="line-height: 36px;">
+      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px'}">
+        <!--<i @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length != 0'-->
+        <!--:style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}"-->
+        <!--class="el-icon-caret-right pointer heightTran "></i>-->
 
-      <span @click="test(item)" class="pointer">{{item.label}}</span>
+        <span :style="{display:(item.children && item.children.length != 0)?'none':'inline-block'}"
+              style="vertical-align: middle;width: 25px"></span>
+        <span @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length != 0'
+              :style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}" style="margin-right: 8px;"
+              class="el-tree-node__expand-icon"></span>
 
-      <i slot="reference" class="el-icon-plus pointer" v-if="item.id === 0" @click="addBig('新建大商户')"></i>
+        <span @click="test(item)" class="pointer el-tree-node__label">{{item.label}}</span>
 
-      <el-popover placement="right" width="200" trigger="click">
-        <el-button size="mini" type="text" @click="addGroup('新增集团')" v-if="item.id === 1">新增集团</el-button>
-        <el-button size="mini" type="text" @click="addEnterprise('新增企业')" v-if="item.id === 2">新增企业</el-button>
-        <el-button size="mini" type="text" @click="addDepartment('添加子部门')" v-if="item.id === 3">添加子部门</el-button>
-        <el-button size="mini" type="text" @click="addStore('添加门店')" v-if="item.id === 3">添加门店</el-button>
+        <i slot="reference" class="el-icon-plus pointer add" v-if="item.id === 0" @click="addBig('新建大商户')"></i>
 
-        <el-button size="mini" type="text" @click="edit(item,'修改')">修改</el-button>
+        <el-popover placement="right" width="200" trigger="click">
+          <el-button size="mini" type="text" @click="addGroup('新增集团')" v-if="item.id === 1">新增集团</el-button>
+          <el-button size="mini" type="text" @click="addEnterprise('新增企业')" v-if="item.id === 2">新增企业</el-button>
+          <el-button size="mini" type="text" @click="addDepartment('添加子部门')" v-if="item.id === 3">添加子部门</el-button>
+          <el-button size="mini" type="text" @click="addStore('添加门店')" v-if="item.id === 3">添加门店</el-button>
 
-        <el-button size="mini" type="text">删除</el-button>
-        <i slot="reference" class="el-icon-plus pointer" v-if="item.id > 0 &&item.id <4"></i>
-      </el-popover>
+          <el-button size="mini" type="text" @click="edit(item,'修改')">修改</el-button>
 
+          <el-button size="mini" type="text">删除</el-button>
+          <i slot="reference" class="el-icon-plus pointer add" v-if="item.id > 0 &&item.id <4"></i>
+        </el-popover>
+
+      </div>
       <transition
         v-on:before-enter="beforeEnter"
         v-on:enter="enter"
@@ -194,7 +210,7 @@
         v-on:after-leave="afterLeave"
         v-on:leave-cancelled="leaveCancelled"
       >
-        <trees :data='item.children' v-if="item.show" :count='count' class="heightTran"></trees>
+        <trees :data='item.children' v-if="item.show" :count='count +1' class="heightTran"></trees>
       </transition>
     </div>
   </div>
@@ -261,7 +277,7 @@
         const isJPG = file.type === 'image/jpeg';
         const isLt5M = file.size / 1024 / 1024 < 5;
 
-        if (!isJPG ||!isPNG) {
+        if (!isJPG || !isPNG) {
           this.$message.error('上传头像图片只能是 JPG 格式!');
         }
         if (!isLt5M) {
@@ -269,11 +285,11 @@
         }
         return (isJPG || isPNG) && isLt5M;
       },
-      addStore(){
+      addStore() {
         this.$router.push('/storeManage/storeList/newAddStore')
 
       },
-      addDepartment(title){
+      addDepartment(title) {
         this.title = title
         this.dialogVisible = true
       },
@@ -313,7 +329,7 @@
         item.children.push(newChild);
         console.log(this.data)
       },
-      edit(item,name) {
+      edit(item, name) {
         this.item = item;
         this.dialogVisible = true
       },

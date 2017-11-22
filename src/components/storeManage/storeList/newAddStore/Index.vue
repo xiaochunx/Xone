@@ -305,6 +305,9 @@ import areaList from "../../../utility/areaData"
     created() {
       this.provinceList = areaList
 
+
+
+
     },
     mounted() {
 

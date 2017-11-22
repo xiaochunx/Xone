@@ -55,7 +55,25 @@
             var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
 
             // 跳转路由
-            this.$router.push('/operate/runningState');
+            let formData = new FormData();
+            formData.append("user_name",loginParams.username);
+            formData.append("password",loginParams.password);
+            this.$http.request({
+              url: '?controller=user&action=login',
+              method: 'post',
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+              data: formData,
+            }).then((res) => {
+              console.log(res)
+              if(res.data.errcode === 0){
+                this.$localStorage.set("token", res.data.data.token);
+                this.$router.push('/main');
+              }else {
+                this.$message(res.data.errmsg)
+              }
+            });
+
+            //this.$router.push('/operate/runningState');
 
             // 提交给后台服务器
             /*requestLogin(loginParams).then(data => {

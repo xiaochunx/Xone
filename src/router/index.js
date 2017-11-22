@@ -47,10 +47,14 @@ import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue
 import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
 import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
 
-/************************** 营运 ***************************/
+/************************** 运营 ***************************/
 import RunningState from '../components/operate/RunningState/Index.vue'
 import InvoiceAllocation from '../components/operate/InvoiceAllocation/Index.vue'
 import SchemeDown from '../components/operate/SchemeDown/Index.vue'
+import OperationPlan from '../components/operate/OperationPlan/Index.vue'
+
+/************************** 公众号管理 ***************************/
+import PublicManagement from '@/components/infrastructure/PublicManagement/Index.vue'
 
 
 
@@ -254,6 +258,22 @@ export default new Router({
           component: PermissionManagement
         },
 
+
+
+        //操作日志
+        {
+          path: '/infrastructure/OperationLog',
+          name: '操作日志',
+          component: OperationLog
+        },
+        //公众号管理
+        {
+          path: '/infrastructure/PublicManagement',
+          name: '公众号管理',
+          component: PublicManagement
+        },
+
+        /**********************运营***************************/
         //运行状态
         {
           path: '/operate/runningState',
@@ -272,12 +292,14 @@ export default new Router({
           name: '方案下发',
           component: SchemeDown
         },
-        //操作日志
+        //运营方案
         {
-          path: '/infrastructure/OperationLog',
-          name: '操作日志',
-          component: OperationLog
+          path: '/operate/OperationPlan',
+          name: '运营方案',
+          component: OperationPlan
         },
+
+
       ]
     },
     {

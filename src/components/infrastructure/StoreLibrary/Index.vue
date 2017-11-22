@@ -9,7 +9,7 @@
         <div>
           <el-button size="small">批量删除</el-button>
           <el-button size="small" @click="batchAdd()">批量新增</el-button>
-          <el-button size="small">批量关闭</el-button>
+          <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
         </div>
 
         <div class="flex_a">
@@ -29,7 +29,7 @@
           <!--:props="defaultProps"-->
           <!--node-key="id"-->
           <!--default-expand-all-->
-          <!--:expand-on-click-node="true"-->
+          <!--:expand-on-click-node="false"-->
           <!--:render-content="renderContent">-->
         <!--</el-tree>-->
 
@@ -38,13 +38,10 @@
       </div>
 
       <div :style="{width:tableWidth + 'px'}">
-        <el-table :data="storeData" border :height="tableHeight"  @row-click="rClick">
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
-                           type="index" width="70">
+        <el-table :data="storeData" border :height="tableHeight">
+          <el-table-column :render-header="selectAll"  label-class-name="table_head" header-align="center" align="center" width="100">
             <template scope="scope">
-
-              <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
-
+              <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
@@ -55,10 +52,50 @@
                            width="80"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
             <template scope="scope">
-              <el-button size="small" type="primary" @click.stop="getOneList()">查看</el-button>
+
+              <el-popover
+                ref="popover4"
+                placement="right"
+                width="400"
+                @show="()=>{
+                  return show(scope.row)
+                }"
+                trigger="click">
+                <div class="padding_10">
+                  <div>{{showAsideObj.storeName}}</div>
+                  <div class="flex_r margin_t_10">
+                    <div class="flex_1 flex_ce">地址：</div>
+                    <div class="flex_2">广东省广州市天河区天河东路88号</div>
+                  </div>
+                  <div class="flex_r margin_t_10">
+                    <div class="flex_1 flex_ce">门店编码：</div>
+                    <div class="flex_2">{{showAsideObj.storeCode}}</div>
+                  </div>
+
+                  <div class="flex_r margin_t_10">
+                    <div class="flex_1 flex_ce">第三方编码：</div>
+                    <div class="flex_2">美团  8989</div>
+                  </div>
+                  <div class="flex_r margin_t_10">
+                    <div class="flex_1 flex_ce">所属组：</div>
+                    <div class="flex_2">广州运营区</div>
+                  </div>
+                  <div class="flex_r margin_t_10">
+                    <div class="flex_1 flex_ce">门店电话：</div>
+                    <div class="flex_2">020-9849792</div>
+                  </div>
+
+                  <div class="flex_r margin_t_10">
+                    <el-button type="primary">日志</el-button>
+
+                  </div>
+                </div>
+              </el-popover>
+
+              <el-button size="small" type="primary" v-popover:popover4>查看</el-button>
               <el-button size="small" @click.stop="edit()">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
-              <el-button size="small" type="primary" @click.stop="getOneList()">上传资料</el-button>
+              <el-button size="small" type="primary" >上传资料</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -68,47 +105,25 @@
 
       </div>
     </div>
-    <!--弹窗-->
-    <transition name="myStore">
-      <!--一定要有class,写style无效-->
-      <div v-show="showAside" class="myStore">
-        <div class="padding_10" style="width: 280px">
-          <div>{{showAsideObj.storeName}}</div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">地址：</div>
-            <div class="flex_2">广东省广州市天河区天河东路88号</div>
-          </div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">门店编码：</div>
-            <div class="flex_2">{{showAsideObj.storeCode}}</div>
-          </div>
-
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">第三方编码：</div>
-            <div class="flex_2">美团  8989</div>
-          </div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">所属组：</div>
-            <div class="flex_2">广州运营区</div>
-          </div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">门店电话：</div>
-            <div class="flex_2">020-9849792</div>
-          </div>
-
-          <div class="flex_r margin_t_10">
-            <el-button size="mini" type="primary">置顶</el-button>
-            <el-button size="mini" type="primary">修改</el-button>
-            <el-button size="mini" type="primary">停用</el-button>
-            <el-button size="mini" type="primary">更多</el-button>
-          </div>
-        </div>
+    <el-dialog
+      title="开启/关闭"
+      :visible.sync="dialogVisible1"
+      width="50%" size="tiny">
+      <el-switch
+        v-model="value2"
+        on-color="#13ce66"
+        off-color="#ff4949">
+      </el-switch>
+      <div class="margin_t_10">
+        <el-button>取消</el-button>
+        <el-button type="primary">确认</el-button>
       </div>
-    </transition>
+    </el-dialog>
+
     <el-dialog
       title="新建／修改组"
       :visible.sync="dialogVisible"
-      width="50%">
+      width="50%" >
       <el-form ref="formRules" :model="form" label-width="100px">
         <el-form-item label="编码:" prop="code" :rules="{required: true, message: '请输入编码', trigger: 'blur'}">
           <el-input v-model="form.code" placeholder="请输入内容"></el-input>
@@ -189,8 +204,10 @@
     },
     data() {
       return {
+        value2:false,
         showAside: false,
         dialogVisible:false,
+        dialogVisible1:false,
         tableHeight: 0,
         tableWidth:0,
         navList: [{name: "门店管理", url: ''}, {name: "门店库", url: ''}],
@@ -221,17 +238,14 @@
         }],
         storeName: '',
         storeData: [{
-          NO: true,
           storeCode: '83789',
           storeName: '炳胜（马场店）',
           status: '开启'
         }, {
-          NO: false,
           storeCode: '837892',
           storeName: '炳胜（马场店）',
           status: '开启'
         }, {
-          NO: false,
           storeCode: '837893',
           storeName: '炳胜（马场店）',
           status: '开启'
@@ -266,22 +280,90 @@
       }
     },
     watch: {
-      "showAsideObj": function (n, o) {
-        if (n.storeCode === o.storeCode) {
-          this.showAside = !this.showAside
-        } else {
-          if (this.showAside === false) {
-            this.showAside = true;
-          } else {
-            this.showAside = false;
-            setTimeout(() => {
-              this.showAside = true;
-            }, 500)
-          }
-        }
-      }
+
     },
     methods: {
+      isSwitch(){
+        this.dialogVisible1 = true
+      },
+      show(row){
+        this.showAsideObj = {"storeName": row.storeName, "storeCode": row.storeCode}
+
+      },
+      renderContent(h, { node, data, store }) {
+        return (
+          <span >
+          <span>
+          <span>{node.label}</span>
+        </span>
+        <span style="padding-left: 10px;">
+        <el-button style="font-size: 12px;" type="text" on-click={ () => this.addBig('新建大商户') }>+</el-button>
+
+        </span>
+        </span>);
+      },
+      handleCheckAll(bool) {
+        if (bool.target.checked === true) {
+          this.storeData.forEach((data) => {
+            data.select = true
+          })
+        } else {
+          this.storeData.forEach((data) => {
+            data.select = false
+          })
+        }
+      },
+      handleChecked(data) {
+        let count =0;
+        this.storeData.forEach((data) => {
+          if (data.select === true) {
+            count += data.select*1
+          }
+        });
+
+        if(count === this.storeData.length){
+          this.selectedAll = true;
+          this.$nextTick(()=>{
+            let all = document.querySelector('#all span');
+            all.classList.add('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = true
+          })
+        }else {
+          this.selectedAll = false;
+          this.$nextTick(()=>{
+            let all = document.querySelector('#all span');
+            all.classList.remove('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = false
+          })
+        }
+
+      },
+      selectAll(h) {
+        return h(
+          'div',
+          {},
+          [
+            h('el-checkbox', {
+                attrs: {id: "all"},
+                'class': {
+                },
+                on: {
+                  change: this.handleCheckAll,
+                  input: (event)=> {
+                  }
+                }
+              }, ['序号']
+            )
+          ]
+        );
+
+      },
+      addBig(){
+        this.title = title
+        this.dialogVisible = true
+      },
       batchAdd(){
         this.$router.push('/storeManage/storeList/newAddStore')
       },
@@ -299,11 +381,9 @@
       },
 
       rClick(row, event, column) {
-        this.showAsideObj = {"storeName": row.storeName, "storeCode": row.storeCode}
+
       },
-      getOneList() {
-        this.$router.push('/storeManage/storeList/seeTheStore')
-      },
+
       edit() {
 
       },
@@ -321,7 +401,7 @@
           this.$set(data, 'children', []);
         }
         data.children.push(newChild);
-        this.clickEvent()
+        //this.clickEvent()
       },
 
 
@@ -348,9 +428,13 @@
       let data = this.data5;
       this.recur(data)
 
+      this.storeData.forEach((map) => {
+        this.$set(map, 'select', false)
+      })
+
     },
     mounted(){
-      this.clickEvent()
+      //this.clickEvent()
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
