@@ -395,7 +395,7 @@
         );
       },
       print(){
-
+console.log(this)
       },
       open(){
 

@@ -7,7 +7,8 @@ import * as types from './type'
 const state = {
   height: 0,
   navPath: [],
-  isLoading: false
+  isLoading: false,
+  token:''//token
 };
 
 const mutations = {
@@ -19,6 +20,9 @@ const mutations = {
   },
   [types.UPDATELOADINGSTATUS](state, payload) {
     state.isLoading = payload.isLoading
+  },
+  [types.SETTOKEN](state, token){
+    state.token = token
   }
 };
 

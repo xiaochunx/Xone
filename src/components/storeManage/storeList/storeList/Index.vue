@@ -18,7 +18,7 @@
             <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
           </div>
           <el-button size="small">搜索</el-button>
-          <el-button size="small" type="primary">+新增</el-button>
+          <el-button size="small" type="primary" @click="add()">+新增</el-button>
         </div>
       </div>
     </div>
@@ -26,11 +26,10 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
 
-
-
         <el-tree
-          :data="data5"
+          :data="dataLeft"
           :props="defaultProps"
+          @node-click="nodeClick"
           node-key="id"
           default-expand-all
           :expand-on-click-node="true"
@@ -48,51 +47,52 @@
 
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
                            label="编码"
                            width="100"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName"
                            width="150"
                            label="门店"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account"
-                           width="150"
-                           label="账户"></el-table-column>
-          <el-table-column header-align="center" align="center" prop="payType" width="140" label="支付方式">
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
+                           width="250" label="账户 -- 支付方式 -- 支付通道">
             <template scope="scope">
-              <div class="flex_a" v-for="(item,index) in scope.row.payType">
+              <div v-for="(item,index) in scope.row.account">
                 <div>
-                  <el-checkbox v-model="item.checked">{{item.label}}</el-checkbox>
+                  {{item.accountName}} -- {{item.paymentMethod}} -- {{item.paymentChannel}}
                 </div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column header-align="center" align="center" prop="payChannel" width="140" label="支付通道">
-            <template scope="scope">
-              <div class="flex_a" v-for="(item,index) in scope.row.payChannel">
-                <div>
-                  <el-checkbox v-model="item.checked">{{item.label}}</el-checkbox>
-                </div>
+
               </div>
             </template>
 
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="pay" label="支付"
-                           width="80"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="invoice" label="发票"
-                           width="80"></el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="url"
+          <el-table-column label-class-name="table_head" header-align="center" align="center"label="支付" width="80">
+            <template scope="scope">
+              <div v-if="scope.row.isOpenPay === 1">
+                √
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="发票" width="80">
+            <template scope="scope">
+              <div v-if="scope.row.isOpenInvoice === 1">
+                √
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="payJumpUrl"
                            label="支付后跳转url"
                            width="280">
             <template scope="scope">
-              <el-input v-model="scope.row.url.input" :disabled="scope.row.url.checked"></el-input>
+              <el-input v-model="scope.row.payJumpUrl" :disabled="scope.row.checked"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statistics" label="状态"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="100">
             <template scope="scope">
               <el-switch
-                v-model="scope.row.statistics"
+                v-model="scope.row.status"
                 on-color="#13ce66"
                 off-color="#ff4949">
               </el-switch>
@@ -101,14 +101,14 @@
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
             <template scope="scope">
-              <el-button size="small" type="primary" @click.stop="getOneList()">查看</el-button>
-              <el-button size="small" @click.stop="edit()">编辑</el-button>
+              <el-button size="small" type="primary" @click.stop="getOneList(scope.row.id)">查看</el-button>
+              <el-button size="small" @click.stop="edit(scope.row.id)">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <footer>
-          <xo-pagination></xo-pagination>
+          <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
 
       </div>
@@ -206,7 +206,7 @@
       width="50%" size="tiny">
 
       <el-tree
-        :data="data5"
+        :data="dataLeft"
         show-checkbox
         node-key="id"
         default-expand-all
@@ -224,6 +224,7 @@
 <script>
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
+  import getApi from './storeList.service';
 
   export default {
     components: {
@@ -264,72 +265,11 @@
           label: '关闭'
         }],
         storeName: '',
-        storeData: [{
-          NO: true,
-          storeCode: '83789',
-          storeName: '炳胜（马场店）',
-          account:"天河北店的账户",
-          payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
-          payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
-          pay: '√',
-          invoice: '√',
-          statistics: false,
-          url: {input: "", checked: true}
-
-        }, {
-          NO: false,
-          storeCode: '837892',
-          storeName: '炳胜（马场店）',
-          account:"天河北店的账户",
-          payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
-          payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
-          pay: '√',
-          invoice: '√',
-          statistics: false,
-          url: {input: "", checked: true}
-
-        }, {
-          NO: false,
-          storeCode: '837893',
-          storeName: '炳胜（马场店）',
-          account:"天河北店的账户",
-          payType: [{label: '支付宝', checked: false}, {label: '微信支付', checked: false}],
-          payChannel: [{label: '易极付', checked: false}, {label: '通联支付', checked: false}],
-          pay: '√',
-          invoice: '√',
-          statistics: false,
-          url: {input: "http://", checked: true}
-
-        }],
-
-        data5: [{
-          id: 1,
-          label: '民生银行',
-          children: [{
-            id: 4,
-            label: '狮子牌',
-            children: [{
-              id: 9,
-              label: '狮子牌33'
-            }, {
-              id: 10,
-              label: '易极付4444'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '民生银行1',
-          children: [{
-            id: 5,
-            label: '九毛九'
-          }, {
-            id: 6,
-            label: '太二酸菜鱼'
-          }]
-        }],
+        storeData: [],
+        dataLeft: [],
         defaultProps: {
-          children: 'children',
-          label: 'label'
+          children: 'child',
+          label: 'levelname'
         },
 
         form: {
@@ -349,10 +289,29 @@
           value: 2,
           label: '易极付'
         }],
+        token:'',
+        p:{page:1, size:10, total:0},
+
       }
     },
     watch: {},
     methods: {
+      getPage(page){
+        this.p.page = page;
+        this.showResouce();
+      },
+      getPageSize(size){
+        this.p.size = size;
+        this.showResouce();
+      },
+      add(){
+        console.log(this.storeData)
+      },
+      nodeClick(data,data1,data2){
+        console.log(data.levelname)
+this.showResouce(data.levelname)
+
+      },
       setChecked(data, checked, deep){
         console.log(data)
       },
@@ -375,7 +334,7 @@
       },
       setUrl() {
         this.storeData.forEach((data) => {
-          data.url.checked = false
+          data.checked = false
         })
       },
       addStore(){
@@ -397,25 +356,50 @@
         });
       },
 
-      getOneList() {
-        this.$router.push('/storeManage/storeList/seeTheStore')
+      getOneList(id) {
+        this.$router.push({path: `/storeManage/storeList/seeTheStore/${id}`})
       },
-      edit() {
-        this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
-
+      edit(id) {
+        this.$router.push({path:`/storeManage/storeList/editStoreAccount/${id}`})
       },
       editGroup(item) {
         this.item = item;
         this.dialogVisible = true
       },
       del() {
+        getApi.delOne().then((res)=>{
+          console.log(res)
+        })
 
       },
-
-
+      showResouce(storeName = ""){
+        getApi.getList(this.token,this.p,storeName).then((res) => {
+          console.log(res.data.data)
+          if(res.data.errcode === 0){
+            res.data.data.list.forEach((data)=>{
+              data.checked = true
+            });
+            this.storeData = res.data.data.list;
+            this.p.total = res.data.data.count
+          }else {
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }})
+          }
+        })
+      }
     },
-    created() {
+   async created() {
+      this.token = this.$localStorage.get('token');
 
+
+    await getApi.getLeft(this.token).then((res)=>{
+        this.dataLeft = res.data.data
+      });
+
+     await this.showResouce();
 
     },
     mounted() {

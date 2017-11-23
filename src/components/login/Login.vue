@@ -52,7 +52,7 @@
             this.logining = true;
             //NProgress.start();
 
-            var loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
+            let loginParams = { username: this.ruleForm2.account, password: this.ruleForm2.checkPass };
 
             // 跳转路由
             let formData = new FormData();
@@ -67,11 +67,13 @@
               console.log(res)
               if(res.data.errcode === 0){
                 this.$localStorage.set("token", res.data.data.token);
-                this.$router.push('/main');
+                this.$router.push('/operate/runningState');
               }else {
                 this.$message(res.data.errmsg)
               }
             });
+
+
 
             //this.$router.push('/operate/runningState');
 

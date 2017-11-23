@@ -5,30 +5,24 @@
       <el-button size="small" type="primary" @click="addGroup()">新增门店组</el-button>
     </div>
     <div>
-      <el-table :data="tableData" border :height="tableHeight" style="width: 100%">
+      <el-table empty-text=" " :data="tableData" border :height="tableHeight" style="width: 100%">
         <el-table-column header-align="center" align="center" label="序号" width="65">
           <template scope="scope">
-            <span>{{ scope.row.count }}</span>
+            <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" label="门店组编码">
-          <template scope="scope">
-            <span>{{ scope.row.accountNum }}</span>
-          </template>
+        <el-table-column header-align="center" align="center" prop="id" label="门店组编码">
+
         </el-table-column>
-        <el-table-column header-align="center" align="center" label="门店组名称">
-          <template scope="scope">
-            <div>
-              {{scope.row.account}}
-            </div>
-          </template>
+        <el-table-column header-align="center" align="center" prop="name" label="门店组名称">
+
         </el-table-column>
         <el-table-column header-align="center" align="center" label="操作" width="200">
           <template scope="scope">
             <div class="flex">
 
-              <el-button size="small" type="primary" @click="showStore()">查看门店</el-button>
-              <el-button size="small"  @click="edit()">编辑</el-button>
+              <el-button size="small" type="primary" @click="showStore(scope.row)">查看门店</el-button>
+              <el-button size="small"  @click="edit(scope.row)">编辑</el-button>
               <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </div>
 
@@ -38,9 +32,9 @@
       </el-table>
     </div>
     <footer>
-      <xo-pagination></xo-pagination>
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
-
+    <!--查看门店-->
     <el-dialog
       title="查看门店"
       :visible.sync="dialogVisible"
@@ -59,29 +53,25 @@
 
 
       <div class="margin_t_10">
-        <el-button type="primary">确认</el-button>
-        <el-button>取消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确认</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
-
+    <!--编辑-->
     <el-dialog
       title="编辑"
       :visible.sync="dialogVisible1"
       @open="myOpen"
       width="50%" >
-      <el-form ref="formRules" :model="form" label-width="100px">
+      <el-form ref="formRules" :model="formEdit" label-width="100px">
 
-        <el-form-item label="标签名称	:" prop="code" :rules="{required: true, message: '请输入标签名称', trigger: 'blur'}">
-          <el-input v-model="form.code" placeholder="请输入内容"></el-input>
-        </el-form-item>
-
-        <el-form-item label="标签编码	:" prop="name" :rules="{required: true, message: '请输入标签编码', trigger: 'blur'}">
-          <el-input v-model="form.name" placeholder="请输入内容"></el-input>
+        <el-form-item label="标签名称	:" prop="name" :rules="{required: true, message: '请输入标签名称', trigger: 'blur'}">
+          <el-input v-model="formEdit.name" placeholder="请输入内容"></el-input>
         </el-form-item>
 
 
-        <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
+        <div v-for="(domain, index) in formEdit.third_code" class="flex_r">
           <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
                         :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
             <div>
@@ -113,7 +103,7 @@
             <div class="m-storeCode margin_l_10" @click="addDomain">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formEdit.third_code.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
@@ -122,7 +112,7 @@
 
 
         <el-form-item label="包含门店:" >
-          <el-table :data="storeData" border>
+          <el-table :data="formEdit.sss" border>
             <el-table-column :render-header="selectAll"  label-class-name="table_head" header-align="center" align="center" width="100">
               <template scope="scope">
                 <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
@@ -136,8 +126,8 @@
         </el-form-item>
 
         <div class="margin_t_10">
-          <el-button type="primary">确认</el-button>
-          <el-button>取消</el-button>
+          <el-button type="primary" @click="update(formEdit)">确认</el-button>
+          <el-button @click="dialogVisible1 = false">取消</el-button>
         </div>
 
       </el-form>
@@ -152,68 +142,40 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
+  import getApi from './storeGroup.service';
+
   export default {
     components: {
 
     },
     data() {
       return {
-        form: {
-          name: '',
-          code: '',
-          thirdPartyCoding: [
-            {value: '', value1: ''}
-          ],
-        },
+        formEdit: {},
         dialogVisible:false,
         dialogVisible1:false,
         tableHeight:0,
         navList: [{name: "门店管理", url: ''}, {name: "门店标签", url: ''}],
-        tableData: [{
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          thirdPartCode: '美团-89898989',
-          lastEdit: '王小虎',
-          lastDate: '2016-05-04 04:33:23',
-          useStore: '天河一店 天河二店'
-        }, {
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
-        storeData:[{
-          storeCode:"123",
-          storeName:"aaa"
-        }],
+        tableData: [],//列表
+        storeData:[],//查看门店
+        p:{page:1, size:20, total:0},
+        token:''
       }
     },
     methods: {
+      getPage(page){
+        this.p.page = page;
+        this.showResouce();
+      },
+      getPageSize(size){
+        this.p.size = size;
+        this.showResouce();
+      },
+      update(data){
+        getApi.updateOne(this.token,data).then((res)=>{
+          console.log(res)
+        })
+
+      },
       handleCheckAll(bool) {
         if (bool.target.checked === true) {
           this.storeData.forEach((data) => {
@@ -284,12 +246,20 @@
           key: Date.now()
         });
       },
-      edit(){
-        this.dialogVisible1 = true
+      edit(row){
+        this.dialogVisible1 = true;
+console.log(row)
+        this.formEdit = row
 
       },
-      showStore(){
+      showStore(row){
         this.dialogVisible = true
+
+        getApi.getOne(this.token,row.id).then((res)=>{
+          console.log(res)
+          this.storeData = res.data.data.list
+        })
+
       },
       handleEdit(index, row) {
         console.log(index, row);
@@ -302,10 +272,21 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'info',
-            message: '删除成功'
-          });
+
+          getApi.delOne(this.token,row.id).then((res)=>{
+            console.log()
+            if(res){
+
+            }
+
+            this.$message({
+              type: 'info',
+              message: '删除成功'
+            });
+            this.showResouce()
+
+          })
+
         }).catch(() => {
     //
         });
@@ -317,6 +298,21 @@
       },
       addGroup(){
         this.$router.push('/storeManage/storeGroup/addGroup')
+      },
+      showResouce(){
+        getApi.getList(this.token,this.p).then((res) => {
+          console.log(res.data.data)
+          if(res.data.errcode === 0){
+            this.tableData = res.data.data.list;
+            this.p.total = res.data.data.count
+          }else {
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }})
+          }
+        })
       }
     },
 
@@ -328,7 +324,11 @@
     created(){
       this.storeData.forEach((map) => {
         this.$set(map, 'select', true)
-      })
+      });
+      this.token = this.$localStorage.get('token');
+
+      this.showResouce()
+
 
     }
   }

@@ -20,7 +20,6 @@ import NewAddStore from '../components/storeManage/storeList/newAddStore/Index.v
 import SeeTheStore from '../components/storeManage/storeList/seeTheStore/Index.vue'
 import StoreGroup from '../components/storeManage/storesGroup/Index.vue'
 import EditStoreAccount from '../components/storeManage/storeList/seeTheStore/editStoreAccount/Index.vue'
-import EditStoreBase from '../components/storeManage/storeList/seeTheStore/redact/Index.vue'
 import addGroup from '../components/storeManage/storesGroup/optionGroup/Index.vue'
 
 
@@ -114,19 +113,13 @@ export default new Router({
         },
         {
           // 查看门店
-          path: '/storeManage/storeList/seeTheStore',
+          path: '/storeManage/storeList/seeTheStore/:id',
           name: '门店管理/门店列表/查看门店',
           component: SeeTheStore,
         },
         {
-          // 账户基础编辑
-          path: '/storeManage/storeList/seeTheStore/editStoreBase',
-          name: '门店管理/门店列表/查看门店/收款账户编辑',
-          component: EditStoreBase,
-        },
-        {
           // 收款账户编辑
-          path: '/storeManage/storeList/seeTheStore/editStoreAccount',
+          path: '/storeManage/storeList/editStoreAccount/:id',
           name: '门店管理/门店列表/查看门店/收款账户编辑',
           component: EditStoreAccount,
         },
