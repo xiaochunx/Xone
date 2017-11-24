@@ -127,12 +127,12 @@
     <div id="calendar">
       <div class="month">
         <ul>
-          <li class="arrow" @click="pickPre(currentYear,currentMonth)">❮</li>
+          <li class="arrow pointer" @click="pickPre(currentYear,currentMonth)">❮</li>
           <li class="year-month" @click="pickYear(currentYear,currentMonth)">
             <span class="choose-year">{{ currentYear }}</span>
             <span class="choose-month">{{ currentMonth }}月</span>
           </li>
-          <li class="arrow" @click="pickNext(currentYear,currentMonth)">❯</li>
+          <li class="arrow pointer" @click="pickNext(currentYear,currentMonth)">❯</li>
         </ul>
       </div>
       <ul class="weekdays">
@@ -146,7 +146,7 @@
 
       </ul>
       <ul class="days">
-        <li v-for="dayobject in days" @click="getEvent(dayobject.day)">
+        <li class="pointer" v-for="dayobject in days" @click="getEvent(dayobject.day)">
           <span v-if="dayobject.day.getMonth()+1 != currentMonth" class="other-month">{{ dayobject.day.getDate() }}</span>
           <span v-else>
           <span
@@ -163,10 +163,9 @@
 </template>
 
 <script>
-  import xoNavPath from '../NavPath.vue'
   export default {
     components:{
-      xoNavPath
+
     },
     data() {
       return {

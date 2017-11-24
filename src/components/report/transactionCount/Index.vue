@@ -46,17 +46,9 @@
             <el-button>查询</el-button>
             <el-button type="primary">导出</el-button>
           </div>
-
-
-
-
         </div>
-
-
-
     </div>
 
-    <div style="width: 100%;">
       <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
         <el-table-column header-align="center" align="center" prop="day" label="日期" width="70"></el-table-column>
@@ -76,8 +68,6 @@
         <el-table-column header-align="center" align="center" prop="totalMoney" label="实收金额（总）" width="100"></el-table-column>
       </el-table>
 
-
-    </div>
     <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
       <xo-pagination></xo-pagination>
@@ -86,11 +76,10 @@
 </template>
 
 <script>
-  import xoNavPath from '../NavPath.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components:{
-      xoNavPath
+
     },
     data() {
       return {

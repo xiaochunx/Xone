@@ -16,9 +16,9 @@
       <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
 
         <div class="flex_es padding_t_10">
-          <div  class="flex_a">
-            <div class="margin_r_10">
-              <div>门店</div>
+          <div class="flex_a">
+            <div class=" margin_r_10">
+              <div>操作人</div>
               <el-select v-model="value" placeholder="请选择">
                 <el-option
                   v-for="item in options"
@@ -28,8 +28,9 @@
                 </el-option>
               </el-select>
             </div>
-            <div class=" margin_r_10">
-              <div>支付方式</div>
+
+            <div >
+              <div>操作类型</div>
               <el-select v-model="value" placeholder="请选择">
                 <el-option
                   v-for="item in options"
@@ -42,35 +43,26 @@
           </div>
 
           <div class="flex_ec">
+            <el-input class="margin_r_10" v-model="input"></el-input>
             <el-button>查询</el-button>
-            <el-button type="primary">导出</el-button>
           </div>
+
         </div>
 
     </div>
-
       <el-table :data="tableData" border :height="tableHeight">
-        <el-table-column header-align="center" align="center" prop="no" label="序号" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="differenceTime" label="差异日期" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="differenceShop" label="差异门店" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="differenceMoney" label="差异金额" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="posAmount" label="pos金额" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payAmount" label="支付金额" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payCount" label="交易笔数" ></el-table-column>
-
-        <el-table-column header-align="center" align="center" prop="differenceBill" label="差异账单号(pos)" ></el-table-column>
-
-        <el-table-column header-align="center" align="center" prop="payment" label="支付单号（款易）" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payType" label="支付方式" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="payTime" label="支付时间" ></el-table-column>
-
+        <el-table-column header-align="center" align="center" prop="operation" label="操作人" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="operationType" label="操作类型" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="operationAction" label="操作动作"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="operationTime" label="操作时间" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="ip" label="IP" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="remarks" label="备注" ></el-table-column>
       </el-table>
 
     <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
       <xo-pagination></xo-pagination>
     </footer>
-
   </div>
 </template>
 
@@ -78,14 +70,13 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   export default {
     components:{
-
     },
     data() {
       return {
         width:0,
         tableHeight:0,
-        navList:[{name:"统计报表",url:''},{name:"差异账单查询",url:''}],
-
+        navList:[{name:"基础设置",url:''},{name:"操作日志",url:''}],
+        input:'',
         input1:'',
         input2:'',
         options: [{
@@ -97,13 +88,19 @@
         }],
         value: '',
         tableData: [{
-          no: '1',
-          settlementLot: '2',
-          account: '3'
+          operation: '1',
+          operationType: '2',
+          operationAction: '3',
+          operationTime:'',
+          ip:'',
+          remarks:''
         },{
-          no: '1',
-          settlementLot: '2',
-          account: '3'
+          operation: '1',
+          operationType: '2',
+          operationAction: '3',
+          operationTime:'',
+          ip:'',
+          remarks:''
         }]
       }
     },

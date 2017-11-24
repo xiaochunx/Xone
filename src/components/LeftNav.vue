@@ -106,6 +106,28 @@
       return {
         leftList: [
           {
+            name:'运营',
+            children: [
+              {
+                name: '运营方案',
+                route: '/operate/OperationPlan',
+              },
+              {
+                name: '运行状态',
+                route: '/operate/runningState',
+              },
+              {
+                name: '发票配置',
+                route: '/operate/invoiceAllocation',
+              },
+              {
+                name: '方案下发',
+                route: '/operate/schemeDown',
+              },
+            ]
+          },
+
+          {
             name: '支付管理',
             children: [
               {
@@ -126,7 +148,7 @@
                 route: '/storeManage/storeList'
               },
               {
-                name: '门店组',
+                name: '门店标签',
                 route: '/storeManage/storeGroup'
               }
             ]
@@ -153,6 +175,10 @@
               {
                 name: '对账单',
                 route: '/report/accountStatement'
+              },
+              {
+                name: '发票',
+                route: '/report/invoice'
               }
             ]
           },
@@ -180,9 +206,33 @@
                 route: '/infrastructure/PayChannels'
               },
               {
-                name: '权限管理',
-                route: '/'
+                name: '门店库',
+                route: '/infrastructure/StoreLibrary'
               },
+              {
+                name: '菜品库',
+                route: '/infrastructure/DishesLibrary'
+              },
+              {
+                name: '角色管理',
+                route: '/infrastructure/RoleManagement'
+              },
+              {
+                name: '权限管理',
+                route: '/infrastructure/PermissionManagement'
+              },
+              {
+                name: '操作日志',
+                route: '/infrastructure/OperationLog'
+              },
+              {
+                name: '公众号管理',
+                route: '/infrastructure/PublicManagement'
+              },
+//              {
+//                name: '根',
+//                route: '/'
+//              },
             ]
           }
         ],

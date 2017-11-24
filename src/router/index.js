@@ -20,7 +20,6 @@ import NewAddStore from '../components/storeManage/storeList/newAddStore/Index.v
 import SeeTheStore from '../components/storeManage/storeList/seeTheStore/Index.vue'
 import StoreGroup from '../components/storeManage/storesGroup/Index.vue'
 import EditStoreAccount from '../components/storeManage/storeList/seeTheStore/editStoreAccount/Index.vue'
-import EditStoreBase from '../components/storeManage/storeList/seeTheStore/redact/Index.vue'
 import addGroup from '../components/storeManage/storesGroup/optionGroup/Index.vue'
 
 
@@ -30,7 +29,7 @@ import TransactionCount from '../components/report/transactionCount/Index.vue'
 import SettlementRecord from '../components/report/settlementRecord/Index.vue'
 import BillQuery from '../components/report/billQuery/Index.vue'
 import AccountStatement from '../components/report/accountStatement/Index.vue'
-
+import Invoice from '../components/report/invoice/Index.vue'
 
 /************************** 基础设置 ***************************/
 import BusinessInfo from '@/components/infrastructure/BusinessInfo/Index.vue'
@@ -41,6 +40,22 @@ import PaymentWay from '@/components/infrastructure/PaymentWay/Index.vue'
 import NewPayment from '@/components/infrastructure/PaymentWay/NewPayment/Index.vue'
 import NewPayChannels from '@/components/infrastructure/PayChannels/NewPayChannels/Index.vue'
 import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
+import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
+import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
+import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue'
+import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
+import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
+
+/************************** 运营 ***************************/
+import RunningState from '../components/operate/RunningState/Index.vue'
+import InvoiceAllocation from '../components/operate/InvoiceAllocation/Index.vue'
+import SchemeDown from '../components/operate/SchemeDown/Index.vue'
+import OperationPlan from '../components/operate/OperationPlan/Index.vue'
+
+/************************** 公众号管理 ***************************/
+import PublicManagement from '@/components/infrastructure/PublicManagement/Index.vue'
+
+
 
 Vue.use(Router);
 
@@ -98,19 +113,13 @@ export default new Router({
         },
         {
           // 查看门店
-          path: '/storeManage/storeList/seeTheStore',
+          path: '/storeManage/storeList/seeTheStore/:id',
           name: '门店管理/门店列表/查看门店',
           component: SeeTheStore,
         },
         {
-          // 账户基础编辑
-          path: '/storeManage/storeList/seeTheStore/editStoreBase',
-          name: '门店管理/门店列表/查看门店/收款账户编辑',
-          component: EditStoreBase,
-        },
-        {
           // 收款账户编辑
-          path: '/storeManage/storeList/seeTheStore/editStoreAccount',
+          path: '/storeManage/storeList/editStoreAccount/:id',
           name: '门店管理/门店列表/查看门店/收款账户编辑',
           component: EditStoreAccount,
         },
@@ -161,6 +170,12 @@ export default new Router({
           component: AccountStatement,
         },
 
+        {
+          // 发票
+          path: '/report/invoice',
+          name: '统计报表/发票',
+          component: Invoice,
+        },
 
         /**********************基础设置***************************/
         // 基础设置/商家信息
@@ -210,6 +225,71 @@ export default new Router({
           path: '/infrastructure/PayChannels/NewPayChannels',
           name: '基础设置/支付通道/新增支付通道',
           component: NewPayChannels
+        },
+        //基础设置/菜品库
+        {
+          path: '/infrastructure/DishesLibrary',
+          name: '基础设置/菜品库',
+          component: DishesLibrary
+        },
+        //门店库
+        {
+          path: '/infrastructure/StoreLibrary',
+          name: '基础设置/门店库',
+          component: StoreLibrary
+        },
+        //角色管理
+        {
+          path: '/infrastructure/RoleManagement',
+          name: '基础设置/角色管理',
+          component: RoleManagement
+        },
+        //权限管理
+        {
+          path: '/infrastructure/PermissionManagement',
+          name: '基础设置/权限管理',
+          component: PermissionManagement
+        },
+
+
+
+        //操作日志
+        {
+          path: '/infrastructure/OperationLog',
+          name: '操作日志',
+          component: OperationLog
+        },
+        //公众号管理
+        {
+          path: '/infrastructure/PublicManagement',
+          name: '公众号管理',
+          component: PublicManagement
+        },
+
+        /**********************运营***************************/
+        //运行状态
+        {
+          path: '/operate/runningState',
+          name: '运行状态',
+          component: RunningState
+        },
+        //发票配置
+        {
+          path: '/operate/invoiceAllocation',
+          name: '发票配置',
+          component: InvoiceAllocation
+        },
+        //方案下发
+        {
+          path: '/operate/schemeDown',
+          name: '方案下发',
+          component: SchemeDown
+        },
+        //运营方案
+        {
+          path: '/operate/OperationPlan',
+          name: '运营方案',
+          component: OperationPlan
         },
 
 

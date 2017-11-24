@@ -10,5 +10,8 @@ export default {
   NavPathChange({commit},path){
     commit(types.NAVPATHCHANGE,path);
   },
+  setToken({commit},token){
+    commit(types.SETTOKEN,token);
+  }
 
 }

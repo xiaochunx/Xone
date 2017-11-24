@@ -15,5 +15,8 @@ export default{
   // 获取isLoading状态
   getLoadingStatus(state){
     return state.isLoading;
+  },
+  getToken(state){
+    return state.token;
   }
 }

@@ -7,107 +7,114 @@
 
       <div class="flex_es">
         <div>
-          <el-button size="small">批量删除</el-button>
-          <el-button size="small" @click="batchAdd()">批量新增</el-button>
-          <el-button size="small">批量关闭</el-button>
+          <el-button size="small" @click="addStore()">新增门店</el-button>
+          <el-button size="small" @click="delSelected()">批量删除</el-button>
+          <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
+          <el-button size="small" @click="setUrl()">批量设置url</el-button>
         </div>
 
         <div class="flex_a">
-          <div class="margin_r_10" >
+          <div class="margin_r_10">
             <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
           </div>
           <el-button size="small">搜索</el-button>
-          <el-button size="small" type="primary">+导入门店</el-button>
+          <el-button size="small" type="primary" @click="add()">+新增</el-button>
         </div>
       </div>
     </div>
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
+
         <el-tree
-          :data="data5"
+          :data="dataLeft"
           :props="defaultProps"
+          @node-click="nodeClick"
           node-key="id"
           default-expand-all
           :expand-on-click-node="true"
-          :render-content="renderContent">
+        >
         </el-tree>
       </div>
 
       <div :style="{width:tableWidth + 'px'}">
-          <el-table :data="storeData" border :height="tableHeight"  @row-click="rClick">
-            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
-                             type="index" width="70">
-              <template scope="scope">
+        <el-table :data="storeData" border :height="tableHeight">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
+                           type="index" width="70">
+            <template scope="scope">
 
-                <el-checkbox v-model="scope.row.NO"></el-checkbox>
-                {{scope.$index + 1 }}
-              </template>
-            </el-table-column>
-            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
-                             label="编码"
-                             width="100"></el-table-column>
-            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName" width="150"
-                             label="门店"></el-table-column>
+              <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
 
-            <el-table-column header-align="center" align="center" prop="storeGroup" label="门店组" width="80"></el-table-column>
-            <el-table-column header-align="center" align="center" prop="account" width="280" label="账户">
-              <template scope="scope">
-                <div v-for="(item,index) in scope.row.account">
-                  {{item}}
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                           label="编码"
+                           width="100"></el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName"
+                           width="150"
+                           label="门店"></el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
+                           width="250" label="账户 -- 支付方式 -- 支付通道">
+            <template scope="scope">
+              <div v-for="(item,index) in scope.row.account">
+                <div>
+                  {{item.accountName}} -- {{item.paymentMethod}} -- {{item.paymentChannel}}
                 </div>
-              </template>
-            </el-table-column>
-            <el-table-column header-align="center" align="center" prop="reserveAccount" width="280" label="备用账号"></el-table-column>
-            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="支付"
-                             width="80"></el-table-column>
-            <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
-              <template scope="scope">
-                <el-button size="small" type="primary" @click.stop="getOneList()">查看</el-button>
-                <el-button size="small" @click.stop="edit()">编辑</el-button>
-                <!--<el-button size="small" type="danger" @click.stop="del()">删除</el-button>-->
-              </template>
-            </el-table-column>
-          </el-table>
+
+              </div>
+            </template>
+
+          </el-table-column>
+
+          <el-table-column label-class-name="table_head" header-align="center" align="center"label="支付" width="80">
+            <template scope="scope">
+              <div v-if="scope.row.isOpenPay === 1">
+                √
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="发票" width="80">
+            <template scope="scope">
+              <div v-if="scope.row.isOpenInvoice === 1">
+                √
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="payJumpUrl"
+                           label="支付后跳转url"
+                           width="280">
+            <template scope="scope">
+              <el-input v-model="scope.row.payJumpUrl" :disabled="scope.row.checked"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
+                           width="100">
+            <template scope="scope">
+              <el-switch
+                v-model="scope.row.status"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+            </template>
+
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
+            <template scope="scope">
+              <el-button size="small" type="primary" @click.stop="getOneList(scope.row.id)">查看</el-button>
+              <el-button size="small" @click.stop="edit(scope.row.id)">编辑</el-button>
+              <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
         <footer>
-          <xo-pagination></xo-pagination>
+          <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
 
       </div>
     </div>
     <!--弹窗-->
-    <transition name="myStore">
-      <!--一定要有class,写style无效-->
-      <div v-show="showAside" class="myStore">
-        <div class="padding_10" style="width: 280px">
-          <div>{{showAsideObj.storeName}}</div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">门店编码：</div>
-            <div class="flex_1">{{showAsideObj.storeCode}}</div>
-          </div>
 
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">第三方编码：</div>
-            <div class="flex_1">美团  8989</div>
-          </div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">所属组：</div>
-            <div class="flex_1">广州运营区</div>
-          </div>
-          <div class="flex_r margin_t_10">
-            <div class="flex_1 flex_ce">门店电话：</div>
-            <div class="flex_1">020-9849792</div>
-          </div>
-
-          <div class="flex_r margin_t_10">
-            <el-button size="mini" type="primary">置顶</el-button>
-            <el-button size="mini" type="primary">修改</el-button>
-            <el-button size="mini" type="primary">停用</el-button>
-            <el-button size="mini" type="primary">更多</el-button>
-          </div>
-        </div>
-      </div>
-    </transition>
     <el-dialog
       title="新建／修改组"
       :visible.sync="dialogVisible"
@@ -178,23 +185,59 @@
       </el-form>
     </el-dialog>
 
+    <el-dialog
+      title="开启/关闭"
+      :visible.sync="dialogVisible1"
+      width="50%" size="tiny">
+      <el-switch
+        v-model="value2"
+        on-color="#13ce66"
+        off-color="#ff4949">
+      </el-switch>
+      <div class="margin_t_10">
+        <el-button>取消</el-button>
+        <el-button type="primary">确认</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="新增门店"
+      :visible.sync="dialogVisible2"
+      width="50%" size="tiny">
+
+      <el-tree
+        :data="dataLeft"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        @setChecked="setChecked"
+        :props="defaultProps">
+      </el-tree>
+      <div class="margin_t_10">
+        <el-button>取消</el-button>
+        <el-button type="primary">确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  let id = 1000;
-  import xoNavPath from '../../NavPath.vue'
+
   import {getScrollHeight} from '../../../utility/getScrollHeight'
+  import getApi from './storeList.service';
+
   export default {
     components: {
-      xoNavPath
+
     },
     data() {
       return {
-        showAside: false,
-        dialogVisible:false,
+        value2:false,
+        dialogVisible: false,
+        dialogVisible1:false,
+        dialogVisible2:false,
         tableHeight: 0,
-        tableWidth:0,
+        tableWidth: 0,
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
         storeGroupData: [{
           value: 1,
@@ -222,94 +265,13 @@
           label: '关闭'
         }],
         storeName: '',
-        storeData: [{
-          NO: true,
-          storeCode: '83789',
-          storeName: '炳胜（马场店）',
-          storeGroup: '山口组',
-          account: ['支付宝  易极付  炳胜（马场店）','支付宝  易极付  炳胜（马场店）'],
-          reserveAccount:'支付宝  易极付  炳胜（马场店）',
-          status: '开启'
-        }, {
-          NO: false,
-          storeCode: '837892',
-          storeName: '炳胜（马场店）',
-          storeGroup: '山口组',
-          account: ['支付宝  易极付  炳胜（马场店）','支付宝  易极付  炳胜（马场店）'],
-          reserveAccount:'支付宝  易极付  炳胜（马场店）',
-          status: '开启'
-        }, {
-          NO: false,
-          storeCode: '837893',
-          storeName: '炳胜（马场店）',
-          storeGroup: '山口组',
-          account: ['支付宝  易极付  炳胜（马场店）','支付宝  易极付  炳胜（马场店）'],
-          reserveAccount:'支付宝  易极付  炳胜（马场店）',
-          status: '开启'
-        }],
-        data4: [{
-          id: 1, name: '民生银行000', children: [
-            {
-              id: 5,
-              parentId: 1,
-              name: '九毛九',
-            }, {
-              id: 6,
-              parentId: 1,
-              name: '太二酸菜鱼',
-            }]
-        }, {
-          id: 2, name: '易极付', children: [
-            {
-              id: 7,
-              parentId: 2,
-              name: '狮子牌',
-            }, {
-              id: 8,
-              parentId: 2,
-              name: '狮子牌22', children: [
-                {id: 9, parentId: 8,name: 'pkkkk',}
-              ]
-            },
-            {
-              id: 10,
-              parentId: 2,
-              name: '狮子牌33'
-            },
-          ]
-        },{
-          id: 3, name: '易极付4444'
-        }],
-        data5: [{
-          id: 1,
-          label: '民生银行',
-          children: [{
-            id: 4,
-            label: '狮子牌',
-            children: [{
-              id: 9,
-              label: '狮子牌33'
-            }, {
-              id: 10,
-              label: '易极付4444'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '民生银行1',
-          children: [{
-            id: 5,
-            label: '九毛九'
-          }, {
-            id: 6,
-            label: '太二酸菜鱼'
-          }]
-        }],
+        storeData: [],
+        dataLeft: [],
         defaultProps: {
-          children: 'children',
-          label: 'label'
+          children: 'child',
+          label: 'levelname'
         },
-        showAsideObj: {storeName: "", storeCode: ""},//侧滑内容
+
         form: {
           name: '',
           code: '',
@@ -327,26 +289,58 @@
           value: 2,
           label: '易极付'
         }],
+        token:'',
+        p:{page:1, size:10, total:0},
+
       }
     },
-    watch: {
-      "showAsideObj": function (n, o) {
-        if (n.storeCode === o.storeCode) {
-          this.showAside = !this.showAside
-        } else {
-          if (this.showAside === false) {
-            this.showAside = true;
-          } else {
-            this.showAside = false;
-            setTimeout(() => {
-              this.showAside = true;
-            }, 500)
-          }
-        }
-      }
-    },
+    watch: {},
     methods: {
-      batchAdd(){
+      getPage(page){
+        this.p.page = page;
+        this.showResouce();
+      },
+      getPageSize(size){
+        this.p.size = size;
+        this.showResouce();
+      },
+      add(){
+        console.log(this.storeData)
+      },
+      nodeClick(data,data1,data2){
+        console.log(data.levelname)
+this.showResouce(data.levelname)
+
+      },
+      setChecked(data, checked, deep){
+        console.log(data)
+      },
+      delSelected(){
+        this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'info',
+            message: '删除成功'
+          });
+        }).catch(() => {
+          //
+        });
+      },
+      isSwitch(){
+        this.dialogVisible1 = true
+      },
+      setUrl() {
+        this.storeData.forEach((data) => {
+          data.checked = false
+        })
+      },
+      addStore(){
+        this.dialogVisible2 = true
+      },
+      batchAdd() {
         this.$router.push('/storeManage/storeList/newAddStore')
       },
       removeDomain(item) {
@@ -361,78 +355,55 @@
           key: Date.now()
         });
       },
-      renderContent(h, { node, data, store }) {
-        return (
-          <span >
-          <span>
-          <span>{node.label}</span>
-        </span>
-        <span class="clickEvent">
-          <el-popover placement="right" width="200" trigger="click">
-          <el-button size="mini" type="text" on-click={ () => this.append(data) }>添加下级组</el-button>
-        <el-button size="mini" type="text" on-click={ () => this.editGroup(data) }>修改组</el-button>
-        <el-button size="mini" type="text" >上移</el-button>
-          <el-button size="mini" type="text">下移</el-button>
-          <el-button size="mini" type="text">删除</el-button>
-          <i slot="reference" class="el-icon-plus pointer margin_l_10"></i>
-          </el-popover>
-          </span>
-          </span>);
-      },
-      rClick(row, event, column) {
-        this.showAsideObj = {"storeName": row.storeName, "storeCode": row.storeCode}
-      },
-      getOneList() {
-        console.log(123)
-        this.$router.push('/storeManage/storeList/seeTheStore')
-      },
-      edit() {
 
+      getOneList(id) {
+        this.$router.push({path: `/storeManage/storeList/seeTheStore/${id}`})
       },
-      editGroup(item){
+      edit(id) {
+        this.$router.push({path:`/storeManage/storeList/editStoreAccount/${id}`})
+      },
+      editGroup(item) {
         this.item = item;
         this.dialogVisible = true
       },
       del() {
+        getApi.delOne().then((res)=>{
+          console.log(res)
+        })
 
       },
-      append(data) {
-        const newChild = { id: id++, label: 'testtest', children: [] };
-        if (!data.children) {
-          this.$set(data, 'children', []);
-        }
-        data.children.push(newChild);
-        this.clickEvent()
-      },
-
-      recur(data){
-        data.forEach((map)=>{
-          if(map.children){
-            //map.height = map.children.length *35
-            this.$set(map,"show",true)
-            this.recur(map.children)
+      showResouce(storeName = ""){
+        getApi.getList(this.token,this.p,storeName).then((res) => {
+          console.log(res.data.data)
+          if(res.data.errcode === 0){
+            res.data.data.list.forEach((data)=>{
+              data.checked = true
+            });
+            this.storeData = res.data.data.list;
+            this.p.total = res.data.data.count
+          }else {
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }})
           }
         })
-      },
-      clickEvent(){
-        let dom = document.querySelectorAll('.clickEvent');
-        dom.forEach((map)=>{
-          map.addEventListener('click',function (event) {
-            event.stopPropagation()
-            event.preventDefault()
-
-          })
-        })
       }
+    },
+   async created() {
+      this.token = this.$localStorage.get('token');
+
+
+    await getApi.getLeft(this.token).then((res)=>{
+        this.dataLeft = res.data.data
+      });
+
+     await this.showResouce();
 
     },
-    created() {
-      let data = this.data4;
-      this.recur(data)
+    mounted() {
 
-    },
-    mounted(){
-      this.clickEvent()
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -456,6 +427,7 @@
   .m-storeCode {
     font-size: 30px;
   }
+
   .m-storeList {
     height: 50px;
     line-height: 50px;
@@ -497,16 +469,5 @@
     z-index: 100;
     border-radius: 10px;
     border: 1px solid #E5EBF4
-  }
-
-
-
-  /*不能有相同的class名*/
-  .myStore-enter-active, .myStore-leave-active {
-    transition: all .5s;
-  }
-
-  .myStore-enter, .myStore-leave-to {
-    right: -280px;
   }
 </style>
