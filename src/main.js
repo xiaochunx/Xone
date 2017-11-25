@@ -15,6 +15,9 @@ import 'font-awesome/css/font-awesome.css'
 
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
+
+//http://x0test.kuan1.cn
+//http://bs.com/
 Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';
 //打开夸域cookie
 Axios.defaults.withCredentials = true;

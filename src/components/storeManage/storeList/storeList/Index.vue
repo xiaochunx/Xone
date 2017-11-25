@@ -15,10 +15,10 @@
 
         <div class="flex_a">
           <div class="margin_r_10">
-            <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
+            <el-input size="small" v-model="storeName" placeholder="请输入门店名称"></el-input>
           </div>
           <el-button size="small">搜索</el-button>
-          <el-button size="small" type="primary" @click="add()">+新增</el-button>
+
         </div>
       </div>
     </div>
@@ -32,12 +32,13 @@
           @node-click="nodeClick"
           node-key="id"
           default-expand-all
-          :expand-on-click-node="true"
+          :highlight-current="true"
+          :expand-on-click-node="false"
         >
         </el-tree>
       </div>
 
-      <div :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="70">
@@ -66,7 +67,7 @@
 
           </el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center"label="支付" width="80">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="支付" width="80">
             <template scope="scope">
               <div v-if="scope.row.isOpenPay === 1">
                 √
@@ -83,18 +84,24 @@
 
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="payJumpUrl"
                            label="支付后跳转url"
-                           width="280">
+                           width="320">
             <template scope="scope">
-              <el-input v-model="scope.row.payJumpUrl" :disabled="scope.row.checked"></el-input>
+              <div class="flex_a">
+                <el-input class="margin_r_10" v-model="scope.row.payJumpUrl" :disabled="scope.row.inputChecked"></el-input>
+                <el-button type="primary" :disabled="scope.row.inputChecked" @click="setOneUrl(scope.row)">确定</el-button>
+              </div>
+
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="100">
             <template scope="scope">
-              <el-switch
-                v-model="scope.row.status"
-                on-color="#13ce66"
-                off-color="#ff4949">
+              <el-switch @change="()=>{
+                return changeStatus(scope.row)
+              }"
+                         v-model="scope.row.status"
+                         on-color="#13ce66"
+                         off-color="#ff4949">
               </el-switch>
             </template>
 
@@ -103,7 +110,7 @@
             <template scope="scope">
               <el-button size="small" type="primary" @click.stop="getOneList(scope.row.id)">查看</el-button>
               <el-button size="small" @click.stop="edit(scope.row.id)">编辑</el-button>
-              <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
+              <el-button size="small" type="danger" @click.stop="del(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -184,38 +191,37 @@
         </div>
       </el-form>
     </el-dialog>
-
+    <!--批量开启/关闭-->
     <el-dialog
       title="开启/关闭"
       :visible.sync="dialogVisible1"
       width="50%" size="tiny">
       <el-switch
-        v-model="value2"
+        v-model="storeStatusValue"
         on-color="#13ce66"
         off-color="#ff4949">
       </el-switch>
       <div class="margin_t_10">
-        <el-button>取消</el-button>
-        <el-button type="primary">确认</el-button>
+        <el-button @click="dialogVisible1 = false">取消</el-button>
+        <el-button type="primary" @click="changeStoresStatus()">确认</el-button>
       </div>
     </el-dialog>
-
+    <!--新增门店-->
     <el-dialog
       title="新增门店"
       :visible.sync="dialogVisible2"
       width="50%" size="tiny">
-
-      <el-tree
-        :data="dataLeft"
-        show-checkbox
-        node-key="id"
-        default-expand-all
-        @setChecked="setChecked"
-        :props="defaultProps">
-      </el-tree>
+      <div class="margin_b_10" v-for="(item,index) in baseStore">
+        <div>
+          {{index}}
+          <div class="padding_l_10" v-for="(item1,index1) in item">
+           <el-checkbox v-model="item1.OK">{{item1.storename}}</el-checkbox>
+          </div>
+        </div>
+      </div>
       <div class="margin_t_10">
-        <el-button>取消</el-button>
-        <el-button type="primary">确认</el-button>
+        <el-button @click="dialogVisible2 = false">取消</el-button>
+        <el-button type="primary" @click="add()">确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -225,17 +231,19 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
+  import ElCheckbox from "../../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
+  import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
 
   export default {
     components: {
-
-    },
+      ElButton,
+      ElCheckbox},
     data() {
       return {
-        value2:false,
+        storeStatusValue: false,
         dialogVisible: false,
-        dialogVisible1:false,
-        dialogVisible2:false,
+        dialogVisible1: false,
+        dialogVisible2: false,
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
@@ -289,57 +297,165 @@
           value: 2,
           label: '易极付'
         }],
-        token:'',
-        p:{page:1, size:10, total:0},
-
+        token: '',
+        p: {page: 1, size: 20, total: 0},
+        baseStore: {},//点击新增时的门店
+        levelId:''//左边树ID
       }
     },
     watch: {},
     methods: {
-      getPage(page){
+      //设置url
+      setOneUrl(row){
+        getApi.urlStatus(this.token,row.id,row.payJumpUrl).then((res)=>{
+          console.log(res)
+        })
+
+      },
+      add(){
+        let list = [];
+        for(let map in this.baseStore){
+          this.baseStore[map].forEach((item)=>{
+            if(item.OK){
+              list.push(item.id)
+            }
+          })
+        }
+        if(list.length === 0){
+          this.$message('请选择门店');
+        }else {
+          getApi.addStore(this.token,list.join(',')).then((res)=>{
+            console.log(res)
+            this.dialogVisible2 = false
+            this.showResouce();
+          })
+        }
+
+      },
+      addStore() {
+        if(this.levelId === ""){
+          this.$message('请选择门店库');
+        }else {
+          this.dialogVisible2 = true;
+          getApi.getBaseStore(this.token,this.levelId).then((res)=>{
+            console.log(res.data.data)
+            this.baseStore = res.data.data
+          })
+        }
+      },
+
+      isSwitch() {
+        let list = [];
+
+        this.storeData.forEach((item)=>{
+          if(item.NO){
+            list.push(item.id)
+          }
+        });
+        if(list.length === 0){
+          this.$message('请勾选门店');
+        } else {
+          this.dialogVisible1 = true
+        }
+
+
+      },
+      //状态设置
+      changeStatus(data) {
+        let storeStatusValue;
+        if (data.status) {
+          storeStatusValue = 1
+        } else {
+          storeStatusValue = 0
+        }
+        getApi.storesStatus(this.token, data.id, storeStatusValue).then((res) => {
+          console.log(res)
+          this.showResouce();
+        })
+      },
+      //批量状态设置
+      changeStoresStatus() {
+        let list = [];
+
+        this.storeData.forEach((item)=>{
+          if(item.NO){
+            list.push(item.id)
+          }
+        });
+
+        let storeStatusValue;
+        if (this.storeStatusValue) {
+          storeStatusValue = 1
+        } else {
+          storeStatusValue = 0
+        }
+
+          getApi.storesStatus(this.token, list.join(','), storeStatusValue).then((res) => {
+            console.log(res)
+            this.showResouce();
+            this.dialogVisible1 = false
+          })
+
+
+
+      },
+      getPage(page) {
         this.p.page = page;
         this.showResouce();
       },
-      getPageSize(size){
+      getPageSize(size) {
         this.p.size = size;
         this.showResouce();
       },
-      add(){
-        console.log(this.storeData)
-      },
-      nodeClick(data,data1,data2){
+
+      nodeClick(data, data1, data2) {
         console.log(data.levelname)
-this.showResouce(data.levelname)
+        this.levelId = data.id;
+        this.showResouce(data.levelname, data.id)
 
       },
-      setChecked(data, checked, deep){
+      setChecked(data, checked, deep) {
         console.log(data)
       },
-      delSelected(){
-        this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'info',
-            message: '删除成功'
-          });
-        }).catch(() => {
-          //
+      delSelected() {
+        let list = [];
+        this.storeData.forEach((item)=>{
+          if(item.NO){
+            list.push(item.id)
+          }
         });
+        if(list.length === 0){
+          this.$message('请勾选门店');
+        }else {
+          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            getApi.del(this.token,list.join(",")).then((res)=>{
+              console.log(res)
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+              this.showResouce();
+            })
+
+
+          }).catch(() => {
+            //
+          });
+        }
+
+
       },
-      isSwitch(){
-        this.dialogVisible1 = true
-      },
+
       setUrl() {
         this.storeData.forEach((data) => {
-          data.checked = false
+          data.inputChecked = false
         })
       },
-      addStore(){
-        this.dialogVisible2 = true
-      },
+
       batchAdd() {
         this.$router.push('/storeManage/storeList/newAddStore')
       },
@@ -360,46 +476,66 @@ this.showResouce(data.levelname)
         this.$router.push({path: `/storeManage/storeList/seeTheStore/${id}`})
       },
       edit(id) {
-        this.$router.push({path:`/storeManage/storeList/editStoreAccount/${id}`})
+        this.$router.push({path: `/storeManage/storeList/editStoreAccount/${id}`})
       },
       editGroup(item) {
         this.item = item;
         this.dialogVisible = true
       },
-      del() {
-        getApi.delOne().then((res)=>{
-          console.log(res)
-        })
+      del(id) {
+        this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          getApi.del(this.token, id).then((res) => {
+            console.log(res)
+            if (res) {
+
+            }
+            this.$message({
+              type: 'info',
+              message: '删除成功'
+            });
+            this.showResouce()
+
+          })
+
+        }).catch(() => {
+          //
+        });
 
       },
-      showResouce(storeName = ""){
-        getApi.getList(this.token,this.p,storeName).then((res) => {
+      showResouce(storeName = "", levelId = "") {
+        getApi.getList(this.token, this.p, storeName, levelId).then((res) => {
           console.log(res.data.data)
-          if(res.data.errcode === 0){
-            res.data.data.list.forEach((data)=>{
-              data.checked = true
+          if (res.data.errcode === 0) {
+            res.data.data.list.forEach((data) => {
+              data.inputChecked = true
+              data.NO = false
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
-          }else {
+          } else {
             this.$alert('请重新登录', '超时', {
               confirmButtonText: '确定',
               callback: action => {
                 this.$router.push('/login')
-              }})
+              }
+            })
           }
         })
       }
     },
-   async created() {
+    created() {
       this.token = this.$localStorage.get('token');
 
 
-    await getApi.getLeft(this.token).then((res)=>{
+      getApi.getLeft(this.token).then((res) => {
         this.dataLeft = res.data.data
       });
 
-     await this.showResouce();
+      this.showResouce();
 
     },
     mounted() {

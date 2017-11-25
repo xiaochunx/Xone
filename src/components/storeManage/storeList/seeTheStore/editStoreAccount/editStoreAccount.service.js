@@ -45,9 +45,7 @@ let editStore = (token,storeData) => {
     formData.append("payJumpUrl", storeData.payJumpUrl);
     formData.append("urlWithCode", storeData.urlCode);
     axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
-
       resolve(res)
-
     })
   })
 };
@@ -67,7 +65,24 @@ let getSecond = (token,id) => {
     })
   })
 };
-export default {getFirst,getSecond,getList,editStore}
+
+//编辑门店-收款账户-保存
+let editStoreAccount = (token,id) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("id", id);
+    formData.append("redirect", "x1.store.saveStoreAccount");
+
+    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+
+      resolve(res)
+
+    })
+  })
+};
+
+
+export default {getFirst,getSecond,getList,editStore,editStoreAccount}
 
 
 

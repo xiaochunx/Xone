@@ -7,8 +7,8 @@
 
       <div class="flex_es">
         <div>
+          <el-button size="small" @click="batchAdd()" :disabled="!showAdd.showAdd">批量新增</el-button>
           <el-button size="small">批量删除</el-button>
-          <el-button size="small" @click="batchAdd()">批量新增</el-button>
           <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
         </div>
 
@@ -92,7 +92,7 @@
                 </div>
               </el-popover>
 
-              <el-button size="small" type="primary" v-popover:popover4>查看</el-button>
+              <el-button size="sshowAddmall" type="primary" v-popover:popover4>查看</el-button>
               <el-button size="small" @click.stop="edit()">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
               <el-button size="small" type="primary" >上传资料</el-button>
@@ -100,7 +100,7 @@
           </el-table-column>
         </el-table>
         <footer>
-          <xo-pagination></xo-pagination>
+          <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
 
       </div>
@@ -190,16 +190,41 @@
       </el-form>
     </el-dialog>
 
+    <el-dialog
+      title="批量新增"
+      :visible.sync="dialogVisible2"
+      width="50%" size="tiny">
+      <div class="flex_f flex">
+        <div class="margin_b_10">需要增加几家？</div>
+        <div class="flex_a">
+          <el-input v-model="number" style="width: 50px"></el-input><span class="padding_l_10">家</span>
+        </div>
+
+        <div class="margin_t_10">
+          <el-button @click="dialogVisible2 = false">取消</el-button>
+          <el-button type="primary" @click="goToAddStore()">确认</el-button>
+        </div>
+      </div>
+
+
+
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-  let id = 1;
+  import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
 
+  let id = 1;
+  import Hub from '../../utility/commun'
   import tree from './tree.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
+  import getApi from './storeLibrary.service'
+
   export default {
     components: {
+      ElInput,
       tree,
     },
     data() {
@@ -208,6 +233,7 @@
         showAside: false,
         dialogVisible:false,
         dialogVisible1:false,
+        dialogVisible2:false,
         tableHeight: 0,
         tableWidth:0,
         navList: [{name: "门店管理", url: ''}, {name: "门店库", url: ''}],
@@ -251,10 +277,7 @@
           status: '开启'
         }],
 
-        data5: [{
-          id: 0,
-          label: '款易',children: []
-        }],
+        data5: [],
         defaultProps: {
           children: 'children',
           label: 'label'
@@ -277,12 +300,28 @@
           value: 2,
           label: '易极付'
         }],
+        token:'',
+        p: {page: 1, size: 20, total: 0},
+        showAdd:{levelid:'',type:'',showAdd:false},
+        number:''
       }
     },
     watch: {
 
     },
     methods: {
+      goToAddStore(){
+        console.log(this.showAdd)
+        this.$router.push({path:`/storeManage/storeList/newAddStore/${this.number}/${this.showAdd.levelid}/${this.showAdd.type}`})
+      },
+      getPage(page) {
+        this.p.page = page;
+//        this.showResouce();
+      },
+      getPageSize(size) {
+        this.p.size = size;
+//        this.showResouce();
+      },
       isSwitch(){
         this.dialogVisible1 = true
       },
@@ -365,7 +404,7 @@
         this.dialogVisible = true
       },
       batchAdd(){
-        this.$router.push('/storeManage/storeList/newAddStore')
+        this.dialogVisible2 = true
       },
       removeDomain(item) {
         var index = this.form.thirdPartyCoding.indexOf(item)
@@ -417,24 +456,55 @@
       },
       recur(data){
         data.forEach((map)=>{
-          if(map.children){
+          if(map.child){
             this.$set(map,"show",true);
-            this.recur(map.children)
+            this.recur(map.child)
           }
         })
       },
+      showLevel() {
+        getApi.getLevel(this.token).then((res)=>{
+          if (res.data.errcode === 0) {
+            this.data5 = res.data.data;
+            this.recur(this.data5)
+          } else {
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }
+            })
+          }
+        })
+      }
     },
     created() {
-      let data = this.data5;
-      this.recur(data)
+//      let data = this.data5;
+//      this.recur(data)
+      this.token = this.$localStorage.get('token');
 
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
 
+      this.showLevel();
+
+
+
+
     },
     mounted(){
       //this.clickEvent()
+
+      Hub.$on('treeEventEditDel', (e) => {
+        this.showLevel();
+      })
+
+      Hub.$on('showAdd', (e) => {
+        this.showAdd = e
+
+      })
+
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;

@@ -14,7 +14,7 @@ let getLeft = (token) => {
 
 
 //获取门店列表
-let getList = (token,p,storeName) => {
+let getList = (token,p,storeName,levelId) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeList");
@@ -22,7 +22,7 @@ let getList = (token,p,storeName) => {
     formData.append("page", p.page);
     formData.append("pagesize", p.size);
     formData.append("storeName", storeName);
-
+    formData.append("levelId", levelId);
     axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
       resolve(res)
     })
@@ -49,7 +49,7 @@ let updateOne = (token) => {
 
 
 //删除门店
-let delOne = (token,id) => {
+let del = (token,id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.delStores");
@@ -75,8 +75,61 @@ let getOne = (token,id) => {
   })
 };
 
+//开启、关闭门店
+let storesStatus = (token,ids,status) => {
+  console.log(ids)
+  console.log(status)
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.store.changeStoresStatus");
+    formData.append("storeId", ids);
+    formData.append("status", status);
+    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
 
-export default {getLeft,getList, updateOne,getOne,delOne}
+//修改url
+let urlStatus = (token,ids,url) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.store.setStoresUrl");
+    formData.append("storeId", ids);
+    formData.append("$url", url);
+    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+//添加门店时候，读取基础库
+let getBaseStore = (token,levelId) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.store.getBaseStore");
+    formData.append("levelId", levelId);
+
+    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+//从基础门店中添加门店
+let addStore = (token,storeIds) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.store.addStore");
+    formData.append("storeIds", storeIds);
+
+    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+export default {getLeft,getList, updateOne,getOne,del,storesStatus,urlStatus,getBaseStore,addStore}
 
 
 

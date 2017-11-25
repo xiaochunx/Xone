@@ -107,7 +107,7 @@ export default new Router({
         },
         {
           // 新增门店
-          path: '/storeManage/storeList/newAddStore',
+          path: '/storeManage/storeList/newAddStore/:number/:levelid/:type',
           name: '门店管理/门店列表/新增门店',
           component: NewAddStore,
         },
