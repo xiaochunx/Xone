@@ -4,7 +4,7 @@
       <xo-nav-path></xo-nav-path>
     </div>
     <div class="contentMsg">
-      <el-card>
+      <el-card :style="{ height: height + 'px'}" style="overflow: auto;">
         <el-row>
           <el-col :span="24" style="border-bottom: 1px solid gainsboro">
             <h3 style="margin-bottom: 10px;">添加门店</h3>
@@ -53,12 +53,16 @@
                     </el-select>
                   </el-col>
 
-                  <el-col :span="4" :offset="1">
 
-                    <el-button class="plusBtn" @click.prevent="removeDomain(domain,'account')" size="small"><i class="fa fa-minus-circle"></i></el-button>
-                    <el-button class="minusBtn" @click="addDomain('account')" size="small"><i class="fa fa-plus-circle"></i></el-button>
-
-                  </el-col>
+                  <div class="flex_sc">
+                    <div class="m-storeCode margin_l_10" @click="addDomain('account')">
+                      <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                    </div>
+                    <div v-if="(form.account.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                         @click.prevent="removeDomain(domain,'account')">
+                      <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                    </div>
+                  </div>
                 </el-col>
 
               </el-form-item>
@@ -67,51 +71,53 @@
 
             <!-- 备用账户 -->
             <el-col :span="24">
-              <el-form-item label="备用账户:">
-                <el-form-item v-for="(domain, index) in form.reserveAcc"
-                              :key="domain.key"
-                              :prop="'reserveAcc.' + index + '.value'"
-                >
-                  <el-col :span="24" class="cell-b">
-                    <el-col :span="6">
-                      <el-select v-model="domain.value1" placeholder="请选择">
-                        <el-option
-                          v-for="item in domain.options1"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value">
-                        </el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-select v-model="domain.value2" placeholder="请选择">
-                        <el-option
-                          v-for="item in domain.options2"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value">
-                        </el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col :span="6">
-                      <el-select v-model="domain.value3" placeholder="请选择">
-                        <el-option
-                          v-for="item in domain.options3"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value">
-                        </el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col :span="4" :offset="1">
-
-                      <el-button class="plusBtn" @click.prevent="removeDomain(domain,'reserveAcc')" size="small"><i class="fa fa-minus-circle"></i></el-button>
-                      <el-button class="minusBtn" @click="addDomain('reserveAcc')" size="small"><i class="fa fa-plus-circle"></i></el-button>
-
-                    </el-col>
+              <el-form-item v-for="(domain, index) in form.reserveAcc"
+                            :label="'备用账户 ' + index + ':'"
+                            :key="domain.key"
+                            :prop="'reserveAcc.' + index + '.value'"
+              >
+                <el-col :span="24">
+                  <el-col :span="6">
+                    <el-select v-model="domain.value1" placeholder="请选择">
+                      <el-option
+                        v-for="item in domain.options1"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-select v-model="domain.value2" placeholder="请选择">
+                      <el-option
+                        v-for="item in domain.options2"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-select v-model="domain.value3" placeholder="请选择">
+                      <el-option
+                        v-for="item in domain.options3"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select>
                   </el-col>
 
-                </el-form-item>
+                  <div class="flex_sc">
+                    <div class="m-storeCode margin_l_10" @click="addDomain('reserveAcc')">
+                      <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                    </div>
+                    <div v-if="(form.reserveAcc.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                         @click.prevent="removeDomain(domain,'reserveAcc')">
+                      <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                    </div>
+                  </div>
+                </el-col>
               </el-form-item>
             </el-col>
 
@@ -223,6 +229,7 @@
 </template>
 <script>
   import xoNavPath from './NavPath.vue'
+  import {mapGetters, mapActions} from 'vuex'
 
   export default {
     data() {
@@ -378,8 +385,9 @@
               label: '北京烤鸭'
             }
             ],
-          }]
-        }
+          }],
+        },
+        height: 0
       }
     },
     props: {
@@ -391,28 +399,21 @@
     components: {
       xoNavPath
     },
+    computed: {
+      ...mapGetters([
+        'getTopHeight',
+        'getLoadingStatus'
+      ]),
+    },
     methods: {
       removeDomain(item, status) {
         if (status == 'account') {
-          if (this.form.account.length == 1) {
-            this.$message('不能再删啦');
-          } else {
-            var index = this.form.account.indexOf(item);
-            if (index !== -1) {
-              this.form.account.splice(index, 1)
-            }
-          }
+          var index = this.form.account.indexOf(item);
+          this.form.account.splice(index, 1)
         } else {
-          if (this.form.reserveAcc.length == 1) {
-            this.$message('不能再删啦');
-          } else {
-            var index = this.form.reserveAcc.indexOf(item);
-            if (index !== -1) {
-              this.form.reserveAcc.splice(index, 1)
-            }
-          }
+          var index = this.form.reserveAcc.indexOf(item);
+          this.form.reserveAcc.splice(index, 1)
         }
-
       },
       addDomain(status) {
         if (status == 'reserveAcc') {
@@ -533,35 +534,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            var flag = true;
-            this.form.account.forEach(function (item) {
-              for (var value in item) {
-                if (item[value] == ""){
-                   flag = false;
-                }
-              }
-            });
-
-            this.form.reserveAcc.forEach(function (item) {
-              for (var value in item) {
-                if (item[value] == ""){
-                  flag = false;
-                }
-              }
-            });
-
-            if (flag){
-               this.$message({
-                 message: "提交成功",
-                 type: "success"
-               })
-            }else {
-              this.$message({
-                message: "所有的表格都要填写",
-                type: "warning"
-              })
-            }
-
+            console.log('submit!!');
           } else {
             console.log('error submit!!');
             return false;
@@ -571,6 +544,14 @@
       handleNodeClick(data) {
         console.log(data);
       }
+    }
+    ,
+    mounted() {
+      // 高度调整
+      var totalH = window.innerHeight - this.getTopHeight;
+      var topH = document.querySelector('.contentMsg').clientHeight;
+
+      this.height = totalH - topH - 50;
     }
   }
 </script>
@@ -601,18 +582,27 @@
     transform: translateY(-70%) translateX(65%);
   }
 
-  .plusBtn{
+  .plusBtn {
     border: none;
     color: red;
     font-size: 35px;
     padding: 0 9px 0 9px;
   }
 
-  .minusBtn{
+  .minusBtn {
     border: none;
     color: deepskyblue;
     font-size: 35px;
     padding: 0 9px 0 9px;
   }
 
+  .m-storeCode {
+    font-size: 30px;
+  }
+
+  .flex_sc {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
 </style>

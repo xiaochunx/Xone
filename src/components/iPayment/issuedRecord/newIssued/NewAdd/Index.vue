@@ -4,7 +4,7 @@
       <xo-nav-path></xo-nav-path>
     </div>
     <div class="contentMsg">
-      <el-card>
+      <el-card :style="{ height: height + 'px'}" style="overflow: auto;">
         <el-row>
           <el-col :span="24" style="border-bottom: 1px solid gainsboro">
             <h3 style="margin-bottom: 10px;">添加门店</h3>
@@ -13,36 +13,41 @@
             <el-col :span="24" class="cell">
               <el-col :span="24">
                 <el-form-item>
-                  <el-col :span="7">
-                    <el-select v-model="form.value" placeholder="--省份--">
+
+
+                  <div class="flex_a">
+                    <el-select :class="{isSelected:form.provinceClass === true}" v-model="form.province"
+                               @change="myChange(form,'province','provinceClass','isProvince')" placeholder="请选择省">
                       <el-option
-                        v-for="item in form.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                        v-for="item in provinceList"
+                        :key="item.name"
+                        :label="item.name"
+                        :value="item.name">
                       </el-option>
                     </el-select>
-                  </el-col>
-                  <el-col :span="7" :offset="1">
-                    <el-select v-model="form.value" placeholder="--城市--">
-                      <el-option
-                        v-for="item in form.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </el-col>
-                  <el-col :span="7" :offset="1">
-                    <el-select v-model="form.value" placeholder="--门店标签--">
-                      <el-option
-                        v-for="item in form.options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+                    <div class="margin_l_10">
+                      <el-select :class="{isSelected:form.cityClass === true}" v-model="form.city"
+                                 @change="myChange(form,'city','cityClass','isCity')" placeholder="请选择市">
+                        <el-option
+                          v-for="item in form.cityList"
+                          :key="item.name"
+                          :label="item.name"
+                          :value="item.name">
+                        </el-option>
+                      </el-select>
+                    </div>
+                    <div class="margin_l_10">
+                      <el-select :class="{isSelected:form.areaClass === true}" v-model="form.area"
+                                 @change="myChange(form,'area','areaClass')" placeholder="请选择区">
+                        <el-option
+                          v-for="item in form.areaList"
+                          :key="item"
+                          :label="item"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                    </div>
+                  </div>
                 </el-form-item>
                 <el-form-item>
                   <el-col :span="16">
@@ -52,11 +57,52 @@
                     <el-button>搜索</el-button>
                   </el-col>
                 </el-form-item>
-                <el-form-item>
+
+
+                <!--<el-form-item>
                   <el-transfer v-model="form.data" :data="form.data2" :titles="['门店','已选门店']"></el-transfer>
+                </el-form-item>-->
+
+
+                <el-form-item>
+                  <el-row>
+                    <el-col :span="11">
+                      <el-tree
+                        :data="form.data3"
+                        show-checkbox
+                        node-key="id"
+                        :default-expanded-keys="[2, 3]"
+                        :default-checked-keys="[5]"
+                        :props="defaultProps">
+                      </el-tree>
+                    </el-col>
+
+                    <el-col :span="1">-</el-col>
+
+                    <el-col :span="11">
+
+                      <el-card class="box-card">
+                        已选门店
+                      </el-card>
+
+                      <el-col :span="24">
+                        <el-tree
+                          :data="form.data4"
+                          show-checkbox
+                          node-key="id"
+                          :default-expanded-keys="[2]"
+                          :default-checked-keys="[5]">
+                        </el-tree>
+                      </el-col>
+
+
+                    </el-col>
+                  </el-row>
                 </el-form-item>
+
+
               </el-col>
-            </el-col >
+            </el-col>
           </el-form>
           <el-col :span="24">
             <el-col :span="12" class="flex-jc">
@@ -73,6 +119,8 @@
 </template>
 <script>
   import xoNavPath from './NavPath.vue'
+  import {mapGetters, mapActions} from 'vuex'
+  import areaList from "../../../../utility/areaData"
 
   export default {
     data() {
@@ -92,7 +140,7 @@
               key: 3,
               label: '门店组3',
             }
-            ],
+          ],
           options: [{
             value: '选项1',
             label: '黄金糕'
@@ -112,7 +160,79 @@
           ],
           value: '',
           storeInfo: '',
-        }
+          data3: [{
+            id: 0,
+            label: '全部',
+            children: [{
+              id: 1,
+              label: '一级 1',
+              children: [{
+                id: 4,
+                label: '二级 1-1',
+                children: [{
+                  id: 9,
+                  label: '三级 1-1-1'
+                }, {
+                  id: 10,
+                  label: '三级 1-1-2'
+                }]
+              }]
+            }, {
+              id: 2,
+              label: '一级 2',
+              children: [{
+                id: 5,
+                label: '二级 2-1'
+              }, {
+                id: 6,
+                label: '二级 2-2'
+              }]
+            }, {
+              id: 3,
+              label: '一级 3',
+              children: [{
+                id: 7,
+                label: '二级 3-1'
+              }, {
+                id: 8,
+                label: '二级 3-2'
+              }]
+            }]
+          }],
+          data4: [{
+            id: 3,
+            label: '二级 2-1',
+            disabled: true,
+            children: [{
+              id: 4,
+              label: '三级 3-1-1'
+            }, {
+              id: 5,
+              label: '三级 3-1-2',
+            }]
+          }, {
+            id: 2,
+            label: '二级 2-2',
+            disabled: true,
+            children: [{
+              id: 6,
+              label: '三级 3-2-1'
+            }, {
+              id: 7,
+              label: '三级 3-2-2',
+            }]
+          }],
+          province: "",
+          provinceClass: false,
+          city: "",
+          cityList: [],
+          cityClass: false,
+          area: "",
+          areaList: [],
+          areaClass: false,
+        },
+        height: 0,
+        provinceList: []
       }
     },
     props: {
@@ -124,8 +244,49 @@
     components: {
       xoNavPath
     },
+    computed: {
+      ...mapGetters([
+        'getTopHeight',
+        'getLoadingStatus'
+      ]),
+    },
     methods: {
+      myChange(map, name, className, str) {
+        if (str === 'isProvince') {
+          areaList.forEach((data) => {
+            if (data.name === map.province) {
+              this.$set(map, "city", '');
+              this.$set(map, "area", '');
+              this.$set(map, "cityList", data.city);
+              this.$set(map, "areaList", []);
+            }
+          })
+        }
+        if (str === 'isCity' && map.city !== "") {
+          map.cityList.forEach((data) => {
+            if (data.name === map.city) {
+              this.$set(map, "area", '');
+              this.$set(map, "areaList", data.area);
+            }
+          })
+        }
 
+        if (map[name] !== "") {
+          map[className] = false
+        } else {
+          map[className] = true
+        }
+      },
+    },
+    created() {
+      this.provinceList = areaList
+    },
+    mounted() {
+      // 高度调整
+      var totalH = window.innerHeight - this.getTopHeight;
+      var topH = document.querySelector('.contentMsg').clientHeight;
+
+      this.height = totalH - topH - 50;
     }
   }
 </script>

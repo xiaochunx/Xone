@@ -6,12 +6,13 @@
         <xo-left-nav></xo-left-nav>
       </el-col>
       <el-col :span="20" id="getContentHeight" style="overflow-y: scroll">
-        <div :style="{height:ListHeight + 'px'}">
-          <div class="content">
-            <!--路由视图-->
-            <router-view v-loading="getLoadingStatus"></router-view>
-          </div>
+        <div class="content">
+          <!--路由视图-->
+          <router-view v-loading="getLoadingStatus" style="height: 100%"></router-view>
         </div>
+        <!--<div :style="{height:ListHeight + 'px'}">
+
+        </div>-->
       </el-col>
     </el-row>
   </div>
@@ -66,5 +67,6 @@
 <style scoped lang="less">
   .content {
     padding: 25px;
+    height: 100%;
   }
 </style>

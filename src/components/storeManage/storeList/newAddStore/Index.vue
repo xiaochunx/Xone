@@ -179,6 +179,7 @@ import areaList from "../../../utility/areaData"
     },
     methods: {
       myChange(map,name,className,str){
+        console.log(map);
         if(str === 'isProvince'){
           areaList.forEach((data)=>{
             if(data.name === map.province){

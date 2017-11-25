@@ -20,6 +20,7 @@ Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';
 Axios.defaults.withCredentials = true;
 
 Vue.prototype.$localStorage = localStorage;
+
 // 关闭生产模式下给出的提示
 Vue.config.productionTip = false;
 

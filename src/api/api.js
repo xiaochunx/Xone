@@ -1,15 +1,40 @@
-let base = '';
+import axios from 'axios'
+import qs from 'qs'
 
-export const requestLogin = params => { return this.$http.post(`${base}/login`, params).then(res => res.data); };
 
-export const getUserList = params => { return this.$http.get(`${base}/user/list`, { params: params }); };
+let get= function(key) {
+  return window.JSON.parse(window.localStorage.getItem(key));
+};
 
-export const getUserListPage = params => { return this.$http.get(`${base}/user/listpage`, { params: params }); };
+// 延迟时间
+let timeOut = {timeout: 1000 * 60};
+let token = get('token');
 
-export const removeUser = params => { return this.$http.get(`${base}/user/remove`, { params: params }); };
+// 调用x1,x2接口
+let changeUrl = `?controller=admin&action=api&token=${get('token')}`;
 
-export const batchRemoveUser = params => { return this.$http.get(`${base}/user/batchremove`, { params: params }); };
+/********************** X1X2所有接口 *******************************/
+// 通用接口
+export const oneTwoApi = params => { return axios.post(`?controller=admin&action=api&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
-export const editUser = params => { return this.$http.get(`${base}/user/edit`, { params: params }); };
+/********************** 基础设置 *******************************/
+// 支付方式列表
+export const payMethods = params => { return axios.post(`?controller=jichu&action=getWayInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
-export const addUser = params => { return this.$http.get(`${base}/user/add`, { params: params }); };
+// 支付通道列表
+export const payMent = params => { return axios.post(`?controller=jichu&action=getChannelInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
+
+
+
+
+
+
+
+
+
+
+// get请求示例
+export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };
+
+// 如果post提交后台,需要将参数通过qs转化
+export const postTest = params => { return axios.post(`${base}/kqadmin/api.php?controller=SysAdmin&action=yaoqing`,qs.stringify(params),timeOut).then(res => res.data)};

@@ -1,31 +1,31 @@
 <template>
   <div id="detailMsg">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline" :label-position="'top'">
+    <el-form :inline="true" :model="ruleForm" class="demo-form-inline" :label-position="'top'">
 
       <el-form-item label="支付方式">
-        <el-select v-model="formInline.value1" placeholder="全部">
+        <el-select v-model="ruleForm.payMethod" placeholder="全部">
           <el-option
-            v-for="item in formInline.option1"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in ruleForm.payOptions"
+            :key="item.id"
+            :label="item.memo"
+            :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="支付通道">
-        <el-select v-model="formInline.value2" placeholder="全部">
+        <el-select v-model="ruleForm.Payment" placeholder="全部">
           <el-option
-            v-for="item in formInline.option2"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in ruleForm.paymentOptions"
+            :key="item.id"
+            :label="item.memo"
+            :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="账号名称">
-        <el-input v-model="formInline.user" placeholder=""></el-input>
+        <el-input v-model="ruleForm.user" placeholder=""></el-input>
       </el-form-item>
 
       <el-form-item style="vertical-align: bottom">
@@ -43,15 +43,18 @@
       </el-form-item>
 
     </el-form>
+
     <el-table
       :data="tableData"
+      :height="height"
+      v-loading="loading"
       border
       style="width: 100%">
       <el-table-column
         label="序号"
         width="65">
         <template scope="scope">
-          <span>{{ scope.row.count }}</span>
+          <span>{{ scope.row.acountCode }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -68,7 +71,7 @@
         <template scope="scope">
           <el-row>
             <el-col :span="18">
-              <el-input v-model="scope.row.account" placeholder=""></el-input>
+              <el-input v-model="scope.row.accountName" placeholder=""></el-input>
             </el-col>
             <el-col :span="5" :offset="1" style="line-height: 36px">
               <el-button
@@ -84,7 +87,7 @@
       <el-table-column
         label="支付通道">
         <template scope="scope">
-          <span>{{ scope.row.payment }}</span>
+          <div v-for="item in scope.row.paymentName">{{ item }}</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -125,12 +128,16 @@
 </template>
 
 <script>
+
+  import {mapGetters, mapActions} from 'vuex'
+  import {oneTwoApi, payMethods, payMent} from '@/api/api.js'
+
   export default {
     data() {
       return {
-        formInline: {
-          value1: '', // 支付方式
-          option1: [{
+        ruleForm: {
+          payMethod: '', // 支付方式
+          payOptions: [{
             value: '选项1',
             label: '黄金糕'
           }, {
@@ -148,8 +155,8 @@
           }
           ],  // 支付方式
 
-          value2: '', // 支付通道
-          option2: [{
+          Payment: '', // 支付通道
+          paymentOptions: [{
             value: '选项1',
             label: '黄金糕'
           }, {
@@ -167,8 +174,7 @@
           }
           ],  // 支付通道
 
-          region: '',
-          user: ''
+          user: ''  // 用户名
         },
         tableData: [{
           count: 1,
@@ -207,7 +213,9 @@
           date: '2016-05-03',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1516 弄'
-        }]
+        }],
+        height: 0,
+        loading: true
       }
     },
     methods: {
@@ -232,11 +240,98 @@
         console.log('submit!');
       },
       search() {
-        console.log('search');
+        // 账户列表 -> 搜索
+        var param = {
+          redirect: 'x1.accountmanage.accountList',
+          paymentMethod: '',
+          paymentChannel: '',
+          accountName: '',
+          page: '',
+          pagesize: ''
+        };
+
+        // 账户列表初始化 -> 获取表格数据
+        oneTwoApi(param).then((res) => {
+          this.loading = false;
+          if (res.errcode == 0){
+            this.tableData = res.data.list;
+            console.log(res);
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
       },
       save() {
         console.log('save');
+      },
+      api(){
+        var param = {
+          redirect: 'x1.accountmanage.accountList',
+          paymentMethod: '',
+          paymentChannel: '',
+          accountName: '',
+          page: '',
+          pagesize: ''
+        };
+
+        // 账户列表初始化 -> 获取表格数据
+        oneTwoApi(param).then((res) => {
+          this.loading = false;
+          if (res.errcode == 0){
+            this.tableData = res.data.list;
+            console.log(res);
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
       }
+    },
+    computed: {
+      ...mapGetters([
+        'getTopHeight',
+        'getLoadingStatus'
+      ]),
+    },
+    mounted(){
+      // 高度调整
+      var topH = document.querySelector('.el-form--label-top').clientHeight;
+      var pageH = document.querySelector('.el-pagination').clientHeight;
+      this.height = window.innerHeight - this.getTopHeight - topH - pageH - 145;
+
+
+
+      var params = {};
+
+      // 支付方式初始化
+      payMethods(params).then((res) => {
+        if (res.errcode == 0) {
+          this.ruleForm.payOptions = res.data;
+        } else {
+          this.$confirm(res.errormsg, '提示', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'error'
+          })
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+
+      // 支付通道初始化
+      payMent(params).then((res) => {
+        if (res.errcode == 0) {
+          this.ruleForm.paymentOptions = res.data;
+        } else {
+          this.$confirm(res.errormsg, '提示', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'error'
+          })
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+
     }
   }
 </script>

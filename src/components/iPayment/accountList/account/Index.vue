@@ -15,12 +15,12 @@
     </div>
 
     <div>
-      <el-card>
+      <el-card class="detail" :style="{ height: height + 'px'}">
         <el-tabs type="border-card">
           <el-tab-pane label="已有账户">
             <xo-already-live></xo-already-live>
           </el-tab-pane>
-          <el-tab-pane label="开户申请">
+          <el-tab-pane label="开户申请" :disabled="true">
             <xo-new-account></xo-new-account>
           </el-tab-pane>
         </el-tabs>
@@ -33,22 +33,41 @@
   import xoAlreadyLive from './AlreadyLive.vue'
   import xoNavPath from './NavPath.vue'
   import xoNewAccount from './NewAccount.vue'
+  import {mapGetters, mapActions} from 'vuex'
 
   export default {
       data(){
           return {
-
+            height: 0
           }
       },
     components: {
       xoAlreadyLive,
       xoNavPath,
       xoNewAccount
+    },
+    computed: {
+      ...mapGetters([
+        'getTopHeight',
+        'getLoadingStatus'
+      ]),
+    },
+    mounted(){
+      var totalH = window.innerHeight - this.getTopHeight;
+      var topH = document.querySelector('.contentMsg').clientHeight;
+
+      this.height = totalH - topH - 50;
+    },
+    create(){
+
     }
   }
 </script>
 <style scoped>
   .contentMsg{
     padding: 0 0 25px 0;
+  }
+  .detail{
+    overflow: auto;
   }
 </style>

@@ -1,43 +1,50 @@
 <template>
-  <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+  <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm"
+           v-loading="loading"
+  >
     <!-- 账户编码 -->
     <el-form-item label="账户编码">
       <el-input v-model="ruleForm.accountCode" :disabled="true"></el-input>
     </el-form-item>
 
-    <!-- 第三方编码 -->
-    <el-row>
-      <el-col :span="24" v-for="(domain, index) in ruleForm.domains">
-        <el-col :span="7">
-          <el-form-item label="第三方编码:"
-                        :rules="{
-      required: true, message: '第三方编码不能为空', trigger: 'blur'
-    }"
-          >
-            <el-input v-model="domain.code1"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="1" style="text-align: center;line-height: 36px;">
-          -
-        </el-col>
-        <el-col :span="11">
-          <el-form-item label-width="0"
-                        :rules="{
-      required: true, message: '第三方编码不能为空', trigger: 'blur'
-    }"
-          >
-            <el-input v-model="domain.code2"></el-input>
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="4" :offset="1">
-          <el-button class="plusBtn" @click.prevent="removeDomain(domain)" size="small"><i
-            class="fa fa-minus-circle"></i></el-button>
-          <el-button class="minusBtn" @click="addDomain" size="small"><i class="fa fa-plus-circle"></i></el-button>
-
-        </el-col>
+    <div v-for="(domain, index) in ruleForm.domains" class="flex_r">
+      <el-form-item label="第三方编码" :key="domain.key" :prop="'domains.' + index + '.code1'"
+                    :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+        <div>
+          <el-row>
+            <el-col>
+              <div style="width:150px">
+                <el-input v-model="domain.code1"></el-input>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form-item>
+      <el-col :span="1" style="text-align: center;line-height: 36px;">
+        -
       </el-col>
-    </el-row>
+      <el-form-item label-width="0" :key="domain.key" :prop="'domains.' + index + '.code2'"
+                    :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+        <div>
+          <el-row>
+            <el-col>
+              <div style="width:150px">
+                <el-input v-model="domain.code2"></el-input>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form-item>
+      <div class="flex_sc">
+        <div class="m-storeCode margin_l_10" @click="addDomain">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+        </div>
+        <div v-if="(ruleForm.domains.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+             @click.prevent="removeDomain(domain)">
+          <i class="fa fa-minus-circle" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
 
 
     <!-- 账户名称 -->
@@ -46,26 +53,21 @@
     </el-form-item>
 
     <!-- 支付方式 -->
-    <el-form-item label="支付方式:" prop="pay">
-      <el-select v-model="ruleForm.pay" placeholder="请选择">
-        <el-option
-          v-for="item in ruleForm.option1"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-
+    <el-form-item label="支付方式:" prop="checkboxGroup">
+      <el-checkbox-group v-model="ruleForm.checkboxGroup">
+        <el-checkbox-button v-for="city in ruleForm.payOptions" :label="city.id" :key="city.id">{{city.memo}}
+        </el-checkbox-button>
+      </el-checkbox-group>
     </el-form-item>
 
     <!-- 支付通道 -->
     <el-form-item label="支付通道:" prop="Payment">
       <el-select v-model="ruleForm.Payment" placeholder="请选择">
         <el-option
-          v-for="item in ruleForm.option2"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in ruleForm.paymentOptions"
+          :key="item.id"
+          :label="item.memo"
+          :value="item.id">
         </el-option>
       </el-select>
     </el-form-item>
@@ -75,119 +77,50 @@
       <el-input v-model="ruleForm.Merchants"></el-input>
     </el-form-item>
 
-    <!-- 商户密钥 -->
-    <el-form-item label="商户密钥:" prop="payKey">
-      <el-row>
-        <el-col :span="2">
-          <el-popover trigger="hover" placement="top">
-            <p>{{ ruleForm.caption }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag>说明</el-tag>
-            </div>
-          </el-popover>
-        </el-col>
-        <el-col :span="21">
-          <el-input v-model="ruleForm.payKey"></el-input>
-        </el-col>
-      </el-row>
-    </el-form-item>
-
-
-    <!-- 证书 apiclient_cert.pem -->
-    <el-form-item label="证书:">
-      <el-upload
-        class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :file-list="ruleForm.fileList1"
-        list-type="picture">
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">apiclient_cert.pem</div>
-      </el-upload>
-    </el-form-item>
-
-    <!-- 证书 apiclient_cert.pem -->
-    <el-form-item label="证书:">
-      <el-upload
-        class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :file-list="ruleForm.fileList2"
-        list-type="picture">
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">apiclient_cert.pem</div>
-      </el-upload>
-    </el-form-item>
-
-
     <el-form-item>
-      <!--<el-button @click="resetForm('ruleForm')"> 取消 </el-button>-->
-      <router-link to="/iPayment/accountList"><el-button> 取消 </el-button></router-link>
+      <router-link to="/iPayment/accountList">
+        <el-button> 取消 </el-button>
+      </router-link>
       <el-button type="primary" @click="submitForm('ruleForm')"> 保存 </el-button>
     </el-form-item>
   </el-form>
 </template>
 <script>
+  import {oneTwoApi, payMethods, payMent} from '@/api/api.js'
+
   export default {
     data() {
       return {
         ruleForm: {
-          accountCode: 54252, // 账户编码
+          accountCode: '系统自动生成', // 账户编码
           accountName: '',    // 账户名称
           Merchants: '',      // 商户号
-          caption: '我是说明文字', // 说明文字
-          payKey: '',         // 商户密钥
-
-          option1: [{     // 支付方式
+          payOptions: [{
+            id: 1,
+            memo: "上海"
+          }, {
+            id: 2,
+            memo: "北京"
+          }, {
+            id: 3,
+            memo: "龙岩"
+          }],    // 支付方式
+          checkboxGroup: [1],
+          paymentOptions: [{     // 支付通道
             value: '选项1',
-            label: '黄金糕'
+            memo: '黄金糕',
+            id: 1
           }, {
             value: '选项2',
-            label: '双皮奶'
-          }, {
-            value: '选项3',
-            label: '蚵仔煎'
-          }, {
-            value: '选项4',
-            label: '龙须面'
-          }, {
-            value: '选项5',
-            label: '北京烤鸭'
-          }],
-          pay: '',    // 支付方式
-
-          option2: [{     // 支付通道
-            value: '选项1',
-            label: '黄金糕'
-          }, {
-            value: '选项2',
-            label: '双皮奶'
-          }, {
-            value: '选项3',
-            label: '蚵仔煎'
-          }, {
-            value: '选项4',
-            label: '龙须面'
-          }, {
-            value: '选项5',
-            label: '北京烤鸭'
+            memo: '双皮奶'
           }],
           Payment: '',    // 支付通道
-
-          fileList1: [],
-          fileList2: [{  // 证书2
-            name: 'food.jpeg',
-            url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-          }],
-
-          domains: [{ // 第三方编码
+          domains: [{  // 第三方编码
             code1: '',
             code2: ''
           }]
         },
-
+        loading: false,       // 加载状态
         rules: {
           accountName: [  // 账号名称
             {required: true, message: '请选择账号名称', trigger: 'change'}
@@ -196,91 +129,119 @@
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
           ],
-          pay: [    // 支付方式
-            {required: true, message: '请选择活动区域', trigger: 'change'}
-          ],
-          Payment: [  // 支付通道
-            {required: true, message: '请选择活动区域', trigger: 'change'}
-          ],
           Merchants: [  // 商户号
             {required: true, message: '请选择商户号', trigger: 'change'}
           ],
           payKey: [ // 支付秘钥
             {required: true, message: '请选择商户支付秘钥', trigger: 'change'}
           ],
-          type: [   // 开户类型
-            {required: true, message: '请选择活动区域', trigger: 'blur'}
+          Payment: [
+            { type: "number", required: true, message: '请选择活动区域', trigger: 'blur' }
           ],
-          thirdCode: [
-            {required: true, message: '请填写第三方编码', trigger: 'blur'}
-          ]
+          checkboxGroup: [
+            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+          ],
         },
-
       };
     },
     methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            var flag = true;
-            this.ruleForm.domains.forEach(function (item) {
-              for (var value in item) {
-                if (item[value] == "") {
-                  flag = false;
-                }
-              }
-            });
-            if (this.ruleForm.fileList1.length == 0 || this.ruleForm.fileList2.length == 0){
-               flag = false;
-            }
 
-            if (flag){
-              this.$message({
-                message: "提交成功",
-                type: "success"
+            this.loading = true;
+
+              // 拼接支付方式格式
+              var paymentMethod = "";
+              for (var value in this.ruleForm.checkboxGroup) {
+                paymentMethod += value + ',';
+              }
+              paymentMethod = paymentMethod.substring(0,paymentMethod.length - 1);
+
+              console.log(this.ruleForm.domains);
+
+              // 已有账户保存
+              var params = {
+                redirect: "x1.accountmanage.accountSaveData",
+                thirdCode: this.ruleForm.domains,           // 第三方编码
+                accountName: this.ruleForm.accountName,     // 账户名
+                paymentChannel: this.ruleForm.Payment,      // 支付通道
+                paymentMethod: paymentMethod,               // 支付方式
+                merchants: this.ruleForm.Merchants          // 商户号
+              };
+
+              oneTwoApi(params).then((res) => {
+                if (res.errcode == 0){
+                  this.loading = false;
+                  this.$message({
+                    showClose: true,
+                    message: "提交成功",
+                    type: "success",
+                  });
+
+                  var _this = this;
+                  setTimeout(function () {
+                    _this.$router.push('/iPayment/accountList');
+                  },400);
+                }else {
+
+                }
+              }).catch((err) => {
+                console.log(err);
               })
-            }else {
-              this.$message({
-                message: "所有表格都需要填写!",
-                type: "warning"
-              })
-            }
           } else {
             console.log('error submit!!');
             return false;
           }
         });
       },
-      /*resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },*/
       removeDomain(item) {
-        if (this.ruleForm.domains.length == 1) {
-          this.$message('不能再删啦');
-        } else {
-          var index = this.ruleForm.domains.indexOf(item);
-          if (index !== -1) {
-            this.ruleForm.domains.splice(index, 1)
-          }
+        var index = this.ruleForm.domains.indexOf(item)
+        if (index !== -1) {
+          this.ruleForm.domains.splice(index, 1)
         }
       },
       addDomain() {
         this.ruleForm.domains.push({
           code1: '',
           code2: '',
-          key: Date.now()
         });
       },
-      // 图片上传操作方法
-      handleRemove(file, fileList) {
-        console.log(this.ruleForm.fileList1);
-        console.log(fileList);
-        console.log(file);
-        // console.log(file, fileList);
-      },
-      handlePreview(file) {
-        console.log(file);
-      }
+    },
+    mounted() {
+
+      var params = {};
+
+      // 支付方式初始化
+      payMethods(params).then((res) => {
+        if (res.errcode == 0) {
+          this.ruleForm.payOptions = res.data;
+
+        } else {
+          this.$confirm(res.errormsg, '提示', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'error'
+          })
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+
+      // 支付通道初始化
+      payMent(params).then((res) => {
+        if (res.errcode == 0) {
+          this.ruleForm.paymentOptions = res.data;
+        } else {
+          this.$confirm(res.errormsg, '提示', {
+            confirmButtonText: '确定',
+            showCancelButton: false,
+            type: 'error'
+          })
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
     }
   }
 </script>
@@ -297,5 +258,9 @@
     color: deepskyblue;
     font-size: 35px;
     padding: 0 9px 0 9px;
+  }
+
+  .m-storeCode {
+    font-size: 30px;
   }
 </style>
