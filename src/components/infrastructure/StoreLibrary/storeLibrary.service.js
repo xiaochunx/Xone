@@ -1,21 +1,5 @@
 import axios from 'axios'
 
-//获取门店列表 api
-let getList = (token,p,data) => {
-  return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("redirect", "x1.stores.index");
-    formData.append("levelid", data);
-    formData.append("storename", data);
-    formData.append("areaId", data);
-    formData.append("x1", data);
-
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
-      resolve(res)
-    })
-  })
-};
-
 //获取组织架构
 let getLevel = (token) => {
   return new Promise((resolve, reject) => {
@@ -51,9 +35,7 @@ let addLevel = (token,data) => {
 //获取单个组织架构
 let getOneLevel = (token,data) => {
   return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("id", data.id);
-    axios.post(`?controller=level&action=view&token=${token}`,formData).then((res)=>{
+    axios.get(`?controller=level&action=view&token=${token}&id=${data.id}`).then((res)=>{
       resolve(res)
     })
   })
@@ -91,8 +73,87 @@ let delLevel = (token,id) => {
   })
 };
 
+//获取基础门店列表
+let getBsList = (token,levelid,storename = '') => {
+  return new Promise((resolve, reject) => {
 
-export default {getLevel,addLevel,updateLevel,delLevel,getOneLevel}
+    axios.get(`?controller=stores&action=index&token=${token}&levelid=${levelid}&storename=${storename}`).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+//获取一条基础门店
+let getBsOne = (token,id) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`?controller=stores&action=view&token=${token}&id=${id}`).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+
+//更新一条基础门店
+let updateBsOne = (token,data) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("id", data.id);
+    formData.append("storename", data.storename);
+    formData.append("storecodeid", data.storecodeid);
+    formData.append("tel", data.tel);
+    formData.append("brand", data.brand);
+    formData.append("provinceid", data.provinceid);
+    formData.append("cityid", data.cityid);
+    formData.append("areaid", data.areaid);
+    formData.append("storecodes", window.JSON.stringify(data.storecodes));
+    formData.append("business_src", data.business_src);
+    formData.append("businesscode_src", data.businesscode_src);
+    formData.append("account_src", data.account_src);
+    formData.append("tax_src", data.tax_src);
+    formData.append("legalman_1", data.legalman_1);
+    formData.append("legalman_2", data.legalman_2);
+    axios.post(`?controller=stores&action=update&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+//删除一条基础门店
+let delBsOne = (token,id) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("id", id);
+
+    axios.post(`?controller=stores&action=delete&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+//获取单个门店的操作记录
+let log = (token,id = '') => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("id", id);
+    axios.get(`?controller=stores&action=log&token=${token}&id=${id}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+
+//地区
+let area = (token,pid = '') => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("pid", pid);
+    axios.post(`?controller=area&action=getAreaList&token=${token}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+export default {getLevel,addLevel,updateLevel,delLevel,getOneLevel,getBsList,getBsOne,updateBsOne,delBsOne,log,area}
 
 
 

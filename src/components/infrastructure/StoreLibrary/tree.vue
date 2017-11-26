@@ -285,7 +285,6 @@
     data() {
       return {
         title: '',
-
         myHeight: '',
         styleObject: {
           height: 0
@@ -323,7 +322,7 @@
         },
         token:'',
         id:'',//组织id
-
+        levelname:''
       }
     },
     methods: {
@@ -342,7 +341,6 @@
             }
 
             if(this.title === '修改'){
-
               getApi.updateLevel(this.token,this.form).then((res)=>{
                 Hub.$emit('treeEventEditDel','Ok');
                 if(res.data.errcode === 0){
@@ -437,11 +435,9 @@
 
         getApi.getOneLevel(this.token,item).then((res)=>{
           console.log(res)
+          this.form = res.data.data;
+          this.dialogVisible = true
         })
-
-
-//        this.form = item;
-//        this.dialogVisible = true
       },
       del(item){
        let id = item.id;
@@ -467,8 +463,9 @@
       },
 
       test(item) {
-
-        if(item.type === 5){
+        this.levelname = item.levelname
+        Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
+        if(item.type === 5 ||item.type === 4){
           Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:true});
         }else {
           Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:false});

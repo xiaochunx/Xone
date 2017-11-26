@@ -174,6 +174,7 @@
             getApi.updateOne(this.token, data).then((res) => {
               console.log(res)
               this.dialogVisible1 = false
+              this.showResouce();
             })
           } else {
             console.log('error submit!!');

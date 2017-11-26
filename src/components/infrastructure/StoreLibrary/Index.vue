@@ -8,16 +8,16 @@
       <div class="flex_es">
         <div>
           <el-button size="small" @click="batchAdd()" :disabled="!showAdd.showAdd">批量新增</el-button>
-          <el-button size="small">批量删除</el-button>
+          <el-button size="small" @click="delSelected()">批量删除</el-button>
           <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
         </div>
 
         <div class="flex_a">
-          <div class="margin_r_10" >
-            <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
+          <div class="margin_r_10">
+            <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
           </div>
-          <el-button size="small">搜索</el-button>
-          <el-button size="small" type="primary">+导入门店</el-button>
+          <el-button size="small" @click="search()">搜索</el-button>
+          <!--<el-button size="small" type="primary">+导入门店</el-button>-->
         </div>
       </div>
     </div>
@@ -25,12 +25,12 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
         <!--<el-tree-->
-          <!--:data="data5"-->
-          <!--:props="defaultProps"-->
-          <!--node-key="id"-->
-          <!--default-expand-all-->
-          <!--:expand-on-click-node="false"-->
-          <!--:render-content="renderContent">-->
+        <!--:data="data5"-->
+        <!--:props="defaultProps"-->
+        <!--node-key="id"-->
+        <!--default-expand-all-->
+        <!--:expand-on-click-node="false"-->
+        <!--:render-content="renderContent">-->
         <!--</el-tree>-->
 
         <tree :data='data5' :count=0></tree>
@@ -39,15 +39,17 @@
 
       <div :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border :height="tableHeight">
-          <el-table-column :render-header="selectAll"  label-class-name="table_head" header-align="center" align="center" width="100">
+          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
+                           width="100">
             <template scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storecodeid"
                            label="编码"
                            width="100"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName" label="门店"></el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
+                           label="门店"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="80"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
@@ -65,37 +67,37 @@
                   <div>{{showAsideObj.storeName}}</div>
                   <div class="flex_r margin_t_10">
                     <div class="flex_1 flex_ce">地址：</div>
-                    <div class="flex_2">广东省广州市天河区天河东路88号</div>
+                    <div class="flex_2">{{showAsideObj.address}}</div>
                   </div>
                   <div class="flex_r margin_t_10">
                     <div class="flex_1 flex_ce">门店编码：</div>
                     <div class="flex_2">{{showAsideObj.storeCode}}</div>
                   </div>
 
-                  <div class="flex_r margin_t_10">
+                  <div class="flex_r margin_t_10" v-for="(item,index) in showAsideObj.storeCodes">
                     <div class="flex_1 flex_ce">第三方编码：</div>
-                    <div class="flex_2">美团  8989</div>
+                    <div class="flex_2">{{item.name}}  {{item.providerid}}</div>
                   </div>
                   <div class="flex_r margin_t_10">
                     <div class="flex_1 flex_ce">所属组：</div>
-                    <div class="flex_2">广州运营区</div>
+                    <div class="flex_2">{{showAsideObj.levelname}}</div>
                   </div>
                   <div class="flex_r margin_t_10">
                     <div class="flex_1 flex_ce">门店电话：</div>
-                    <div class="flex_2">020-9849792</div>
+                    <div class="flex_2">{{showAsideObj.tel}}</div>
                   </div>
 
                   <div class="flex_r margin_t_10">
-                    <el-button type="primary">日志</el-button>
+                    <el-button type="primary" @click="log(showAsideObj)">日志</el-button>
 
                   </div>
                 </div>
               </el-popover>
 
-              <el-button size="sshowAddmall" type="primary" v-popover:popover4>查看</el-button>
-              <el-button size="small" @click.stop="edit()">编辑</el-button>
-              <el-button size="small" type="danger" @click.stop="del()">删除</el-button>
-              <el-button size="small" type="primary" >上传资料</el-button>
+              <el-button size="small" type="primary" v-popover:popover4>查看</el-button>
+              <el-button size="small" @click.stop="edit(scope.row)">编辑</el-button>
+              <el-button size="small" type="danger" @click.stop="del(scope.row)">删除</el-button>
+              <!--<el-button size="small" type="primary">上传资料</el-button>-->
             </template>
           </el-table-column>
         </el-table>
@@ -105,6 +107,7 @@
 
       </div>
     </div>
+<!--开启/关闭-->
     <el-dialog
       title="开启/关闭"
       :visible.sync="dialogVisible1"
@@ -115,32 +118,28 @@
         off-color="#ff4949">
       </el-switch>
       <div class="margin_t_10">
-        <el-button>取消</el-button>
+        <el-button @click="dialogVisible1 = false">取消</el-button>
         <el-button type="primary">确认</el-button>
       </div>
     </el-dialog>
-
+    <!--新建／修改组-->
     <el-dialog
       title="新建／修改组"
       :visible.sync="dialogVisible"
-      width="50%" >
-      <el-form ref="formRules" :model="form" label-width="100px">
-        <el-form-item label="编码:" prop="code" :rules="{required: true, message: '请输入编码', trigger: 'blur'}">
-          <el-input v-model="form.code" placeholder="请输入内容"></el-input>
+      width="50%">
+      <el-form ref="formRules" :model="formEdit" label-width="100px">
+        <el-form-item label="名称:" prop="storename" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formEdit.storename" placeholder="请输入内容"></el-input>
         </el-form-item>
 
-        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="form.name" placeholder="请输入内容"></el-input>
-        </el-form-item>
-
-        <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
+        <div v-for="(domain, index) in formEdit.storecodes" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key" :prop="'storecodes.' + index + '.name'"
                         :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value"></el-input>
+                    <el-input v-model="domain.name"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -149,13 +148,13 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
+          <el-form-item label-width="0" :key="domain.key" :prop="'storecodes.' + index + '.providerid'"
                         :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value1"></el-input>
+                    <el-input v-model="domain.providerid"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -165,31 +164,106 @@
             <div class="m-storeCode margin_l_10" @click="addDomain()">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formEdit.storecodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
           </div>
         </div>
 
-        <el-form-item label="上级组:" v-if="isEdit">
-          <el-select v-model="value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
+        <div>
+          请上传以下证件（图片大小不要超过5M）
+        </div>
 
         <div class="margin_t_10">
-          <el-button>取消</el-button>
-          <el-button type="primary">确认</el-button>
+          <div>营业执照</div>
+          <el-upload
+            class="avatar-uploader"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess1"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="formEdit.business_src" :src="formEdit.business_src" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>
+            组织机构代码
+          </div>
+          <el-upload
+            class="avatar-uploader"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess2"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="formEdit.businesscode_src" :src="formEdit.businesscode_src" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>开户许可证</div>
+          <el-upload
+            class="avatar-uploader"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess3"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="formEdit.account_src" :src="formEdit.account_src" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>税务登记证</div>
+          <el-upload
+            class="avatar-uploader"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess4"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="formEdit.tax_src" :src="formEdit.tax_src" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>法人证件正面照</div>
+          <el-upload
+            class="avatar-uploader"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess5"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="formEdit.legalman_1" :src="formEdit.legalman_1" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>法人证件反面照</div>
+          <el-upload
+            class="avatar-uploader"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess6"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="formEdit.legalman_2" :src="formEdit.legalman_2" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitFrom('formRules',formEdit)">确认</el-button>
         </div>
       </el-form>
     </el-dialog>
 
+
+    <!--批量新增-->
     <el-dialog
       title="批量新增"
       :visible.sync="dialogVisible2"
@@ -197,19 +271,29 @@
       <div class="flex_f flex">
         <div class="margin_b_10">需要增加几家？</div>
         <div class="flex_a">
-          <el-input v-model="number" style="width: 50px"></el-input><span class="padding_l_10">家</span>
+          <el-input v-model="number" style="width: 50px"></el-input>
+          <span class="padding_l_10">家</span>
         </div>
-
         <div class="margin_t_10">
           <el-button @click="dialogVisible2 = false">取消</el-button>
           <el-button type="primary" @click="goToAddStore()">确认</el-button>
         </div>
       </div>
-
-
-
     </el-dialog>
+    <!--日志-->
+    <el-dialog
+      title="日志"
+      :visible.sync="dialogVisible3"
+      width="50%" size="tiny">
+      <div class="flex_f flex">
 
+        <div>message:{{logList.message}}</div>
+
+        <div class="margin_t_10">
+          <el-button type="primary" @click="dialogVisible3 = false">确认</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -229,114 +313,187 @@
     },
     data() {
       return {
-        value2:false,
+        value2: false,
         showAside: false,
-        dialogVisible:false,
-        dialogVisible1:false,
-        dialogVisible2:false,
+        dialogVisible: false,
+        dialogVisible1: false,
+        dialogVisible2: false,
+        dialogVisible3:false,
         tableHeight: 0,
-        tableWidth:0,
+        tableWidth: 0,
         navList: [{name: "门店管理", url: ''}, {name: "门店库", url: ''}],
-        storeGroupData: [{
-          value: 1,
-          label: '全部'
-        }, {
-          value: 2,
-          label: '支付宝'
-        }, {
-          value: 3,
-          label: '微信支付'
-        }, {
-          value: 4,
-          label: 'QQ钱包'
-        }],
+
         storeGroup: 1,
         payValue: 2,
-        payValueData: [{
-          value: 1,
-          label: '全部'
-        }, {
-          value: 2,
-          label: '开启'
-        }, {
-          value: 3,
-          label: '关闭'
-        }],
-        storeName: '',
-        storeData: [{
-          storeCode: '83789',
-          storeName: '炳胜（马场店）',
-          status: '开启'
-        }, {
-          storeCode: '837892',
-          storeName: '炳胜（马场店）',
-          status: '开启'
-        }, {
-          storeCode: '837893',
-          storeName: '炳胜（马场店）',
-          status: '开启'
-        }],
 
+        searchName: '',
+        storeData: [],
         data5: [],
         defaultProps: {
           children: 'children',
           label: 'label'
         },
-        showAsideObj: {storeName: "", storeCode: ""},//侧滑内容
-        form: {
-          name: '',
-          code: '',
-          thirdPartyCoding: [
-            {value: '', value1: ''}
-          ],
-        },
-
-        isEdit: true,
-        value: "",
-        options: [{
-          value: 1,
-          label: '民生银行'
-        }, {
-          value: 2,
-          label: '易极付'
-        }],
-        token:'',
+        showAsideObj: {},//侧滑内容
+        formEdit: {},//编辑弹窗
+        token: '',
         p: {page: 1, size: 20, total: 0},
-        showAdd:{levelid:'',type:'',showAdd:false},
-        number:''
+        showAdd: {levelid: '', type: '', showAdd: false},
+        number: 1,
+        logList:{}
       }
     },
-    watch: {
-
-    },
+    watch: {},
     methods: {
-      goToAddStore(){
+      search(){
+        console.log(this.showAdd.levelid)
+        getApi.getBsList(this.token,this.showAdd.levelid,this.searchName).then((res)=>{
+          console.log(res)
+
+          if (res.data.errcode === 0) {
+            res.data.data.list.forEach((item)=>{
+              if(item.status === 1){
+                item.status = "开启"
+              }else {
+                item.status = "关闭"
+              }
+              item.select = false
+            });
+            this.storeData = res.data.data.list;
+            this.p.total = res.data.data.count
+          } else {
+
+          }
+        })
+
+      },
+      log(data){
+        console.log(data)
+        getApi.log(this.token,data.id).then((res)=>{
+          console.log(res)
+          this.dialogVisible3 = true;
+          this.logList = res.data.data
+        })
+
+      },
+      delSelected() {
+        let list = [];
+        this.storeData.forEach((item)=>{
+          if(item.select){
+            list.push(item.id)
+          }
+        });
+
+        if(list.length === 0){
+          this.$message('请勾选门店');
+        }else {
+          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            getApi.delBsOne(this.token,list.join(",")).then((res)=>{
+              console.log(res)
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+              this.getBsList();
+            })
+          }).catch(() => {
+            //
+          });
+        }
+
+
+      },
+      submitFrom(formRules,formEdit){
+        this.$refs[formRules].validate((valid) => {
+          if (valid) {
+            console.log(formEdit)
+            getApi.updateBsOne(this.token,formEdit).then((res)=>{
+              console.log(res)
+                          this.dialogVisible = false
+            this.dialogVisible1 = false
+            })
+
+
+
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      goToAddStore() {
         console.log(this.showAdd)
-        this.$router.push({path:`/storeManage/storeList/newAddStore/${this.number}/${this.showAdd.levelid}/${this.showAdd.type}`})
+
+        this.$router.push({path: `/storeManage/storeList/newAddStore/${this.number}/${this.showAdd.levelid}/${this.showAdd.type}`})
       },
       getPage(page) {
         this.p.page = page;
-//        this.showResouce();
+        this.getBsList();
       },
       getPageSize(size) {
         this.p.size = size;
-//        this.showResouce();
+        this.getBsList();
       },
-      isSwitch(){
+      isSwitch() {
         this.dialogVisible1 = true
       },
-      show(row){
-        this.showAsideObj = {"storeName": row.storeName, "storeCode": row.storeCode}
+     async show(row) {
+
+        console.log(row)
+      let province,city,area;
+      await  getApi.area(this.token, '').then((res) => {
+          if (res.data.errcode === 0) {
+            res.data.data.forEach((item)=>{
+              if(item.id === row.provinceid){
+                province = item.address
+              }
+            })
+          } else {
+          }
+        });
+       await  getApi.area(this.token, row.provinceid).then((res) => {
+         if (res.data.errcode === 0) {
+           res.data.data.forEach((item)=>{
+             if(item.id === row.cityid){
+               city = item.address
+             }
+           })
+         } else {
+         }
+       });
+       await  getApi.area(this.token, row.cityid).then((res) => {
+         if (res.data.errcode === 0) {
+           res.data.data.forEach((item)=>{
+             if(item.id === row.areaid){
+               area = item.address
+             }
+           })
+         } else {
+         }
+       });
+
+        this.showAsideObj = {
+          storeName: row.storename,
+          storeCode: row.storecodeid,
+          address:`${province} ${city} ${area}`,tel:row.tel,
+          storeCodes:row.storecodes,
+          levelname:row.levelname,
+          id:row.id
+        }
 
       },
-      renderContent(h, { node, data, store }) {
+      renderContent(h, {node, data, store}) {
         return (
-          <span >
+          <span>
           <span>
           <span>{node.label}</span>
         </span>
-        <span style="padding-left: 10px;">
-        <el-button style="font-size: 12px;" type="text" on-click={ () => this.addBig('新建大商户') }>+</el-button>
+        <span style = "padding-left: 10px;" >
+          <el-button style = "font-size: 12px;"type = "text" on-click = {()=>this.addBig('新建大商户')}></el-button>
 
         </span>
         </span>);
@@ -353,24 +510,24 @@
         }
       },
       handleChecked(data) {
-        let count =0;
+        let count = 0;
         this.storeData.forEach((data) => {
           if (data.select === true) {
-            count += data.select*1
+            count += data.select * 1
           }
         });
 
-        if(count === this.storeData.length){
+        if (count === this.storeData.length) {
           this.selectedAll = true;
-          this.$nextTick(()=>{
+          this.$nextTick(() => {
             let all = document.querySelector('#all span');
             all.classList.add('is-checked');
             let allInput = document.querySelector('#all span input');
             allInput.checked = true
           })
-        }else {
+        } else {
           this.selectedAll = false;
-          this.$nextTick(()=>{
+          this.$nextTick(() => {
             let all = document.querySelector('#all span');
             all.classList.remove('is-checked');
             let allInput = document.querySelector('#all span input');
@@ -386,56 +543,79 @@
           [
             h('el-checkbox', {
                 attrs: {id: "all"},
-                'class': {
-                },
+                'class': {},
                 on: {
                   change: this.handleCheckAll,
-                  input: (event)=> {
+                  input: (event) => {
                   }
                 }
               }, ['序号']
             )
           ]
         );
-
       },
-      addBig(){
+      addBig() {
         this.title = title
         this.dialogVisible = true
       },
-      batchAdd(){
+      batchAdd() {
         this.dialogVisible2 = true
       },
       removeDomain(item) {
-        var index = this.form.thirdPartyCoding.indexOf(item)
+        var index = this.form.storecodes.indexOf(item)
         if (index !== -1) {
-          this.form.thirdPartyCoding.splice(index, 1)
+          this.formEdit.storecodes.splice(index, 1)
         }
       },
       addDomain() {
-        this.form.thirdPartyCoding.push({
-          value: '',
-          key: Date.now()
-        });
+        this.formEdit.storecodes.push( {name: '', providerid: ''});
       },
 
       rClick(row, event, column) {
 
       },
 
-      edit() {
+      edit(row) {
+        getApi.getBsOne(this.token,row.id).then((res)=>{
+          console.log(res)
+          this.formEdit = res.data.data[0];
+
+          this.dialogVisible = true
+        })
 
       },
-      editGroup(item){
+      editGroup(item) {
         this.item = item;
         this.dialogVisible = true
       },
-      del() {
-
+      del(row) {
+        this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          getApi.delBsOne(this.token,row.id).then((res) => {
+            console.log(res)
+            if (res.data.errcode === 0) {
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.errmsg
+              });
+            }
+            this.getBsList();
+          })
+        }).catch(() => {
+          //
+        });
       },
       append(data) {
         console.log(data)
-        const newChild = { id: id++, label: 'testtest', children: [] };
+        const newChild = {id: id++, label: 'testtest', children: []};
         if (!data.children) {
           this.$set(data, 'children', []);
         }
@@ -444,26 +624,26 @@
       },
 
 
-      clickEvent(){
+      clickEvent() {
         let dom = document.querySelectorAll('.clickEvent');
-        dom.forEach((map)=>{
-          map.addEventListener('click',function (event) {
+        dom.forEach((map) => {
+          map.addEventListener('click', function (event) {
             event.stopPropagation()
             event.preventDefault()
 
           })
         })
       },
-      recur(data){
-        data.forEach((map)=>{
-          if(map.child){
-            this.$set(map,"show",true);
+      recur(data) {
+        data.forEach((map) => {
+          if (map.child) {
+            this.$set(map, "show", true);
             this.recur(map.child)
           }
         })
       },
       showLevel() {
-        getApi.getLevel(this.token).then((res)=>{
+        getApi.getLevel(this.token).then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
             this.recur(this.data5)
@@ -476,11 +656,74 @@
             })
           }
         })
-      }
+      },
+      getBsList(){
+        getApi.getBsList(this.token, -1).then((res) => {
+          console.log(res)
+          if (res.data.errcode === 0) {
+            res.data.data.list.forEach((item)=>{
+              if(item.status === 1){
+                item.status = "开启"
+              }else {
+                item.status = "关闭"
+              }
+              item.select = false
+            });
+            this.storeData = res.data.data.list;
+            this.p.total = res.data.data.count
+          } else {
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }
+            })
+          }
+        })
+      },
+      handleAvatarSuccess1(res, file) {
+        this.formEdit.business_src_url = file.response.data.file_url;
+        this.formEdit.business_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess2(res, file) {
+        this.formEdit.businesscode_src_url = file.response.data.file_url;
+        this.formEdit.businesscode_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess3(res, file) {
+        this.formEdit.account_src_url = file.response.data.file_url;
+        this.formEdit.account_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess4(res, file) {
+        this.formEdit.tax_src_url = file.response.data.file_url;
+        this.formEdit.tax_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess5(res, file) {
+        this.formEdit.legalman_1_url = file.response.data.file_url;
+        this.formEdit.legalman_1 = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess6(res, file) {
+        this.formEdit.legalman_2_url = file.response.data.file_url;
+        this.formEdit.legalman_2 = URL.createObjectURL(file.raw);
+      },
+      beforeAvatarUpload(file) {
+        const isPNG = file.type === 'image/png';
+        const isJPG = file.type === 'image/jpeg';
+        const isLt5M = file.size / 1024 / 1024 < 5;
+        let img
+
+        if(isJPG || isPNG){
+          img = true
+        }else {
+          img = false;
+          this.$message.error('上传头像图片只能是 JPG,PNG 格式!');
+        }
+        if (!isLt5M) {
+          this.$message.error('上传头像图片大小不能超过 5MB!');
+        }
+        return img && isLt5M;
+      },
     },
     created() {
-//      let data = this.data5;
-//      this.recur(data)
       this.token = this.$localStorage.get('token');
 
       this.storeData.forEach((map) => {
@@ -488,23 +731,22 @@
       })
 
       this.showLevel();
-
-
-
-
+      this.getBsList();
     },
-    mounted(){
+    mounted() {
       //this.clickEvent()
-
       Hub.$on('treeEventEditDel', (e) => {
         this.showLevel();
-      })
-
+      });
       Hub.$on('showAdd', (e) => {
         this.showAdd = e
-
+      });
+      Hub.$on('getBsList', (e) => {
+        getApi.getBsList(this.token, e.levelid).then((res) => {
+          console.log(res)
+          this.storeData = res.data.data.list
+        })
       })
-
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -528,6 +770,7 @@
   .m-storeCode {
     font-size: 30px;
   }
+
   .m-storeList {
     height: 50px;
     line-height: 50px;
@@ -570,8 +813,6 @@
     border-radius: 10px;
     border: 1px solid #E5EBF4
   }
-
-
 
   /*不能有相同的class名*/
   .myStore-enter-active, .myStore-leave-active {

@@ -67,11 +67,13 @@ let getSecond = (token,id) => {
 };
 
 //编辑门店-收款账户-保存
-let editStoreAccount = (token,id) => {
+let editStoreAccount = (token,id,account,reserveAcc) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("id", id);
     formData.append("redirect", "x1.store.saveStoreAccount");
+    formData.append("account", account);
+    formData.append("reserveAcc", reserveAcc);
 
     axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
 
@@ -81,8 +83,42 @@ let editStoreAccount = (token,id) => {
   })
 };
 
+//支付方式列表
+let getWayInfo = (token) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`?controller=jichu&action=getWayInfo&token=${token}`).then((res)=>{
 
-export default {getFirst,getSecond,getList,editStore,editStoreAccount}
+      resolve(res)
+
+    })
+  })
+};
+
+//支付通道列表
+let getChannelInfo = (token) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`?controller=jichu&action=getChannelInfo&token=${token}`).then((res)=>{
+
+      resolve(res)
+
+    })
+  })
+};
+
+//获取符合要求的账户列表
+let getCanUseAccountList = (token) => {
+  return new Promise((resolve, reject) => {
+    axios.post(`?controller=jichu&action=getChannelInfo&token=${token}`).then((res)=>{
+      formData.append("redirect", "x1.accountmanage.getCanUseAccountList");
+
+      resolve(res)
+
+    })
+  })
+};
+
+
+export default {getFirst,getSecond,getList,editStore,editStoreAccount,getWayInfo,getChannelInfo,getCanUseAccountList}
 
 
 

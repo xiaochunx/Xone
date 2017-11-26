@@ -160,7 +160,7 @@
     data() {
       return {
         dialogFormVisible: false,
-        navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: '/storeManage/storeGroup'}, {name: "门店标签", url: ''}],
+        navList: [{name: "门店管理", url: ''}, {name: "门店标签列表", url: '/storeManage/storeGroup'}, {name: "门店标签", url: ''}],
         searchValue: '',
         form: {
           name: '',
@@ -169,6 +169,7 @@
           ],
         },
         searchList: [],
+        searchListTemp:[],
         storeData: [],
         token: '',
         providerId: '',
@@ -187,14 +188,15 @@
     methods: {
       searchSelect() {
         let list = [];
-        list = this.searchList.filter((item) => {
+
+        list = this.searchListTemp.filter((item) => {
           return item.name.includes(this.searchValue)
         })
 
         this.searchList = list
 
-        console.log(this.searchValue)
-        console.log(this.searchList)
+        console.log(list)
+       // console.log(this.searchList)
       },
       submitAdd() {
         let list = [];
@@ -209,6 +211,7 @@
           });
         } else {
           this.searchList = list
+          this.searchListTemp = list
           this.dialogFormVisible = false
         }
 

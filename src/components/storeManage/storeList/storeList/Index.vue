@@ -41,7 +41,7 @@
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
-                           type="index" width="70">
+                           type="index" width="90">
             <template scope="scope">
 
               <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
@@ -508,11 +508,19 @@
       },
       showResouce(storeName = "", levelId = "") {
         getApi.getList(this.token, this.p, storeName, levelId).then((res) => {
-          console.log(res.data.data)
+          console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {
               data.inputChecked = true
               data.NO = false
+
+              if(data.status === 1){
+                data.status = true
+              }else {
+                data.status = false
+
+              }
+
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count

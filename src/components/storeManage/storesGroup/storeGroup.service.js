@@ -36,12 +36,9 @@ let updateOne = (token,data) => {
 
   data.store.forEach((item)=>{
     if(item.select === true){
-      list.push(item.id)
+      list.push(item.code)
     }
   })
-  console.log(list.join(','))
-
-
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.editStoreLabel");
