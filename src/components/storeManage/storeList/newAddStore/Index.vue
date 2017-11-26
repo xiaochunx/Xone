@@ -5,46 +5,130 @@
       <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
 
-    <div class="flex_sb">
-      <div class="flex_1">
+    <el-dialog
+      title="上传图片"
+      :visible.sync="dialogVisible"
+      width="50%" size="tiny">
+      <div class="flex_f flex">
 
-      </div>
-      <div class="flex_1 flex_ce">
+        <div>
+          请上传以下证件（图片大小不要超过5M）
+        </div>
 
-        <el-button type="primary" @click="submitFrom()">保存</el-button>
+        <div class="margin_t_10">
+          <div>营业执照</div>
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>
+            组织机构代码
+          </div>
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>开户许可证</div>
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>税务登记证</div>
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>法人证件正面照</div>
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <div>法人证件反面照</div>
+          <el-upload
+            class="avatar-uploader"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
+
+
+        <div class="margin_t_10">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="updateImg()">确认</el-button>
+        </div>
       </div>
-    </div>
+
+    </el-dialog>
 
     <div class="margin_t_10 width_100">
       <el-table :data="storeData" border :height="tableHeight" style="width: 100%;">
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店名称" width="200">
           <template scope="scope">
-            <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.name" @change="myChange(scope.row,'name','nameClass')" placeholder="请输入内容"></el-input>
+            <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.storename" @change="myChange(scope.row,'storename','nameClass')" placeholder="请输入内容"></el-input>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">
           <template scope="scope">
-            <el-input  :class="{isInput:scope.row.codeClass === true}" v-model="scope.row.code" @change="myChange(scope.row,'code','codeClass')" placeholder="请输入内容"></el-input>
+            <el-input  :class="{isInput:scope.row.codeClass === true}" v-model="scope.row.storecodeid" @change="myChange(scope.row,'storecodeid','codeClass')" placeholder="请输入内容"></el-input>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
           <template scope="scope">
-            <div v-for="(domain, index) in scope.row.thirdPartyCoding" class="flex_a padding_10">
+            <div v-for="(domain, index) in scope.row.storecodes" class="flex_a padding_10">
               <div style="width:150px">
-                <el-input :class="{isInput:domain.valueClass === true}" v-model="domain.value" @change="myChange(domain,'value','valueClass')" placeholder="请输入内容"></el-input>
+                <el-input :class="{isInput:domain.valueClass === true}" v-model="domain.name" @change="myChange(domain,'name','valueClass')" placeholder="请输入内容"></el-input>
               </div>
               <div class="m-rank">
                 <div class="m-rank-child"></div>
               </div>
               <div style="width:150px">
-                <el-input :class="{isInput:domain.value1Class === true}" v-model="domain.value1" @change="myChange(domain,'value1','value1Class')" placeholder="请输入内容"></el-input>
+                <el-input :class="{isInput:domain.value1Class === true}" v-model="domain.providerid" @change="myChange(domain,'providerid','value1Class')" placeholder="请输入内容"></el-input>
               </div>
               <div class="flex_sb" style="width:80px">
-                <div class="m-storeCode margin_l_10" @click="addDomain(scope.row.thirdPartyCoding)">
+                <div class="m-storeCode margin_l_10" @click="addDomain(scope.row.storecodes)">
                   <i class="fa fa-plus-circle" aria-hidden="true"></i>
                 </div>
-                <div v-if="(scope.row.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
-                     @click.prevent="removeDomain(scope.row.thirdPartyCoding,index)">
+                <div v-if="(scope.row.storecodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                     @click.prevent="removeDomain(scope.row.storecodes,index)">
                   <i class="fa fa-minus-circle" aria-hidden="true"></i>
                 </div>
               </div>
@@ -68,7 +152,7 @@
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店地址" width="600">
           <template scope="scope">
             <div class="flex_a">
-              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.province" @change="myChange(scope.row,'province','provinceClass','isProvince')" placeholder="请选择省">
+              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.provinceid" @change="myChange(scope.row,'provinceid','provinceClass','isProvince')" placeholder="请选择省">
                 <el-option
                   v-for="item in provinceList"
                   :key="item.name"
@@ -77,7 +161,7 @@
                 </el-option>
               </el-select>
               <div class="margin_l_10">
-                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.city" @change="myChange(scope.row,'city','cityClass','isCity')" placeholder="请选择市">
+                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.cityid" @change="myChange(scope.row,'cityid','cityClass','isCity')" placeholder="请选择市">
                   <el-option
                     v-for="item in scope.row.cityList"
                     :key="item.name"
@@ -87,7 +171,7 @@
                 </el-select>
               </div>
               <div class="margin_l_10">
-                <el-select :class="{isSelected:scope.row.areaClass === true}" v-model="scope.row.area" @change="myChange(scope.row,'area','areaClass')" placeholder="请选择区">
+                <el-select :class="{isSelected:scope.row.areaClass === true}" v-model="scope.row.areaid" @change="myChange(scope.row,'areaid','areaClass')" placeholder="请选择区">
                   <el-option
                     v-for="item in scope.row.areaList"
                     :key="item"
@@ -108,28 +192,31 @@
           </template>
         </el-table-column>
 
-        <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="140">
           <template scope="scope">
-            <!--<i class="fa fa-plus-circle m-storeCode" aria-hidden="true"></i>-->
-            <!--<i class="el-icon-delete m-storeCode" aria-hidden="true"></i>-->
-            <i v-if="storeData.length === scope.$index+1" class="el-icon-plus m-storeCode" aria-hidden="true"
-               @click="addRow()"></i>
+
+            <!--<i v-if="storeData.length === scope.$index+1" class="el-icon-plus m-storeCode" aria-hidden="true"-->
+               <!--@click="addRow()"></i>-->
+            <el-button @click="addRow()">上传资料</el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="flex margin_t_10">
+        <el-button type="primary" @click="submitFrom()">保存</el-button>
+        <el-button  @click="$router.go(-1)">取消</el-button>
+      </div>
     </div>
 
-    <!--<div>-->
-    <!--<xo-pagination></xo-pagination>-->
-    <!--</div>-->
   </div>
 </template>
 
 <script>
 import areaList from "../../../utility/areaData"
+import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
   export default {
     components: {
-
+      ElButton
     },
 
     data() {
@@ -147,53 +234,52 @@ import areaList from "../../../utility/areaData"
         provinceList: [],
 
         storeName: '',
-        storeData: [{
-          name: "",
-          nameClass:false,
-          code: '',
-          codeClass:false,
-          brand: '',
-          brandClass:false,
-          province:"",
-          provinceClass:false,
-          city:"",
-          cityList:[],
-          cityClass:false,
-          area:"",
-          areaList:[],
-          areaClass:false,
-          address:"",
-          addressClass:false,
-          tel: "",
-          telClass:false,
-          thirdPartyCoding: [
-            {value: '',valueClass:false, value1: '',value1Class:false}
-          ],
-        }],
+        storeData: [],
 
-        va:""
+        va:"",
+        dialogVisible:false,
+        imageUrl: '',
       }
     },
     watch: {
 
     },
     methods: {
+      updateImg(){
+
+      },
+      handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
+      },
+      beforeAvatarUpload(file) {
+        const isPNG = file.type === 'image/png';
+        const isJPG = file.type === 'image/jpeg';
+        const isLt5M = file.size / 1024 / 1024 < 5;
+
+        if (!isJPG || !isPNG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt5M) {
+          this.$message.error('上传头像图片大小不能超过 5MB!');
+        }
+        return (isJPG || isPNG) && isLt5M;
+      },
       myChange(map,name,className,str){
         console.log(map);
         if(str === 'isProvince'){
           areaList.forEach((data)=>{
-            if(data.name === map.province){
-              this.$set(map,"city",'');
-              this.$set(map,"area",'');
+            if(data.name === map.provinceid){
+              this.$set(map,"cityid",'');
+              this.$set(map,"areaid",'');
               this.$set(map,"cityList",data.city);
               this.$set(map,"areaList",[]);
             }
           })
         }
-        if(str === 'isCity' && map.city !== ""){
+        if(str === 'isCity' && map.cityid !== ""){
           map.cityList.forEach((data)=>{
-            if(data.name === map.city){
-              this.$set(map,"area",'');
+            if(data.name === map.cityid){
+              this.$set(map,"areaid",'');
               this.$set(map,"areaList",data.area);
             }
           })
@@ -207,22 +293,22 @@ import areaList from "../../../utility/areaData"
       },
       checkSubmit(){
         for(let map of this.storeData){
-          if (map.name === "") {
+          if (map.storename === "") {
            map.nameClass = true
           }
-          if (map.code === "") {
+          if (map.storecodeid === "") {
             map.codeClass = true
           }
           if (map.brand === "") {
             map.brandClass = true
           }
-          if (map.province === "") {
+          if (map.provinceid === "") {
             map.provinceClass = true
           }
-          if (map.city === "") {
+          if (map.cityid === "") {
             map.cityClass = true
           }
-          if (map.area === "") {
+          if (map.areaid === "") {
             map.areaClass = true
           }
           if (map.address === "") {
@@ -231,11 +317,11 @@ import areaList from "../../../utility/areaData"
           if (map.tel === "") {
             map.telClass = true
           }
-          for(let map1 of map.thirdPartyCoding){
-            if (map1.value === "") {
+          for(let map1 of map.storecodes){
+            if (map1.name === "") {
               map1.valueClass = true
             }
-            if (map1.value1 === "") {
+            if (map1.providerid === "") {
               map1.value1Class = true
             }
           }
@@ -245,51 +331,42 @@ import areaList from "../../../utility/areaData"
         this.checkSubmit();
         outer:
         for(let map of this.storeData){
-          if (map.name === "" || map.code === "" || map.brand === "" || map.province === "" || map.city === "" || map.area === "" || map.address === "" || map.tel === "") {
+          if (map.storename === "" || map.storecodeid === "" || map.brand === "" || map.provinceid === "" || map.cityid === "" || map.areaid === "" || map.address === "" || map.tel === "") {
             this.va = "";
             break
           }
 
-          for(let map1 of map.thirdPartyCoding){
-            if (map1.value === "" || map1.value1 === "") {
+          for(let map1 of map.storecodes){
+            if (map1.name === "" || map1.providerid === "") {
               this.va = "";
               break outer
             }
             this.va = "ok"
           }
         }
-
         console.log(this.va )
+
+        if(this.va === "ok"){
+          console.log(this.storeData )
+        }else {
+          this.$message({
+            type: 'warning',
+            message: '请填写所需选项'
+          });
+        }
+
       },
 
       addRow() {
-        this.storeData.push({
-          name: "",
-          nameClass:false,
-          code: '',
-          codeClass:false,
-          brand: '',
-          brandClass:false,
-          province:"",
-          provinceClass:false,
-          city:"",
-          cityClass:false,
-          area:"",
-          areaClass:false,
-          address:"",
-          addressClass:false,
-          tel: "",
-          telClass:false,
-          thirdPartyCoding: [
-            {value: '',valueClass:false, value1: '',value1Class:false}
-          ],
-        })
+
+        this.dialogVisible = true
+
       },
       removeDomain(list, i) {
         list.splice(i, 1)
       },
       addDomain(list) {
-        list.push({value: '',valueClass:false, value1: '',value1Class:false});
+        list.push({name: '',valueClass:false, providerid: '',value1Class:false});
       },
 
       getOneList() {
@@ -305,10 +382,32 @@ import areaList from "../../../utility/areaData"
     },
     created() {
       this.provinceList = areaList
+//
+      let item = {
+        storename: "",
+        nameClass:false,
+        storecodeid: '',
+        codeClass:false,
+        brand: '',
+        brandClass:false,
+        provinceid:"",
+        provinceClass:false,
+        cityid:"",
+        cityClass:false,
+        areaid:"",
+        areaClass:false,
+        address:"",
+        addressClass:false,
+        tel: "",
+        telClass:false,
+        storecodes: [
+          {name: '',valueClass:false, providerid: '',value1Class:false}
+        ],
+      }
 
-
-
-
+      for(let i =0; i<this.$route.params.number;i++){
+        this.storeData.push(item)
+      }
     },
     mounted() {
 

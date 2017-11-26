@@ -38,22 +38,18 @@
       :visible.sync="dialogVisible"
       width="50%">
       <el-form ref="formRules" :model="form" label-width="100px">
-        <el-form-item label="编码:">
-          <el-input v-model="form.code" :disabled="true"></el-input>
+        <el-form-item label="名称:" prop="levelname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="form.levelname" placeholder="请输入内容"></el-input>
         </el-form-item>
 
-        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="form.name" placeholder="请输入内容"></el-input>
-        </el-form-item>
-
-        <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
+        <div v-for="(domain, index) in form.levelcodes" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key" :prop="'levelcodes.' + index + '.name'"
                         :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value"></el-input>
+                    <el-input v-model="domain.name"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -62,13 +58,13 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
+          <el-form-item label-width="0" :key="domain.key" :prop="'levelcodes.' + index + '.providerid'"
                         :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value1"></el-input>
+                    <el-input v-model="domain.providerid"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -78,7 +74,7 @@
             <div class="m-storeCode margin_l_10" @click="addDomain()">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(form.levelcodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
@@ -93,11 +89,12 @@
           <div>营业执照</div>
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
+            :on-success="handleAvatarSuccess1"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="form.business_src" :src="form.business_src" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -107,11 +104,12 @@
           </div>
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
+            :on-success="handleAvatarSuccess2"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="form.businesscode_src" :src="form.businesscode_src" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -119,11 +117,12 @@
           <div>开户许可证</div>
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
+            :on-success="handleAvatarSuccess3"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="form.account_src" :src="form.account_src" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -131,11 +130,12 @@
           <div>税务登记证</div>
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
+            :on-success="handleAvatarSuccess4"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="form.tax_src" :src="form.tax_src" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -143,11 +143,12 @@
           <div>法人证件正面照</div>
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
+            :on-success="handleAvatarSuccess5"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="form.legalman_1" :src="form.legalman_1" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -155,16 +156,72 @@
           <div>法人证件反面照</div>
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            name = 'filename'
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
+            :on-success="handleAvatarSuccess6"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="form.legalman_2" :src="form.legalman_2" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
         <div class="margin_t_10">
-          <el-button>取消</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitFrom('formRules')">确认</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
+
+    <!--子部门-->
+    <el-dialog
+      :title="title"
+      :visible.sync="dialogVisible1"
+      width="50%">
+      <el-form ref="formRules" :model="form" label-width="100px">
+        <el-form-item label="名称:" prop="levelname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="form.levelname" placeholder="请输入内容"></el-input>
+        </el-form-item>
+
+        <div v-for="(domain, index) in form.levelcodes" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key" :prop="'levelcodes.' + index + '.name'"
+                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+            <div>
+              <el-row>
+                <el-col>
+                  <div style="width:150px">
+                    <el-input v-model="domain.name"></el-input>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
+          <div class="m-rank">
+            <div class="m-rank-child"></div>
+          </div>
+          <el-form-item label-width="0" :key="domain.key" :prop="'levelcodes.' + index + '.providerid'"
+                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+            <div>
+              <el-row>
+                <el-col>
+                  <div style="width:150px">
+                    <el-input v-model="domain.providerid"></el-input>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
+          <div class="flex_a" style="margin-bottom: 22px">
+            <div class="m-storeCode margin_l_10" @click="addDomain()">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            </div>
+            <div v-if="(form.levelcodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                 @click.prevent="removeDomain(domain)">
+              <i class="fa fa-minus-circle" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <div class="margin_t_10">
+          <el-button @click="dialogVisible1 = false">取消</el-button>
           <el-button type="primary" @click="submitFrom('formRules')">确认</el-button>
         </div>
       </el-form>
@@ -172,30 +229,29 @@
 
     <div v-for='(item,index) in data' style="line-height: 36px;">
       <div class="tree-node" :style="{'padding-left':  count *  20  + 'px'}">
-        <!--<i @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length != 0'-->
+        <!--<i @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length != 0'-->
         <!--:style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}"-->
         <!--class="el-icon-caret-right pointer heightTran "></i>-->
 
-        <span :style="{display:(item.children && item.children.length != 0)?'none':'inline-block'}"
+        <span :style="{display:(item.child && item.child.length != 0)?'none':'inline-block'}"
               style="vertical-align: middle;width: 25px"></span>
-        <span @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length != 0'
+        <span @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length != 0'
               :style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}" style="margin-right: 8px;"
               class="el-tree-node__expand-icon"></span>
 
-        <span @click="test(item)" class="pointer el-tree-node__label">{{item.label}}</span>
+        <span @click="test(item)" class="pointer el-tree-node__label">{{item.levelname}}</span>
 
-        <i slot="reference" class="el-icon-plus pointer add" v-if="item.id === 0" @click="addBig('新建大商户')"></i>
+        <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 1" @click="addBig(item.id,'新建大商户',1)"></i>
 
         <el-popover placement="right" width="200" trigger="click">
-          <el-button size="mini" type="text" @click="addGroup('新增集团')" v-if="item.id === 1">新增集团</el-button>
-          <el-button size="mini" type="text" @click="addEnterprise('新增企业')" v-if="item.id === 2">新增企业</el-button>
-          <el-button size="mini" type="text" @click="addDepartment('添加子部门')" v-if="item.id === 3">添加子部门</el-button>
-          <el-button size="mini" type="text" @click="addStore('添加门店')" v-if="item.id === 3">添加门店</el-button>
+          <el-button size="mini" type="text" @click="addBig(item.id,'新增集团',1)" v-if="item.type === 2">新增集团</el-button>
+          <el-button size="mini" type="text" @click="addBig(item.id,'新增企业',1)" v-if="item.type === 3">新增企业</el-button>
+          <el-button size="mini" type="text" @click="addBig(item.id,'添加子部门',2)" v-if="item.type === 4">添加子部门</el-button>
 
           <el-button size="mini" type="text" @click="edit(item,'修改')">修改</el-button>
 
-          <el-button size="mini" type="text">删除</el-button>
-          <i slot="reference" class="el-icon-plus pointer add" v-if="item.id > 0 &&item.id <4"></i>
+          <el-button size="mini" type="text" @click="del(item,'删除')">删除</el-button>
+          <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 2 || item.type === 3 || item.type === 4"></i>
         </el-popover>
 
       </div>
@@ -210,27 +266,26 @@
         v-on:after-leave="afterLeave"
         v-on:leave-cancelled="leaveCancelled"
       >
-        <trees :data='item.children' v-if="item.show" :count='count +1' class="heightTran"></trees>
+        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran"></trees>
       </transition>
     </div>
   </div>
 </template>
 
 <script>
-
+  import Hub from '../../utility/commun'
+  import getApi from './storeLibrary.service'
   let id = 1;
   export default {
     name: 'trees',
     props: ['data', 'count'],
     watch: {
-      'data': function (n) {
-        console.log(n)
-      }
+
     },
     data() {
       return {
         title: '',
-        imageUrl: '',
+
         myHeight: '',
         styleObject: {
           height: 0
@@ -239,6 +294,7 @@
         value: "",
         item: {},
         dialogVisible: false,
+        dialogVisible1: false,
         options: [{
           value: 1,
           label: '民生银行'
@@ -247,12 +303,26 @@
           label: '易极付'
         }],
         form: {
-          name: '',
-          code: '',
-          thirdPartyCoding: [
-            {value: '', value1: ''}
+          levelname: '',
+          levelcodes: [
+            {name: '', providerid: ''}
           ],
-        }
+          business_src:'',
+          business_src_url:'',
+          businesscode_src:'',
+          businesscode_src_url:'',
+          account_src:'',
+          account_src_url:'',
+          tax_src:'',
+          tax_src_url:'',
+          legalman_1:'',
+          legalman_1_url:'',
+          legalman_2:'',
+          legalman_2_url:'',
+
+        },
+        token:'',
+        id:'',//组织id
 
       }
     },
@@ -260,79 +330,165 @@
       submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            const newChild = {id: id++, label: 'testtest', show: true, children: []};
-            this.data[0].children.push(newChild);
+            this.form.id = this.id;
+            if(this.title === '新建大商户' || this.title === '新增集团' || this.title === '新增企业' || this.title === '添加子部门'){
+
+              getApi.addLevel(this.token,this.form).then((res)=>{
+                console.log(res)
+                if(res.data.errcode === 0){
+                  Hub.$emit('treeEventEditDel','Ok');
+                }
+              });
+            }
+
+            if(this.title === '修改'){
+
+              getApi.updateLevel(this.token,this.form).then((res)=>{
+                Hub.$emit('treeEventEditDel','Ok');
+                if(res.data.errcode === 0){
+                }
+              });
+            }
             this.dialogVisible = false
+            this.dialogVisible1 = false
           } else {
             console.log('error submit!!');
             return false;
           }
         });
       },
-      handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
+
+      handleAvatarSuccess1(res, file) {
+        this.form.business_src_url = file.response.data.file_url;
+        this.form.business_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess2(res, file) {
+        this.form.businesscode_src_url = file.response.data.file_url;
+        this.form.businesscode_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess3(res, file) {
+        this.form.account_src_url = file.response.data.file_url;
+        this.form.account_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess4(res, file) {
+        this.form.tax_src_url = file.response.data.file_url;
+        this.form.tax_src = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess5(res, file) {
+        this.form.legalman_1_url = file.response.data.file_url;
+        this.form.legalman_1 = URL.createObjectURL(file.raw);
+      },
+      handleAvatarSuccess6(res, file) {
+        this.form.legalman_2_url = file.response.data.file_url;
+        this.form.legalman_2 = URL.createObjectURL(file.raw);
       },
       beforeAvatarUpload(file) {
         const isPNG = file.type === 'image/png';
         const isJPG = file.type === 'image/jpeg';
         const isLt5M = file.size / 1024 / 1024 < 5;
+        let img
 
-        if (!isJPG || !isPNG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+        if(isJPG || isPNG){
+           img = true
+        }else {
+          img = false;
+          this.$message.error('上传头像图片只能是 JPG,PNG 格式!');
         }
         if (!isLt5M) {
           this.$message.error('上传头像图片大小不能超过 5MB!');
         }
-        return (isJPG || isPNG) && isLt5M;
+        return img && isLt5M;
       },
-      addStore() {
-        this.$router.push('/storeManage/storeList/newAddStore')
+
+      addBig(id,title,no) {
+        this.form= {
+          levelname: '',
+          levelcodes: [
+            {name: '', providerid: ''}
+          ],
+          business_src:'',
+          business_src_url:'',
+          businesscode_src:'',
+          businesscode_src_url:'',
+          account_src:'',
+          account_src_url:'',
+          tax_src:'',
+          tax_src_url:'',
+          legalman_1:'',
+          legalman_1_url:'',
+          legalman_2:'',
+          legalman_2_url:'',
+        };
+
+        this.id = id;
+        this.title = title;
+        if(no === 1){
+          this.dialogVisible = true
+        } else {
+          this.dialogVisible1 = true
+
+        }
+
 
       },
-      addDepartment(title) {
-        this.title = title
-        this.dialogVisible = true
+      edit(item, name) {
+        this.id = item.id;
+        this.title = "修改";
+
+        getApi.getOneLevel(this.token,item).then((res)=>{
+          console.log(res)
+        })
+
+
+//        this.form = item;
+//        this.dialogVisible = true
       },
-      addEnterprise(title) {
-        this.title = title
-        this.dialogVisible = true
-      },
-      addGroup(title) {
-        this.title = title
-        this.dialogVisible = true
-      },
-      addBig(title) {
-        this.title = title
-        this.dialogVisible = true
+      del(item){
+       let id = item.id;
+        this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          getApi.delLevel(this.token, id).then((res) => {
+            console.log(res)
+            Hub.$emit('treeEventEditDel','Ok');
+            if (res) {
+
+            }
+            this.$message({
+              type: 'info',
+              message: '删除成功'
+            });
+          })
+        }).catch(() => {
+          //
+        });
       },
 
       test(item) {
-        item.show = !item.show
+
+        if(item.type === 5){
+          Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:true});
+        }else {
+          Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:false});
+        }
+//        item.show = !item.show
       },
       removeDomain(item) {
-        let index = this.form.thirdPartyCoding.indexOf(item)
+        let index = this.form.levelcodes.indexOf(item)
         if (index !== -1) {
-          this.form.thirdPartyCoding.splice(index, 1)
+          this.form.levelcodes.splice(index, 1)
         }
       },
       addDomain() {
-        this.form.thirdPartyCoding.push({
+        this.form.levelcodes.push({
           value: '',
           key: Date.now()
         });
       },
-      append(item) {
-        const newChild = {id: id++, label: 'testtest', show: true, children: []};
-        if (!item.children) {
-          this.$set(item, 'children', []);
-        }
-        item.children.push(newChild);
-        console.log(this.data)
-      },
-      edit(item, name) {
-        this.item = item;
-        this.dialogVisible = true
-      },
+
+
       beforeEnter: function (el) {
         el.style.height = '0';
       },
@@ -367,6 +523,7 @@
       },
     },
     created() {
+    this.token = this.$localStorage.get("token")
 
     },
     mounted() {

@@ -87,7 +87,7 @@
 
                 <div class="flex">
                   <el-button type="primary" @click="editStoreBase()">保存</el-button>
-                  <el-button @click="editStoreBase()">取消</el-button>
+                  <el-button @click="router.go(-1)">取消</el-button>
 
                 </div>
               </el-col>
@@ -196,8 +196,8 @@
                 </div>
 
                 <div class="flex">
-                  <el-button type="primary" @click="editStoreBase()">保存</el-button>
-                  <el-button @click="editStoreBase()">取消</el-button>
+                  <el-button type="primary" @click="editStoreAccount()">保存</el-button>
+                  <el-button @click="router.go(-1)">取消</el-button>
 
                 </div>
               </el-col>
@@ -873,13 +873,17 @@
 
         getApi.editStore(this.token, this.storeData).then((res) => {
           console.log(res)
+          if(res){
+            this.$router.go(-1)
+          }
         })
-
 
         //this.$router.push('/storeManage/storeList/seeTheStore/editStoreBase')
       },
       editStoreAccount() {
-        this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
+
+
+        //this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
       },
       clientSubmit() {
         console.log(this.clientForm)
