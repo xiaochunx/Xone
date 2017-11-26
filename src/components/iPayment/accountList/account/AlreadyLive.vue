@@ -95,16 +95,7 @@
           accountCode: '系统自动生成', // 账户编码
           accountName: '',    // 账户名称
           Merchants: '',      // 商户号
-          payOptions: [{
-            id: 1,
-            memo: "上海"
-          }, {
-            id: 2,
-            memo: "北京"
-          }, {
-            id: 3,
-            memo: "龙岩"
-          }],    // 支付方式
+          payOptions: [],    // 支付方式
           checkboxGroup: [1],
           paymentOptions: [{     // 支付通道
             value: '选项1',
@@ -151,14 +142,13 @@
 
             this.loading = true;
 
-              // 拼接支付方式格式
+            // 拼接支付方式格式
               var paymentMethod = "";
               for (var value in this.ruleForm.checkboxGroup) {
-                paymentMethod += value + ',';
+                paymentMethod += this.ruleForm.checkboxGroup[value] + ',';
               }
-              paymentMethod = paymentMethod.substring(0,paymentMethod.length - 1);
 
-              console.log(this.ruleForm.domains);
+            paymentMethod = paymentMethod.substring(0,paymentMethod.length - 1);
 
               // 已有账户保存
               var params = {
@@ -167,7 +157,7 @@
                 accountName: this.ruleForm.accountName,     // 账户名
                 paymentChannel: this.ruleForm.Payment,      // 支付通道
                 paymentMethod: paymentMethod,               // 支付方式
-                merchants: this.ruleForm.Merchants          // 商户号
+                merchants: this.ruleForm.Merchants,         // 商户号
               };
 
               oneTwoApi(params).then((res) => {
@@ -245,7 +235,7 @@
     }
   }
 </script>
-<style scoped>
+<style scoped lang="less">
   .plusBtn {
     border: none;
     color: red;

@@ -2,6 +2,10 @@ import axios from 'axios'
 import qs from 'qs'
 
 
+var a = { name: 1 }
+
+console.log(qs.stringify(a));
+
 let get= function(key) {
   return window.JSON.parse(window.localStorage.getItem(key));
 };
@@ -25,13 +29,15 @@ export const payMethods = params => { return axios.post(`?controller=jichu&actio
 export const payMent = params => { return axios.post(`?controller=jichu&action=getChannelInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
 
+// 获取地区接口
+export const accessRegion = params => { return axios.post(`?controller=area&action=getAreaList&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
 
 
 
 
 
-
+export const requresEmployessInfo = params => { return axios.post(`${base}/kqadmin/api.php?controller=SysAdmin&action=yaoqing&mod=erweima`,qs.stringify(params),timeOut).then(res => res.data)};
 
 // get请求示例
 export const getUserList = params => { return axios.get(`${base}/user/list`, { params: params }); };

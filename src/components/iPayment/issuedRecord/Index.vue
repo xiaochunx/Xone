@@ -19,7 +19,7 @@
       <div>
         <el-form :inline="true" :model="form" :label-position="'top'">
           <el-form-item label="状态">
-            <el-select v-model="form.status" placeholder="请选择" clearable>
+            <el-select v-model="form.status" placeholder="请选择状态" clearable>
               <el-option
                 v-for="item in form.options"
                 :key="item.id"
@@ -29,7 +29,7 @@
             </el-select>
           </el-form-item>
           <el-form-item style="vertical-align: bottom">
-            <el-button type="primary">搜索</el-button>
+            <el-button type="primary" @click="search">搜索</el-button>
           </el-form-item>
         </el-form>
 
@@ -37,7 +37,6 @@
           :data="tableData"
           :height="height"
           border
-          v-loading="loading"
           style="width: 100%">
           <el-table-column
             type="index"
@@ -46,16 +45,18 @@
           </el-table-column>
 
           <el-table-column
-            label="支付方式"
-            width="103"
+            label="支付方式 - 支付通道 - 账户"
+            width="265"
           >
             <template scope="scope">
-              <div style="margin-left: 10px" v-for="item in scope.row.paymentMethod">{{ item }}</div>
+              <div style="margin-left: 10px" v-for="item in scope.row.account">
+                <span>{{item.paymentMethod}}</span> - <span>{{item.paymentChannel}}</span> - <span>{{item.name}}</span>
+              </div>
             </template>
           </el-table-column>
 
 
-          <el-table-column
+          <!--<el-table-column
             label="支付通道"
             width="103">
             <template scope="scope">
@@ -70,40 +71,39 @@
             <template scope="scope">
               <div style="margin-left: 10px" v-for="item in scope.row.account">{{ item }}</div>
             </template>
-          </el-table-column>
+          </el-table-column>-->
 
           <el-table-column
-            prop="date"
+            prop="time"
             label="时间"
             width="170">
           </el-table-column>
 
           <el-table-column
-            prop="lastEdit"
+            prop="operator"
             label="操作员">
           </el-table-column>
 
 
           <el-table-column
-            prop="lastEdit"
-            label="操作员"
+            label="状态"
             width="220"
           >
             <template scope="scope">
-              <div>
-                <el-tag
-                  :type="scope.row.state === '成功' ? 'primary' : 'danger'"
-                  close-transition>{{scope.row.state}}
-                </el-tag>
 
-                <span style="color: red"> &nbsp;{{scope.row.executionTime}}</span>
-              </div>
+
+              <el-tag
+                :type="scope.row.statusCode === 1 ? 'primary' : 'danger'"
+                close-transition>{{scope.row.status}}
+              </el-tag>
+
+              <div style="color: red">{{scope.row.waitTime}}</div>
+
             </template>
           </el-table-column>
 
 
           <el-table-column
-            prop="lastEdit"
             label="操作">
             <template scope="scope">
               <el-button size="small" @click="examine(scope)">查看</el-button>
@@ -114,14 +114,115 @@
         <el-dialog
           title="下发记录详情"
           :visible.sync="dialogVisible"
-          size="tiny"
+          size="small"
           :before-close="handleClose">
-          <p>操作员: {{ tableData[index].lastEdit }}</p>
-          <p>添加时间: {{ tableData[index].date }}</p>
-          <p>执行时间: {{ tableData[index].executionTime}}</p>
-          <p>状态: {{ tableData[index].state}}</p>
-          <p>下发账户: {{ tableData[index].account}}</p>
-          <p>下发门店: {{ tableData[index].account}}</p>
+
+          <div>操作员: {{checkData.operator}}</div>
+          <div>添加时间: {{checkData.addTime}}</div>
+          <div>执行时间: {{checkData.doTime}}</div>
+          <div>状态: {{checkData.status}}</div>
+
+          <div>下发账户</div>
+          <el-table
+            style="width: 100%"
+            :data="checkData.account.account"
+          >
+            <el-table-column
+              type="index"
+              width="50">
+            </el-table-column>
+
+            <el-table-column
+              property="accountId"
+              label="账户编码"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="name"
+              label="支付账户"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="paymentChannel"
+              label="支付通道"
+              :width="150"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="paymentMethod"
+              label="支付方式"
+              :width="150"
+            >
+            </el-table-column>
+
+          </el-table>
+
+          <div>下发备用账户</div>
+          <el-table
+            style="width: 100%"
+            :data="checkData.account.reserveAcc"
+          >
+            <el-table-column
+              type="index"
+              width="50">
+            </el-table-column>
+
+            <el-table-column
+              property="accountId"
+              label="账户编码"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="name"
+              label="支付账户"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="paymentChannel"
+              label="支付通道"
+              :width="150"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="paymentMethod"
+              label="支付方式"
+              :width="150"
+            >
+            </el-table-column>
+
+          </el-table>
+
+          <div>下发门店</div>
+          <el-table
+            style="width: 100%"
+            :data="checkData.stores"
+          >
+            <el-table-column
+              type="index"
+              width="50">
+            </el-table-column>
+
+            <el-table-column
+              property="code"
+              label="门店编码"
+            >
+            </el-table-column>
+
+            <el-table-column
+              property="storeName"
+              label="门店名称"
+            >
+            </el-table-column>
+
+          </el-table>
+
+
           <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -150,34 +251,21 @@
           options: [],
           status: ''
         },
-        tableData: [
-          [
-            {
-              "id": 10,
-              "account": [
-                {
-                  "paymentMethod": "微信",
-                  "paymentChannel": "民生银行",
-                  "name": "第二个"
-                }
-              ],
-              "time": "2017-05-11 05:38:58",
-              "store": null,
-              "operator": "测试",
-              "isOpen": 1,
-              "status": "执行成功"
-            }
-          ]
-        ],
+        tableData: [],
         dialogVisible: false,
         index: 0,
         height: 0,
-        loading: false,
+        checkData: {
+          account: {
+            account: [],
+            reserveAcc: []
+          },
+          stores: []
+        }
       }
     },
     methods: {
       getPage(value) {
-        console.log(1);
         this.p.page = value;
         this.api();
       },
@@ -194,12 +282,17 @@
       handleClose(done) {
         done();
       },
+      search(){
+        this.api();
+      },
       examine(scope) {
         this.index = scope.$index;
         this.dialogVisible = true;
+
+        var id = this.tableData[scope.$index].id;
+        this.checkApi(id)
       },
       api() {
-        this.loading = true;
 
         var param = {
           redirect: 'x1.accountmanage.accountUseLog',
@@ -211,15 +304,32 @@
         // 账户列表初始化 -> 获取表格数据
         oneTwoApi(param).then((res) => {
           console.log(res);
-          this.loading = false;
           if (res.errcode == 0) {
 
             this.p.total = res.data.count;
+            this.tableData = res.data.list;
           }
         }).catch((err) => {
           console.log(err);
         });
 
+      },
+      checkApi(value){
+        var param = {
+          redirect: 'x1.accountmanage.accountUseLogInfo',
+          id: value
+        };
+
+        // 账户列表初始化 -> 获取表格数据
+        oneTwoApi(param).then((res) => {
+          console.log(res);
+          this.loading = false;
+          if (res.errcode == 0) {
+            this.checkData = res.data;
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
       }
     },
     computed: {
@@ -257,7 +367,7 @@
     }
   }
 </script>
-<style scoped>
+<style scoped lang="less">
   div.cell {
     text-align: center;
   }

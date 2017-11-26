@@ -63,7 +63,7 @@
     }
   }
 </script>
-<style scoped>
+<style scoped lang="less">
   .contentMsg{
     padding: 0 0 25px 0;
   }

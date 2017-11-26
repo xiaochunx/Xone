@@ -59,20 +59,22 @@
                 </el-form-item>
 
 
-                <!--<el-form-item>
-                  <el-transfer v-model="form.data" :data="form.data2" :titles="['门店','已选门店']"></el-transfer>
-                </el-form-item>-->
-
-
                 <el-form-item>
+                  <el-transfer v-model="form.data" :data="form.data2" :titles="['门店','已选门店']"></el-transfer>
+                </el-form-item>
+
+
+                <!--<el-form-item>
                   <el-row>
                     <el-col :span="11">
                       <el-tree
                         :data="form.data3"
                         show-checkbox
                         node-key="id"
-                        :default-expanded-keys="[2, 3]"
-                        :default-checked-keys="[5]"
+                        @check-change="click"
+                        @node-collapse="click1"
+                        :default-expanded-keys="[17]"
+                        :default-checked-keys="[17]"
                         :props="defaultProps">
                       </el-tree>
                     </el-col>
@@ -91,14 +93,14 @@
                           show-checkbox
                           node-key="id"
                           :default-expanded-keys="[2]"
-                          :default-checked-keys="[5]">
+                          :default-checked-keys="[5,2]">
                         </el-tree>
                       </el-col>
 
 
                     </el-col>
                   </el-row>
-                </el-form-item>
+                </el-form-item>-->
 
 
               </el-col>
@@ -164,18 +166,11 @@
             id: 0,
             label: '全部',
             children: [{
-              id: 1,
+              labelId: 17,
               label: '一级 1',
               children: [{
                 id: 4,
                 label: '二级 1-1',
-                children: [{
-                  id: 9,
-                  label: '三级 1-1-1'
-                }, {
-                  id: 10,
-                  label: '三级 1-1-2'
-                }]
               }]
             }, {
               id: 2,
@@ -276,6 +271,12 @@
         } else {
           map[className] = true
         }
+      },
+      click(value1){
+        console.log(value1.$treeNodeId);
+      },
+      click1(value1){
+        console.log(value1);
       },
     },
     created() {

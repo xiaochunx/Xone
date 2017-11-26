@@ -8,10 +8,37 @@
 </template>
 
 <script>
+
+  import Axios from 'axios'
+
 export default {
   name: 'app',
   created(){
 
+  },
+
+  mounted(){
+    Axios.interceptors.response.use(data => {// 响应成功关闭loading
+
+      if (data.data.errcode != 0){
+        this.$alert(data.data.errmsg, '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$message({
+              type: 'warning',
+              message: data.data.errmsg
+            });
+          }
+        });
+      }
+      return data
+    }, error => {
+      loadinginstace.close()
+      Message.error({
+        message: '加载失败'
+      });
+      return Promise.reject(error)
+    });
   }
 }
 </script>

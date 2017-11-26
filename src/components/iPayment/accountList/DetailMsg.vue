@@ -335,7 +335,7 @@
     }
   }
 </script>
-<style scoped>
+<style scoped lang="less">
   div.cell {
     text-align: center;
   }

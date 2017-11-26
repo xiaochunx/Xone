@@ -8,7 +8,7 @@
       <el-col :span="20" id="getContentHeight" style="overflow-y: scroll">
         <div class="content">
           <!--路由视图-->
-          <router-view v-loading="getLoadingStatus" style="height: 100%"></router-view>
+          <router-view v-loading="getLoadingStatus"></router-view>
         </div>
         <!--<div :style="{height:ListHeight + 'px'}">
 
@@ -67,6 +67,5 @@
 <style scoped lang="less">
   .content {
     padding: 25px;
-    height: 100%;
   }
 </style>

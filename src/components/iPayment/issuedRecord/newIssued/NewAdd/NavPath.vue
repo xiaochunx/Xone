@@ -27,7 +27,7 @@
     }
   }
 </script>
-<style lang="less">
+<style scoped lang="less">
   .xo-breadcrumb {
     font-size: 15px;
     .xo-breadcrumb__separator {
