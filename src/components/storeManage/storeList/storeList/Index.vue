@@ -311,7 +311,6 @@
         getApi.urlStatus(this.token,row.id,row.payJumpUrl).then((res)=>{
           console.log(res)
         })
-
       },
       add(){
         let list = [];

@@ -17,6 +17,12 @@
                     <span>{{storeData.code}}</span>
                   </el-form-item>
                   <el-form-item label="第三方编码:">
+                    <div v-for="(item,index) in storeData.storeCode">
+                      <span>{{item.code1}} -- {{item.code2}}</span>
+                    </div>
+
+                  </el-form-item>
+                  <el-form-item label="">
                     <div v-for="(item,index) in storeData.thirdCode">
                       <span>{{item.code1}} -- {{item.code2}}</span>
                     </div>
@@ -69,21 +75,18 @@
                   <div class="m-seeAddStore-account">
                     <div class="m-seeAddStore-account-now">正在使用中的账户</div>
 
-                    <div v-for="(item,index) in storeAccount.account" class="m-seeAddStore-account-list">
-                      <div class="m-seeAddStore-account-list-img">
-                        <img src="" alt=""></div>
+                    <div v-for="(item,index) in storeAccount.account" class="padding_l_10">
+                      <!--<div class=""><img src="" alt=""></div>-->
                       <span>{{item.accountName}}</span>
                       <span>{{item.paymentName}}</span>
                       <span>{{item.paymentChannel}}</span>
                     </div>
                   </div>
-                  <div class="m-seeAddStore-account">
+                  <div class="m-seeAddStore-account margin_t_10">
                     <div class="m-seeAddStore-account-prepare">备用账户</div>
 
-
-                    <div v-for="(item,index) in storeAccount.reserveAcc" class="m-seeAddStore-account-list">
-                      <div class="m-seeAddStore-account-list-img">
-                        <img src="" alt=""></div>
+                    <div v-for="(item,index) in storeAccount.reserveAcc" class="padding_l_10">
+                      <!--<div class=""><img src="" alt=""></div>-->
                       <span>{{item.accountName}}</span>
                       <span>{{item.paymentName}}</span>
                       <span>{{item.paymentChannel}}</span>

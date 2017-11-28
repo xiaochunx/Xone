@@ -349,7 +349,7 @@
         if(this.searchName === ''){
           this.getBsList()
         }else {
-          getApi.getBsList(this.token,this.showAdd.levelid,this.searchName).then((res)=>{
+          getApi.getBsList(this.token,this.p,this.showAdd.levelid,this.searchName).then((res)=>{
             console.log(res)
             if (res.data.errcode === 0) {
               res.data.data.list.forEach((item)=>{
@@ -655,7 +655,7 @@
         })
       },
       getBsList(){
-        getApi.getBsList(this.token, -1).then((res) => {
+        getApi.getBsList(this.token, this.p,-1).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((item)=>{
@@ -754,7 +754,7 @@
         this.recurSelected(this.data5,e.levelid)
       });
       Hub.$on('getBsList', (e) => {
-        getApi.getBsList(this.token, e.levelid).then((res) => {
+        getApi.getBsList(this.token,this.p, e.levelid).then((res) => {
           console.log(res)
           res.data.data.list.forEach((item)=>{
             if(item.status === 1){

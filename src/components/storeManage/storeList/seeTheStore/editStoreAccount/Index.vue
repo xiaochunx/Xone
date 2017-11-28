@@ -537,14 +537,43 @@
                   <el-form-item label="第三方编码:">
                     <div v-for="(item,index) in storeData.storeCode">
                       <span>{{item.code1}} -- {{item.code2}}</span>
-                      <span class="padding_l_10" style="color: red">此处为基础设置中门店库里设置的第三方编码，不可修改</span>
+
                     </div>
+                    <span class="padding_l_10" style="color: red">此处为基础设置中门店库里设置的第三方编码，不可修改</span>
                   </el-form-item>
 
-                  <el-form-item label="第三方编码:">
-                    <div v-for="(item,index) in storeData.thirdCode">
-                      <span>{{item.code1}} -- {{item.code2}}</span>
+                  <el-form-item label="">
+
+
+                    <!--<div v-for="(item,index) in storeData.thirdCode">-->
+                    <!--<span>{{item.code1}} &#45;&#45; {{item.code2}}</span>-->
+                    <!--</div>-->
+
+
+                    <div v-for="(domain, index) in storeData.thirdCode" class="flex_a padding_10">
+                      <div style="width:150px">
+                        <el-input v-model="domain.code1" style="width: 150px;"
+                                  placeholder="请输入内容"></el-input>
+                      </div>
+                      <div class="m-rank">
+                        <div class="m-rank-child"></div>
+                      </div>
+                      <div style="width:150px">
+                        <el-input v-model="domain.code2" style="width: 150px;"
+                                  placeholder="请输入内容"></el-input>
+                      </div>
+                      <div class="flex_sb" style="width:80px">
+                        <div class="m-storeCode margin_l_10" @click="addDomainThird()">
+                          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        </div>
+                        <div v-if="index !== 0" class="m-storeCode margin_l_10"
+                             @click.prevent="removeDomainThird(index)">
+                          <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                        </div>
+                      </div>
+
                     </div>
+
                   </el-form-item>
                   <el-form-item label="所属门店组:">
                     <el-select v-model="storeData.storeLabelId" placeholder="请选择">
@@ -606,7 +635,7 @@
 
                 <div class="flex">
                   <el-button type="primary" @click="editStoreBase()">保存</el-button>
-                  <el-button @click="router.go(-1)">取消</el-button>
+                  <el-button @click="$router.go(-1)">取消</el-button>
 
                 </div>
               </el-col>
@@ -935,11 +964,10 @@
       editStoreAccount(formRules) {
 
 
-
-        this.formAccount.account.forEach((item)=>{
-            delete item.getCanUseAccountList
+        this.formAccount.account.forEach((item) => {
+          delete item.getCanUseAccountList
         })
-        this.formAccount.reserveAcc.forEach((item)=>{
+        this.formAccount.reserveAcc.forEach((item) => {
           delete item.getCanUseAccountList
         })
         console.log(this.formAccount)
@@ -975,9 +1003,9 @@
           }
         }
         if (tab.name === 'second') {
-let list = {}
+          let list = {}
           await getApi.getStoreAccount(this.token, this.$route.params.id).then((res) => {
-//            console.log(res.data.data)
+//            console.log(res)
 
             if (res.data.data.account.length === 0 && res.data.data.reserveAcc.length === 0) {
               this.formAccount.account.push({
@@ -993,44 +1021,23 @@ let list = {}
                 getCanUseAccountList: []
               })
             } else {
-              console.log(1)
               list = res.data.data
-
             }
           });
-
-
-          console.log(2)
-
-//          setTimeout(()=>{
-//            this.formAccount = res.data.data
-//            console.log(this.formAccount)
-//          },1500)
-
-       await   list.account.forEach((item) => {
-            getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res1) => {
-              console.log(res1)
+          for (let item of list.account) {
+            await  getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res1) => {
               item.getCanUseAccountList = res1.data.data
-              console.log(3)
-
-              this.formAccount = list
-
+              //this.formAccount = list
             })
-
-          })
-
-          await   list.reserveAcc.forEach((item) => {
-            getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res2) => {
-              console.log(res2)
+          }
+          for (let item of list.reserveAcc) {
+            await getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res2) => {
               item.getCanUseAccountList = res2.data.data
-              console.log(4)
-              this.formAccount = list
+              //this.formAccount = list
             })
-          })
-
-//          console.log(this.formAccount)
+          }
+          this.formAccount = list
         }
-
       },
       addDomainClient() {
         let length = this.clientForm.list.length;
@@ -1046,6 +1053,12 @@ let list = {}
       removeDomain(i) {
         this.formAccount.account.splice(i, 1)
       },
+      addDomainThird() {
+        this.storeData.thirdCode.push({"code1": "", "code2": ""})
+      },
+      removeDomainThird(i) {
+        this.storeData.thirdCode.splice(i, 1)
+      },
       subAddDomain() {
         this.formAccount.reserveAcc.push({paymentId: '', paymentChannelId: '', accountId: '', getCanUseAccountList: []})
       },
@@ -1056,7 +1069,12 @@ let list = {}
         getApi.getFirst(this.token, this.$route.params.id).then((res) => {
           if (res.data.errcode === 0) {
             res.data.data.urlCode = res.data.data.urlWithCode * 1;
+
+            if (res.data.data.thirdCode.length === 0) {
+              res.data.data.thirdCode.push({"code1": "", "code2": ""})
+            }
             this.storeData = res.data.data;
+            console.log(this.storeData)
           } else {
             this.$alert('请重新登录', '超时', {
               confirmButtonText: '确定',
@@ -1091,6 +1109,13 @@ let list = {}
 </script>
 
 <style scope lang="less">
+  .m-rank {
+    width: 40px;
+    .m-rank-child {
+      border-bottom: 1px solid #000;
+    }
+  }
+
   .select_w {
     width: 150px;
   }

@@ -36,8 +36,9 @@ let editStore = (token,storeData) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.saveStoreBaseInfo");
-
     formData.append("id", storeData.id);
+
+    formData.append("thirdCode", window.JSON.stringify(storeData.thirdCode) );
     formData.append("labelId", storeData.storeLabelId);
     formData.append("openTimeStart", storeData.openTimeStart);
     formData.append("openTimeEnd", storeData.openTimeEnd);

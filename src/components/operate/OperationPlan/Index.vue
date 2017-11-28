@@ -70,7 +70,7 @@
         this.showResouce();
       },
       showResouce() {
-        getApi.getProject(this.token).then((res) => {
+        getApi.getProject(this.token,this.p).then((res) => {
           this.tableData = res.data.data.list
           this.p.total = res.data.data.count
         })

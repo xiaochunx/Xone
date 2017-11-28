@@ -123,14 +123,14 @@
           <template scope="scope">
             <div v-for="(domain, index) in scope.row.storecodes" class="flex_a padding_10">
               <div style="width:150px">
-                <el-input :class="{isInput:domain.valueClass === true}" v-model="domain.name"
+                <el-input  v-model="domain.name"
                           @change="myChange(domain,'name','valueClass')" placeholder="请输入内容"></el-input>
               </div>
               <div class="m-rank">
                 <div class="m-rank-child"></div>
               </div>
               <div style="width:150px">
-                <el-input :class="{isInput:domain.value1Class === true}" v-model="domain.providerid"
+                <el-input  v-model="domain.providerid"
                           @change="myChange(domain,'providerid','value1Class')" placeholder="请输入内容"></el-input>
               </div>
               <div class="flex_sb" style="width:80px">
@@ -152,9 +152,9 @@
                        @change="myChange(scope.row,'brand','brandClass')" placeholder="请选择">
               <el-option
                 v-for="item in brandList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                :key="item.id"
+                :label="item.levelname"
+                :value="item.id">
               </el-option>
             </el-select>
           </template>
@@ -228,13 +228,7 @@
       return {
         tableHeight: 0,
         navList: [{name: "门店管理", url: ''}, {name: "新增门店", url: ''}],
-        brandList: [{
-          value: 1,
-          label: '品牌1'
-        }, {
-          value: 2,
-          label: '品牌2'
-        }],
+        brandList: [],
         value: '',
         provinceList: [],
 
@@ -386,13 +380,14 @@
               break
             }
 
-            for (let map1 of map.storecodes) {
-              if (map1.name === "" || map1.providerid === "") {
-                this.va = "";
-                break outer
-              }
-              this.va = "ok"
-            }
+//            for (let map1 of map.storecodes) {
+//              if (map1.name === "" || map1.providerid === "") {
+//                this.va = "";
+//                break outer
+//              }
+//              this.va = "ok"
+//            }
+            this.va = "ok"
           }
         console.log(this.va)
 
@@ -427,11 +422,7 @@
                 this.$router.go(-1)
               }
             })
-
-
           })
-
-
         } else {
           this.$message({
             type: 'warning',
@@ -440,7 +431,6 @@
         }
 
       },
-
 
       removeDomain(list, i) {
         list.splice(i, 1)
@@ -529,6 +519,11 @@
             }
           })
         }
+      })
+
+      getApi.getBrand(this.token,this.$route.params.levelid).then((res)=>{
+        console.log(res)
+        this.brandList = res.data.data
       })
     },
     mounted() {

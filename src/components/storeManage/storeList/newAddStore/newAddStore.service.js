@@ -18,8 +18,17 @@ let addStore = (token,levelid,type,data) => {
 
 
 
+//返回当前的组织架构下的品牌
+let getBrand = (token,id) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`?controller=level&action=brand&token=${token}&id=${id}`).then((res)=>{
+      resolve(res)
+    })
+  })
+};
 
-export default {addStore}
+
+export default {addStore,getBrand}
 
 
 
