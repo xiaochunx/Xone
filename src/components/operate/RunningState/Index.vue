@@ -12,9 +12,9 @@
 
         <div class="flex_a">
           <div class="margin_r_10">
-            <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
+            <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
           </div>
-          <el-button size="small">搜索</el-button>
+          <el-button size="small" @click="search()">搜索</el-button>
         </div>
       </div>
     </div>
@@ -22,16 +22,18 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
         <el-tree
-          :data="data5"
+          :data="dataLeft"
           :props="defaultProps"
+          @node-click="nodeClick"
           node-key="id"
           default-expand-all
-          :expand-on-click-node="true"
+          :highlight-current="true"
+          :expand-on-click-node="false"
         >
         </el-tree>
       </div>
 
-      <div :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="70">
@@ -41,36 +43,38 @@
 
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storecodeid"
                            label="编码"
                            width="100"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
                            label="门店"></el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service" label="款易服务"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center"  label="打印机状态" width="120">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service"
+                           label="款易服务"></el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="打印机状态" width="120">
             <template scope="scope">
-              <el-button type="text" @click="printStatus()">查看</el-button>
+              <el-button type="text" @click="printStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="客户端状态" width="120">
             <template scope="scope">
-              <el-button type="text" @click="clientStatus()">查看</el-button>
+              <el-button type="text" @click="clientStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="POS端状态" width="120">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="POS端状态"
+                           width="120">
             <template scope="scope">
-              <el-button type="text" @click="posStatus()">查看</el-button>
+              <el-button type="text" @click="posStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">
             <template scope="scope">
-              <el-button type="text" @click="operation()">操作</el-button>
+              <el-button type="text" @click="operation(scope.row)">操作</el-button>
             </template>
           </el-table-column>
         </el-table>
         <footer>
-          <xo-pagination></xo-pagination>
+          <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
 
       </div>
@@ -80,20 +84,20 @@
       title="打印机状态"
       :visible.sync="dialogVisible"
       width="50%">
-      <el-table :data="printList" border >
+      <el-table :data="printList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
           <template scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="打印机ID" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="打印机ID">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ip" label="IP地址" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ip" label="IP地址">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type" label="型号" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type" label="型号">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -102,20 +106,20 @@
       title="客户端状态"
       :visible.sync="dialogVisible2"
       width="50%">
-      <el-table :data="clientList" border >
+      <el-table :data="clientList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
           <template scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ver" label="服务版本" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ver" label="服务版本">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="time" label="安装日期" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="time" label="安装日期">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posion" label="安装位置" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posion" label="安装位置">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -124,20 +128,20 @@
       title="客户端状态"
       :visible.sync="dialogVisible3"
       width="50%">
-      <el-table :data="POSList" border >
+      <el-table :data="POSList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
           <template scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="POS ID" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="POS ID">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ip" label="IP地址" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ip" label="IP地址">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posion" label="位置" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posion" label="位置">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -146,35 +150,41 @@
       title="设置"
       :visible.sync="dialogVisible4"
       width="70%">
-      <el-table :data="setList" border >
+      <el-table :data="setList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
           <template scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"  width="120" label="打印机ID" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" width="120"
+                         label="打印机ID">
         </el-table-column>
-        <el-table-column label-class-name="table_head" :render-header="headerPrint" header-align="center" align="center" width="100">
+        <el-table-column label-class-name="table_head" :render-header="headerPrint" header-align="center" align="center"
+                         width="100">
           <template scope="scope">
             <el-button type="text" @click="print()">打印</el-button>
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="client" label="客户端" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="client" label="客户端">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service"  width="100" label="款易服务" >
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service" width="100"
+                         label="款易服务">
         </el-table-column>
-        <el-table-column label-class-name="table_head" :render-header="headerOpen" header-align="center" align="center" width="100">
+        <el-table-column label-class-name="table_head" :render-header="headerOpen" header-align="center" align="center"
+                         width="100">
           <template scope="scope">
             <el-button type="text" @click="open()">开启</el-button>
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" :render-header="headerClose" header-align="center" align="center" width="100">
+        <el-table-column label-class-name="table_head" :render-header="headerClose" header-align="center" align="center"
+                         width="100">
           <template scope="scope">
             <el-button type="text" @click="close()">关闭</el-button>
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" :render-header="headerUpdate" header-align="center" align="center" width="100">
+        <el-table-column label-class-name="table_head" :render-header="headerUpdate" header-align="center"
+                         align="center" width="100">
           <template scope="scope">
             <el-button type="text" @click="update()">更新</el-button>
           </template>
@@ -187,38 +197,37 @@
 <script>
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
-
+  import getApi from './runningState.service'
+  import getCommunApi from '../../utility/communApi'
   export default {
-    components: {
-
-    },
+    components: {},
     data() {
       return {
-        printList:[
-          {
-            id: 12321321,
-            ip: '192.168',
-            type: '爱普生',
-            status: '在线',
-          }
+        printList: [
+//          {
+//            id: 12321321,
+//            ip: '192.168',
+//            type: '爱普生',
+//            status: '在线',
+//          }
         ],
-        clientList:[
-          {
-            ver: 12321321,
-            time: '2017-11-11',
-            posion: 'POS3',
-            status: '正常',
-          }
+        clientList: [
+//          {
+//            ver: 12321321,
+//            time: '2017-11-11',
+//            posion: 'POS3',
+//            status: '正常',
+//          }
         ],
-        POSList:[
-          {
-            id: 12321321,
-            ip: '192.168',
-            posion: 'POS3',
-            status: '在线',
-          }
+        POSList: [
+//          {
+//            id: 12321321,
+//            ip: '192.168',
+//            posion: 'POS3',
+//            status: '在线',
+//          }
         ],
-        setList:[
+        setList: [
           {
             id: 12321321,
             client: 'POS3',
@@ -228,103 +237,73 @@
         dialogVisible: false,
         dialogVisible2: false,
         dialogVisible3: false,
-        dialogVisible4:false,
+        dialogVisible4: false,
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "运营状态", url: ''}],
 
-        storeGroup: 1,
-        payValue: 2,
-        payValueData: [{
-          value: 1,
-          label: '全部'
-        }, {
-          value: 2,
-          label: '开启'
-        }, {
-          value: 3,
-          label: '关闭'
-        }],
-        storeName: '',
-        storeData: [{
-          NO: true,
-          storeCode: '83789',
-          storeName: '炳胜（马场店）',
-          service: 'x1',
-        }, {
-          NO: false,
-          storeCode: '837892',
-          storeName: '炳胜（马场店）',
-          service: 'x1',
-        }, {
-          NO: false,
-          storeCode: '837893',
-          storeName: '炳胜（马场店）',
-          service: 'x1',
-        }],
-
-        data5: [{
-          id: 1,
-          label: '民生银行',
-          children: [{
-            id: 4,
-            label: '狮子牌',
-            children: [{
-              id: 9,
-              label: '狮子牌33'
-            }, {
-              id: 10,
-              label: '易极付4444'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '民生银行1',
-          children: [{
-            id: 5,
-            label: '九毛九'
-          }, {
-            id: 6,
-            label: '太二酸菜鱼'
-          }]
-        }],
+        levelId: -1,//左边树ID
+        searchName: '',
+        storeData: [],
+        p: {page: 1, size: 20, total: 0},
+        dataLeft: [],
         defaultProps: {
-          children: 'children',
-          label: 'label'
+          children: 'child',
+          label: 'levelname'
         },
-
-        form: {
-          name: '',
-          code: '',
-          thirdPartyCoding: [
-            {value: '', value1: ''}
-          ],
-        },
-
-        isEdit: true,
-        value: "",
-        options: [{
-          value: 1,
-          label: '民生银行'
-        }, {
-          value: 2,
-          label: '易极付'
-        }],
       }
     },
     watch: {},
     methods: {
-      headerUpdate(h){
+      search(){
+        console.log(this.levelId)
+        if(this.searchName === ''){
+          this.showResouce(-1)
+        }else {
+          getApi.getService(this.token,this.levelId,this.searchName).then((res)=>{
+            console.log(res)
+            if (res.data.errcode === 0) {
+              res.data.data.list.forEach((item)=>{
+                if(item.status === 1){
+                  item.status = "开启"
+                }else {
+                  item.status = "关闭"
+                }
+                item.select = false
+              });
+              this.storeData = res.data.data.list;
+              this.p.total = res.data.data.count
+            } else {
+
+            }
+          })
+        }
+      },
+
+      nodeClick(item, data1, data2) {
+        console.log(item.id);
+        this.levelId = item.id
+
+        this.showResouce(item.id)
+      },
+      getPage(page) {
+        this.p.page = page;
+        this.showResouce(this.levelId);
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        this.showResouce(this.levelId);
+      },
+      headerUpdate(h) {
         return h(
           'div',
           {},
           [
             h('el-button', {
                 attrs: {size: "mini"},
-                'class': {
-                },
+                'class': {},
                 on: {
-                  click: ()=>{
+                  click: () => {
                     console.log(111)
                   },
 
@@ -334,17 +313,16 @@
           ]
         );
       },
-      headerClose(h){
+      headerClose(h) {
         return h(
           'div',
           {},
           [
             h('el-button', {
                 attrs: {size: "mini"},
-                'class': {
-                },
+                'class': {},
                 on: {
-                  click: ()=>{
+                  click: () => {
                     console.log(111)
                   },
 
@@ -354,37 +332,35 @@
           ]
         );
       },
-      headerOpen(h){
-      return h(
-        'div',
-        {},
-        [
-          h('el-button', {
-              attrs: {size: "mini"},
-              'class': {
-              },
-              on: {
-                click: ()=>{
-                  console.log(111)
-                },
-
-              }
-            }, ['开启']
-          )
-        ]
-      );
-    },
-      headerPrint(h){
+      headerOpen(h) {
         return h(
           'div',
           {},
           [
             h('el-button', {
-              attrs: {size: "mini"},
-                'class': {
-                },
+                attrs: {size: "mini"},
+                'class': {},
                 on: {
-                  click: ()=>{
+                  click: () => {
+                    console.log(111)
+                  },
+
+                }
+              }, ['开启']
+            )
+          ]
+        );
+      },
+      headerPrint(h) {
+        return h(
+          'div',
+          {},
+          [
+            h('el-button', {
+                attrs: {size: "mini"},
+                'class': {},
+                on: {
+                  click: () => {
                     console.log(111)
                   },
 
@@ -394,28 +370,38 @@
           ]
         );
       },
-      print(){
-console.log(this)
+      print() {
+        console.log(this)
       },
-      open(){
+      open() {
 
       },
-      close(){
+      close() {
 
       },
-      update(){
+      update() {
 
       },
-      printStatus(){
+      printStatus(row) {
+        console.log(row)
+
+        this.printList = row.storeprinters;
+
         this.dialogVisible = true
       },
-      clientStatus(){
+      clientStatus(row) {
+        console.log(row)
+        this.clientList = row.storeclients
         this.dialogVisible2 = true
       },
-      posStatus(){
+      posStatus(row) {
+        console.log(row)
+this.POSList = row.storeposs
         this.dialogVisible3 = true
       },
-      operation(){
+      operation(row) {
+        console.log(row)
+
         this.dialogVisible4 = true
 
       },
@@ -427,12 +413,26 @@ console.log(this)
       del() {
 
       },
-
-
+      showResouce(id) {
+        getApi.getService(this.token, id).then((res) => {
+          this.storeData = res.data.data.list
+          this.p.total = res.data.data.count
+        })
+      }
     },
     created() {
+      this.token = this.$localStorage.get('token');
 
+      getCommunApi.getLeft(this.token).then((res) => {
 
+        this.dataLeft = res.data.data
+      });
+
+      getApi.getService(this.token, -1).then((res) => {
+        console.log(res)
+        this.storeData = res.data.data.list
+        this.p.total = res.data.data.count
+      })
     },
     mounted() {
 

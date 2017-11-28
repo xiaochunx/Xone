@@ -29,9 +29,9 @@
     <div>
       <span class="login">帮助</span>
       <el-dropdown @command="loginOut">
-  <span class="login el-dropdown-link">
-    admin
-  </span>
+        <span class="login el-dropdown-link pointer">
+          {{user}}
+        </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="login">退出</el-dropdown-item>
         </el-dropdown-menu>
@@ -46,18 +46,28 @@
   export default {
     data() {
       return {
-        height: 0
+        height: 0,
+        user: ''
       }
     },
     methods: {
       loginOut: function () {
-        this.$router.push("/login")
+        this.$http.get(`?controller=user&action=logout&token=${this.$localStorage.get("token")}`).then((res) => {
+          if(res.data.errcode === 0){
+            this.$localStorage.remove("token");
+            this.$localStorage.remove("user");
+            this.$router.push("/login")
+          }else {
+            this.$message(res.data.errmsg)
+          }
+        });
       },
       ...mapActions([
         'topHeight'
       ])
     },
     created() {
+      this.user = this.$localStorage.get("user")
     },
     mounted() {
       let top = this.$refs.getTop;

@@ -557,14 +557,14 @@
                     </el-select>
                   </el-form-item>
                   <!--<el-form-item label="公众号:">-->
-                    <!--<el-select v-model="storeData.wx_id" placeholder="请选择">-->
-                      <!--<el-option-->
-                        <!--v-for="item in form.options"-->
-                        <!--:key="item.value"-->
-                        <!--:label="item.label"-->
-                        <!--:value="item.value">-->
-                      <!--</el-option>-->
-                    <!--</el-select>-->
+                  <!--<el-select v-model="storeData.wx_id" placeholder="请选择">-->
+                  <!--<el-option-->
+                  <!--v-for="item in form.options"-->
+                  <!--:key="item.value"-->
+                  <!--:label="item.label"-->
+                  <!--:value="item.value">-->
+                  <!--</el-option>-->
+                  <!--</el-select>-->
                   <!--</el-form-item>-->
                   <el-form-item label="营业时间:">
                     <el-time-select
@@ -621,108 +621,138 @@
         <div class="m-seeAddStore">
           <div class="m-seeAddStore-basic">
             <el-row>
-              <el-col :span="16">
-                <div class="cell_title margin_b_10">
-                  正在使用中的账户
-                </div>
-                <div class="flex_r margin_b_10" v-for="(item,index) in list" :key="item.id">
-                  <div class="margin_r_10 ">
-                    <el-select v-model="item.paymentMethod" placeholder="请选择">
-                      <el-option
-                        v-for="item in getWayInfo"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
+              <el-col :span="24">
+
+                <el-form ref="formRules" :model="formAccount" label-width="0px">
+                  <div class="cell_title margin_b_10">
+                    正在使用中的账户
+                  </div>
+                  <div class="flex_r margin_b_10" v-for="(item,index) in formAccount.account">
+
+                    <el-form-item label="" :prop="'account.' + index + '.paymentId'"
+                                  :rules="{ type:'number', required: true, message: '请选择支付方式', trigger: 'change' }">
+                      <div class="margin_r_10 ">
+                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentId"
+                                   placeholder="请选择支付方式">
+                          <el-option
+                            v-for="item in getWayInfo"
+                            :key="item.id"
+                            :label="item.memo"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="" :prop="'account.' + index + '.paymentChannelId'"
+                                  :rules="{type:'number',  required: true, message: '请选择通道列表', trigger: 'change' }">
+
+                      <div class="margin_r_10 ">
+                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
+                                   placeholder="请选择通道列表">
+                          <el-option
+                            v-for="item in getChannelInfo"
+                            :key="item.id"
+                            :label="item.memo"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </el-form-item>
+
+                    <el-form-item label="" :prop="'account.' + index + '.accountId'"
+                                  :rules="{type:'number',  required: true, message: '请选择账户列表', trigger: 'change' }">
+                      <div class="margin_r_10 ">
+                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表">
+                          <el-option
+                            v-for="item1 in item.getCanUseAccountList"
+                            :key="item1.id"
+                            :label="item1.name"
+                            :value="item1.id">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </el-form-item>
+
+                    <div class="flex height_100">
+                      <div class="m-storeCode flex pointer" @click="addDomain()">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                      </div>
+                      <div class="m-storeCode flex margin_l_10 pointer" v-if="index !== 0" @click="removeDomain(index)">
+                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="margin_r_10 ">
-                    <el-select v-model="item.paymentChannel" placeholder="请选择">
-                      <el-option
-                        v-for="item in getChannelInfo"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
+
+                  <div class="cell_title margin_b_10">
+                    备用账户
                   </div>
 
-                  <div class="margin_r_10 ">
-                    <el-select v-model="item.accountId" placeholder="请选择">
-                      <el-option
-                        v-for="item in addressList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
+                  <div class="flex_r margin_b_10" v-for="(item,index) in formAccount.reserveAcc">
+
+                    <el-form-item label="" :prop="'reserveAcc.' + index + '.paymentId'"
+                                  :rules="{ type:'number', required: true, message: '请选择支付方式', trigger: 'change' }">
+                      <div class="margin_r_10 ">
+                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentId"
+                                   placeholder="请选择支付方式">
+                          <el-option
+                            v-for="item in getWayInfo"
+                            :key="item.id"
+                            :label="item.memo"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="" :prop="'reserveAcc.' + index + '.paymentChannelId'"
+                                  :rules="{type:'number',  required: true, message: '请选择通道列表', trigger: 'change' }">
+                      <div class="margin_r_10 ">
+                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
+                                   placeholder="请选择">
+                          <el-option
+                            v-for="item in getChannelInfo"
+                            :key="item.id"
+                            :label="item.memo"
+                            :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </el-form-item>
+
+                    <el-form-item label="" :prop="'reserveAcc.' + index + '.accountId'"
+                                  :rules="{type:'number',  required: true, message: '请选择账户列表', trigger: 'change' }">
+                      <div class="margin_r_10 ">
+                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择">
+                          <el-option
+                            v-for="item1 in item.getCanUseAccountList"
+                            :key="item1.id"
+                            :label="item1.name"
+                            :value="item1.id">
+                          </el-option>
+                        </el-select>
+                      </div>
+                    </el-form-item>
+                    <div class="flex height_100">
+                      <div class="m-storeCode flex pointer" @click="subAddDomain()">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                      </div>
+                      <div class="m-storeCode flex margin_l_10 pointer" v-if="index !== 0"
+                           @click="subRemoveDomain(index)">
+                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                      </div>
+                    </div>
                   </div>
+
+
                   <div class="flex">
-                    <div class="m-storeCode flex pointer" @click="addDomain()">
-                      <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                    </div>
-                    <div class="m-storeCode flex margin_l_10 pointer" @click="removeDomain(index)">
-                      <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                    </div>
-                  </div>
-                </div>
+                    <el-button type="primary" @click="editStoreAccount('formRules')">保存</el-button>
+                    <el-button @click="$router.go(-1)">取消</el-button>
 
-                <div class="cell_title margin_b_10">
-                  备用账户
-                </div>
-                <div class="flex_r margin_b_10" v-for="(item,index) in subList" :key="item.id">
-                  <div class="margin_r_10 ">
-                    <el-select v-model="item.paymentMethod" placeholder="请选择">
-                      <el-option
-                        v-for="item in getWayInfo"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
                   </div>
-
-                  <div class="margin_r_10 ">
-                    <el-select v-model="item.paymentChannel" placeholder="请选择">
-                      <el-option
-                        v-for="item in getChannelInfo"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </div>
-
-                  <div class="margin_r_10 ">
-                    <el-select v-model="item.accountId" placeholder="请选择">
-                      <el-option
-                        v-for="item in addressList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                  </div>
-                  <div class="flex">
-                    <div class="m-storeCode flex pointer" @click="subAddDomain()">
-                      <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                    </div>
-                    <div class="m-storeCode flex margin_l_10 pointer" @click="subRemoveDomain(index)">
-                      <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex">
-                  <el-button type="primary" @click="editStoreAccount()">保存</el-button>
-                  <el-button @click="router.go(-1)">取消</el-button>
-
-                </div>
-              </el-col>
-              <el-col :span="8">
+                </el-form>
 
               </el-col>
+
             </el-row>
           </div>
         </div>
@@ -735,7 +765,6 @@
 <script>
 
   import getApi from './editStoreAccount.service';
-
 
   export default {
     components: {},
@@ -806,14 +835,14 @@
           weiXin: '',
           voice: ''
         },
-        list: [
-          {paymentMethod: '', paymentChannel: '', accountId: ''},
-          {paymentMethod: '', paymentChannel: '', accountId: ''},
-        ],
-        subList: [
-          {paymentMethod: '', paymentChannel: '', accountId: ''},
-          {paymentMethod: '', paymentChannel: '', accountId: ''},
-        ],
+        formAccount: {
+          account: [
+//            {paymentId: '', paymentChannelId: '', accountId: ''},
+          ],
+          reserveAcc: [
+//            {paymentId: '', paymentChannelId: '', accountId: ''},
+          ]
+        },
 
         payType: [
           {value: 1, label: '兴业银行'},
@@ -826,12 +855,33 @@
         ],
         storeData: {},
         storeGroup: [],
-        storeAccount:{},
-        getWayInfo:[],//支付方式列表
-        getChannelInfo:[]//支付通道列表
+        storeAccount: {},
+        getWayInfo: [],//支付方式列表
+        getChannelInfo: [],//支付通道列表
+        getCanUseAccountList: [],//获取符合要求的账户列表
+
       }
     },
+    watch: {},
     methods: {
+      changePayment(item) {
+        if (item.paymentId !== "" && item.paymentChannelId !== "") {
+          getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res) => {
+            console.log(res)
+            item.accountId = '';
+            item.getCanUseAccountList = res.data.data
+          })
+        }
+      },
+//      changePayment2(item) {
+//        if (item.paymentId !== "" && item.paymentChannelId !== "") {
+//          getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res) => {
+//            console.log(res)
+//            item.accountId = '';
+//            this.getCanUseAccountList2 = res.data.data
+//          })
+//        }
+//      },
       async config2(clientForm, clientForm1) {
         let a, b;
         await this.$refs[clientForm].validate((valid) => {
@@ -843,7 +893,7 @@
             //return false;
             a = false
           }
-        })
+        });
 
         await  this.$refs[clientForm1].validate((valid) => {
           if (valid) {
@@ -875,31 +925,37 @@
         });
       },
       editStoreBase() {
-
-
         getApi.editStore(this.token, this.storeData).then((res) => {
           console.log(res)
-          if(res){
+          if (res) {
             this.$router.go(-1)
           }
         })
-
-        //this.$router.push('/storeManage/storeList/seeTheStore/editStoreBase')
       },
-      editStoreAccount() {
-        console.log(this.list)
-        console.log(this.subList)
+      editStoreAccount(formRules) {
 
 
-//        getApi.editStoreAccount(this.token,this.$route.params.id,this.list,this.subList).then((res)=>{
-//
-//          console.log(res)
-////          if(res){
-////            this.$router.go(-1)
-////          }
-//        })
 
-        //this.$router.push('/storeManage/storeList/seeTheStore/editStoreAccount')
+        this.formAccount.account.forEach((item)=>{
+            delete item.getCanUseAccountList
+        })
+        this.formAccount.reserveAcc.forEach((item)=>{
+          delete item.getCanUseAccountList
+        })
+        console.log(this.formAccount)
+        this.$refs[formRules].validate((valid) => {
+          if (valid) {
+            getApi.editStoreAccount(this.token, this.$route.params.id, this.formAccount).then((res) => {
+              console.log(res)
+              if (res.data.errcode === 0) {
+                this.$router.go(-1)
+              }
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
       clientSubmit() {
         console.log(this.clientForm)
@@ -910,15 +966,69 @@
       noticeSubmit() {
         console.log(this.noticeForm)
       },
-      handleClick(tab, event) {
-        if(tab.name === 'first'){
+      async handleClick(tab, event) {
+        if (tab.name === 'first') {
           this.getFirst()
+          this.formAccount = {
+            account: [],
+            reserveAcc: [],
+          }
         }
-        if(tab.name === 'second') {
-          getApi.getSecond(this.token,this.$route.params.id).then((res)=>{
-            console.log(res.data.data)
-          this.storeAccount = res.data.data
+        if (tab.name === 'second') {
+let list = {}
+          await getApi.getStoreAccount(this.token, this.$route.params.id).then((res) => {
+//            console.log(res.data.data)
+
+            if (res.data.data.account.length === 0 && res.data.data.reserveAcc.length === 0) {
+              this.formAccount.account.push({
+                paymentId: '',
+                paymentChannelId: '',
+                accountId: '',
+                getCanUseAccountList: []
+              });
+              this.formAccount.reserveAcc.push({
+                paymentId: '',
+                paymentChannelId: '',
+                accountId: '',
+                getCanUseAccountList: []
+              })
+            } else {
+              console.log(1)
+              list = res.data.data
+
+            }
+          });
+
+
+          console.log(2)
+
+//          setTimeout(()=>{
+//            this.formAccount = res.data.data
+//            console.log(this.formAccount)
+//          },1500)
+
+       await   list.account.forEach((item) => {
+            getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res1) => {
+              console.log(res1)
+              item.getCanUseAccountList = res1.data.data
+              console.log(3)
+
+              this.formAccount = list
+
+            })
+
           })
+
+          await   list.reserveAcc.forEach((item) => {
+            getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res2) => {
+              console.log(res2)
+              item.getCanUseAccountList = res2.data.data
+              console.log(4)
+              this.formAccount = list
+            })
+          })
+
+//          console.log(this.formAccount)
         }
 
       },
@@ -926,28 +1036,21 @@
         let length = this.clientForm.list.length;
         let id = this.clientForm.list[length - 1].id;
         this.clientForm.list.push({id: ++id, payValue: '', payTypeValue: '', addressValue: ''})
-
       },
       removeDomainClient(i) {
         this.clientForm.list.splice(i, 1)
       },
       addDomain() {
-        let length = this.list.length;
-        let id = this.list[length - 1].id;
-        this.list.push({id: ++id, payValue: '', payTypeValue: '', addressValue: ''})
-
+        this.formAccount.account.push({paymentId: '', paymentChannelId: '', accountId: '', getCanUseAccountList: []})
       },
       removeDomain(i) {
-        this.list.splice(i, 1)
+        this.formAccount.account.splice(i, 1)
       },
       subAddDomain() {
-        let length = this.subList.length;
-        let id = this.subList[length - 1].id;
-        this.subList.push({id: ++id, payValue: '', payTypeValue: '', addressValue: ''})
-
+        this.formAccount.reserveAcc.push({paymentId: '', paymentChannelId: '', accountId: '', getCanUseAccountList: []})
       },
       subRemoveDomain(i) {
-        this.subList.splice(i, 1)
+        this.formAccount.reserveAcc.splice(i, 1)
       },
       getFirst() {
         getApi.getFirst(this.token, this.$route.params.id).then((res) => {
@@ -974,12 +1077,12 @@
         console.log(res.data.data)
       })
 
-      getApi.getWayInfo(this.token).then((res)=>{
+      getApi.getWayInfo(this.token).then((res) => {
         console.log(res)
         this.getWayInfo = res.data.data
       })
 
-      getApi.getChannelInfo(this.token).then((res)=>{
+      getApi.getChannelInfo(this.token).then((res) => {
         this.getChannelInfo = res.data.data
       })
 
@@ -988,6 +1091,10 @@
 </script>
 
 <style scope lang="less">
+  .select_w {
+    width: 150px;
+  }
+
   .myInput {
     width: 300px;
   }

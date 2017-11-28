@@ -67,13 +67,12 @@
               console.log(res)
               if(res.data.errcode === 0){
                 this.$localStorage.set("token", res.data.data.token);
+                this.$localStorage.set("user", res.data.data.username);
                 this.$router.push('/operate/runningState');
               }else {
                 this.$message(res.data.errmsg)
               }
             });
-
-
 
             //this.$router.push('/operate/runningState');
 

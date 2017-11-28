@@ -228,7 +228,7 @@
     </el-dialog>
 
     <div v-for='(item,index) in data' style="line-height: 36px;">
-      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px'}">
+      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}">
         <!--<i @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length != 0'-->
         <!--:style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}"-->
         <!--class="el-icon-caret-right pointer heightTran "></i>-->
@@ -463,7 +463,8 @@
       },
 
       test(item) {
-        this.levelname = item.levelname
+        console.log(item)
+        this.levelname = item.levelname;
         Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
         if(item.type === 5 ||item.type === 4){
           Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:true});

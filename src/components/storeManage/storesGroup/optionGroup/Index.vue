@@ -155,6 +155,7 @@
 <script>
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
   import getApi from './optionGroup.service';
+  import getCommunApi from '../../../utility/communApi';
 
   export default {
     data() {
@@ -222,14 +223,14 @@
           this.cityId = "";
           this.areaId = "";
           this.areaList = [];
-          getApi.area(this.token, id).then((res) => {
+          getCommunApi.area(this.token, id).then((res) => {
             this.cityList = res.data.data
           })
         }
         if (name === "city" && this.cityId !== "") {
           this.areaId = "";
           this.areaList = [];
-          getApi.area(this.token, id).then((res) => {
+          getCommunApi.area(this.token, id).then((res) => {
             this.areaList = res.data.data
           })
         }
@@ -342,16 +343,10 @@
       }
     },
     created() {
-
-
       this.token = this.$localStorage.get('token');
-
-
-      getApi.area(this.token, '').then((res) => {
-
+      getCommunApi.area(this.token, '').then((res) => {
         if (res.data.errcode === 0) {
           this.providerList = res.data.data
-
         } else {
           this.$alert('请重新登录', '超时', {
             confirmButtonText: '确定',
@@ -360,9 +355,7 @@
             }
           })
         }
-
       })
-
     }
   }
 </script>

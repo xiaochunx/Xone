@@ -1,14 +1,10 @@
 import axios from 'axios'
 
-//新增门店
-
-let addStore = (token,levelid,type,data) => {
+//X1运营方案
+let getProject = (token) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append("levelid", levelid);
-    formData.append("type", type);
-    formData.append("data", window.JSON.stringify(data) );
-
+    formData.append("redirect", "x1.accountmanage.project");
 
     axios.post(`?controller=stores&action=create&token=${token}`,formData).then((res)=>{
       resolve(res)
@@ -16,10 +12,4 @@ let addStore = (token,levelid,type,data) => {
   })
 };
 
-
-
-
-export default {addStore}
-
-
-
+export default {getProject}

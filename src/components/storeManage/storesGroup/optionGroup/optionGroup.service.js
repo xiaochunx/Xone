@@ -34,19 +34,7 @@ let searchStore = (token,areaId ='',storeName = '') => {
   })
 };
 
-
-//地区
-let area = (token,pid = '') => {
-  return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("pid", pid);
-    axios.post(`?controller=area&action=getAreaList&token=${token}`,formData).then((res)=>{
-      resolve(res)
-    })
-  })
-};
-
-export default {addOne,searchStore,area}
+export default {addOne,searchStore}
 
 
 

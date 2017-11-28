@@ -271,7 +271,7 @@
       <div class="flex_f flex">
         <div class="margin_b_10">需要增加几家？</div>
         <div class="flex_a">
-          <el-input v-model="number" style="width: 50px"></el-input>
+          <el-input v-model="number" style="width: 60px" min="1" max="100" type="number"></el-input>
           <span class="padding_l_10">家</span>
         </div>
         <div class="margin_t_10">
@@ -337,7 +337,7 @@
         formEdit: {},//编辑弹窗
         token: '',
         p: {page: 1, size: 20, total: 0},
-        showAdd: {levelid: '', type: '', showAdd: false},
+        showAdd: {levelid: -1, type: '', showAdd: false},
         number: 1,
         logList:{}
       }
@@ -346,25 +346,27 @@
     methods: {
       search(){
         console.log(this.showAdd.levelid)
-        getApi.getBsList(this.token,this.showAdd.levelid,this.searchName).then((res)=>{
-          console.log(res)
+        if(this.searchName === ''){
+          this.getBsList()
+        }else {
+          getApi.getBsList(this.token,this.showAdd.levelid,this.searchName).then((res)=>{
+            console.log(res)
+            if (res.data.errcode === 0) {
+              res.data.data.list.forEach((item)=>{
+                if(item.status === 1){
+                  item.status = "开启"
+                }else {
+                  item.status = "关闭"
+                }
+                item.select = false
+              });
+              this.storeData = res.data.data.list;
+              this.p.total = res.data.data.count
+            } else {
 
-          if (res.data.errcode === 0) {
-            res.data.data.list.forEach((item)=>{
-              if(item.status === 1){
-                item.status = "开启"
-              }else {
-                item.status = "关闭"
-              }
-              item.select = false
-            });
-            this.storeData = res.data.data.list;
-            this.p.total = res.data.data.count
-          } else {
-
-          }
-        })
-
+            }
+          })
+        }
       },
       log(data){
         console.log(data)
@@ -415,10 +417,6 @@
                           this.dialogVisible = false
             this.dialogVisible1 = false
             })
-
-
-
-
           } else {
             console.log('error submit!!');
             return false;
@@ -426,9 +424,11 @@
         });
       },
       goToAddStore() {
-        console.log(this.showAdd)
-
-        this.$router.push({path: `/storeManage/storeList/newAddStore/${this.number}/${this.showAdd.levelid}/${this.showAdd.type}`})
+        if(this.number < 1){
+          this.$message('需要最少一家门店');
+        }else {
+          this.$router.push({path: `/storeManage/storeList/newAddStore/${this.number}/${this.showAdd.levelid}/${this.showAdd.type}`})
+        }
       },
       getPage(page) {
         this.p.page = page;
@@ -638,6 +638,7 @@
         data.forEach((map) => {
           if (map.child) {
             this.$set(map, "show", true);
+            this.$set(map, "selected", false);
             this.recur(map.child)
           }
         })
@@ -646,14 +647,10 @@
         getApi.getLevel(this.token).then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
+            console.log(this.data5)
             this.recur(this.data5)
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+
           }
         })
       },
@@ -672,12 +669,12 @@
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+//            this.$alert('请重新登录', '超时', {
+//              confirmButtonText: '确定',
+//              callback: action => {
+//                this.$router.push('/login')
+//              }
+//            })
           }
         })
       },
@@ -722,28 +719,51 @@
         }
         return img && isLt5M;
       },
+
+
+      recurSelected(data,levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          }else {
+            this.$set(map, "selected", false);
+          }
+          if(map.child ){
+            this.recurSelected(map.child,levelId)
+          }
+        })
+      },
     },
     created() {
       this.token = this.$localStorage.get('token');
-
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
-
       this.showLevel();
       this.getBsList();
     },
+
+
     mounted() {
       //this.clickEvent()
       Hub.$on('treeEventEditDel', (e) => {
         this.showLevel();
       });
       Hub.$on('showAdd', (e) => {
-        this.showAdd = e
+        this.showAdd = e;
+        this.recurSelected(this.data5,e.levelid)
       });
       Hub.$on('getBsList', (e) => {
         getApi.getBsList(this.token, e.levelid).then((res) => {
           console.log(res)
+          res.data.data.list.forEach((item)=>{
+            if(item.status === 1){
+              item.status = "开启"
+            }else {
+              item.status = "关闭"
+            }
+            item.select = false
+          });
           this.storeData = res.data.data.list
         })
       })

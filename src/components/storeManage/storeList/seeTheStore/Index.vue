@@ -72,8 +72,9 @@
                     <div v-for="(item,index) in storeAccount.account" class="m-seeAddStore-account-list">
                       <div class="m-seeAddStore-account-list-img">
                         <img src="" alt=""></div>
-                      <span>{{item.account.name}}</span>
-                      <span>{{item.paymentMethod.name}}</span>
+                      <span>{{item.accountName}}</span>
+                      <span>{{item.paymentName}}</span>
+                      <span>{{item.paymentChannel}}</span>
                     </div>
                   </div>
                   <div class="m-seeAddStore-account">
@@ -83,8 +84,9 @@
                     <div v-for="(item,index) in storeAccount.reserveAcc" class="m-seeAddStore-account-list">
                       <div class="m-seeAddStore-account-list-img">
                         <img src="" alt=""></div>
-                      <span>{{item.account.name}}</span>
-                      <span>{{item.paymentMethod.name}}</span>
+                      <span>{{item.accountName}}</span>
+                      <span>{{item.paymentName}}</span>
+                      <span>{{item.paymentChannel}}</span>
                     </div>
 
                   </div>
@@ -330,8 +332,9 @@
       getSecond() {
         getApi.getSecond(this.token, this.$route.params.id).then((res) => {
           if (res.data.errcode === 0) {
-            this.storeAccount = res.data.data
 
+            this.storeAccount = res.data.data
+            console.log(this.storeAccount)
           } else {
             this.$alert('请重新登录', '超时', {
               confirmButtonText: '确定',

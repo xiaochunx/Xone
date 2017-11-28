@@ -74,9 +74,8 @@ let delLevel = (token,id) => {
 };
 
 //获取基础门店列表
-let getBsList = (token,levelid,storename = '') => {
+let getBsList = (token,levelid = -1,storename = '') => {
   return new Promise((resolve, reject) => {
-
     axios.get(`?controller=stores&action=index&token=${token}&levelid=${levelid}&storename=${storename}`).then((res)=>{
       resolve(res)
     })

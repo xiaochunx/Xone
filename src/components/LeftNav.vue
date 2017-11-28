@@ -116,14 +116,14 @@
                 name: '运行状态',
                 route: '/operate/runningState',
               },
-              {
-                name: '发票配置',
-                route: '/operate/invoiceAllocation',
-              },
-              {
-                name: '方案下发',
-                route: '/operate/schemeDown',
-              },
+//              {
+//                name: '发票配置',
+//                route: '/operate/invoiceAllocation',
+//              },
+//              {
+//                name: '方案下发',
+//                route: '/operate/schemeDown',
+//              },
             ]
           },
 
@@ -153,82 +153,82 @@
               }
             ]
           },
-          {
-            name: '统计报表',
-            children: [
-              {
-                name: '交易列表',
-                route: '/report/transactionList'
-              },
-              {
-                name: '交易统计',
-                route: '/report/transactionCount'
-              },
-              {
-                name: '结算记录',
-                route: '/report/settlementRecord'
-              },
-              {
-                name: '差异账单查询',
-                route: '/report/billQuery'
-              },
-              {
-                name: '对账单',
-                route: '/report/accountStatement'
-              },
-              {
-                name: '发票',
-                route: '/report/invoice'
-              }
-            ]
-          },
+//          {
+//            name: '统计报表',
+//            children: [
+//              {
+//                name: '交易列表',
+//                route: '/report/transactionList'
+//              },
+//              {
+//                name: '交易统计',
+//                route: '/report/transactionCount'
+//              },
+//              {
+//                name: '结算记录',
+//                route: '/report/settlementRecord'
+//              },
+//              {
+//                name: '差异账单查询',
+//                route: '/report/billQuery'
+//              },
+//              {
+//                name: '对账单',
+//                route: '/report/accountStatement'
+//              },
+//              {
+//                name: '发票',
+//                route: '/report/invoice'
+//              }
+//            ]
+//          },
           {
             name: '基础设置',
             children: [
-              {
-                name: '商家信息',
-                route: '/infrastructure/BusinessInfo'
-              },
-              {
-                name: '备用账户切换配置',
-                route: '/infrastructure/BackupAcc'
-              },
-              {
-                name: '客户端批量设置',
-                route: '/infrastructure/VolumeSet'
-              },
-              {
-                name: '支付方式',
-                route: '/infrastructure/PaymentWay'
-              },
-              {
-                name: '支付通道',
-                route: '/infrastructure/PayChannels'
-              },
+//              {
+//                name: '商家信息',
+//                route: '/infrastructure/BusinessInfo'
+//              },
+//              {
+//                name: '备用账户切换配置',
+//                route: '/infrastructure/BackupAcc'
+//              },
+//              {
+//                name: '客户端批量设置',
+//                route: '/infrastructure/VolumeSet'
+//              },
+//              {
+//                name: '支付方式',
+//                route: '/infrastructure/PaymentWay'
+//              },
+//              {
+//                name: '支付通道',
+//                route: '/infrastructure/PayChannels'
+//              },
               {
                 name: '门店库',
                 route: '/infrastructure/StoreLibrary'
               },
-              {
-                name: '菜品库',
-                route: '/infrastructure/DishesLibrary'
-              },
-              {
-                name: '角色管理',
-                route: '/infrastructure/RoleManagement'
-              },
-              {
-                name: '权限管理',
-                route: '/infrastructure/PermissionManagement'
-              },
-              {
-                name: '操作日志',
-                route: '/infrastructure/OperationLog'
-              },
-              {
-                name: '公众号管理',
-                route: '/infrastructure/PublicManagement'
-              },
+//              {
+//                name: '菜品库',
+//                route: '/infrastructure/DishesLibrary'
+//              },
+//              {
+//                name: '角色管理',
+//                route: '/infrastructure/RoleManagement'
+//              },
+//              {
+//                name: '权限管理',
+//                route: '/infrastructure/PermissionManagement'
+//              },
+//              {
+//                name: '操作日志',
+//                route: '/infrastructure/OperationLog'
+//              },
+//              {
+//                name: '公众号管理',
+//                route: '/infrastructure/PublicManagement'
+//              },
 //              {
 //                name: '根',
 //                route: '/'

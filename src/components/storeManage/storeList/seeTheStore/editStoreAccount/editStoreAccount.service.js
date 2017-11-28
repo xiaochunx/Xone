@@ -52,7 +52,7 @@ let editStore = (token,storeData) => {
 
 
 //查看门店-收款账户
-let getSecond = (token,id) => {
+let getStoreAccount = (token,id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("id", id);
@@ -67,13 +67,13 @@ let getSecond = (token,id) => {
 };
 
 //编辑门店-收款账户-保存
-let editStoreAccount = (token,id,account,reserveAcc) => {
+let editStoreAccount = (token,storeId,data) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append("id", id);
+    formData.append("storeId", storeId);
     formData.append("redirect", "x1.store.saveStoreAccount");
-    formData.append("account", account);
-    formData.append("reserveAcc", reserveAcc);
+    formData.append("account", window.JSON.stringify(data.account));
+    formData.append("reserveAcc", window.JSON.stringify(data.reserveAcc));
 
     axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
 
@@ -87,9 +87,7 @@ let editStoreAccount = (token,id,account,reserveAcc) => {
 let getWayInfo = (token) => {
   return new Promise((resolve, reject) => {
     axios.post(`?controller=jichu&action=getWayInfo&token=${token}`).then((res)=>{
-
       resolve(res)
-
     })
   })
 };
@@ -98,27 +96,26 @@ let getWayInfo = (token) => {
 let getChannelInfo = (token) => {
   return new Promise((resolve, reject) => {
     axios.post(`?controller=jichu&action=getChannelInfo&token=${token}`).then((res)=>{
-
       resolve(res)
-
     })
   })
 };
 
 //获取符合要求的账户列表
-let getCanUseAccountList = (token) => {
+let getCanUseAccountList = (token,paymentMethod,paymentChannel) => {
   return new Promise((resolve, reject) => {
-    axios.post(`?controller=jichu&action=getChannelInfo&token=${token}`).then((res)=>{
-      formData.append("redirect", "x1.accountmanage.getCanUseAccountList");
-
+    let formData = new FormData();
+    formData.append("redirect", "x1.accountmanage.getCanUseAccountList");
+    formData.append("paymentMethod", paymentMethod);
+    formData.append("paymentChannel", paymentChannel);
+    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
       resolve(res)
-
     })
   })
 };
 
 
-export default {getFirst,getSecond,getList,editStore,editStoreAccount,getWayInfo,getChannelInfo,getCanUseAccountList}
+export default {getFirst,getStoreAccount,getList,editStore,editStoreAccount,getWayInfo,getChannelInfo,getCanUseAccountList}
 
 
 

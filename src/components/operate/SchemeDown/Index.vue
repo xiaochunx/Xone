@@ -68,7 +68,7 @@
                   <el-transfer v-model="form.data" :data="form.data2" :titles="['适用门店','已选门店']"></el-transfer>
                 </el-form-item>
               </el-col>
-            </el-col >
+            </el-col>
           </el-form>
           <el-col :span="24">
             <el-col :span="12" class="flex-jc">
@@ -84,7 +84,7 @@
   </div>
 </template>
 <script>
-
+  import getApi from './schemeDown.service'
 
   export default {
     data() {
@@ -146,17 +146,14 @@
         }
       }
     },
-    props: {
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
-    },
-    components: {
 
-
-    },
-    methods: {
+    components: {},
+    methods: {},
+    created() {
+      this.token = this.$localStorage.get("token")
+//      getApi.getProject(this.token).then((res) => {
+//        console.log(res)
+//      })
 
     }
   }

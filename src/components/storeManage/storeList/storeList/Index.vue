@@ -59,7 +59,7 @@
             <template scope="scope">
               <div v-for="(item,index) in scope.row.account">
                 <div>
-                  {{item.accountName}} -- {{item.paymentMethod}} -- {{item.paymentChannel}}
+                  {{item.accountName}} -- {{item.paymentName}} -- {{item.paymentChannel}}
                 </div>
 
               </div>
@@ -231,6 +231,7 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
+  import getCommunApi from '../../../utility/communApi'
   import ElCheckbox from "../../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
 
@@ -538,8 +539,7 @@
     created() {
       this.token = this.$localStorage.get('token');
 
-
-      getApi.getLeft(this.token).then((res) => {
+      getCommunApi.getLeft(this.token).then((res) => {
         this.dataLeft = res.data.data
       });
 

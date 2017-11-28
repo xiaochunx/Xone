@@ -218,7 +218,7 @@
 <script>
   import getApi from "./newAddStore.service"
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
-
+  import getCommunApi from "../../../utility/communApi"
   export default {
     components: {
       ElButton
@@ -321,7 +321,7 @@
       myChange(map, name, className, str) {
         console.log(map);
         if (str === 'isProvince') {
-          getApi.area(this.token, map.provinceid).then((res) => {
+          getCommunApi.area(this.token, map.provinceid).then((res) => {
             this.$set(map, "cityid", '');
             this.$set(map, "areaid", '');
             this.$set(map, "cityList", res.data.data);
@@ -329,7 +329,7 @@
           })
         }
         if (str === 'isCity' && map.cityid !== "") {
-          getApi.area(this.token, map.cityid).then((res) => {
+          getCommunApi.area(this.token, map.cityid).then((res) => {
             this.$set(map, "areaid", '');
             this.$set(map, "areaList", res.data.data);
           })
@@ -518,11 +518,9 @@
 
       }
 
-      getApi.area(this.token, '').then((res) => {
-
+      getCommunApi.area(this.token, '').then((res) => {
         if (res.data.errcode === 0) {
           this.provinceList = res.data.data
-
         } else {
           this.$alert('请重新登录', '超时', {
             confirmButtonText: '确定',
@@ -531,10 +529,7 @@
             }
           })
         }
-
       })
-
-
     },
     mounted() {
 
