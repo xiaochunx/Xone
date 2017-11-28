@@ -1,11 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
 
-
-var a = { name: 1 }
-
-console.log(qs.stringify(a));
-
 let get= function(key) {
   return window.JSON.parse(window.localStorage.getItem(key));
 };

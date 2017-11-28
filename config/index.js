@@ -10,7 +10,7 @@ module.exports = {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: './static',
     // 需要将静态济源改为相对路径,不然打包之后js/css文件会错误
     assetsPublicPath: './',
     productionSourceMap: true,

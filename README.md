@@ -3,4 +3,4 @@
 - fontAwesome:  http://www.fontawesome.com.cn/faicons/
 
 - 注意事项:
-  - 在项目打包阶段,需要将字体图标文件手动拖动到static/css/文件下
+  - 在项目打包阶段,请将img跟fonts文件手动拖动到static/css/文件下

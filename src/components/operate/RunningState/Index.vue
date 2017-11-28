@@ -91,13 +91,14 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="打印机ID">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerid" label="打印机ID">
+
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ip" label="IP地址">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerip" label="IP地址">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type" label="型号">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printertype" label="型号">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerstatus" label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -113,13 +114,13 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ver" label="服务版本">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="clientserver" label="服务版本">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="time" label="安装日期">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installdata" label="安装日期">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posion" label="安装位置">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installlocation" label="安装位置">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="linkstatus" label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -135,13 +136,13 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="POS ID">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posid" label="POS ID">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="ip" label="IP地址">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posip" label="IP地址">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posion" label="位置">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="poslocation" label="位置">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="poststatus" label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
