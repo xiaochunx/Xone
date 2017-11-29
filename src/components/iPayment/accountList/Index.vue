@@ -202,44 +202,7 @@
           ],  // 支付通道
           userName: ''  // 用户名
         },
-        tableData: [{
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          thirdPartCode: '美团-89898989',
-          lastEdit: '王小虎',
-          lastDate: '2016-05-04 04:33:23',
-          useStore: '天河一店 天河二店'
-        }, {
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          count: 1,
-          accountNum: 11233,
-          account: '支付宝',
-          payment: '易极付',
-          status: '开户成功',
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
+        tableData: [],
         height: 0,
         loading: true,
         checkoutData: {}
@@ -324,7 +287,6 @@
 
         // 账户列表初始化 -> 获取表格数据
         oneTwoApi(param).then((res) => {
-          console.log(res);
           if (res.errcode == 0){
             this.checkoutData = res.data;
           }
@@ -356,7 +318,6 @@
 
         // 账户列表初始化 -> 获取表格数据
         oneTwoApi(param).then((res) => {
-          console.log(res);
           this.loading = false;
           if (res.errcode == 0){
             this.tableData = res.data.list;

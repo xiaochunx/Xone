@@ -27,14 +27,18 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" label="操作员" prop="operator"  width="150">
+        <el-table-column header-align="center" align="center" label="操作员" prop="operator" width="150">
         </el-table-column>
         <el-table-column header-align="center" align="center" label="操作" width="100">
           <template scope="scope">
             <el-switch
-              v-model="scope.row.value2"
+              v-model="scope.row.isOpen"
               on-color="#13ce66"
-              off-color="#ff4949">
+              off-color="#ff4949"
+              on-value="1"
+              off-value="0"
+              @change="changeSwitch(scope.row.isOpen,scope.row.id)"
+            >
             </el-switch>
           </template>
         </el-table-column>
@@ -49,6 +53,7 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './operationPlan.service'
+  import {oneTwoApi} from '@/api/api.js'
 
   export default {
     components: {},
@@ -70,10 +75,27 @@
         this.showResouce();
       },
       showResouce() {
-        getApi.getProject(this.token,this.p).then((res) => {
-          this.tableData = res.data.data.list
+        getApi.getProject(this.token, this.p).then((res) => {
+          console.log(res.data);
+
+          this.tableData = res.data.data.list;
           this.p.total = res.data.data.count
         })
+      },
+      changeSwitch(statue, id) {
+        console.log(statue);
+        console.log(id);
+
+        var params = {
+          redirect: 'x1.accountmanage.setProjectOpen',
+          id: id,
+          isOpen: statue
+        };
+
+        oneTwoApi(params).then((res) => {
+
+        }).catch((err) => {
+          console.log(err);})
       }
     },
     updated() {

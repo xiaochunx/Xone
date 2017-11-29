@@ -10,33 +10,64 @@
 <script>
 
   import Axios from 'axios'
+  import { Loading, Message,MessageBox } from 'element-ui'
 
 export default {
   name: 'app',
-  created(){
-
+  data(){
+    return {
+      flag: true
+    }
   },
 
   mounted(){
-    Axios.interceptors.response.use(data => {// 响应成功关闭loading
 
-      if (data.data.errcode != 0){
-        this.$alert(data.data.errmsg, '提示', {
-          confirmButtonText: '确定',
-          callback: action => {
-            this.$message({
-              type: 'warning',
-              message: data.data.errmsg
+    var loadinginstace;
+    Axios.interceptors.request.use(config => {
+      loadinginstace = Loading.service({ fullscreen: true })
+      return config
+    }, error => {
+      loadinginstace.close()
+      Message.error({
+        message: '加载超时'
+      })
+      return Promise.reject(error)
+    });
+
+
+    Axios.interceptors.response.use(data => {// 响应成功关闭loading
+      loadinginstace.close()
+
+      if (data.data.errcode){
+        // token失效,重新登录
+        if (data.data.errcode == 210){
+          if (this.flag){
+            this.$alert(data.data.errmsg, '提示', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/');
+                this.flag = false;
+              }
             });
           }
-        });
+        }else if (data.data.errcode != 0){
+          this.$alert(data.data.errmsg, '提示', {
+            confirmButtonText: '确定',
+            callback: action => {
+              this.$message({
+                type: 'warning',
+                message: data.data.errmsg
+              });
+            }
+          });
+        }
       }
       return data
     }, error => {
       loadinginstace.close()
       Message.error({
         message: '加载失败'
-      });
+      })
       return Promise.reject(error)
     });
   }

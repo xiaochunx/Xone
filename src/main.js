@@ -11,47 +11,21 @@ import localStorage from './components/utility/localStorage'
 // 样式导入
 import 'element-ui/lib/theme-default/index.css'
 import 'font-awesome/css/font-awesome.css'
-import { Loading, Message,MessageBox } from 'element-ui'
-
 
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
 
-//http://x.kuan1.cn
-//http://bs.com/
-Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';
+
+// Axios.defaults.baseURL = 'http://x.kuan1.cn/kybase/index.php';            // 正式环境
+Axios.defaults.baseURL = 'http://test0.kuan1.cn/kybase/index.php';        // 测试环境
+// Axios.defaults.baseURL = 'http://x0test.kuan1.cn/kybase/index.php';       // 开发环境
+// Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';                // 本地环境
+
+
 //打开夸域cookie
 Axios.defaults.withCredentials = true;
 
 Vue.prototype.$localStorage = localStorage;
-
-var loadinginstace;
-Axios.interceptors.request.use(config => {
-  loadinginstace = Loading.service({ fullscreen: true })
-  return config
-}, error => {
-  loadinginstace.close()
-  Message.error({
-    message: '加载超时'
-  })
-  return Promise.reject(error)
-})
-
-
-
-// http响应拦截器
-Axios.interceptors.response.use(data => {// 响应成功关闭loading
-  loadinginstace.close()
-  return data
-}, error => {
-  loadinginstace.close()
-  Message.error({
-    message: '加载失败'
-  })
-  return Promise.reject(error)
-});
-
-
 
 // 关闭生产模式下给出的提示
 Vue.config.productionTip = false;
@@ -68,7 +42,6 @@ Object.keys(utility).forEach(function (item) {
   setTimeout(function () {
     next()
   }, 1000);
-
 });
 
 router.afterEach(function (to) {
