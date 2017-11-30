@@ -231,7 +231,7 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
-  import getCommunApi from '../../../utility/communApi'
+  import {getLeft,getArea} from '../../../utility/communApi'
   import ElCheckbox from "../../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
 
@@ -298,7 +298,6 @@
           value: 2,
           label: '易极付'
         }],
-        token: '',
         p: {page: 1, size: 20, total: 0},
         baseStore: {},//点击新增时的门店
         levelId:''//左边树ID
@@ -308,7 +307,7 @@
     methods: {
       //设置url
       setOneUrl(row){
-        getApi.urlStatus(this.token,row.id,row.payJumpUrl).then((res)=>{
+        getApi.urlStatus(row.id,row.payJumpUrl).then((res)=>{
           console.log(res)
         })
       },
@@ -324,7 +323,7 @@
         if(list.length === 0){
           this.$message('请选择门店');
         }else {
-          getApi.addStore(this.token,list.join(',')).then((res)=>{
+          getApi.addStore(list.join(',')).then((res)=>{
             console.log(res)
             this.dialogVisible2 = false
             this.showResouce();
@@ -337,7 +336,7 @@
           this.$message('请选择门店库');
         }else {
           this.dialogVisible2 = true;
-          getApi.getBaseStore(this.token,this.levelId).then((res)=>{
+          getApi.getBaseStore(this.levelId).then((res)=>{
             console.log(res.data.data)
             this.baseStore = res.data.data
           })
@@ -368,7 +367,7 @@
         } else {
           storeStatusValue = 0
         }
-        getApi.storesStatus(this.token, data.id, storeStatusValue).then((res) => {
+        getApi.storesStatus(data.id, storeStatusValue).then((res) => {
           console.log(res)
           this.showResouce();
         })
@@ -390,7 +389,7 @@
           storeStatusValue = 0
         }
 
-          getApi.storesStatus(this.token, list.join(','), storeStatusValue).then((res) => {
+          getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
             console.log(res)
             this.showResouce();
             this.dialogVisible1 = false
@@ -432,7 +431,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.del(this.token,list.join(",")).then((res)=>{
+            getApi.del(list.join(",")).then((res)=>{
               console.log(res)
               this.$message({
                 type: 'info',
@@ -488,7 +487,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          getApi.del(this.token, id).then((res) => {
+          getApi.del(id).then((res) => {
             console.log(res)
             if (res) {
 
@@ -507,7 +506,7 @@
 
       },
       showResouce(storeName = "", levelId = "") {
-        getApi.getList(this.token, this.p, storeName, levelId).then((res) => {
+        getApi.getList(this.p, storeName, levelId).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {
@@ -536,9 +535,7 @@
       }
     },
     created() {
-      this.token = this.$localStorage.get('token');
-
-      getCommunApi.getLeft(this.token).then((res) => {
+      getLeft().then((res) => {
         this.dataLeft = res.data.data
       });
 

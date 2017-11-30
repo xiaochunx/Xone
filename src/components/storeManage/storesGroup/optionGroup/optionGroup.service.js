@@ -1,8 +1,8 @@
-import axios from 'axios'
+import {axios,get} from '../../../utility/communApi'
 
 //新增门店标签
 
-let addOne = (token,data,storeIds) => {
+let addOne = (data,storeIds) => {
   console.log(storeIds)
   return new Promise((resolve, reject) => {
     let formData = new FormData();
@@ -13,7 +13,7 @@ let addOne = (token,data,storeIds) => {
     formData.append("thirdCode", thirdCode);
     formData.append("storeIds", storeIds);
 
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -21,14 +21,14 @@ let addOne = (token,data,storeIds) => {
 
 //标签添加门店时搜索
 
-let searchStore = (token,areaId ='',storeName = '') => {
+let searchStore = (areaId ='',storeName = '') => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.searchStore");
 
     formData.append("areaId", areaId);
     formData.append("storeName", storeName);
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

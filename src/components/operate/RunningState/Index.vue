@@ -67,11 +67,11 @@
               <el-button type="text" @click="posStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">
-            <template scope="scope">
-              <el-button type="text" @click="operation(scope.row)">操作</el-button>
-            </template>
-          </el-table-column>
+          <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">-->
+            <!--<template scope="scope">-->
+              <!--<el-button type="text" @click="operation(scope.row)">操作</el-button>-->
+            <!--</template>-->
+          <!--</el-table-column>-->
         </el-table>
         <footer>
           <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
@@ -199,7 +199,7 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './runningState.service'
-  import getCommunApi from '../../utility/communApi'
+  import {getLeft} from '../../utility/communApi'
   export default {
     components: {},
     data() {
@@ -261,7 +261,7 @@
         if(this.searchName === ''){
           this.showResouce(-1)
         }else {
-          getApi.getService(this.token,this.levelId,this.searchName).then((res)=>{
+          getApi.getService(this.levelId,this.searchName).then((res)=>{
             console.log(res)
             if (res.data.errcode === 0) {
               res.data.data.list.forEach((item)=>{
@@ -415,21 +415,20 @@ this.POSList = row.storeposs
 
       },
       showResouce(id) {
-        getApi.getService(this.token, id).then((res) => {
+        getApi.getService(id).then((res) => {
           this.storeData = res.data.data.list
           this.p.total = res.data.data.count
         })
       }
     },
     created() {
-      this.token = this.$localStorage.get('token');
 
-      getCommunApi.getLeft(this.token).then((res) => {
+      getLeft().then((res) => {
 
         this.dataLeft = res.data.data
       });
 
-      getApi.getService(this.token, -1).then((res) => {
+      getApi.getService(-1).then((res) => {
         console.log(res)
         this.storeData = res.data.data.list
         this.p.total = res.data.data.count

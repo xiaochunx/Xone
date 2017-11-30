@@ -156,7 +156,6 @@
         tableData: [],//列表
         storeData: [],//查看门店
         p: {page: 1, size: 20, total: 0},
-        token: ''
       }
     },
     methods: {
@@ -171,7 +170,7 @@
       update(formRules, data) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            getApi.updateOne(this.token, data).then((res) => {
+            getApi.updateOne(data).then((res) => {
               console.log(res)
               this.dialogVisible1 = false
               this.showResouce();
@@ -253,7 +252,7 @@
       },
       edit(row) {
 
-        getApi.getOneStore(this.token,row).then((res)=>{
+        getApi.getOneStore(row).then((res)=>{
           console.log(res.data.data.store)
           res.data.data.store.forEach((item)=>{
             item.select = true
@@ -269,7 +268,7 @@
       showStore(row) {
         this.dialogVisible = true
 
-        getApi.getOne(this.token, row.id).then((res) => {
+        getApi.getOne(row.id).then((res) => {
           console.log(res)
           this.storeData = res.data.data.list
         })
@@ -285,20 +284,21 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          getApi.delOne(this.token, row.id).then((res) => {
+          getApi.delOne(row.id).then((res) => {
             console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
                 message: '删除成功'
               });
+              this.showResouce()
             } else {
-              this.$message({
-                type: 'info',
-                message: res.data.errmsg
-              });
+//              this.$message({
+//                type: 'info',
+//                message: res.data.errmsg
+//              });
             }
-            this.showResouce()
+
           })
         }).catch(() => {
           //
@@ -313,7 +313,7 @@
         this.$router.push('/storeManage/storeGroup/addGroup')
       },
       showResouce() {
-        getApi.getList(this.token, this.p).then((res) => {
+        getApi.getList(this.p).then((res) => {
           console.log(res.data.data)
           if (res.data.errcode === 0) {
             this.tableData = res.data.data.list;
@@ -339,8 +339,6 @@
       this.storeData.forEach((map) => {
         this.$set(map, 'select', true)
       });
-      this.token = this.$localStorage.get('token');
-
       this.showResouce()
 
     }

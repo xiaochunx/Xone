@@ -21,6 +21,8 @@ Axios.defaults.baseURL = 'http://test0.kuan1.cn/kybase/index.php';        // 测
 // Axios.defaults.baseURL = 'http://x0test.kuan1.cn/kybase/index.php';       // 开发环境
 // Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';                // 本地环境
 
+//图片上传地址
+Vue.prototype.$updateUrl = 'http://x.kuan1.cn/oss/index.php?controller=index&action=upload_img';
 
 //打开夸域cookie
 Axios.defaults.withCredentials = true;
@@ -43,7 +45,6 @@ Object.keys(utility).forEach(function (item) {
     next()
   }, 1000);
 });
-
 router.afterEach(function (to) {
   store.commit('UPDATELOADINGSTATUS', {isLoading: false})
 });*/

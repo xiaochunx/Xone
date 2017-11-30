@@ -19,7 +19,7 @@
           <div>营业执照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name='filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess1"
@@ -34,7 +34,7 @@
           </div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name='filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess2"
@@ -47,7 +47,7 @@
           <div>开户许可证</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name='filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess3"
@@ -60,7 +60,7 @@
           <div>税务登记证</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name='filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess4"
@@ -73,7 +73,7 @@
           <div>法人证件正面照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name='filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess5"
@@ -86,7 +86,7 @@
           <div>法人证件反面照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name='filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess6"
@@ -113,12 +113,12 @@
                       @change="myChange(scope.row,'storename','nameClass')" placeholder="请输入内容"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">
-          <template scope="scope">
-            <el-input :class="{isInput:scope.row.codeClass === true}" v-model="scope.row.storecodeid"
-                      @change="myChange(scope.row,'storecodeid','codeClass')" placeholder="请输入内容"></el-input>
-          </template>
-        </el-table-column>
+        <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">-->
+          <!--<template scope="scope">-->
+            <!--<el-input :class="{isInput:scope.row.codeClass === true}" v-model="scope.row.storecodeid"-->
+                      <!--@change="myChange(scope.row,'storecodeid','codeClass')" placeholder="请输入内容"></el-input>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
           <template scope="scope">
             <div v-for="(domain, index) in scope.row.storecodes" class="flex_a padding_10">
@@ -218,7 +218,7 @@
 <script>
   import getApi from "./newAddStore.service"
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
-  import getCommunApi from "../../../utility/communApi"
+  import {getLeft,getArea} from '../../../utility/communApi'
   export default {
     components: {
       ElButton
@@ -227,12 +227,10 @@
     data() {
       return {
         tableHeight: 0,
-        navList: [{name: "门店管理", url: ''}, {name: "新增门店", url: ''}],
+        navList: [{name: "门店库", url: '/infrastructure/StoreLibrary'},{name: "新增门店", url: ''}],
         brandList: [],
         value: '',
         provinceList: [],
-
-
         imgList: {
           business_src: '',
           business_src_url: '',
@@ -315,7 +313,7 @@
       myChange(map, name, className, str) {
         console.log(map);
         if (str === 'isProvince') {
-          getCommunApi.area(this.token, map.provinceid).then((res) => {
+          getArea(map.provinceid).then((res) => {
             this.$set(map, "cityid", '');
             this.$set(map, "areaid", '');
             this.$set(map, "cityList", res.data.data);
@@ -323,7 +321,7 @@
           })
         }
         if (str === 'isCity' && map.cityid !== "") {
-          getCommunApi.area(this.token, map.cityid).then((res) => {
+          getArea(map.cityid).then((res) => {
             this.$set(map, "areaid", '');
             this.$set(map, "areaList", res.data.data);
           })
@@ -339,9 +337,6 @@
         for (let map of this.storeData) {
           if (map.storename === "") {
             map.nameClass = true
-          }
-          if (map.storecodeid === "") {
-            map.codeClass = true
           }
           if (map.brand === "") {
             map.brandClass = true
@@ -375,7 +370,7 @@
         this.checkSubmit();
         outer:
           for (let map of this.storeData) {
-            if (map.storename === "" || map.storecodeid === "" || map.brand === "" || map.provinceid === "" || map.cityid === "" || map.areaid === "" || map.address === "" || map.tel === "") {
+            if (map.storename === "" || map.provinceid === "" || map.cityid === "" || map.areaid === "" || map.address === "" || map.tel === "") {
               this.va = "";
               break
             }
@@ -396,7 +391,6 @@
 
         this.storeData.forEach((item) => {
           delete item.nameClass;
-          delete item.codeClass;
           delete item.brandClass;
           delete item.provinceClass;
           delete item.areaClass;
@@ -414,7 +408,7 @@
 
         console.log(this.storeData);
 
-          getApi.addStore(this.token,this.$route.params.levelid,this.$route.params.type,this.storeData).then((res)=>{
+          getApi.addStore(this.$route.params.levelid,this.$route.params.type,this.storeData).then((res)=>{
             console.log(res)
             this.$alert('添加成功', '', {
               confirmButtonText: '确定',
@@ -475,14 +469,11 @@
       },
     },
     created() {
-      this.token = this.$localStorage.get('token');
-
       for (let i = 0; i < this.$route.params.number; i++) {
         this.storeData.push({
           storename: "",
           nameClass: false,
-          storecodeid: '',
-          codeClass: false,
+          //storecodeid:'1',
           brand: '',
           brandClass: false,
           provinceid: "",
@@ -508,7 +499,7 @@
 
       }
 
-      getCommunApi.area(this.token, '').then((res) => {
+      getArea('').then((res) => {
         if (res.data.errcode === 0) {
           this.provinceList = res.data.data
         } else {
@@ -521,7 +512,7 @@
         }
       })
 
-      getApi.getBrand(this.token,this.$route.params.levelid).then((res)=>{
+      getApi.getBrand(this.$route.params.levelid).then((res)=>{
         console.log(res)
         this.brandList = res.data.data
       })

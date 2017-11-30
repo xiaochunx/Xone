@@ -155,7 +155,7 @@
 <script>
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
   import getApi from './optionGroup.service';
-  import getCommunApi from '../../../utility/communApi';
+  import {getLeft,getArea} from '../../../utility/communApi'
 
   export default {
     data() {
@@ -172,7 +172,6 @@
         searchList: [],
         searchListTemp:[],
         storeData: [],
-        token: '',
         providerId: '',
         providerList: [],
         cityId: '',
@@ -223,21 +222,21 @@
           this.cityId = "";
           this.areaId = "";
           this.areaList = [];
-          getCommunApi.area(this.token, id).then((res) => {
+          getArea(id).then((res) => {
             this.cityList = res.data.data
           })
         }
         if (name === "city" && this.cityId !== "") {
           this.areaId = "";
           this.areaList = [];
-          getCommunApi.area(this.token, id).then((res) => {
+          getArea(id).then((res) => {
             this.areaList = res.data.data
           })
         }
       },
 
       search() {
-        getApi.searchStore(this.token, this.areaId, this.inputArea).then((res) => {
+        getApi.searchStore(this.areaId, this.inputArea).then((res) => {
           res.data.data.forEach((map) => {
             this.$set(map, 'select', false)
           });
@@ -324,7 +323,7 @@
             });
             let storeIds = list.join(",");
 
-            getApi.addOne(this.token, this.form, storeIds).then((res) => {
+            getApi.addOne(this.form, storeIds).then((res) => {
               if (res.data.errcode === 0) {
                 this.$alert('添加成功', '', {
                   confirmButtonText: '确定',
@@ -343,8 +342,8 @@
       }
     },
     created() {
-      this.token = this.$localStorage.get('token');
-      getCommunApi.area(this.token, '').then((res) => {
+
+      getArea('').then((res) => {
         if (res.data.errcode === 0) {
           this.providerList = res.data.data
         } else {

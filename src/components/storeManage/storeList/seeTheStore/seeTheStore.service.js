@@ -1,16 +1,14 @@
-import axios from 'axios'
-
-
+import {axios,get} from '../../../utility/communApi'
 
 //查看门店-基础信息
 
-let getFirst = (token,id) => {
+let getFirst = (id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("id", id);
     formData.append("redirect", "x1.store.storeBaseInfo");
 
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
         resolve(res)
 
@@ -19,13 +17,13 @@ let getFirst = (token,id) => {
 };
 
 //查看门店-收款账户
-let getSecond = (token,id) => {
+let getSecond = (id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("id", id);
     formData.append("redirect", "x1.store.storeAccount");
 
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
       resolve(res)
 

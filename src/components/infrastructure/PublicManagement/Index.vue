@@ -2,31 +2,42 @@
   <div>
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
-      <xo-nav-path :navList="navList"></xo-nav-path>
+        <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
     </div>
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
 
-        <!--<roleTree :data="data5" :count=0 @sendName="getName"></roleTree>-->
-        <el-tree :data="data5" :props="defaultProps" default-expand-all @node-click="handleNodeClick"></el-tree>
+        <el-tree
+          :data="dataLeft"
+          :props="defaultProps"
+          @node-click="nodeClick"
+          node-key="id"
+          default-expand-all
+          :highlight-current="true"
+          :expand-on-click-node="false"
+        >
+        </el-tree>
       </div>
 
-      <div :style="{width:tableWidth + 'px'}">
-        <el-table :data="storeData" border >
-          <el-table-column label-class-name="table_head" header-align="center" align="center"  label="序号">
+      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
+        <el-table :data="storeData" border>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号">
             <template scope="scope">
               <div>{{scope.$index}}</div>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="APPID">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account" label="公众号名称">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account"
+                           label="公众号名称">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="time" label="上次授权时间">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="time"
+                           label="上次授权时间">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="operation" label="操作人">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="operation"
+                           label="操作人">
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作">
             <template scope="scope">
@@ -45,11 +56,11 @@
           width="50%">
           <el-form ref="formRules" :model="form" label-width="100px">
             <el-form-item label="公众号:">
-              <el-input v-model="form.code" ></el-input>
+              <el-input v-model="form.code"></el-input>
             </el-form-item>
 
 
-            <el-form-item label="修改授权:" prop="name" >
+            <el-form-item label="修改授权:" prop="name">
               <el-button type="primary">公众号授权</el-button>
             </el-form-item>
 
@@ -60,14 +71,12 @@
             </div>
           </el-form>
         </el-dialog>
-        <!--<footer>-->
+        <footer>
           <!--<xo-pagination></xo-pagination>-->
-        <!--</footer>-->
+        </footer>
 
       </div>
     </div>
-
-
 
 
   </div>
@@ -76,37 +85,10 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
+  import {getLeft,getArea} from '../../utility/communApi'
+  import getApi from './publicManagement.service'
+
   export default {
-    components: {
-
-      ElButton,
-      roleTree: {
-        name: 'roleTrees',
-        props: ['data', 'count'],
-        template: `
-          <div>
-                <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-                  <i  v-if='item.children && item.children.length != 0' class="el-icon-caret-right pointer heightTran "></i>
-      <span @click="test(item)" class="pointer">{{item.label}}</span>
-                  <roleTrees :data='item.children'  :count='count' class="heightTran" @sendName="getName"></roleTrees>
-              </div>
-          </div>
-        `,
-        data() {
-          return {}
-        },
-        methods: {
-          test(item) {
-            this.$emit('sendName', item.label)
-          },
-          getName(name) {
-            this.$emit('sendName', name)
-          }
-
-        }
-      },
-
-    },
     data() {
       return {
         showAside: false,
@@ -116,36 +98,21 @@
         navList: [{name: "基础设置", url: ''}, {name: "公众号管理", url: ''}],
 
         name: '',
-        department:'部门',
+        department: '部门',
         payValue: 2,
         storeName: '',
         storeData: [{
           id: "24u6r3y953",
           account: "s酸菜鱼",
-          time:"2017-10-10",
-          operation:"aaa"
+          time: "2017-10-10",
+          operation: "aaa"
 
         }],
-
-        data5: [{
-          label: '款易',
-          children: [{
-            label: '大商户',
-            children: [{
-              label: '集团',
-              children: [{
-                label: '品牌', children: [{
-                  label: '门店1',
-                }, {
-                  label: '门店2',
-                }]
-              }]
-            }]
-          }]
-        }],
+        levelId: '',
+        dataLeft: [],
         defaultProps: {
-          children: 'children',
-          label: 'label'
+          children: 'child',
+          label: 'levelname'
         },
         form: {
           name: '',
@@ -157,30 +124,23 @@
           ],
         },
 
-        isEdit: true,
-        value: "",
-        options: [{
-          value: 1,
-          label: '民生银行'
-        }, {
-          value: 2,
-          label: '易极付'
-        }],
-
       }
     },
     watch: {},
     methods: {
-      edit(){
-this.dialogVisible = true
+      nodeClick(data, data1, data2) {
+        console.log(data.levelname)
+        this.levelId = data.id;
+        //this.showResouce(data.levelname, data.id)
+
+      },
+      edit() {
+        this.dialogVisible = true
       },
       getName(name) {
         this.name = name
       },
-      getName1(name){
-        this.department = name;
-        this.showAside = false
-      },
+
       addAccount() {
         this.dialogVisible = true
       },
@@ -216,7 +176,11 @@ this.dialogVisible = true
 
     },
     created() {
+      this.token = this.$localStorage.get('token');
 
+      getLeft(this.token).then((res) => {
+        this.dataLeft = res.data.data
+      });
 
     },
     mounted() {

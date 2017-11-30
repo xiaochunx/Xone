@@ -333,7 +333,7 @@
         }
       },
       getSecond() {
-        getApi.getSecond(this.token, this.$route.params.id).then((res) => {
+        getApi.getSecond(this.$route.params.id).then((res) => {
           if (res.data.errcode === 0) {
 
             this.storeAccount = res.data.data
@@ -350,7 +350,7 @@
         })
       },
       getFirst() {
-        getApi.getFirst(this.token, this.$route.params.id).then((res) => {
+        getApi.getFirst(this.$route.params.id).then((res) => {
           if (res.data.errcode === 0) {
             res.data.data.urlCode = res.data.data.urlWithCode * 1;
             this.storeData = res.data.data;
@@ -367,10 +367,7 @@
       }
     },
     created() {
-      this.token = this.$localStorage.get('token');
-
       this.getFirst()
-
     }
   }
 </script>

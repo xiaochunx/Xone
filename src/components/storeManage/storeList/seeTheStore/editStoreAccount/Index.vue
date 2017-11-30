@@ -895,7 +895,7 @@
     methods: {
       changePayment(item) {
         if (item.paymentId !== "" && item.paymentChannelId !== "") {
-          getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res) => {
+          getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res) => {
             console.log(res)
             item.accountId = '';
             item.getCanUseAccountList = res.data.data
@@ -904,7 +904,7 @@
       },
 //      changePayment2(item) {
 //        if (item.paymentId !== "" && item.paymentChannelId !== "") {
-//          getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res) => {
+//          getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res) => {
 //            console.log(res)
 //            item.accountId = '';
 //            this.getCanUseAccountList2 = res.data.data
@@ -954,7 +954,7 @@
         });
       },
       editStoreBase() {
-        getApi.editStore(this.token, this.storeData).then((res) => {
+        getApi.editStore(this.storeData).then((res) => {
           console.log(res)
           if (res) {
             this.$router.go(-1)
@@ -973,7 +973,7 @@
         console.log(this.formAccount)
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            getApi.editStoreAccount(this.token, this.$route.params.id, this.formAccount).then((res) => {
+            getApi.editStoreAccount(this.$route.params.id, this.formAccount).then((res) => {
               console.log(res)
               if (res.data.errcode === 0) {
                 this.$router.go(-1)
@@ -1004,7 +1004,7 @@
         }
         if (tab.name === 'second') {
           let list = {}
-          await getApi.getStoreAccount(this.token, this.$route.params.id).then((res) => {
+          await getApi.getStoreAccount(this.$route.params.id).then((res) => {
 //            console.log(res)
 
             if (res.data.data.account.length === 0 && res.data.data.reserveAcc.length === 0) {
@@ -1024,19 +1024,24 @@
               list = res.data.data
             }
           });
-          for (let item of list.account) {
-            await  getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res1) => {
-              item.getCanUseAccountList = res1.data.data
-              //this.formAccount = list
-            })
+
+          let keyArr = Object.keys(list);
+
+          if(keyArr.length !== 0){
+            for (let item of list.account) {
+              await  getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res1) => {
+                item.getCanUseAccountList = res1.data.data
+                //this.formAccount = list
+              })
+            }
+            for (let item of list.reserveAcc) {
+              await getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res2) => {
+                item.getCanUseAccountList = res2.data.data
+                //this.formAccount = list
+              })
+            }
+            this.formAccount = list
           }
-          for (let item of list.reserveAcc) {
-            await getApi.getCanUseAccountList(this.token, item.paymentId, item.paymentChannelId).then((res2) => {
-              item.getCanUseAccountList = res2.data.data
-              //this.formAccount = list
-            })
-          }
-          this.formAccount = list
         }
       },
       addDomainClient() {
@@ -1066,7 +1071,7 @@
         this.formAccount.reserveAcc.splice(i, 1)
       },
       getFirst() {
-        getApi.getFirst(this.token, this.$route.params.id).then((res) => {
+        getApi.getFirst(this.$route.params.id).then((res) => {
           if (res.data.errcode === 0) {
             res.data.data.urlCode = res.data.data.urlWithCode * 1;
 
@@ -1088,19 +1093,19 @@
       }
     },
     created() {
-      this.token = this.$localStorage.get('token');
-      this.getFirst()
-      getApi.getList(this.token).then((res) => {
+
+      this.getFirst();
+      getApi.getList().then((res) => {
         this.storeGroup = res.data.data.list;
         console.log(res.data.data)
       })
 
-      getApi.getWayInfo(this.token).then((res) => {
+      getApi.getWayInfo().then((res) => {
         console.log(res)
         this.getWayInfo = res.data.data
       })
 
-      getApi.getChannelInfo(this.token).then((res) => {
+      getApi.getChannelInfo().then((res) => {
         this.getChannelInfo = res.data.data
       })
 

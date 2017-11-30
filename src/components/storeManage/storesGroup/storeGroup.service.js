@@ -1,13 +1,13 @@
-import axios from 'axios'
+import {axios,get} from '../../utility/communApi'
 
 //获取门店标签列表
-let getList = (token,p) => {
+let getList = (p) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeLabelList");
     formData.append("page", p.page);
     formData.append("pagesize", p.size);
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -15,14 +15,14 @@ let getList = (token,p) => {
 
 
 //获取门店标签详情
-let getOneStore = (token,data) => {
+let getOneStore = (data) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeLabelInfo");
 
     formData.append("id", data.id);
 
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
 
@@ -30,7 +30,7 @@ let getOneStore = (token,data) => {
 };
 
 //编辑门店标签
-let updateOne = (token,data) => {
+let updateOne = (data) => {
 
   let list = [];
 
@@ -48,7 +48,7 @@ let updateOne = (token,data) => {
     formData.append("thirdCode", window.JSON.stringify(data.thirdCode));
     formData.append("storeIds", list.join(','));
 
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
 
@@ -57,12 +57,12 @@ let updateOne = (token,data) => {
 
 
 //删除门店标签
-let delOne = (token,id) => {
+let delOne = (id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.delStoreLabel");
     formData.append("id", id);
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
 
@@ -73,13 +73,13 @@ let delOne = (token,id) => {
 
 //获取标签下的门店列表
 
-let getOne = (token,id) => {
+let getOne = (id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("id", id);
     formData.append("redirect", "x1.store.getStoreListByLabelId");
 
-    axios.post(`?controller=admin&action=api&token=${token}`,formData).then((res)=>{
+    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

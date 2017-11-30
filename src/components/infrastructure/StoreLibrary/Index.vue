@@ -17,7 +17,7 @@
             <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
           </div>
           <el-button size="small" @click="search()">搜索</el-button>
-          <!--<el-button size="small" type="primary">+导入门店</el-button>-->
+          <!--<el-button size="small" type="primary" @click="importXls()">+导入门店</el-button>-->
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@
         <!--:render-content="renderContent">-->
         <!--</el-tree>-->
 
-        <tree :data='data5' :count=0></tree>
+        <tree :data='data5' :count=0 ></tree>
 
       </div>
 
@@ -179,7 +179,7 @@
           <div>营业执照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess1"
@@ -194,7 +194,7 @@
           </div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess2"
@@ -207,7 +207,7 @@
           <div>开户许可证</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess3"
@@ -220,7 +220,7 @@
           <div>税务登记证</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess4"
@@ -233,7 +233,7 @@
           <div>法人证件正面照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess5"
@@ -246,7 +246,7 @@
           <div>法人证件反面照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess6"
@@ -294,6 +294,61 @@
         </div>
       </div>
     </el-dialog>
+
+
+    <el-dialog
+      title="导入门店"
+      :visible.sync="dialogVisible4"
+      @close="close4"
+      width="50%" size="tiny">
+      <div class="flex_f flex">
+
+        <div>
+          请按照我们提供的标准模板填写信息
+          <a style="color: #52CBF8" href="http://x0test.kuan1.cn/kybase/uploads/x0read.xlsx">下载标准模板</a>
+        </div>
+
+        <div class="margin_t_10">文件中的成员将会被导入至</div>
+
+        <div ref="tree" style="width: 100%;">
+          <el-tree
+            :data="dataLeft"
+            :props="defaultProps"
+            @node-click="nodeClick"
+            node-key="id"
+            default-expand-all
+            :highlight-current="true"
+            :expand-on-click-node="false"
+          >
+          </el-tree>
+        </div>
+
+        <div class="margin_t_10 width_100">
+          <el-upload
+            class="upload-demo"
+            ref="upload"
+            :action="updateXls"
+            :data="xlsObj"
+            name="file_stu"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :file-list="fileList"
+            :multiple="false"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <div class="margin_t_10">
+              <el-checkbox>门店名称相同时，覆盖原的有信息</el-checkbox>
+            </div>
+
+          </el-upload>
+        </div>
+        <div class="margin_t_10">
+          <el-button  @click="dialogVisible4 = false">取消</el-button>
+          <el-button type="primary" @click="submitUpload">提交</el-button>
+
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -302,12 +357,15 @@
 
   let id = 1;
   import Hub from '../../utility/commun'
+  import {getLeft,getArea} from '../../utility/communApi'
   import tree from './tree.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './storeLibrary.service'
+  import ElCheckbox from "../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
 
   export default {
     components: {
+      ElCheckbox,
       ElInput,
       tree,
     },
@@ -319,37 +377,83 @@
         dialogVisible1: false,
         dialogVisible2: false,
         dialogVisible3:false,
+        dialogVisible4:false,//导入文件窗口
         tableHeight: 0,
         tableWidth: 0,
-        navList: [{name: "门店管理", url: ''}, {name: "门店库", url: ''}],
-
+        navList: [{name: "门店库", url: ''}],
+        updateXls:'',
+        xlsObj:{},
+        brandid:'',
         storeGroup: 1,
         payValue: 2,
-
         searchName: '',
         storeData: [],
         data5: [],
         defaultProps: {
-          children: 'children',
-          label: 'label'
+          children: 'child',
+          label: 'levelname'
         },
         showAsideObj: {},//侧滑内容
         formEdit: {},//编辑弹窗
-        token: '',
         p: {page: 1, size: 20, total: 0},
         showAdd: {levelid: -1, type: '', showAdd: false},
         number: 1,
-        logList:{}
+        logList:{},
+        dataLeft:[],
+        fileList: []
+
       }
     },
     watch: {},
     methods: {
+      close4(){
+        this.brandid = '';
+        this.fileList = []
+      },
+      handlePreview(file) {
+        console.log(file);
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      submitUpload() {
+        console.log(this)
+        if(this.brandid === ''){
+          this.$message('请选择成员')
+          return
+        }
+//        if(this.fileList.length === 0){
+//          this.$message('请选择要上传的XLS文件')
+//          return
+//        }
+
+          this.xlsObj = {brandid:this.brandid,file_stu:'file_stu'};
+          this.$refs.upload.submit();
+          this.dialogVisible4 = false
+
+      },
+      nodeClick(data, data1, data2) {
+        console.log(data.levelname)
+        this.levelId = data.id;
+
+        this.brandid = data.id;
+
+        //this.showResouce(data.levelname, data.id)
+
+      },
+      importXls(){
+        getLeft().then((res) => {
+          console.log(res)
+          this.dataLeft = res.data.data
+          this.dialogVisible4 = true
+        });
+      },
       search(){
         console.log(this.showAdd.levelid)
         if(this.searchName === ''){
           this.getBsList()
         }else {
-          getApi.getBsList(this.token,this.p,this.showAdd.levelid,this.searchName).then((res)=>{
+          getApi.getBsList(this.p,this.showAdd.levelid,this.searchName).then((res)=>{
             console.log(res)
             if (res.data.errcode === 0) {
               res.data.data.list.forEach((item)=>{
@@ -370,7 +474,7 @@
       },
       log(data){
         console.log(data)
-        getApi.log(this.token,data.id).then((res)=>{
+        getApi.log(data.id).then((res)=>{
           console.log(res)
           this.dialogVisible3 = true;
           this.logList = res.data.data
@@ -393,7 +497,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.delBsOne(this.token,list.join(",")).then((res)=>{
+            getApi.delBsOne(list.join(",")).then((res)=>{
               console.log(res)
               this.$message({
                 type: 'info',
@@ -412,7 +516,7 @@
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             console.log(formEdit)
-            getApi.updateBsOne(this.token,formEdit).then((res)=>{
+            getApi.updateBsOne(formEdit).then((res)=>{
               console.log(res)
                           this.dialogVisible = false
             this.dialogVisible1 = false
@@ -445,17 +549,19 @@
 
         console.log(row)
       let province,city,area;
-      await  getApi.area(this.token, '').then((res) => {
+      await  getArea('').then((res) => {
+        console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.forEach((item)=>{
               if(item.id === row.provinceid){
                 province = item.address
+                console.log(province)
               }
             })
           } else {
           }
         });
-       await  getApi.area(this.token, row.provinceid).then((res) => {
+       await  getArea(row.provinceid).then((res) => {
          if (res.data.errcode === 0) {
            res.data.data.forEach((item)=>{
              if(item.id === row.cityid){
@@ -465,7 +571,7 @@
          } else {
          }
        });
-       await  getApi.area(this.token, row.cityid).then((res) => {
+       await  getArea(row.cityid).then((res) => {
          if (res.data.errcode === 0) {
            res.data.data.forEach((item)=>{
              if(item.id === row.areaid){
@@ -576,7 +682,7 @@
       },
 
       edit(row) {
-        getApi.getBsOne(this.token,row.id).then((res)=>{
+        getApi.getBsOne(row.id).then((res)=>{
           console.log(res)
           this.formEdit = res.data.data[0];
 
@@ -594,7 +700,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          getApi.delBsOne(this.token,row.id).then((res) => {
+          getApi.delBsOne(row.id).then((res) => {
             console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
@@ -644,7 +750,7 @@
         })
       },
       showLevel() {
-        getApi.getLevel(this.token).then((res) => {
+        getApi.getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
             console.log(this.data5)
@@ -655,7 +761,7 @@
         })
       },
       getBsList(){
-        getApi.getBsList(this.token, this.p,-1).then((res) => {
+        getApi.getBsList(this.p,-1).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((item)=>{
@@ -736,6 +842,8 @@
     },
     created() {
       this.token = this.$localStorage.get('token');
+      this.updateXls = `http://bs.com/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
+//      this.updateXls = `http://x.kuan1.cn/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
@@ -746,6 +854,7 @@
 
     mounted() {
       //this.clickEvent()
+
       Hub.$on('treeEventEditDel', (e) => {
         this.showLevel();
       });
@@ -754,19 +863,23 @@
         this.recurSelected(this.data5,e.levelid)
       });
       Hub.$on('getBsList', (e) => {
-        getApi.getBsList(this.token,this.p, e.levelid).then((res) => {
+        getApi.getBsList(this.p, e.levelid).then((res) => {
           console.log(res)
-          res.data.data.list.forEach((item)=>{
-            if(item.status === 1){
-              item.status = "开启"
-            }else {
-              item.status = "关闭"
-            }
-            item.select = false
-          });
-          this.storeData = res.data.data.list
+          if(res.data.errcode === 0){
+            res.data.data.list.forEach((item)=>{
+              if(item.status === 1){
+                item.status = "开启"
+              }else {
+                item.status = "关闭"
+              }
+              item.select = false
+            });
+            this.storeData = res.data.data.list
+          }
+
         })
       })
+
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -775,6 +888,11 @@
         this.tableHeight = h;
       })
     },
+    destroyed(){
+      Hub.$off("treeEventEditDel");
+      Hub.$off("showAdd");
+      Hub.$off("getBsList")
+    }
   }
 </script>
 

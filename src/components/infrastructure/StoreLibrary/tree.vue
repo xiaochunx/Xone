@@ -89,7 +89,7 @@
           <div>营业执照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess1"
@@ -104,7 +104,7 @@
           </div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess2"
@@ -117,7 +117,7 @@
           <div>开户许可证</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess3"
@@ -130,7 +130,7 @@
           <div>税务登记证</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess4"
@@ -143,7 +143,7 @@
           <div>法人证件正面照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess5"
@@ -156,7 +156,7 @@
           <div>法人证件反面照</div>
           <el-upload
             class="avatar-uploader"
-            action="http://bs.com/oss/index.php?controller=index&action=upload_img"
+            :action="$updateUrl"
             name = 'filename'
             :show-file-list="false"
             :on-success="handleAvatarSuccess6"
@@ -239,7 +239,7 @@
               :style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}" style="margin-right: 8px;"
               class="el-tree-node__expand-icon"></span>
 
-        <span @click="test(item)" class="pointer el-tree-node__label">{{item.levelname}}</span>
+        <span @click.stop.self="test(item)" class="pointer el-tree-node__label">{{item.levelname}}</span>
 
         <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 1" @click="addBig(item.id,'新建大商户',1)"></i>
 
@@ -266,13 +266,14 @@
         v-on:after-leave="afterLeave"
         v-on:leave-cancelled="leaveCancelled"
       >
-        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran"></trees>
+        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran" ></trees>
       </transition>
     </div>
   </div>
 </template>
 
 <script>
+
   import Hub from '../../utility/commun'
   import getApi from './storeLibrary.service'
   let id = 1;
@@ -282,8 +283,10 @@
     watch: {
 
     },
+
     data() {
       return {
+        tree:null,
         title: '',
         myHeight: '',
         styleObject: {
@@ -320,9 +323,8 @@
           legalman_2_url:'',
 
         },
-        token:'',
         id:'',//组织id
-        levelname:''
+        levelname:'',
       }
     },
     methods: {
@@ -332,7 +334,7 @@
             this.form.id = this.id;
             if(this.title === '新建大商户' || this.title === '新增集团' || this.title === '新增企业' || this.title === '添加子部门'){
 
-              getApi.addLevel(this.token,this.form).then((res)=>{
+              getApi.addLevel(this.form).then((res)=>{
                 console.log(res)
                 if(res.data.errcode === 0){
                   Hub.$emit('treeEventEditDel','Ok');
@@ -341,7 +343,7 @@
             }
 
             if(this.title === '修改'){
-              getApi.updateLevel(this.token,this.form).then((res)=>{
+              getApi.updateLevel(this.form).then((res)=>{
                 Hub.$emit('treeEventEditDel','Ok');
                 if(res.data.errcode === 0){
                 }
@@ -433,7 +435,7 @@
         this.id = item.id;
         this.title = "修改";
 
-        getApi.getOneLevel(this.token,item).then((res)=>{
+        getApi.getOneLevel(item).then((res)=>{
           console.log(res)
           this.form = res.data.data;
           this.dialogVisible = true
@@ -446,7 +448,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          getApi.delLevel(this.token, id).then((res) => {
+          getApi.delLevel(id).then((res) => {
             console.log(res)
             Hub.$emit('treeEventEditDel','Ok');
             if (res) {
@@ -463,8 +465,9 @@
       },
 
       test(item) {
-        console.log(item)
+        //console.log(item)
         this.levelname = item.levelname;
+
         Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
         if(item.type === 5 ||item.type === 4){
           Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:true});
@@ -521,11 +524,11 @@
       },
     },
     created() {
-    this.token = this.$localStorage.get("token")
 
     },
     mounted() {
     },
-
+    destroyed(){
+    }
   }
 </script>

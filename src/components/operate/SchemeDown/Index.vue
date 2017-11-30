@@ -150,8 +150,8 @@
     components: {},
     methods: {},
     created() {
-      this.token = this.$localStorage.get("token")
-//      getApi.getProject(this.token).then((res) => {
+
+//      getApi.getProject().then((res) => {
 //        console.log(res)
 //      })
 
