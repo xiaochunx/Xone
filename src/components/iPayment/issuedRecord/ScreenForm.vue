@@ -14,7 +14,7 @@
         label="支付方式"
         width="103"
       >
-        <template scope="scope">
+        <template slot-scope="scope">
           <div style="margin-left: 10px" v-for="item in scope.row.paymentMethod">{{ item }}</div>
         </template>
       </el-table-column>
@@ -23,7 +23,7 @@
       <el-table-column
         label="支付通道"
         width="103">
-        <template scope="scope">
+        <template slot-scope="scope">
           <div style="margin-left: 10px" v-for="item in scope.row.payment">{{ item }}</div>
         </template>
       </el-table-column>
@@ -32,7 +32,7 @@
         label="账户"
         width="144">
         label="支付通道">
-        <template scope="scope">
+        <template slot-scope="scope">
           <div style="margin-left: 10px" v-for="item in scope.row.account">{{ item }}</div>
         </template>
       </el-table-column>
@@ -61,7 +61,7 @@
         :filters="[{ text: '成功', value: '成功' }, { text: '待执行', value: '待执行' }]"
         :filter-method="filterTag"
         filter-placement="bottom-end">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-tag
             :type="scope.row.state === '成功' ? 'primary' : 'danger'"
             close-transition>{{scope.row.state}}
@@ -72,7 +72,7 @@
       <el-table-column
         prop="lastEdit"
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button size="small" @click="examine(scope)">查看</el-button>
         </template>
       </el-table-column>

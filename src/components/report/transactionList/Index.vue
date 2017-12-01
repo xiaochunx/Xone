@@ -130,7 +130,7 @@
                          width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="refund" label="退款人" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作" fixed="right" width="70">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div class="flex">
               <el-button size="small">退款</el-button>
             </div>

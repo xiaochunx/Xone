@@ -8,7 +8,7 @@ let getProject = (p) => {
     formData.append("page", p.page);
     formData.append("pagesize", p.size);
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

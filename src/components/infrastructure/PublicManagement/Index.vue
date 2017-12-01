@@ -24,23 +24,23 @@
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号">
-            <template scope="scope">
+            <template slot-scope="scope">
               <div>{{scope.$index}}</div>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="APPID">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="authorizer_appid" label="APPID">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="nick_name"
                            label="公众号名称">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="time"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="updated_at"
                            label="上次授权时间">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="operation"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="op_manage"
                            label="操作人">
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="edit()">修改</el-button>
 
             </template>
@@ -48,7 +48,7 @@
 
         </el-table>
         <div class="margin_10">
-          <el-button type="primary">公众号授权</el-button>
+          <el-button type="primary" @click="auth()">公众号授权</el-button>
         </div>
         <el-dialog
           title="公众号"
@@ -101,13 +101,7 @@
         department: '部门',
         payValue: 2,
         storeName: '',
-        storeData: [{
-          id: "24u6r3y953",
-          account: "s酸菜鱼",
-          time: "2017-10-10",
-          operation: "aaa"
-
-        }],
+        storeData: [],
         levelId: '',
         dataLeft: [],
         defaultProps: {
@@ -128,10 +122,16 @@
     },
     watch: {},
     methods: {
+      auth(){
+        getApi.threeAuthorize(this.levelId).then((res)=>{
+          console.log(res)
+        })
+
+      },
       nodeClick(data, data1, data2) {
         console.log(data.levelname)
         this.levelId = data.id;
-        //this.showResouce(data.levelname, data.id)
+        this.showResouce(data.id)
 
       },
       edit() {
@@ -172,14 +172,23 @@
       del() {
 
       },
-
+      showResouce(id){
+        getApi.getGzhInfo(id).then((res)=>{
+          console.log(res)
+          if(res.data.errcode === 0){
+            this.storeData = res.data.data
+          }
+        })
+      }
 
     },
     created() {
-      this.token = this.$localStorage.get('token');
+      this.showResouce(-1)
+      getLeft().then((res) => {
+        if(res.data.errcode === 0){
+          this.dataLeft = res.data.data
+        }
 
-      getLeft(this.token).then((res) => {
-        this.dataLeft = res.data.data
       });
 
     },

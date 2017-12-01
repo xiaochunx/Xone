@@ -450,14 +450,15 @@
         }).then(() => {
           getApi.delLevel(id).then((res) => {
             console.log(res)
-            Hub.$emit('treeEventEditDel','Ok');
-            if (res) {
 
+            if (res.data.errcode === 0) {
+              Hub.$emit('treeEventEditDel','Ok');
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
             }
-            this.$message({
-              type: 'info',
-              message: '删除成功'
-            });
+
           })
         }).catch(() => {
           //

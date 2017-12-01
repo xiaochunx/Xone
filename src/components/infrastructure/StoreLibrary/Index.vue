@@ -17,7 +17,7 @@
             <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
           </div>
           <el-button size="small" @click="search()">搜索</el-button>
-          <!--<el-button size="small" type="primary" @click="importXls()">+导入门店</el-button>-->
+          <el-button size="small" type="primary" @click="importXls()">+导入门店</el-button>
         </div>
       </div>
     </div>
@@ -41,11 +41,11 @@
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                            width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storecodeid"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                            label="编码"
                            width="100"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
@@ -53,7 +53,7 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="80"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
-            <template scope="scope">
+            <template slot-scope="scope">
 
               <el-popover
                 ref="popover4"
@@ -97,7 +97,7 @@
               <el-button size="small" type="primary" v-popover:popover4>查看</el-button>
               <el-button size="small" @click.stop="edit(scope.row)">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del(scope.row)">删除</el-button>
-              <!--<el-button size="small" type="primary">上传资料</el-button>-->
+              <el-button size="small" type="primary">上传资料</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -128,6 +128,9 @@
       :visible.sync="dialogVisible"
       width="50%">
       <el-form ref="formRules" :model="formEdit" label-width="100px">
+        <el-form-item label="编码:" prop="id" >
+          <el-input v-model="formEdit.id" placeholder="请输入内容" disabled></el-input>
+        </el-form-item>
         <el-form-item label="名称:" prop="storename" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
           <el-input v-model="formEdit.storename" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -299,6 +302,7 @@
     <el-dialog
       title="导入门店"
       :visible.sync="dialogVisible4"
+      @open="open4"
       @close="close4"
       width="50%" size="tiny">
       <div class="flex_f flex">
@@ -327,24 +331,25 @@
           <el-upload
             class="upload-demo"
             ref="upload"
-            :action="updateXls"
-            :data="xlsObj"
+            :action="$updateUrl"
             name="file_stu"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
+            :on-change="handleChange"
+            :on-success="handleAvatarSuccessXls"
+            :before-upload="beforeAvatarUploadXls"
             :file-list="fileList"
             :multiple="false"
-            :auto-upload="false">
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            >
+            <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
+            <el-button size="small" type="primary">选取文件上传</el-button>
             <div class="margin_t_10">
-              <el-checkbox>门店名称相同时，覆盖原的有信息</el-checkbox>
+              <el-checkbox v-model="isOver">门店名称相同时，覆盖原的有信息</el-checkbox>
             </div>
 
           </el-upload>
         </div>
         <div class="margin_t_10">
           <el-button  @click="dialogVisible4 = false">取消</el-button>
-          <el-button type="primary" @click="submitUpload">提交</el-button>
+          <el-button type="primary" @click="submitUploadXls">提交</el-button>
 
         </div>
       </div>
@@ -355,7 +360,6 @@
 <script>
   import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
 
-  let id = 1;
   import Hub from '../../utility/commun'
   import {getLeft,getArea} from '../../utility/communApi'
   import tree from './tree.vue'
@@ -371,6 +375,7 @@
     },
     data() {
       return {
+        isOver:false,
         value2: false,
         showAside: false,
         dialogVisible: false,
@@ -382,7 +387,6 @@
         tableWidth: 0,
         navList: [{name: "门店库", url: ''}],
         updateXls:'',
-        xlsObj:{},
         brandid:'',
         storeGroup: 1,
         payValue: 2,
@@ -400,36 +404,63 @@
         number: 1,
         logList:{},
         dataLeft:[],
-        fileList: []
+        fileList: [],
+        fileurl:''
 
       }
     },
     watch: {},
     methods: {
+      open4(){
+      },
       close4(){
         this.brandid = '';
+        this.xlsFile = '';
         this.fileList = []
       },
-      handlePreview(file) {
-        console.log(file);
+      handleChange(file, fileList) {
+        this.fileList = fileList.slice(-1);
       },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
+      handleAvatarSuccessXls(res, file) {
+        console.log(res)
+        console.log(file)
+
+        this.fileurl = file.response.data.file_url
+
       },
-      submitUpload() {
-        console.log(this)
+      beforeAvatarUploadXls(file) {
+        const isLt5M = file.size / 1024 / 1024 < 5;
+        if (!isLt5M) {
+          this.$message.error('上传头像图片大小不能超过 5MB!');
+        }
+        return isLt5M;
+      },
+      submitUploadXls() {
         if(this.brandid === ''){
-          this.$message('请选择成员')
+          this.$message('请选择成员');
           return
         }
-//        if(this.fileList.length === 0){
-//          this.$message('请选择要上传的XLS文件')
-//          return
-//        }
+        if(this.fileurl === ''){
+          this.$message('需要上传XLS文件');
+          return
+        }
+        let over = '';
+        if(this.isOver === false){
+          over = 0
+        }else {
+          over = 1
+        }
+        getApi.updateXlsFile(this.brandid,this.fileurl,over).then((res)=>{
+          console.log(res)
+          if(res.data.errcode === 0){
+            this.$message({
+              type: 'info',
+              message: '上传成功'
+            });
+            this.dialogVisible4 = false
+          }
 
-          this.xlsObj = {brandid:this.brandid,file_stu:'file_stu'};
-          this.$refs.upload.submit();
-          this.dialogVisible4 = false
+        })
 
       },
       nodeClick(data, data1, data2) {
@@ -438,14 +469,15 @@
 
         this.brandid = data.id;
 
-        //this.showResouce(data.levelname, data.id)
-
       },
       importXls(){
         getLeft().then((res) => {
           console.log(res)
-          this.dataLeft = res.data.data
-          this.dialogVisible4 = true
+          if(res.data.errcode === 0){
+            this.dataLeft = res.data.data;
+            this.dialogVisible4 = true
+          }
+
         });
       },
       search(){
@@ -499,11 +531,13 @@
           }).then(() => {
             getApi.delBsOne(list.join(",")).then((res)=>{
               console.log(res)
-              this.$message({
-                type: 'info',
-                message: '删除成功'
-              });
-              this.getBsList();
+              if(res.data.errcode === 0){
+                this.$message({
+                  type: 'info',
+                  message: '删除成功'
+                });
+                this.getBsList();
+              }
             })
           }).catch(() => {
             //
@@ -518,8 +552,11 @@
             console.log(formEdit)
             getApi.updateBsOne(formEdit).then((res)=>{
               console.log(res)
-                          this.dialogVisible = false
-            this.dialogVisible1 = false
+              if(res.data.errcode === 0){
+                this.getBsList();
+                this.dialogVisible = false
+                this.dialogVisible1 = false
+              }
             })
           } else {
             console.log('error submit!!');
@@ -707,26 +744,18 @@
                 type: 'info',
                 message: '删除成功'
               });
+              this.getBsList();
             } else {
               this.$message({
                 type: 'info',
-                message: res.data.errmsg
+                message: res.data.data
               });
             }
-            this.getBsList();
+
           })
         }).catch(() => {
           //
         });
-      },
-      append(data) {
-        console.log(data)
-        const newChild = {id: id++, label: 'testtest', children: []};
-        if (!data.children) {
-          this.$set(data, 'children', []);
-        }
-        data.children.push(newChild);
-        //this.clickEvent()
       },
 
 
@@ -736,7 +765,6 @@
           map.addEventListener('click', function (event) {
             event.stopPropagation()
             event.preventDefault()
-
           })
         })
       },
@@ -775,12 +803,12 @@
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
           } else {
-//            this.$alert('请重新登录', '超时', {
-//              confirmButtonText: '确定',
-//              callback: action => {
-//                this.$router.push('/login')
-//              }
-//            })
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }
+            })
           }
         })
       },
@@ -842,7 +870,7 @@
     },
     created() {
       this.token = this.$localStorage.get('token');
-      this.updateXls = `http://bs.com/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
+      this.updateXls = `http://test0.kuan1.cn/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
 //      this.updateXls = `http://x.kuan1.cn/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)

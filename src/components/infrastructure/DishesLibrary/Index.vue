@@ -35,7 +35,7 @@
       <el-table :data="storeData" border :height="tableHeight">
         <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                          width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
 
           </template>
@@ -48,7 +48,7 @@
         <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="所属品牌"
         ></el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button size="small" type="primary" @click.stop.self="getOneList()">查看</el-button>
             <el-button size="small" @click.stop.self="edit()">编辑</el-button>
             <el-button size="small" type="danger" @click.stop.self="del()">删除</el-button>

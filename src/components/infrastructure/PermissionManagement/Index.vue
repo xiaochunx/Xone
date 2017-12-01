@@ -36,7 +36,7 @@
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="70">
-            <template scope="scope">
+            <template slot-scope="scope">
 
               <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
 
@@ -52,7 +52,7 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="role" label="关联角色"
           ></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button size="small" type="primary" @click="">查看</el-button>
               <el-button size="small" @click="edit()">编辑</el-button>
               <el-button size="small" type="danger" @click="del()">删除</el-button>
@@ -60,7 +60,7 @@
           </el-table-column>
         </el-table>
         <footer>
-          <xo-pagination></xo-pagination>
+          <!--<xo-pagination></xo-pagination>-->
         </footer>
 
       </div>

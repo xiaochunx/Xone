@@ -13,7 +13,7 @@ let addOne = (data,storeIds) => {
     formData.append("thirdCode", thirdCode);
     formData.append("storeIds", storeIds);
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -28,7 +28,7 @@ let searchStore = (areaId ='',storeName = '') => {
 
     formData.append("areaId", areaId);
     formData.append("storeName", storeName);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

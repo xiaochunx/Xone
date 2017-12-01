@@ -56,7 +56,7 @@
     </div>
       <el-table :data="tableData" border :height="tableHeight">
         <el-table-column header-align="center" align="center" label="序号" width="70">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div>
               {{scope.$index + 1}}
             </div>
@@ -69,7 +69,7 @@
         <el-table-column header-align="center" align="center" prop="money" label="开票金额"></el-table-column>
         <el-table-column header-align="center" align="center" prop="time" label="开票时间"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-popover
               ref="popover4"
               placement="right"

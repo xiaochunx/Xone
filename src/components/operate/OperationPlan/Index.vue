@@ -6,12 +6,12 @@
     <div>
       <el-table :data="tableData" border :height="tableHeight" style="width: 100%">
         <el-table-column header-align="center" align="center" label="序号" width="65">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" label="账户 -- 支付方式 -- 支付通道">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-for="(item,index) in scope.row.account">
               <div>{{item.name}} -- {{item.paymentMethod}} -- {{item.paymentChannel}}</div>
             </div>
@@ -21,7 +21,7 @@
         <el-table-column header-align="center" align="center" label="时间" prop="time" width="200">
         </el-table-column>
         <el-table-column header-align="center" align="center" label="门店" prop="store">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-for="(item,index) in scope.row.store">
               <div>{{item}}</div>
             </div>
@@ -30,7 +30,7 @@
         <el-table-column header-align="center" align="center" label="操作员" prop="operator" width="150">
         </el-table-column>
         <el-table-column header-align="center" align="center" label="操作" width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-switch
               v-model="scope.row.isOpen"
               on-color="#13ce66"
@@ -75,7 +75,7 @@
         this.showResouce();
       },
       showResouce() {
-        getApi.getProject(this.token, this.p).then((res) => {
+        getApi.getProject(this.p).then((res) => {
           console.log(res.data);
 
           this.tableData = res.data.data.list;
@@ -104,7 +104,6 @@
       })
     },
     created() {
-      this.token = this.$localStorage.get("token");
       this.showResouce()
     }
   }

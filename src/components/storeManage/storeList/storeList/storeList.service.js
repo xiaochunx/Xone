@@ -5,7 +5,7 @@ let getLeft = () => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeLeft");
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -22,7 +22,7 @@ let getList = (p,storeName,levelId) => {
     formData.append("pagesize", p.size);
     formData.append("storeName", storeName);
     formData.append("levelId", levelId);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -39,7 +39,7 @@ let updateOne = () => {
     formData.append("thrdcode", "");
     formData.append("storeIds", "");
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
 
@@ -53,7 +53,7 @@ let del = (id) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.delStores");
     formData.append("storeId", id);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -68,7 +68,7 @@ let getOne = (id) => {
     formData.append("id", id);
     formData.append("redirect", "x1.store.getStoreListByLabelId");
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -83,7 +83,7 @@ let storesStatus = (ids,status) => {
     formData.append("redirect", "x1.store.changeStoresStatus");
     formData.append("storeId", ids);
     formData.append("status", status);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -96,7 +96,7 @@ let urlStatus = (ids,url) => {
     formData.append("redirect", "x1.store.setStoresUrl");
     formData.append("storeId", ids);
     formData.append("$url", url);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -109,7 +109,7 @@ let getBaseStore = (levelId) => {
     formData.append("redirect", "x1.store.getBaseStore");
     formData.append("levelId", levelId);
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -122,7 +122,7 @@ let addStore = (storeIds) => {
     formData.append("redirect", "x1.store.addStore");
     formData.append("storeIds", storeIds);
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

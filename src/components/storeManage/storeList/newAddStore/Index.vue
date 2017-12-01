@@ -108,7 +108,7 @@
     <div class="margin_t_10 width_100">
       <el-table :data="storeData" border :height="tableHeight" style="width: 100%;">
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店名称" width="200">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.storename"
                       @change="myChange(scope.row,'storename','nameClass')" placeholder="请输入内容"></el-input>
           </template>
@@ -120,7 +120,7 @@
           <!--</template>-->
         <!--</el-table-column>-->
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div v-for="(domain, index) in scope.row.storecodes" class="flex_a padding_10">
               <div style="width:150px">
                 <el-input  v-model="domain.name"
@@ -147,7 +147,7 @@
         </el-table-column>
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.brand"
                        @change="myChange(scope.row,'brand','brandClass')" placeholder="请选择">
               <el-option
@@ -161,7 +161,7 @@
         </el-table-column>
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店地址" width="600">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div class="flex_a">
               <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.provinceid"
                          @change="myChange(scope.row,'provinceid','provinceClass','isProvince')" placeholder="请选择省">
@@ -190,14 +190,14 @@
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店电话" width="200">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-input :class="{isInput:scope.row.telClass === true}" v-model="scope.row.tel"
                       @change="myChange(scope.row,'tel','telClass')" placeholder="请输入内容"></el-input>
           </template>
         </el-table-column>
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="140">
-          <template scope="scope">
+          <template slot-scope="scope">
 
             <!--<i v-if="storeData.length === scope.$index+1" class="el-icon-plus m-storeCode" aria-hidden="true"-->
             <!--@click="addRow()"></i>-->
@@ -245,9 +245,7 @@
           legalman_2: '',
           legalman_2_url: '',
         },
-
         storeData: [],
-
         va: "",
         dialogVisible: false,
         imageUrl: '',
@@ -257,7 +255,6 @@
     watch: {},
     methods: {
       addRow(row, index) {
-
         this.imgList = {
           business_src: '',
           business_src_img: '',
@@ -272,7 +269,6 @@
           legalman_2: '',
           legalman_2_img: '',
         };
-
 
         this.index = index;
         this.dialogVisible = true
@@ -407,15 +403,17 @@
         });
 
         console.log(this.storeData);
-
           getApi.addStore(this.$route.params.levelid,this.$route.params.type,this.storeData).then((res)=>{
             console.log(res)
-            this.$alert('添加成功', '', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.go(-1)
-              }
-            })
+            if(res.data.errcode === 0){
+              this.$alert('添加成功', '', {
+                confirmButtonText: '确定',
+                callback: action => {
+                  this.$router.go(-1)
+                }
+              })
+            }
+
           })
         } else {
           this.$message({

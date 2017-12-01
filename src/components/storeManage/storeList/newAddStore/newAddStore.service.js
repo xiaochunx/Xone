@@ -8,7 +8,7 @@ let addStore = (levelid,type,data) => {
     formData.append("levelid", levelid);
     formData.append("type", type);
     formData.append("data", window.JSON.stringify(data) );
-    axios.post(`?controller=stores&action=create&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=stores&action=create&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -17,7 +17,7 @@ let addStore = (levelid,type,data) => {
 //返回当前的组织架构下的品牌
 let getBrand = (id) => {
   return new Promise((resolve, reject) => {
-    axios.get(`?controller=level&action=brand&token=${get('token')}&id=${id}`).then((res)=>{
+    axios.get(`index.php?controller=level&action=brand&token=${get('token')}&id=${id}`).then((res)=>{
       resolve(res)
     })
   })

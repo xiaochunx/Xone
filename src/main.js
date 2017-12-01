@@ -16,13 +16,13 @@ import 'font-awesome/css/font-awesome.css'
 Vue.prototype.$http = Axios;
 
 
-// Axios.defaults.baseURL = 'http://x.kuan1.cn/kybase/index.php';            // 正式环境
-Axios.defaults.baseURL = 'http://test0.kuan1.cn/kybase/index.php';        // 测试环境
-// Axios.defaults.baseURL = 'http://x0test.kuan1.cn/kybase/index.php';       // 开发环境
-// Axios.defaults.baseURL = 'http://bs.com/kybase/index.php';                // 本地环境
+// Axios.defaults.baseURL = 'http://x.kuan1.cn/kybase/';            // 正式环境
+Axios.defaults.baseURL = 'http://test0.kuan1.cn/kybase/';        // 测试环境
+// Axios.defaults.baseURL = 'http://x0test.kuan1.cn/kybase/';       // 开发环境
+// Axios.defaults.baseURL = 'http://bs.com/kybase/';                // 本地环境
 
 //图片上传地址
-Vue.prototype.$updateUrl = 'http://x.kuan1.cn/oss/index.php?controller=index&action=upload_img';
+Vue.prototype.$updateUrl = 'http://test0.kuan1.cn/oss/index.php?controller=index&action=upload_img';
 
 //打开夸域cookie
 Axios.defaults.withCredentials = true;

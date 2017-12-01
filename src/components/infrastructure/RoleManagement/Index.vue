@@ -9,7 +9,7 @@
       <div class="flex_sb">
         <div class="flex_1">
           <el-button size="small" @click="add()">新增</el-button>
-          <!--<el-button size="small">删除</el-button>-->
+          <el-button size="small" type="danger" @click="del()">删除</el-button>
         </div>
         <div>
           <el-input size="small" v-model="storeName" icon="search" placeholder="请输入内容">
@@ -22,7 +22,7 @@
     <el-table :data="storeData" border :height="tableHeight">
       <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                        width="100">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
 
         </template>
@@ -35,9 +35,10 @@
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="是否启用"
       ></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
-        <template scope="scope">
-          <el-button size="small" @click="edit()">配置权限</el-button>
-          <el-button size="small" type="danger" @click="del()">删除</el-button>
+        <template slot-scope="scope">
+          <el-button size="small" type="primary" @click="edit()">配置权限</el-button>
+          <el-button size="small" @click="edit()">修改</el-button>
+
 
         </template>
       </el-table-column>
@@ -45,7 +46,7 @@
 
 
     <footer>
-      <xo-pagination></xo-pagination>
+      <!--<xo-pagination></xo-pagination>-->
     </footer>
 
     <!--弹窗-->
@@ -55,13 +56,67 @@
       @close="dialogClose"
       width="30%">
       <el-form ref="formRules" :model="form" label-width="100px">
-        <el-form-item label="编码:" prop="code" :rules="{required: true, message: '请输入编码', trigger: 'blur'}">
-          <el-input v-model="form.code" placeholder="请输入内容"></el-input>
+        <el-form-item label="编码:" prop="code">
+          <el-input v-model="form.code" placeholder="请输入内容" disabled></el-input>
         </el-form-item>
 
         <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
           <el-input v-model="form.name" placeholder="请输入内容"></el-input>
         </el-form-item>
+
+        <el-form-item label="角色类型:" prop="type" :rules="{type:'number',required: true, message: '请选择角色类型', trigger: 'change'}">
+
+
+          <el-select v-model="form.type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+
+        <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
+                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+            <div>
+              <el-row>
+                <el-col>
+                  <div style="width:150px">
+                    <el-input v-model="domain.value"></el-input>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
+          <div class="m-rank">
+            <div class="m-rank-child"></div>
+          </div>
+          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
+                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+            <div>
+              <el-row>
+                <el-col>
+                  <div style="width:150px">
+                    <el-input v-model="domain.value1"></el-input>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
+          <div class="flex_a" style="margin-bottom: 22px">
+            <div class="m-storeCode margin_l_10" @click="addDomain()">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            </div>
+            <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                 @click.prevent="removeDomain(domain)">
+              <i class="fa fa-minus-circle" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+
 
         <el-form-item label="状态:">
 
@@ -142,7 +197,9 @@
 </div>
         `,
         data() {
-          return {}
+          return {
+
+          }
         },
         methods: {
           cell(item) {
@@ -209,7 +266,11 @@
         form: {
           code: '',
           name: '',
-          status: ''
+          status: '',
+          type:'',
+          thirdPartyCoding: [
+            {value: '', value1: ''}
+          ],
         },
         dialogVisible: false,
         dialogVisible2: false,
@@ -263,6 +324,18 @@
       roleClose() {
         console.log(22)
 
+      },
+      removeDomain(item) {
+        var index = this.form.thirdPartyCoding.indexOf(item)
+        if (index !== -1) {
+          this.form.thirdPartyCoding.splice(index, 1)
+        }
+      },
+      addDomain() {
+        this.form.thirdPartyCoding.push({
+          value: '',
+          key: Date.now()
+        });
       },
       dialogClose() {
         console.log(444)
@@ -344,7 +417,7 @@
       },
 
       edit() {
-        this.dialogVisible2 = true
+        this.dialogVisible = true
       },
       del() {
 
@@ -374,6 +447,18 @@
 </script>
 
 <style scoped lang="less">
+  .m-rank {
+    width: 40px;
+    .m-rank-child {
+      height: 18px;
+      border-bottom: 1px solid #000;
+    }
+  }
+
+  .m-storeCode {
+    font-size: 30px;
+  }
+
   .m-storeList {
     height: 50px;
     line-height: 50px;

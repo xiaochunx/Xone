@@ -7,7 +7,7 @@ let getList = () => {
     formData.append("redirect", "x1.store.storeLabelList");
     formData.append("page", 1);
     formData.append("pagesize", 1000);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -22,7 +22,7 @@ let getFirst = (id) => {
     formData.append("id", id);
     formData.append("redirect", "x1.store.storeBaseInfo");
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
         resolve(res)
 
@@ -45,7 +45,7 @@ let editStore = (storeData) => {
     formData.append("orderPrompting", storeData.orderPrompting);
     formData.append("payJumpUrl", storeData.payJumpUrl);
     formData.append("urlWithCode", storeData.urlCode);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -59,7 +59,7 @@ let getStoreAccount = (id) => {
     formData.append("id", id);
     formData.append("redirect", "x1.store.storeAccount");
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
       resolve(res)
 
@@ -76,7 +76,7 @@ let editStoreAccount = (storeId,data) => {
     formData.append("account", window.JSON.stringify(data.account));
     formData.append("reserveAcc", window.JSON.stringify(data.reserveAcc));
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
       resolve(res)
 
@@ -87,7 +87,7 @@ let editStoreAccount = (storeId,data) => {
 //支付方式列表
 let getWayInfo = () => {
   return new Promise((resolve, reject) => {
-    axios.post(`?controller=jichu&action=getWayInfo&token=${get('token')}`).then((res)=>{
+    axios.post(`index.php?controller=jichu&action=getWayInfo&token=${get('token')}`).then((res)=>{
       resolve(res)
     })
   })
@@ -96,7 +96,7 @@ let getWayInfo = () => {
 //支付通道列表
 let getChannelInfo = () => {
   return new Promise((resolve, reject) => {
-    axios.post(`?controller=jichu&action=getChannelInfo&token=${get('token')}`).then((res)=>{
+    axios.post(`index.php?controller=jichu&action=getChannelInfo&token=${get('token')}`).then((res)=>{
       resolve(res)
     })
   })
@@ -109,7 +109,7 @@ let getCanUseAccountList = (paymentMethod,paymentChannel) => {
     formData.append("redirect", "x1.accountmanage.getCanUseAccountList");
     formData.append("paymentMethod", paymentMethod);
     formData.append("paymentChannel", paymentChannel);
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

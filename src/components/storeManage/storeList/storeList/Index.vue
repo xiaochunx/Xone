@@ -42,7 +42,7 @@
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="90">
-            <template scope="scope">
+            <template slot-scope="scope">
 
               <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
 
@@ -56,7 +56,7 @@
                            label="门店"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center"
                            width="250" label="账户 -- 支付方式 -- 支付通道">
-            <template scope="scope">
+            <template slot-scope="scope">
               <div v-for="(item,index) in scope.row.account">
                 <div>
                   {{item.accountName}} -- {{item.paymentName}} -- {{item.paymentChannel}}
@@ -68,14 +68,14 @@
           </el-table-column>
 
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="支付" width="80">
-            <template scope="scope">
+            <template slot-scope="scope">
               <div v-if="scope.row.isOpenPay === 1">
                 √
               </div>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="发票" width="80">
-            <template scope="scope">
+            <template slot-scope="scope">
               <div v-if="scope.row.isOpenInvoice === 1">
                 √
               </div>
@@ -85,7 +85,7 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="payJumpUrl"
                            label="支付后跳转url"
                            width="320">
-            <template scope="scope">
+            <template slot-scope="scope">
               <div class="flex_a">
                 <el-input class="margin_r_10" v-model="scope.row.payJumpUrl" :disabled="scope.row.inputChecked"></el-input>
                 <el-button type="primary" :disabled="scope.row.inputChecked" @click="setOneUrl(scope.row)">确定</el-button>
@@ -95,7 +95,7 @@
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-switch @change="()=>{
                 return changeStatus(scope.row)
               }"
@@ -107,7 +107,7 @@
 
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button size="small" type="primary" @click.stop="getOneList(scope.row.id)">查看</el-button>
               <el-button size="small" @click.stop="edit(scope.row.id)">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del(scope.row.id)">删除</el-button>

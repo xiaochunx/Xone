@@ -34,7 +34,7 @@
       <el-table-column header-align="center" align="center" prop="invoiceService" label="发票服务商" ></el-table-column>
       <el-table-column header-align="center" align="center" prop="status" label="状态" ></el-table-column>
       <el-table-column header-align="center" align="center"  label="在售门店" >
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-select size="small" v-model="value" placeholder="请选择">
             <el-option
               v-for="item in options"
@@ -47,7 +47,7 @@
       </el-table-column>
 
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="220">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button size="small" type="primary" @click="">修改</el-button>
           <el-button size="small"  @click="">查看</el-button>
           <el-button size="small" type="danger" @click="">删除</el-button>

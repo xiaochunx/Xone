@@ -53,14 +53,14 @@
       <el-table-column
         label="序号"
         width="65">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.acountCode }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="账户编号"
       >
-        <template scope="scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.accountNum }}</span>
         </template>
       </el-table-column>
@@ -68,7 +68,7 @@
         label="账户名称"
         width="180"
       >
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-row>
             <el-col :span="18">
               <el-input v-model="scope.row.accountName" placeholder=""></el-input>
@@ -86,19 +86,19 @@
       </el-table-column>
       <el-table-column
         label="支付通道">
-        <template scope="scope">
+        <template slot-scope="scope">
           <div v-for="item in scope.row.paymentName">{{ item }}</div>
         </template>
       </el-table-column>
       <el-table-column
         label="状态">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span>{{ scope.row.status }}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="查看">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <p v-if="scope.row.count">序号: {{ scope.row.count }}</p>
             <p v-if="scope.row.accountNum">账号编号: {{ scope.row.accountNum }}</p>
@@ -115,7 +115,7 @@
         </template>
       </el-table-column>
       <el-table-column label="删除">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button
             size="small"
             type="danger"

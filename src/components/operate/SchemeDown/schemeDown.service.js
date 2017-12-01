@@ -6,7 +6,7 @@ let getProject = () => {
     let formData = new FormData();
     formData.append("redirect", "x1.accountmanage.project");
 
-    axios.post(`?controller=stores&action=create&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=stores&action=create&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

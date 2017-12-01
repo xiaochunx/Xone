@@ -673,7 +673,7 @@
                       </div>
                     </el-form-item>
                     <el-form-item label="" :prop="'account.' + index + '.paymentChannelId'"
-                                  :rules="{type:'number',  required: true, message: '请选择通道列表', trigger: 'change' }">
+                                  :rules="{type:'number',  required: true, message: '请选择通道', trigger: 'change' }">
 
                       <div class="margin_r_10 ">
                         <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
@@ -689,7 +689,7 @@
                     </el-form-item>
 
                     <el-form-item label="" :prop="'account.' + index + '.accountId'"
-                                  :rules="{type:'number',  required: true, message: '请选择账户列表', trigger: 'change' }">
+                                  :rules="{type:'number',  required: true, message: '请选择账户', trigger: 'change' }">
                       <div class="margin_r_10 ">
                         <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表">
                           <el-option
@@ -734,7 +734,7 @@
                       </div>
                     </el-form-item>
                     <el-form-item label="" :prop="'reserveAcc.' + index + '.paymentChannelId'"
-                                  :rules="{type:'number',  required: true, message: '请选择通道列表', trigger: 'change' }">
+                                  :rules="{type:'number',  required: true, message: '请选择通道', trigger: 'change' }">
                       <div class="margin_r_10 ">
                         <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
                                    placeholder="请选择">
@@ -749,7 +749,7 @@
                     </el-form-item>
 
                     <el-form-item label="" :prop="'reserveAcc.' + index + '.accountId'"
-                                  :rules="{type:'number',  required: true, message: '请选择账户列表', trigger: 'change' }">
+                                  :rules="{type:'number',  required: true, message: '请选择账户', trigger: 'change' }">
                       <div class="margin_r_10 ">
                         <el-select class="select_w" v-model="item.accountId" placeholder="请选择">
                           <el-option
@@ -956,14 +956,17 @@
       editStoreBase() {
         getApi.editStore(this.storeData).then((res) => {
           console.log(res)
-          if (res) {
-            this.$router.go(-1)
+          if (res.data.errcode === 0) {
+            this.$alert('添加成功', '', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.go(-1)
+              }
+            })
           }
         })
       },
       editStoreAccount(formRules) {
-
-
         this.formAccount.account.forEach((item) => {
           delete item.getCanUseAccountList
         })
@@ -976,7 +979,12 @@
             getApi.editStoreAccount(this.$route.params.id, this.formAccount).then((res) => {
               console.log(res)
               if (res.data.errcode === 0) {
-                this.$router.go(-1)
+                this.$alert('添加成功', '', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    this.$router.go(-1)
+                  }
+                })
               }
             })
           } else {

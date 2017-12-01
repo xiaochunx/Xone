@@ -122,7 +122,6 @@
 <script>
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
-  import areaList from "../../../../utility/areaData"
 
   export default {
     data() {
@@ -280,7 +279,7 @@
       },
     },
     created() {
-      this.provinceList = areaList
+      this.provinceList = []
     },
     mounted() {
       // 高度调整

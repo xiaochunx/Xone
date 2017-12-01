@@ -7,7 +7,7 @@
     <div>
       <el-table empty-text=" " :data="tableData" border :height="tableHeight" style="width: 100%">
         <el-table-column header-align="center" align="center" label="序号" width="65">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
@@ -18,7 +18,7 @@
 
         </el-table-column>
         <el-table-column header-align="center" align="center" label="操作" width="200">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div class="flex">
 
               <el-button size="small" type="primary" @click="showStore(scope.row)">查看门店</el-button>
@@ -41,7 +41,7 @@
       width="50%">
       <el-table :data="storeData" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号" width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <div>{{scope.$index + 1}}</div>
           </template>
         </el-table-column>
@@ -115,7 +115,7 @@
           <el-table :data="formEdit.store" border>
             <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center"
                              align="center" width="100">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
               </template>
             </el-table-column>

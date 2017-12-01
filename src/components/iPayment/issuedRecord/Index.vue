@@ -48,7 +48,7 @@
             label="支付方式 - 支付通道 - 账户"
             width="265"
           >
-            <template scope="scope">
+            <template slot-scope="scope">
               <div style="margin-left: 10px" v-for="item in scope.row.account">
                 <span>{{item.paymentMethod}}</span> - <span>{{item.paymentChannel}}</span> - <span>{{item.name}}</span>
               </div>
@@ -89,7 +89,7 @@
             label="状态"
             width="220"
           >
-            <template scope="scope">
+            <template slot-scope="scope">
 
 
               <el-tag
@@ -105,7 +105,7 @@
 
           <el-table-column
             label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button size="small" @click="examine(scope)">查看</el-button>
             </template>
           </el-table-column>

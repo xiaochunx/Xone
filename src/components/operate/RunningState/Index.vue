@@ -37,13 +37,13 @@
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="70">
-            <template scope="scope">
+            <template slot-scope="scope">
 
               <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
 
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storecodeid"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                            label="编码"
                            width="100"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
@@ -52,18 +52,18 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service"
                            label="款易服务"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="打印机状态" width="120">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" @click="printStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="客户端状态" width="120">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" @click="clientStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="POS端状态"
                            width="120">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" @click="posStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
@@ -87,7 +87,7 @@
       <el-table :data="printList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
@@ -110,7 +110,7 @@
       <el-table :data="clientList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
@@ -132,7 +132,7 @@
       <el-table :data="POSList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
@@ -154,7 +154,7 @@
       <el-table :data="setList" border>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          type="index" width="70">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
@@ -163,7 +163,7 @@
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerPrint" header-align="center" align="center"
                          width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" @click="print()">打印</el-button>
           </template>
         </el-table-column>
@@ -174,19 +174,19 @@
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerOpen" header-align="center" align="center"
                          width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" @click="open()">开启</el-button>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerClose" header-align="center" align="center"
                          width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" @click="close()">关闭</el-button>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerUpdate" header-align="center"
                          align="center" width="100">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" @click="update()">更新</el-button>
           </template>
         </el-table-column>
@@ -424,8 +424,9 @@ this.POSList = row.storeposs
     created() {
 
       getLeft().then((res) => {
-
-        this.dataLeft = res.data.data
+        if(res.data.errcode === 0){
+          this.dataLeft = res.data.data
+        }
       });
 
       getApi.getService(-1).then((res) => {

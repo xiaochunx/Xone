@@ -10,22 +10,22 @@ let timeOut = {timeout: 1000 * 60};
 let token = get('token');
 
 // 调用x1,x2接口
-let changeUrl = `?controller=admin&action=api&token=${get('token')}`;
+let changeUrl = `index.php?controller=admin&action=api&token=${get('token')}`;
 
 /********************** X1X2所有接口 *******************************/
 // 通用接口
-export const oneTwoApi = params => { return axios.post(`?controller=admin&action=api&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
+export const oneTwoApi = params => { return axios.post(`index.php?controller=admin&action=api&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
 /********************** 基础设置 *******************************/
 // 支付方式列表
-export const payMethods = params => { return axios.post(`?controller=jichu&action=getWayInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
+export const payMethods = params => { return axios.post(`index.php?controller=jichu&action=getWayInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
 // 支付通道列表
-export const payMent = params => { return axios.post(`?controller=jichu&action=getChannelInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
+export const payMent = params => { return axios.post(`index.php?controller=jichu&action=getChannelInfo&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
 
 // 获取地区接口
-export const accessRegion = params => { return axios.post(`?controller=area&action=getAreaList&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
+export const accessRegion = params => { return axios.post(`index.php?controller=area&action=getAreaList&token=${get('token')}`, qs.stringify(params),timeOut).then(res => res.data); };
 
 
 

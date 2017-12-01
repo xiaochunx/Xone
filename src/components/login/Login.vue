@@ -59,7 +59,7 @@
             formData.append("user_name",loginParams.username);
             formData.append("password",loginParams.password);
             this.$http.request({
-              url: '?controller=user&action=login',
+              url: 'index.php?controller=user&action=login',
               method: 'post',
               headers: {'Content-Type': 'application/x-www-form-urlencoded'},
               data: formData,

@@ -68,7 +68,7 @@
                 <el-table :data="searchList" border>
                   <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                                    width="100">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                       <div>{{scope.$index + 1}}</div>
                     </template>
                   </el-table-column>
@@ -133,7 +133,7 @@
         <el-table :data="storeData" border style="width: 100%;">
           <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                            width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>

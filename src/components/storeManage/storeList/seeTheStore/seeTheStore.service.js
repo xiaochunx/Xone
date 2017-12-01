@@ -8,7 +8,7 @@ let getFirst = (id) => {
     formData.append("id", id);
     formData.append("redirect", "x1.store.storeBaseInfo");
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
         resolve(res)
 
@@ -23,7 +23,7 @@ let getSecond = (id) => {
     formData.append("id", id);
     formData.append("redirect", "x1.store.storeAccount");
 
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
 
       resolve(res)
 

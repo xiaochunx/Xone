@@ -1,7 +1,7 @@
 <template>
   <div id="xoNavPath">
     <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: item.url }" v-for="(item,index) in navList">{{item.name}}</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: item.url }" v-for="(item,index) in navList" :key="item.url">{{item.name}}</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 </template>

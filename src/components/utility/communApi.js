@@ -9,7 +9,7 @@ let getLeft = () => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeLeft");
-    axios.post(`?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -20,7 +20,7 @@ let getArea = (pid = '') => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("pid", pid);
-    axios.post(`?controller=area&action=getAreaList&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=area&action=getAreaList&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

@@ -90,7 +90,7 @@
       <!--后期加上-->
       <el-submenu v-for="(value,index1) in leftList" :index=index1.toString() :key="index1">
         <template slot="title">{{value.name}}</template>
-        <router-link v-for="(item,index2) in value.children" :to=item.route><el-menu-item :index=formatNum(index1,index2) :key="index2">{{item.name}}</el-menu-item></router-link>
+        <router-link v-for="(item,index2) in value.children" :key="item.route" :to=item.route><el-menu-item :index=formatNum(index1,index2) :key="index2">{{item.name}}</el-menu-item></router-link>
       </el-submenu>
     </el-menu>
   </div>
@@ -213,22 +213,22 @@
 //                name: '菜品库',
 //                route: '/infrastructure/DishesLibrary'
 //              },
-//              {
-//                name: '角色管理',
-//                route: '/infrastructure/RoleManagement'
-//              },
-//              {
-//                name: '权限管理',
-//                route: '/infrastructure/PermissionManagement'
-//              },
+              {
+                name: '角色管理',
+                route: '/infrastructure/RoleManagement'
+              },
+              {
+                name: '权限管理',
+                route: '/infrastructure/PermissionManagement'
+              },
 //              {
 //                name: '操作日志',
 //                route: '/infrastructure/OperationLog'
 //              },
-//              {
-//                name: '公众号管理',
-//                route: '/infrastructure/PublicManagement'
-//              },
+              {
+                name: '公众号管理',
+                route: '/infrastructure/PublicManagement'
+              },
 //              {
 //                name: '根',
 //                route: '/'
