@@ -95,7 +95,7 @@ let urlStatus = (ids,url) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.setStoresUrl");
     formData.append("storeId", ids);
-    formData.append("$url", url);
+    formData.append("url", url);
     axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })

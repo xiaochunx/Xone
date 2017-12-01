@@ -973,7 +973,22 @@
         this.formAccount.reserveAcc.forEach((item) => {
           delete item.getCanUseAccountList
         })
+
+        for(let item of this.formAccount.account){
+         delete item.accountName
+          delete item.paymentChannel
+          delete item.paymentName
+
+        }
+        for(let item of this.formAccount.reserveAcc){
+          delete item.accountName
+          delete item.paymentChannel
+          delete item.paymentName
+
+        }
+
         console.log(this.formAccount)
+
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             getApi.editStoreAccount(this.$route.params.id, this.formAccount).then((res) => {
@@ -1011,45 +1026,49 @@
           }
         }
         if (tab.name === 'second') {
-          let list = {}
+          let list = {};
           await getApi.getStoreAccount(this.$route.params.id).then((res) => {
-//            console.log(res)
-
-            if (res.data.data.account.length === 0 && res.data.data.reserveAcc.length === 0) {
-              this.formAccount.account.push({
-                paymentId: '',
-                paymentChannelId: '',
-                accountId: '',
-                getCanUseAccountList: []
-              });
-              this.formAccount.reserveAcc.push({
-                paymentId: '',
-                paymentChannelId: '',
-                accountId: '',
-                getCanUseAccountList: []
-              })
-            } else {
+            if(res.data.errcode === 0){
+              if(res.data.data.account.length === 0){
+                res.data.data.account.push({
+                  paymentId: '',
+                  paymentChannelId: '',
+                  accountId: '',
+                  getCanUseAccountList: []
+                });
+              }
+              if(res.data.data.reserveAcc.length === 0){
+                res.data.data.reserveAcc.push({
+                  paymentId: '',
+                  paymentChannelId: '',
+                  accountId: '',
+                  getCanUseAccountList: []
+                })
+              }
               list = res.data.data
             }
           });
 
-          let keyArr = Object.keys(list);
-
-          if(keyArr.length !== 0){
+console.log(list)
+          if(list.account.length !== 0){
             for (let item of list.account) {
-              await  getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res1) => {
-                item.getCanUseAccountList = res1.data.data
-                //this.formAccount = list
-              })
+              if(item.paymentId !== ''){
+                await  getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res1) => {
+                  item.getCanUseAccountList = res1.data.data
+                })
+              }
             }
-            for (let item of list.reserveAcc) {
-              await getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res2) => {
-                item.getCanUseAccountList = res2.data.data
-                //this.formAccount = list
-              })
-            }
-            this.formAccount = list
           }
+          if(list.reserveAcc.length !== 0){
+            for (let item of list.reserveAcc) {
+              if(item.paymentId !== ''){
+                await getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res2) => {
+                  item.getCanUseAccountList = res2.data.data
+                })
+              }
+            }
+          }
+          this.formAccount = list
         }
       },
       addDomainClient() {

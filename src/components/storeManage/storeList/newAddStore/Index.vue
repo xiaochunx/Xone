@@ -25,7 +25,7 @@
             :on-success="handleAvatarSuccess1"
             :before-upload="beforeAvatarUpload">
             <img v-if="imgList.business_src_img" :src="imgList.business_src_img" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -40,7 +40,7 @@
             :on-success="handleAvatarSuccess2"
             :before-upload="beforeAvatarUpload">
             <img v-if="imgList.businesscode_src_img" :src="imgList.businesscode_src_img" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -53,7 +53,7 @@
             :on-success="handleAvatarSuccess3"
             :before-upload="beforeAvatarUpload">
             <img v-if="imgList.account_src_img" :src="imgList.account_src_img" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -66,7 +66,7 @@
             :on-success="handleAvatarSuccess4"
             :before-upload="beforeAvatarUpload">
             <img v-if="imgList.tax_src_img" :src="imgList.tax_src_img" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -79,7 +79,7 @@
             :on-success="handleAvatarSuccess5"
             :before-upload="beforeAvatarUpload">
             <img v-if="imgList.legalman_1_img" :src="imgList.legalman_1_img" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -92,7 +92,7 @@
             :on-success="handleAvatarSuccess6"
             :before-upload="beforeAvatarUpload">
             <img v-if="imgList.legalman_2_img" :src="imgList.legalman_2_img" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
 

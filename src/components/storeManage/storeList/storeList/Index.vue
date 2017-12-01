@@ -17,7 +17,7 @@
           <div class="margin_r_10">
             <el-input size="small" v-model="storeName" placeholder="请输入门店名称"></el-input>
           </div>
-          <el-button size="small">搜索</el-button>
+          <el-button size="small" @click="search()">搜索</el-button>
 
         </div>
       </div>
@@ -248,31 +248,7 @@
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "门店管理", url: ''}, {name: "门店列表", url: ''}],
-        storeGroupData: [{
-          value: 1,
-          label: '全部'
-        }, {
-          value: 2,
-          label: '支付宝'
-        }, {
-          value: 3,
-          label: '微信支付'
-        }, {
-          value: 4,
-          label: 'QQ钱包'
-        }],
-        storeGroup: 1,
-        payValue: 2,
-        payValueData: [{
-          value: 1,
-          label: '全部'
-        }, {
-          value: 2,
-          label: '开启'
-        }, {
-          value: 3,
-          label: '关闭'
-        }],
+
         storeName: '',
         storeData: [],
         dataLeft: [],
@@ -305,9 +281,15 @@
     },
     watch: {},
     methods: {
+      search(){
+        this.showResouce({page: 1, size: 20, total: 0},this.storeName,this.levelId);
+      },
       //设置url
       setOneUrl(row){
         getApi.urlStatus(row.id,row.payJumpUrl).then((res)=>{
+          if(res.data.errcode === 0){
+            this.$message('操作成功');
+          }
           console.log(res)
         })
       },
@@ -369,7 +351,11 @@
         }
         getApi.storesStatus(data.id, storeStatusValue).then((res) => {
           console.log(res)
-          this.showResouce();
+          if(res.data.errcode === 0){
+            this.$message('操作成功');
+            this.showResouce(this.p);
+          }
+
         })
       },
       //批量状态设置
@@ -391,26 +377,26 @@
 
           getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
             console.log(res)
-            this.showResouce();
-            this.dialogVisible1 = false
+            if(res.data.errcode === 0){
+              this.$message('操作成功');
+              this.showResouce(this.p);
+              this.dialogVisible1 = false
+            }
           })
-
-
-
       },
       getPage(page) {
         this.p.page = page;
-        this.showResouce();
+        this.showResouce(this.p);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce();
+        this.showResouce(this.p);
       },
 
       nodeClick(data, data1, data2) {
         console.log(data.levelname)
         this.levelId = data.id;
-        this.showResouce(data.levelname, data.id)
+        this.showResouce({page: 1, size: 20, total: 0},data.levelname, data.id)
 
       },
       setChecked(data, checked, deep) {
@@ -505,8 +491,8 @@
         });
 
       },
-      showResouce(storeName = "", levelId = "") {
-        getApi.getList(this.p, storeName, levelId).then((res) => {
+      showResouce(p = {page: 1, size: 20, total: 0},storeName = "", levelId = "") {
+        getApi.getList(p, storeName, levelId).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {

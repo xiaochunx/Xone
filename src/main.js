@@ -15,15 +15,20 @@ import 'font-awesome/css/font-awesome.css'
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
 
+// 'http://x.kuan1.cn'            // 正式环境
+// 'http://test0.kuan1.cn'        // 测试环境
+// 'http://x0test.kuan1.cn'       // 开发环境
+// 'http://bs.com'                // 本地环境
 
-// Axios.defaults.baseURL = 'http://x.kuan1.cn/kybase/';            // 正式环境
-Axios.defaults.baseURL = 'http://test0.kuan1.cn/kybase/';        // 测试环境
-// Axios.defaults.baseURL = 'http://x0test.kuan1.cn/kybase/';       // 开发环境
-// Axios.defaults.baseURL = 'http://bs.com/kybase/';                // 本地环境
-
+let url = 'http://test0.kuan1.cn';
+Axios.defaults.baseURL = `${url}/kybase/`;
 //图片上传地址
-Vue.prototype.$updateUrl = 'http://test0.kuan1.cn/oss/index.php?controller=index&action=upload_img';
+Vue.prototype.$updateUrl = `${url}/oss/index.php?controller=index&action=upload_img`;
 
+//上传xls地址
+Vue.prototype.$updateXlsUrl = `${url}/oss/index.php?controller=index&action=upload_file&dir=file`;
+//下载xls地址
+Vue.prototype.$xlsUrl = `${url}/kybase/uploads/x0read.xlsx`;
 //打开夸域cookie
 Axios.defaults.withCredentials = true;
 

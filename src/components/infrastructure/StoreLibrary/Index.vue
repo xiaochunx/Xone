@@ -52,7 +52,7 @@
                            label="门店"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态"
                            width="80"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="220">
             <template slot-scope="scope">
 
               <el-popover
@@ -97,7 +97,7 @@
               <el-button size="small" type="primary" v-popover:popover4>查看</el-button>
               <el-button size="small" @click.stop="edit(scope.row)">编辑</el-button>
               <el-button size="small" type="danger" @click.stop="del(scope.row)">删除</el-button>
-              <el-button size="small" type="primary">上传资料</el-button>
+              <!--<el-button size="small" type="primary">上传资料</el-button>-->
             </template>
           </el-table-column>
         </el-table>
@@ -188,7 +188,7 @@
             :on-success="handleAvatarSuccess1"
             :before-upload="beforeAvatarUpload">
             <img v-if="formEdit.business_src" :src="formEdit.business_src" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -203,7 +203,7 @@
             :on-success="handleAvatarSuccess2"
             :before-upload="beforeAvatarUpload">
             <img v-if="formEdit.businesscode_src" :src="formEdit.businesscode_src" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -216,7 +216,7 @@
             :on-success="handleAvatarSuccess3"
             :before-upload="beforeAvatarUpload">
             <img v-if="formEdit.account_src" :src="formEdit.account_src" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -229,7 +229,7 @@
             :on-success="handleAvatarSuccess4"
             :before-upload="beforeAvatarUpload">
             <img v-if="formEdit.tax_src" :src="formEdit.tax_src" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -242,7 +242,7 @@
             :on-success="handleAvatarSuccess5"
             :before-upload="beforeAvatarUpload">
             <img v-if="formEdit.legalman_1" :src="formEdit.legalman_1" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -255,7 +255,7 @@
             :on-success="handleAvatarSuccess6"
             :before-upload="beforeAvatarUpload">
             <img v-if="formEdit.legalman_2" :src="formEdit.legalman_2" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
         <div class="margin_t_10">
@@ -309,7 +309,7 @@
 
         <div>
           请按照我们提供的标准模板填写信息
-          <a style="color: #52CBF8" href="http://x0test.kuan1.cn/kybase/uploads/x0read.xlsx">下载标准模板</a>
+          <a style="color: #52CBF8" :href="$xlsUrl">下载标准模板</a>
         </div>
 
         <div class="margin_t_10">文件中的成员将会被导入至</div>
@@ -330,22 +330,20 @@
         <div class="margin_t_10 width_100">
           <el-upload
             class="upload-demo"
-            ref="upload"
-            :action="$updateUrl"
-            name="file_stu"
+            :action="$updateXlsUrl"
+            name="filename"
             :on-change="handleChange"
             :on-success="handleAvatarSuccessXls"
             :before-upload="beforeAvatarUploadXls"
             :file-list="fileList"
             :multiple="false"
             >
-            <!--<el-button slot="trigger" size="small" type="primary">选取文件</el-button>-->
             <el-button size="small" type="primary">选取文件上传</el-button>
-            <div class="margin_t_10">
-              <el-checkbox v-model="isOver">门店名称相同时，覆盖原的有信息</el-checkbox>
-            </div>
 
           </el-upload>
+          <div class="margin_t_10">
+            <el-checkbox v-model="isOver">门店名称相同时，覆盖原的有信息</el-checkbox>
+          </div>
         </div>
         <div class="margin_t_10">
           <el-button  @click="dialogVisible4 = false">取消</el-button>
@@ -386,7 +384,6 @@
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "门店库", url: ''}],
-        updateXls:'',
         brandid:'',
         storeGroup: 1,
         payValue: 2,
@@ -483,7 +480,7 @@
       search(){
         console.log(this.showAdd.levelid)
         if(this.searchName === ''){
-          this.getBsList()
+          this.getBsList({page: 1, size: 20, total: 0},this.showAdd.levelid)
         }else {
           getApi.getBsList(this.p,this.showAdd.levelid,this.searchName).then((res)=>{
             console.log(res)
@@ -573,11 +570,11 @@
       },
       getPage(page) {
         this.p.page = page;
-        this.getBsList();
+        this.getBsList(this.p);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.getBsList();
+        this.getBsList(this.p);
       },
       isSwitch() {
         this.dialogVisible1 = true
@@ -788,8 +785,8 @@
           }
         })
       },
-      getBsList(){
-        getApi.getBsList(this.p,-1).then((res) => {
+      getBsList(p = {page: 1, size: 20, total: 0}, levelId = -1,storeName = ''){
+        getApi.getBsList(p,levelId, storeName).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((item)=>{
@@ -870,8 +867,6 @@
     },
     created() {
       this.token = this.$localStorage.get('token');
-      this.updateXls = `http://test0.kuan1.cn/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
-//      this.updateXls = `http://x.kuan1.cn/kybase/index.php?controller=stores&action=upload&token=${this.token}`;
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
@@ -891,7 +886,7 @@
         this.recurSelected(this.data5,e.levelid)
       });
       Hub.$on('getBsList', (e) => {
-        getApi.getBsList(this.p, e.levelid).then((res) => {
+        getApi.getBsList({page: 1, size: 20, total: 0}, e.levelid,'').then((res) => {
           console.log(res)
           if(res.data.errcode === 0){
             res.data.data.list.forEach((item)=>{
@@ -904,7 +899,6 @@
             });
             this.storeData = res.data.data.list
           }
-
         })
       })
 
