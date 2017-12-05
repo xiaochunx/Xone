@@ -23,7 +23,7 @@
     </div>
 
     <div class="flex_r">
-      <div ref="tree" style="min-width: 200px;">
+      <div ref="tree">
         <!--<el-tree-->
         <!--:data="data5"-->
         <!--:props="defaultProps"-->
@@ -37,7 +37,7 @@
 
       </div>
 
-      <div :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                            width="100">
