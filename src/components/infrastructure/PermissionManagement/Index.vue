@@ -2,20 +2,27 @@
   <div>
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
-      <xo-nav-path :navList="navList"></xo-nav-path>
+        <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
 
       <div class="flex_es">
         <div>
-          {{name}}
-          <div v-if="name != ''">
-            <el-button size="small" @click="addAccount()">新增账号</el-button>
-            <el-button size="small" @click="del()">删除</el-button>
-            <el-button size="small">查看拥有权限</el-button>
-            <el-button size="small" @click="">禁用</el-button>
-            <el-button size="small" @click="">启用</el-button>
 
+          <div v-if="levelName === '款易'">
+            {{levelName}}
+            <el-button size="small" @click="addAccount()">批量新增用户</el-button>
+            <el-button size="small" @click="delSelected()">批量删除</el-button>
+            <el-button size="small" @click="dialogVisible1 = true">批量开启/关闭</el-button>
           </div>
+
+          <div v-if="levelName !== '款易' && levelName !== ''">
+            {{levelName}}
+            <el-button size="small" >删除</el-button>
+            <el-button size="small" >查看拥有权限</el-button>
+            <el-button size="small" >禁用</el-button>
+            <el-button size="small" >启用</el-button>
+          </div>
+
         </div>
         <div class="flex_a">
           <el-input size="small" v-model="storeName" icon="search" placeholder="请输入内容">
@@ -28,7 +35,7 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;">
 
-        <roleTree :data="data5" :count=0 @sendName="getName"></roleTree>
+        <permission-tree :data='data5' :count=0></permission-tree>
 
       </div>
 
@@ -43,7 +50,7 @@
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account"
-                           label="账号"
+                           label="用户"
                            width="100"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
                            label="姓名"></el-table-column>
@@ -54,21 +61,21 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click="">查看</el-button>
-              <el-button size="small" @click="edit()">编辑</el-button>
-              <el-button size="small" type="danger" @click="del()">删除</el-button>
+              <el-button size="small" @click="editAccount()">编辑</el-button>
+              <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <footer>
-          <!--<xo-pagination></xo-pagination>-->
+          <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
 
       </div>
     </div>
 
-
+    <!--编辑弹窗-->
     <el-dialog
-      title="新增账号"
+      title="编辑用户"
       :visible.sync="dialogVisible"
       width="50%">
       <el-form ref="formRules" :model="form" label-width="100px">
@@ -123,12 +130,7 @@
 
         <el-form-item label="所属部门:" v-if="isEdit">
 
-          <el-button @click="showAside = !showAside"> {{department}} </el-button>
-
-            <div v-if="showAside">
-              <roleTree1 :data="data5" :count=0 @sendName1="getName1"></roleTree1>
-            </div>
-
+          <el-button @click="showAside = !showAside"> {{department}}</el-button>
 
 
         </el-form-item>
@@ -149,75 +151,100 @@
       </el-form>
     </el-dialog>
 
+    <!--开启/关闭-->
+    <el-dialog
+      title="开启/关闭"
+      :visible.sync="dialogVisible1"
+      width="50%" size="tiny">
+      <el-switch
+        v-model="value2"
+        on-color="#13ce66"
+        off-color="#ff4949">
+      </el-switch>
+      <div class="margin_t_10">
+        <el-button @click="dialogVisible1 = false">取消</el-button>
+        <el-button type="primary">确认</el-button>
+      </div>
+    </el-dialog>
+
+    <!--导入用户-->
+    <el-dialog
+      title="导入用户"
+      :visible.sync="dialogVisible2"
+      @close="close2"
+      width="50%" size="tiny">
+      <div class="flex_f flex">
+
+        <div>
+          请按照我们提供的标准模板填写信息
+          <a style="color: #52CBF8" :href="$xlsUrl">下载标准模板</a>
+        </div>
+
+        <div class="margin_t_10">文件中的成员将会被导入至</div>
+
+        <div ref="tree" style="width: 100%;">
+          <el-tree
+            :data="dataLeft"
+            :props="defaultProps"
+            @node-click="nodeClick"
+            node-key="id"
+            default-expand-all
+            :highlight-current="true"
+            :expand-on-click-node="false"
+          >
+          </el-tree>
+        </div>
+
+        <div class="margin_t_10 width_100">
+          <el-upload
+            class="upload-demo"
+            :action="$updateXlsUrl"
+            name="filename"
+            :on-change="handleChange"
+            :on-success="handleAvatarSuccessXls"
+            :before-upload="beforeAvatarUploadXls"
+            :file-list="fileList"
+            :multiple="false"
+          >
+            <el-button size="small" type="primary">选取文件上传</el-button>
+
+          </el-upload>
+          <div class="margin_t_10">
+            <el-checkbox v-model="isOver">手机号相同时，覆盖原有的信息</el-checkbox>
+          </div>
+        </div>
+        <div class="margin_t_10">
+          <el-button @click="dialogVisible2 = false">取消</el-button>
+          <el-button type="primary" @click="submitUploadXls">提交</el-button>
+
+        </div>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
+  import permissionTree from './permissionTree'
+  import getApi from './permissionManagement.service'
+  import Hub from '../../utility/commun'
+
   export default {
     components: {
-
-      roleTree: {
-        name: 'roleTrees',
-        props: ['data', 'count'],
-        template: `
-          <div>
-                <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-                  <i  v-if='item.children && item.children.length != 0' class="el-icon-caret-right pointer heightTran "></i>
-      <span @click="test(item)" class="pointer">{{item.label}}</span>
-                  <roleTrees :data='item.children'  :count='count' class="heightTran" @sendName="getName"></roleTrees>
-              </div>
-          </div>
-        `,
-        data() {
-          return {}
-        },
-        methods: {
-          test(item) {
-            this.$emit('sendName', item.label)
-          },
-          getName(name) {
-            this.$emit('sendName', name)
-          }
-
-        }
-      },
-      roleTree1: {
-        name: 'roleTrees',
-        props: ['data', 'count'],
-        template: `
-          <div>
-                <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-                  <i  v-if='item.children && item.children.length != 0' class="el-icon-caret-right pointer heightTran "></i>
-      <span @click="test(item)" class="pointer">{{item.label}}</span>
-                  <roleTrees :data='item.children'  :count='count' class="heightTran" @sendName1="getName1"></roleTrees>
-              </div>
-          </div>
-        `,
-        data() {
-          return {}
-        },
-        methods: {
-          test(item) {
-            this.$emit('sendName1', item.label)
-          },
-          getName1(name) {
-            this.$emit('sendName1', name)
-          }
-
-        }
-      }
+      permissionTree,
     },
     data() {
       return {
         showAside: false,
         dialogVisible: false,
+        dialogVisible1: false,
+        dialogVisible2: false,
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
-
-        name: '',
-        department:'部门',
+        value2: '',
+        department: '部门',
         payValue: 2,
         storeName: '',
         storeData: [{
@@ -239,27 +266,12 @@
           status: '开启',
           role: '系统管理人员、产品'
         }],
-
-        data5: [{
-          label: '款易',
-          children: [{
-            label: '大商户',
-            children: [{
-              label: '集团',
-              children: [{
-                label: '品牌', children: [{
-                  label: '门店1',
-                }, {
-                  label: '门店2',
-                }]
-              }]
-            }]
-          }]
-        }],
+        dataLeft:[],
         defaultProps: {
-          children: 'children',
-          label: 'label'
+          children: 'child',
+          label: 'levelname'
         },
+        data5: [],
         form: {
           name: '',
           code: '',
@@ -269,7 +281,8 @@
             {value: '', value1: ''}
           ],
         },
-
+        isOver:false,
+        fileList:[],
         isEdit: true,
         value: "",
         options: [{
@@ -279,18 +292,37 @@
           value: 2,
           label: '易极付'
         }],
+        levelName:'',
+        p: {page: 1, size: 20, total: 0},
       }
     },
     watch: {},
     methods: {
-      getName(name) {
-        this.name = name
+      handleChange(file, fileList) {
+        this.fileList = fileList.slice(-1);
       },
-      getName1(name){
-        this.department = name;
-        this.showAside = false
+      beforeAvatarUploadXls(file){
+        const isLt5M = file.size / 1024 / 1024 < 5;
+        if (!isLt5M) {
+          this.$message.error('上传文件大小不能超过 5MB!');
+        }
+        return isLt5M;
       },
-      addAccount() {
+      handleAvatarSuccessXls(){
+
+      },
+      nodeClick() {
+
+      },
+      submitUploadXls() {
+
+      },
+      close2() {
+        this.brandid = '';
+        this.xlsFile = '';
+        this.fileList = []
+      },
+      editAccount() {
         this.dialogVisible = true
       },
       batchAdd() {
@@ -313,25 +345,123 @@
       getOneList() {
         this.$router.push('/storeManage/storeList/seeTheStore')
       },
-      edit() {
-
+      addAccount() {
+        this.dialogVisible2 = true
       },
       editGroup(item) {
         this.item = item;
         this.dialogVisible = true
       },
-      del() {
+      delSelected() {
+        let list = [];
+        this.storeData.forEach((item) => {
+          if (item.NO) {
+            list.push(item.id)
+          }
+        });
+
+        if (list.length === 0) {
+          this.$message('请勾选门店');
+        } else {
+          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // getApi.delBsOne(list.join(",")).then((res)=>{
+            //   console.log(res)
+            //   if(res.data.errcode === 0){
+            //     this.$message({
+            //       type: 'info',
+            //       message: '删除成功'
+            //     });
+            //     this.getBsList();
+            //   }
+            // })
+          }).catch(() => {
+            //
+          });
+        }
+
 
       },
+      del(row) {
+        this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // getApi.delBsOne(row.id).then((res) => {
+          //   console.log(res)
+          //   if (res.data.errcode === 0) {
+          //     this.$message({
+          //       type: 'info',
+          //       message: '删除成功'
+          //     });
+          //     this.getBsList();
+          //   } else {
+          //     this.$message({
+          //       type: 'info',
+          //       message: res.data.data
+          //     });
+          //   }
+          //
+          // })
+        }).catch(() => {
+          //
+        });
+      },
 
+      recur(data) {
+        data.forEach((map) => {
+          if (map.child) {
+            this.$set(map, "show", true);
+            this.$set(map, "selected", false);
+            this.recur(map.child)
+          }
+        })
+      },
+      showLevel() {
+        getApi.getLevel().then((res) => {
+          if (res.data.errcode === 0) {
+            this.data5 = res.data.data;
+            console.log(this.data5)
+            this.recur(this.data5)
+          } else {
 
+          }
+        })
+      },
+      recurSelected(data, levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          } else {
+            this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.recurSelected(map.child, levelId)
+          }
+        })
+      },
+      getPage(page) {
+        this.p.page = page;
+        //this.getBsList(this.p);
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        //this.getBsList(this.p);
+      },
     },
     created() {
-
+      this.showLevel()
 
     },
     mounted() {
-
+      Hub.$on('showAdd', (e) => {
+        this.levelName = e.levelName;
+        this.recurSelected(this.data5, e.levelid)
+      });
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -340,6 +470,11 @@
         this.tableHeight = h;
       })
     },
+    destroyed() {
+
+      Hub.$off("showAdd");
+
+    }
   }
 </script>
 
@@ -389,22 +524,4 @@
     border-bottom: 1px solid #000;
   }
 
-  .myStore {
-    position: absolute;
-    top: 40%;
-    right: 0;
-    background: white;
-    z-index: 100;
-    border-radius: 10px;
-    border: 1px solid #E5EBF4
-  }
-
-  /*不能有相同的class名*/
-  .myStore-enter-active, .myStore-leave-active {
-    transition: all .5s;
-  }
-
-  .myStore-enter, .myStore-leave-to {
-    right: -280px;
-  }
 </style>

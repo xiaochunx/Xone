@@ -139,6 +139,17 @@ let log = (id = '') => {
   })
 };
 
+//批量开启/关闭
+let storesStatus = (id,status) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("id", id);
+    formData.append("status", status);
+    axios.post(`index.php?controller=stores&action=open&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
 
 //上传文件
 let updateXlsFile = (brandid,fileurl,over) => {
@@ -153,7 +164,7 @@ let updateXlsFile = (brandid,fileurl,over) => {
   })
 };
 
-export default {getLevel,addLevel,updateLevel,delLevel,getOneLevel,getBsList,getBsOne,updateBsOne,delBsOne,log,updateXlsFile}
+export default {getLevel,addLevel,updateLevel,delLevel,getOneLevel,getBsList,getBsOne,updateBsOne,delBsOne,log,updateXlsFile,storesStatus}
 
 
 

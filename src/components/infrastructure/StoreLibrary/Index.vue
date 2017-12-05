@@ -113,13 +113,13 @@
       :visible.sync="dialogVisible1"
       width="50%" size="tiny">
       <el-switch
-        v-model="value2"
+        v-model="storeStatusValue"
         on-color="#13ce66"
         off-color="#ff4949">
       </el-switch>
       <div class="margin_t_10">
         <el-button @click="dialogVisible1 = false">取消</el-button>
-        <el-button type="primary">确认</el-button>
+        <el-button type="primary" @click="changeStoresStatus()">确认</el-button>
       </div>
     </el-dialog>
     <!--新建／修改组-->
@@ -298,7 +298,7 @@
       </div>
     </el-dialog>
 
-
+    <!--导入门店-->
     <el-dialog
       title="导入门店"
       :visible.sync="dialogVisible4"
@@ -374,7 +374,7 @@
     data() {
       return {
         isOver:false,
-        value2: false,
+        storeStatusValue: false,
         showAside: false,
         dialogVisible: false,
         dialogVisible1: false,
@@ -415,6 +415,46 @@
         this.xlsFile = '';
         this.fileList = []
       },
+      //批量状态设置
+      changeStoresStatus() {
+        let list = [];
+        this.storeData.forEach((item)=>{
+          if(item.select){
+            list.push(item.id)
+          }
+        });
+
+        let storeStatusValue;
+        if (this.storeStatusValue) {
+          storeStatusValue = 1
+        } else {
+          storeStatusValue = 0
+        }
+
+        getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
+          console.log(res)
+          if(res.data.errcode === 0){
+            this.$message('操作成功');
+            this.getBsList({page: 1, size: 20, total: 0});
+            this.dialogVisible1 = false
+          }
+        })
+      },
+      isSwitch(){
+        this.storeStatusValue = false;
+        let list = [];
+        this.storeData.forEach((item)=>{
+          if(item.select){
+            list.push(item.id)
+          }
+        });
+
+        if(list.length === 0){
+          this.$message('请勾选门店');
+        }else {
+          this.dialogVisible1 = true
+        }
+      },
       handleChange(file, fileList) {
         this.fileList = fileList.slice(-1);
       },
@@ -428,7 +468,7 @@
       beforeAvatarUploadXls(file) {
         const isLt5M = file.size / 1024 / 1024 < 5;
         if (!isLt5M) {
-          this.$message.error('上传头像图片大小不能超过 5MB!');
+          this.$message.error('上传文件大小不能超过 5MB!');
         }
         return isLt5M;
       },
@@ -482,23 +522,7 @@
         if(this.searchName === ''){
           this.getBsList({page: 1, size: 20, total: 0},this.showAdd.levelid)
         }else {
-          getApi.getBsList(this.p,this.showAdd.levelid,this.searchName).then((res)=>{
-            console.log(res)
-            if (res.data.errcode === 0) {
-              res.data.data.list.forEach((item)=>{
-                if(item.status === 1){
-                  item.status = "开启"
-                }else {
-                  item.status = "关闭"
-                }
-                item.select = false
-              });
-              this.storeData = res.data.data.list;
-              this.p.total = res.data.data.count
-            } else {
-
-            }
-          })
+          this.getBsList({page: 1, size: 20, total: 0},this.showAdd.levelid,this.searchName)
         }
       },
       log(data){
@@ -576,9 +600,7 @@
         this.p.size = size;
         this.getBsList(this.p);
       },
-      isSwitch() {
-        this.dialogVisible1 = true
-      },
+
      async show(row) {
 
         console.log(row)
