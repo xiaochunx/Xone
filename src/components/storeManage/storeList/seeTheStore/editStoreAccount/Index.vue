@@ -719,8 +719,7 @@
 
                   <div class="flex_r margin_b_10" v-for="(item,index) in formAccount.reserveAcc">
 
-                    <el-form-item label="" :prop="'reserveAcc.' + index + '.paymentId'"
-                                  :rules="{ type:'number', required: true, message: '请选择支付方式', trigger: 'change' }">
+                    <el-form-item label="">
                       <div class="margin_r_10 ">
                         <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentId"
                                    placeholder="请选择支付方式">
@@ -733,8 +732,7 @@
                         </el-select>
                       </div>
                     </el-form-item>
-                    <el-form-item label="" :prop="'reserveAcc.' + index + '.paymentChannelId'"
-                                  :rules="{type:'number',  required: true, message: '请选择通道', trigger: 'change' }">
+                    <el-form-item label="">
                       <div class="margin_r_10 ">
                         <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
                                    placeholder="请选择">
@@ -748,8 +746,7 @@
                       </div>
                     </el-form-item>
 
-                    <el-form-item label="" :prop="'reserveAcc.' + index + '.accountId'"
-                                  :rules="{type:'number',  required: true, message: '请选择账户', trigger: 'change' }">
+                    <el-form-item label="">
                       <div class="margin_r_10 ">
                         <el-select class="select_w" v-model="item.accountId" placeholder="请选择">
                           <el-option

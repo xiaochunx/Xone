@@ -213,22 +213,22 @@
 //                name: '菜品库',
 //                route: '/infrastructure/DishesLibrary'
 //              },
-              {
-                name: '角色管理',
-                route: '/infrastructure/RoleManagement'
-              },
-              {
-                name: '权限管理',
-                route: '/infrastructure/PermissionManagement'
-              },
+//               {
+//                 name: '角色管理',
+//                 route: '/infrastructure/RoleManagement'
+//               },
+//               {
+//                 name: '权限管理',
+//                 route: '/infrastructure/PermissionManagement'
+//               },
 //              {
 //                name: '操作日志',
 //                route: '/infrastructure/OperationLog'
 //              },
-              {
-                name: '公众号管理',
-                route: '/infrastructure/PublicManagement'
-              },
+//               {
+//                 name: '公众号管理',
+//                 route: '/infrastructure/PublicManagement'
+//               },
 //              {
 //                name: '根',
 //                route: '/'

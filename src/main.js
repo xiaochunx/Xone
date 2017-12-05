@@ -45,6 +45,18 @@ Object.keys(utility).forEach(function (item) {
   Vue.component(`${item}`, utility[item])
 });
 
+
+
+router.beforeEach(({ meta, path }, from, next) => {
+  const { auth = true } = meta;
+  const isLogin = Boolean(localStorage.get("token"));
+  if (auth && !isLogin && path !== '/login') {
+    let to = { path: '/login' };
+    return next(to)
+  }
+  next()
+});
+
 // 路由切换加载提示
 /*router.beforeEach(function (to, from, next) {
   store.commit('UPDATELOADINGSTATUS', {isLoading: true})

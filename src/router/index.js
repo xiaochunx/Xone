@@ -63,6 +63,7 @@ export default new Router({
   routes: [
     {
       path: '/main',
+      meta: { auth: true },
       name: '首页',
       component: Main,
       children:[
@@ -70,29 +71,34 @@ export default new Router({
         {
           // 支付管理/账户列表
           path: '/iPayment/accountList',
+          meta: { auth: true },
           name: '支付管理/账户列表',
           component: IPayment,
         },
         {
           path: '/iPayment/accountList/account',
+          meta: { auth: true },
           name: '支付管理/账户列表/新增账户',
           component: Account
         },
         {
           // 支付管理/下发记录
           path: '/iPayment/issuedRecord',
+          meta: { auth: true },
           name: '支付管理/下发记录',
           component: Record,
         },
         {
           // 支付管理/下发记录/新增下发
           path: '/iPayment/issuedRecord/newIssued',
+          meta: { auth: true },
           name: '支付管理/下发记录/新增下发',
           component: NewIssued,
         },
         {
           // 支付管理/下发记录/新增下发/新增门店
           path: '/iPayment/issuedRecord/newIssued/newAdd',
+          meta: { auth: true },
           name: '支付管理/下发记录/新增下发/新增门店',
           component: IssuedAdd,
         },
@@ -102,24 +108,28 @@ export default new Router({
         {
           // 门店管理
           path: '/storeManage/storeList',
+          meta: { auth: true },
           name: '门店管理/门店列表',
           component: StoreList,
         },
         {
           // 新增门店
           path: '/storeManage/storeList/newAddStore/:number/:levelid/:type',
+          meta: { auth: true },
           name: '门店管理/门店列表/新增门店',
           component: NewAddStore,
         },
         {
           // 查看门店
           path: '/storeManage/storeList/seeTheStore/:id',
+          meta: { auth: true },
           name: '门店管理/门店列表/查看门店',
           component: SeeTheStore,
         },
         {
           // 收款账户编辑
           path: '/storeManage/storeList/editStoreAccount/:id',
+          meta: { auth: true },
           name: '门店管理/门店列表/查看门店/收款账户编辑',
           component: EditStoreAccount,
         },
@@ -127,12 +137,14 @@ export default new Router({
         {
           // 门店组
           path: '/storeManage/storeGroup',
+          meta: { auth: true },
           name: '门店管理/门店组',
           component: StoreGroup,
         },
         {
           // 新增门店组
           path: '/storeManage/storeGroup/addGroup',
+          meta: { auth: true },
           name: '门店管理/门店组',
           component: addGroup,
         },
@@ -142,30 +154,35 @@ export default new Router({
         {
           // 交易列表
           path: '/report/transactionList',
+          meta: { auth: true },
           name: '统计报表/交易列表',
           component: TransactionList,
         },
         {
           // 交易统计
           path: '/report/transactionCount',
+          meta: { auth: true },
           name: '统计报表/交易统计',
           component: TransactionCount,
         },
         {
           // 结算记录
           path: '/report/settlementRecord',
+          meta: { auth: true },
           name: '统计报表/结算记录',
           component: SettlementRecord,
         },
         {
           // 差异账单查询
           path: '/report/billQuery',
+          meta: { auth: true },
           name: '统计报表/差异账单查询',
           component: BillQuery,
         },
         {
           // 对账单
           path: '/report/accountStatement',
+          meta: { auth: true },
           name: '统计报表/对账单',
           component: AccountStatement,
         },
@@ -173,6 +190,7 @@ export default new Router({
         {
           // 发票
           path: '/report/invoice',
+          meta: { auth: true },
           name: '统计报表/发票',
           component: Invoice,
         },
@@ -181,72 +199,84 @@ export default new Router({
         // 基础设置/商家信息
         {
           path: '/infrastructure/BusinessInfo',
+          meta: { auth: true },
           name: '基础设置/商家信息',
           component: BusinessInfo
         },
         // 基础设置/备用账户切换
         {
           path: '/infrastructure/BackupAcc',
+          meta: { auth: true },
           name: '基础设置/备用账户切换',
           component: BackupAcc
         },
         // 基础设置/客户端批量设置
         {
           path: '/infrastructure/VolumeSet',
+          meta: { auth: true },
           name: '基础设置/客户端批量设置',
           component: VolumeSet
         },
         // 基础设置/客户端批量设置/新增门店
         {
           path: '/infrastructure/VolumeSet/newAdd',
+          meta: { auth: true },
           name: '基础设置/客户端批量设置/新增门店',
           component: NewAdd
         },
         // 基础设置/支付方式
         {
           path: '/infrastructure/PaymentWay',
+          meta: { auth: true },
           name: '基础设置/支付方式',
           component: PaymentWay
         },
         // 基础设置/支付方式/新增支付方式
         {
           path: '/infrastructure/PaymentWay/NewPayment',
+          meta: { auth: true },
           name: '基础设置/支付方式/新增支付方式',
           component: NewPayment
         },
         // 基础设置/支付通道
         {
           path: '/infrastructure/PayChannels',
+          meta: { auth: true },
           name: '基础设置/支付通道',
           component: PayChannels
         },
         // 基础设置/支付通道/新增支付通道
         {
           path: '/infrastructure/PayChannels/NewPayChannels',
+          meta: { auth: true },
           name: '基础设置/支付通道/新增支付通道',
           component: NewPayChannels
         },
         //基础设置/菜品库
         {
           path: '/infrastructure/DishesLibrary',
+          meta: { auth: true },
           name: '基础设置/菜品库',
           component: DishesLibrary
         },
         //门店库
         {
           path: '/infrastructure/StoreLibrary',
+          meta: { auth: true },
           name: '基础设置/门店库',
           component: StoreLibrary
         },
         //角色管理
         {
           path: '/infrastructure/RoleManagement',
+          meta: { auth: true },
           name: '基础设置/角色管理',
           component: RoleManagement
         },
         //权限管理
         {
           path: '/infrastructure/PermissionManagement',
+          meta: { auth: true },
           name: '基础设置/权限管理',
           component: PermissionManagement
         },
@@ -256,12 +286,14 @@ export default new Router({
         //操作日志
         {
           path: '/infrastructure/OperationLog',
+          meta: { auth: true },
           name: '操作日志',
           component: OperationLog
         },
         //公众号管理
         {
           path: '/infrastructure/PublicManagement',
+          meta: { auth: true },
           name: '公众号管理',
           component: PublicManagement
         },
@@ -270,24 +302,28 @@ export default new Router({
         //运行状态
         {
           path: '/operate/runningState',
+          meta: { auth: true },
           name: '运行状态',
           component: RunningState
         },
         //发票配置
         {
           path: '/operate/invoiceAllocation',
+          meta: { auth: true },
           name: '发票配置',
           component: InvoiceAllocation
         },
         //方案下发
         {
           path: '/operate/schemeDown',
+          meta: { auth: true },
           name: '方案下发',
           component: SchemeDown
         },
         //运营方案
         {
           path: '/operate/OperationPlan',
+          meta: { auth: true },
           name: '运营方案',
           component: OperationPlan
         },
@@ -303,12 +339,14 @@ export default new Router({
     },
     {
       path: '/login',
+      meta: { auth: false },
       component: Login,
       name: '登陆页',
       hidden: true
     },
     {
       path: '/404',
+      meta: { auth: false },
       component: NotFound,
       name: '',
       hidden: true
