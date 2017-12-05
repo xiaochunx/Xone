@@ -24,6 +24,7 @@ export default {
 
     var loadinginstace;
     Axios.interceptors.request.use(config => {
+      console.log('拦截开始');
       loadinginstace = Loading.service({ fullscreen: true })
       return config
     }, error => {
@@ -36,21 +37,23 @@ export default {
 
 
     Axios.interceptors.response.use(data => {// 响应成功关闭loading
-      loadinginstace.close()
 
+      loadinginstace.close()
       if (data.data.errcode){
         // token失效,重新登录
         if (data.data.errcode == 210){
           if (this.flag){
+            this.flag = false;
             this.$alert(data.data.errmsg, '提示', {
               confirmButtonText: '确定',
               callback: action => {
                 this.$router.push('/');
-                this.flag = false;
+                this.flag = true;
               }
             });
           }
         }else if (data.data.errcode != 0){
+          alert(1);
           this.$alert(data.data.errmsg, '提示', {
             confirmButtonText: '确定',
             callback: action => {

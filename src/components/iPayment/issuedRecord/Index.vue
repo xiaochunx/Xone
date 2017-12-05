@@ -373,6 +373,6 @@
   }
 
   .contentMsg {
-    padding: 0 25px 0 0;
+    padding: 0 25px 10px 0;
   }
 </style>
