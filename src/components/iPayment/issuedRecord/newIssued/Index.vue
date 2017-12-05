@@ -133,7 +133,7 @@
                   </el-col>
 
                   <el-col :span="24" v-if="form.shop == 2">
-                    <el-col :span="10">
+                    <el-col style="width: 500px">
                       <el-transfer v-model="selectStore" :data="allStore"
                                    :props="{
                                       key: 'id',
@@ -142,9 +142,10 @@
                                    :titles="['全部门店', '已选门店']"
                       ></el-transfer>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="8">
                       <el-col :span="24">
-                        <el-select v-model="province" placeholder="请选择省" clearable @change="changeProvince" style="width: 120px;">
+                        <el-select v-model="province" placeholder="请选择省" clearable @change="changeProvince"
+                                   style="width: 120px;">
                           <el-option
                             v-for="item in provinceOptions"
                             :key="item.id"
@@ -154,7 +155,8 @@
                           </el-option>
                         </el-select>
 
-                        <el-select v-model="city" placeholder="请选择市" clearable @change="changeCity" style="width: 120px;">
+                        <el-select v-model="city" placeholder="请选择市" clearable @change="changeCity"
+                                   style="width: 120px;">
                           <el-option
                             v-for="item in cityOptions"
                             :key="item.id"
@@ -453,7 +455,6 @@
 
             });
           }
-
         } else {
           params = {
             redirect: 'x1.accountmanage.getCanUseAccountList',
@@ -537,22 +538,26 @@
           if (res.errcode == 0) {
             this.allStore = res.data;
           }
-        }).catch((err) => {})
+        }).catch((err) => {
+        })
       },
-      submitSave(){
+      submitSave() {
 
         // 选中门店id
         var selectStore = "";
         for (var value in this.selectStore) {
           selectStore += this.selectStore[value] + ',';
         }
-        selectStore = selectStore.substring(0,selectStore.length - 1);
+        selectStore = selectStore.substring(0, selectStore.length - 1);
 
 
         var account = [];
+        console.log(this.form.account);
+
         for (var value in this.form.account) {
           console.log(value);
           var obj = {};
+          console.log(this.form.account[value].accountId);
           obj.accountId = this.form.account[value].accountId;
           obj.paymentMethod = this.form.account[value].paymentMethod;
           obj.paymentChannel = this.form.account[value].paymentChannel;
@@ -560,21 +565,21 @@
           account.push(obj)
         }
 
-        var reserveAcc = '';
+        var reserveAcc = [];
 
-        if (this.form.reserveAcc[value].accountId){
-          reserveAcc = [];
-          for (var value in this.form.reserveAcc) {
-            console.log(value);
-            var obj = {};
-            obj.accountId = this.form.reserveAcc[value].accountId;
-            obj.paymentMethod = this.form.reserveAcc[value].paymentMethod;
-            obj.paymentChannel = this.form.reserveAcc[value].paymentChannel;
+        if (this.form.reserveAcc[value]) {
+          if (this.form.reserveAcc[value].accountId) {
+            for (var value in this.form.reserveAcc) {
+              console.log(value);
+              var obj = {};
+              obj.accountId = this.form.reserveAcc[value].accountId;
+              obj.paymentMethod = this.form.reserveAcc[value].paymentMethod;
+              obj.paymentChannel = this.form.reserveAcc[value].paymentChannel;
 
-            reserveAcc.push(obj)
+              reserveAcc.push(obj)
+            }
           }
         }
-
         var params = {
           redirect: 'x1.accountmanage.saveAccountUse',
           account: account,
@@ -591,7 +596,7 @@
 
         oneTwoApi(params).then((res) => {
           console.log(res);
-          if (res.errcode == 0){
+          if (res.errcode == 0) {
             this.$message({
               showClose: true,
               message: "提交成功",
@@ -601,9 +606,10 @@
             var _this = this;
             setTimeout(function () {
               _this.$router.push('/iPayment/issuedRecord');
-            },400);
+            }, 400);
           }
-        }).catch((error) => {})
+        }).catch((error) => {
+        })
       }
     },
     mounted() {
