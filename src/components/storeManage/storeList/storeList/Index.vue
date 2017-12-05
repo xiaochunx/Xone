@@ -282,7 +282,7 @@
     watch: {},
     methods: {
       search(){
-        this.showResouce({page: 1, size: 20, total: 0},this.storeName,this.levelId);
+        this.showResouce(this.p = {page: 1, size: 20, total: 0},this.storeName,this.levelId);
       },
       //设置url
       setOneUrl(row){
@@ -396,7 +396,7 @@
       nodeClick(data, data1, data2) {
         console.log(data.levelname)
         this.levelId = data.id;
-        this.showResouce({page: 1, size: 20, total: 0},data.levelname, data.id)
+        this.showResouce(this.p = {page: 1, size: 20, total: 0},'', data.id)
 
       },
       setChecked(data, checked, deep) {

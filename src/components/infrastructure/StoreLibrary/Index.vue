@@ -122,9 +122,9 @@
         <el-button type="primary" @click="changeStoresStatus()">确认</el-button>
       </div>
     </el-dialog>
-    <!--新建／修改组-->
+    <!--修改-->
     <el-dialog
-      title="新建／修改组"
+      title="修改"
       :visible.sync="dialogVisible"
       width="50%">
       <el-form ref="formRules" :model="formEdit" label-width="100px">
@@ -136,13 +136,12 @@
         </el-form-item>
 
         <div v-for="(domain, index) in formEdit.storecodes" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'storecodes.' + index + '.name'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.name"></el-input>
+                    <el-input v-model="domain.name" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -151,13 +150,12 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'storecodes.' + index + '.providerid'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.providerid"></el-input>
+                    <el-input v-model="domain.providerid" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -435,7 +433,7 @@
           console.log(res)
           if(res.data.errcode === 0){
             this.$message('操作成功');
-            this.getBsList({page: 1, size: 20, total: 0});
+            this.getBsList(this.p = {page: 1, size: 20, total: 0});
             this.dialogVisible1 = false
           }
         })
@@ -520,9 +518,9 @@
       search(){
         console.log(this.showAdd.levelid)
         if(this.searchName === ''){
-          this.getBsList({page: 1, size: 20, total: 0},this.showAdd.levelid)
+          this.getBsList(this.p = {page: 1, size: 20, total: 0},this.showAdd.levelid)
         }else {
-          this.getBsList({page: 1, size: 20, total: 0},this.showAdd.levelid,this.searchName)
+          this.getBsList(this.p = {page: 1, size: 20, total: 0},this.showAdd.levelid,this.searchName)
         }
       },
       log(data){
@@ -724,7 +722,7 @@
         this.dialogVisible2 = true
       },
       removeDomain(item) {
-        var index = this.form.storecodes.indexOf(item)
+        var index = this.formEdit.storecodes.indexOf(item)
         if (index !== -1) {
           this.formEdit.storecodes.splice(index, 1)
         }

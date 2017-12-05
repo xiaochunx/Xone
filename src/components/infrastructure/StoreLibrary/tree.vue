@@ -45,13 +45,12 @@
         </el-form-item>
 
         <div v-for="(domain, index) in form.levelcodes" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'levelcodes.' + index + '.name'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.name"></el-input>
+                    <el-input v-model="domain.name" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -60,13 +59,12 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'levelcodes.' + index + '.providerid'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.providerid"></el-input>
+                    <el-input v-model="domain.providerid" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -185,13 +183,12 @@
         </el-form-item>
 
         <div v-for="(domain, index) in form.levelcodes" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'levelcodes.' + index + '.name'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.name"></el-input>
+                    <el-input v-model="domain.name" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -200,13 +197,12 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'levelcodes.' + index + '.providerid'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.providerid"></el-input>
+                    <el-input v-model="domain.providerid" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -243,17 +239,17 @@
 
         <span @click.stop.self="test(item)" class="pointer el-tree-node__label">{{item.levelname}}</span>
 
-        <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 1" @click="addBig(item.id,'新建大商户',1)"></i>
+        <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 1" @click="addBig(item,'新建大商户')"></i>
 
         <el-popover placement="right" width="200" trigger="click">
-          <el-button size="mini" type="text" @click="addBig(item.id,'新增集团',1)" v-if="item.type === 2">新增集团</el-button>
-          <el-button size="mini" type="text" @click="addBig(item.id,'新增企业',1)" v-if="item.type === 3">新增企业</el-button>
-          <el-button size="mini" type="text" @click="addBig(item.id,'添加子部门',2)" v-if="item.type === 4">添加子部门</el-button>
+          <el-button size="mini" type="text" @click="addBig(item,'新增集团')" v-if="item.type === 2">新增集团</el-button>
+          <el-button size="mini" type="text" @click="addBig(item,'新增企业')" v-if="item.type === 3">新增企业</el-button>
+          <el-button size="mini" type="text" @click="addBig(item,'添加子部门')" v-if="item.type === 4">添加子部门</el-button>
 
           <el-button size="mini" type="text" @click="edit(item,'修改')">修改</el-button>
 
           <el-button size="mini" type="text" @click="del(item,'删除')">删除</el-button>
-          <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 2 || item.type === 3 || item.type === 4"></i>
+          <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 2 || item.type === 3 || item.type === 4 || item.type === 5"></i>
         </el-popover>
 
       </div>
@@ -402,7 +398,7 @@
         return img && isLt5M;
       },
 
-      addBig(id,title,no) {
+      addBig(item,title) {
         this.form= {
           levelname: '',
           levelcodes: [
@@ -422,16 +418,13 @@
           legalman_2_url:'',
         };
 
-        this.id = id;
+        this.id = item.id;
         this.title = title;
-        if(no === 1){
-          this.dialogVisible = true
-        } else {
+        if(item.type >3){
           this.dialogVisible1 = true
-
+        } else {
+          this.dialogVisible = true
         }
-
-
       },
       edit(item, name) {
         this.id = item.id;
@@ -439,8 +432,17 @@
 
         getApi.getOneLevel(item).then((res)=>{
           console.log(res)
+          if(res.data.data.levelcodes.length === 0){
+            res.data.data.levelcodes.push({name: '', providerid: ''})
+          }
           this.form = res.data.data;
-          this.dialogVisible = true
+
+          if(item.type >3){
+            this.dialogVisible1 = true
+          }else {
+            this.dialogVisible = true
+          }
+
         })
       },
       del(item){
@@ -468,7 +470,7 @@
       },
 
       test(item) {
-        //console.log(item)
+        console.log(item)
         this.levelname = item.levelname;
 
         Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});

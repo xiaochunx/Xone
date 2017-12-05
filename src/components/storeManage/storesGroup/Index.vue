@@ -73,8 +73,7 @@
 
 
         <div v-for="(domain, index) in formEdit.thirdCode" class="flex_r">
-          <el-form-item label="第三方编码" :prop="'thirdCode.' + index + '.code1'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label="第三方编码">
             <div>
               <el-row>
                 <el-col>
@@ -88,8 +87,7 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :prop="'thirdCode.' + index + '.code2'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label-width="0">
             <div>
               <el-row>
                 <el-col>
@@ -251,23 +249,17 @@
         });
       },
       edit(row) {
-
         getApi.getOneStore(row).then((res)=>{
-          console.log(res.data.data.store)
+          console.log(res)
           res.data.data.store.forEach((item)=>{
             item.select = true
           });
-          this.formEdit = res.data.data
+          this.formEdit = res.data.data;
           this.dialogVisible1 = true;
         })
-
-
-
-
       },
       showStore(row) {
-        this.dialogVisible = true
-
+        this.dialogVisible = true;
         getApi.getOne(row.id).then((res) => {
           console.log(res)
           this.storeData = res.data.data.list
