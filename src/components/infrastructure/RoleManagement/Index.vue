@@ -36,7 +36,7 @@
       ></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="edit()">配置权限</el-button>
+          <el-button size="small" type="primary" @click="config(scope.row)">配置权限</el-button>
           <el-button size="small" @click="edit()">修改</el-button>
 
 
@@ -46,19 +46,19 @@
 
 
     <footer>
-      <!--<xo-pagination></xo-pagination>-->
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
 
-    <!--弹窗-->
+    <!--弹窗新增角色-->
     <el-dialog
       title="新增角色"
       :visible.sync="dialogVisible"
       @close="dialogClose"
       width="30%">
       <el-form ref="formRules" :model="form" label-width="100px">
-        <el-form-item label="编码:" prop="code">
-          <el-input v-model="form.code" placeholder="请输入内容" disabled></el-input>
-        </el-form-item>
+        <!--<el-form-item label="编码:" prop="code">-->
+          <!--<el-input v-model="form.code" placeholder="请输入内容" disabled></el-input>-->
+        <!--</el-form-item>-->
 
         <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
           <el-input v-model="form.name" placeholder="请输入内容"></el-input>
@@ -79,13 +79,12 @@
 
 
         <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value"></el-input>
+                    <el-input v-model="domain.value" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -94,13 +93,12 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value1"></el-input>
+                    <el-input v-model="domain.value1" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -165,7 +163,7 @@
 <script>
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
-
+  import getApi from './roleManagement.service'
   export default {
     components: {
       roleTree: {
@@ -264,9 +262,8 @@
           }
         ],
         form: {
-          code: '',
           name: '',
-          status: '',
+          status: false,
           type:'',
           thirdPartyCoding: [
             {value: '', value1: ''}
@@ -288,22 +285,20 @@
         }],
 
         storeName: '',
-        storeData: [{
-          select: false,
-          code: '837893',
-          name: 'aaa',
-          status: '启用'
-        }, {
-          select: false,
-          code: '837894',
-          name: 'bbb',
-          status: '启用'
-        }],
-
+        storeData: [],
+        p: {page: 1, size: 20, total: 0},
       }
     },
     watch: {},
     methods: {
+      getPage(page) {
+        this.p.page = page;
+        this.showRoleList(this.p);
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        this.showRoleList(this.p);
+      },
       roleOpen() {
         this.roleList = [{
           name: '全部', checked: false, children: [
@@ -338,14 +333,26 @@
         });
       },
       dialogClose() {
-        console.log(444)
+        this.form = {
+            name: '',
+            status: false,
+            type:'',
+            thirdPartyCoding: [
+            {value: '', value1: ''}
+          ],
+        };
         this.$refs['formRules'].resetFields();
       },
       submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
+            getApi.saveRole(this.form).then((res)=>{
+              console.log(res)
+              if(res.data.errcode === 0){
 
-            this.dialogVisible = false
+                this.dialogVisible = false
+              }
+            })
           } else {
             console.log('error submit!!');
             return false;
@@ -416,23 +423,76 @@
         );
       },
 
+      config(row) {
+        this.dialogVisible2 = true
+        getApi.rolePower(row.id).then((res)=>{
+          console.log(res)
+        })
+      },
       edit() {
         this.dialogVisible = true
       },
       del() {
 
-      },
-      append(store, data) {
-        console.log(store)
-        console.log(data)
+        let list = [];
+        this.storeData.forEach((item)=>{
+          if(item.select){
+            list.push(item.id)
+          }
+        });
+        if(list.length === 0){
+          this.$message('请勾选角色');
+        }else {
+          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            getApi.delRole(list.join(",")).then((res)=>{
+              console.log(res)
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+              this.showRoleList(this.p={page: 1, size: 20, total: 0});
+            })
 
-        store.append({id: id++, label: 'testtest' + id, children: []}, data);
+
+          }).catch(() => {
+            //
+          });
+        }
+
       },
+
+      showRoleList(p){
+        getApi.getRoleList(p={page: 1, size: 20, total: 0}).then((res)=>{
+          console.log(res)
+          if (res.data.errcode === 0) {
+            res.data.data.list.forEach((data) => {
+              data.select = false;
+
+              if(data.status === 1){
+                data.status = true
+              }else {
+                data.status = false
+
+              }
+
+            });
+            this.storeData = res.data.data.list;
+            this.p.total = res.data.data.count
+          }
+
+
+        })
+      }
     },
     created() {
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
+      this.showRoleList(this.p)
     },
     mounted() {
 

@@ -264,7 +264,7 @@
         v-on:after-leave="afterLeave"
         v-on:leave-cancelled="leaveCancelled"
       >
-        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran" ></trees>
+        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran"></trees>
       </transition>
     </div>
   </div>

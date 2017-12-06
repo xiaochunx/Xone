@@ -209,18 +209,18 @@
                 name: '门店库',
                 route: '/infrastructure/StoreLibrary'
               },
-//              {
-//                name: '菜品库',
-//                route: '/infrastructure/DishesLibrary'
-//              },
-//               {
-//                 name: '角色管理',
-//                 route: '/infrastructure/RoleManagement'
-//               },
-//               {
-//                 name: '权限管理',
-//                 route: '/infrastructure/PermissionManagement'
-//               },
+             {
+               name: '菜品库',
+               route: '/infrastructure/DishesLibrary'
+             },
+              {
+                name: '角色管理',
+                route: '/infrastructure/RoleManagement'
+              },
+              {
+                name: '权限管理',
+                route: '/infrastructure/PermissionManagement'
+              },
 //              {
 //                name: '操作日志',
 //                route: '/infrastructure/OperationLog'

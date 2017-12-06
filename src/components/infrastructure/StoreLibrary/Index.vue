@@ -23,7 +23,7 @@
     </div>
 
     <div class="flex_r">
-      <div ref="tree">
+      <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
         <!--<el-tree-->
         <!--:data="data5"-->
         <!--:props="defaultProps"-->
@@ -33,7 +33,7 @@
         <!--:render-content="renderContent">-->
         <!--</el-tree>-->
 
-        <tree :data='data5' :count=0 ></tree>
+        <tree :data='data5' :count=0 style="width: max-content"></tree>
 
       </div>
 
