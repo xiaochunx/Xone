@@ -20,18 +20,13 @@ let getBrand = (id) => {
 
 
 //菜品列表
-let getProductList = (p,levelid) => {
+let getProductList = (p,levelid,searchName) => {
   return new Promise((resolve, reject) => {
 
-
-    // formData.append("levelid", levelid);
-    // formData.append("product_name", '');
     // formData.append("x2", '');
     // formData.append("productIdIn", '');
 
-
-
-    axios.get(`index.php?controller=product&action=index&token=${get('token')}&levelid=${levelid}&page=${p.page}&pagesize=${p.size}`).then((res)=>{
+    axios.get(`index.php?controller=product&action=index&token=${get('token')}&levelid=${levelid}&page=${p.page}&pagesize=${p.size}&product_name=${searchName}`).then((res)=>{
       resolve(res)
     })
   })

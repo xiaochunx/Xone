@@ -282,7 +282,7 @@
     watch: {},
     methods: {
       search(){
-        this.showResouce(this.p = {page: 1, size: 20, total: 0},this.storeName,this.levelId);
+        this.showResouce(this.p = {page: 1, size: 20, total: 0},this.levelId,this.storeName);
       },
       //设置url
       setOneUrl(row){
@@ -308,7 +308,7 @@
           getApi.addStore(list.join(',')).then((res)=>{
             console.log(res)
             this.dialogVisible2 = false
-            this.showResouce();
+            this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.storeName = '');
           })
         }
 
@@ -353,7 +353,7 @@
           console.log(res)
           if(res.data.errcode === 0){
             this.$message('操作成功');
-            this.showResouce(this.p);
+            this.showResouce(this.p, this.levelId);
           }
 
         })
@@ -379,24 +379,24 @@
             console.log(res)
             if(res.data.errcode === 0){
               this.$message('操作成功');
-              this.showResouce(this.p);
+              this.showResouce(this.p, this.levelId);
               this.dialogVisible1 = false
             }
           })
       },
       getPage(page) {
         this.p.page = page;
-        this.showResouce(this.p);
+        this.showResouce(this.p, this.levelId,this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce(this.p);
+        this.showResouce(this.p, this.levelId,this.searchName);
       },
 
       nodeClick(data, data1, data2) {
         console.log(data.levelname)
         this.levelId = data.id;
-        this.showResouce(this.p = {page: 1, size: 20, total: 0},'', data.id)
+        this.showResouce(this.p = {page: 1, size: 20, total: 0}, data.id,this.searchName = '')
 
       },
       setChecked(data, checked, deep) {
@@ -423,7 +423,7 @@
                 type: 'info',
                 message: '删除成功'
               });
-              this.showResouce();
+              this.showResouce(this.p, this.levelId);
             })
 
 
@@ -482,7 +482,7 @@
               type: 'info',
               message: '删除成功'
             });
-            this.showResouce()
+            this.showResouce(this.p, this.levelId)
 
           })
 
@@ -491,8 +491,8 @@
         });
 
       },
-      showResouce(p = {page: 1, size: 20, total: 0},storeName = "", levelId = "") {
-        getApi.getList(p, storeName, levelId).then((res) => {
+      showResouce(p,levelId,storeName = "") {
+        getApi.getList(p,levelId, storeName).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {
@@ -505,7 +505,6 @@
                 data.status = false
 
               }
-
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
@@ -525,7 +524,7 @@
         this.dataLeft = res.data.data
       });
 
-      this.showResouce();
+      this.showResouce(this.p, this.levelId);
 
     },
     mounted() {

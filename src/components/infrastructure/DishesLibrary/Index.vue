@@ -9,14 +9,15 @@
       <div class="flex_sb">
         <div class="flex_1">
           <el-button size="small" @click="addDishes()">+新增菜品</el-button>
-          <!--<el-button size="small">批量编辑</el-button>-->
+          <el-button size="small" @click="test()">批量编辑</el-button>
           <el-button size="small" @click="delSelected()">批量删除</el-button>
         </div>
         <div class="flex_1 flex_ec">
 
           <div class="margin_l_10 margin_r_10" style="width: 200px">
-            <el-input size="small" v-model="storeName" placeholder="请输入内容"></el-input>
+            <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
           </div>
+          <el-button size="small" @click="search()">搜索</el-button>
           <el-button size="small" @click="importXls()">导入</el-button>
         </div>
       </div>
@@ -98,7 +99,7 @@
       :visible.sync="dialogVisible"
       width="50%">
       <el-form ref="formRules" :model="oneList" label-width="100px">
-        <el-form-item label="编码:" prop="id" >
+        <el-form-item label="编码:" prop="id">
           <el-input v-model="oneList.id" placeholder="请输入内容" disabled></el-input>
         </el-form-item>
 
@@ -148,7 +149,8 @@
           <el-input v-model="oneList.price" placeholder="请输入内容"></el-input>
         </el-form-item>
 
-        <el-form-item label="所属品牌:" prop="levelid" :rules="{type:'number',required: true, message: '请输入价格', trigger: 'change'}">
+        <el-form-item label="所属品牌:" prop="levelid"
+                      :rules="{type:'number',required: true, message: '请输入价格', trigger: 'change'}">
 
           <el-select v-model="oneList.levelid" placeholder="请选择">
             <el-option
@@ -162,7 +164,7 @@
         </el-form-item>
 
 
-        <el-form-item label="上传图片1" >
+        <el-form-item label="上传图片1">
           <el-upload
             class="avatar-uploader margin_r_10"
             :action="$updateUrl"
@@ -176,7 +178,7 @@
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="上传图片2" >
+        <el-form-item label="上传图片2">
           <el-upload
             class="avatar-uploader margin_r_10"
             :action="$updateUrl"
@@ -190,7 +192,7 @@
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="上传图片1" >
+        <el-form-item label="上传图片1">
           <el-upload
             class="avatar-uploader margin_r_10"
             :action="$updateUrl"
@@ -261,7 +263,7 @@
           </div>
         </div>
         <div class="margin_t_10">
-          <el-button  @click="dialogVisible4 = false">取消</el-button>
+          <el-button @click="dialogVisible4 = false">取消</el-button>
           <el-button type="primary" @click="submitUploadXls">提交</el-button>
 
         </div>
@@ -275,7 +277,8 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './dishesLibrary.service'
-  import {getLeft,getArea} from '../../utility/communApi'
+  import {getLeft, getArea} from '../../utility/communApi'
+
   export default {
     components: {},
     data() {
@@ -285,8 +288,8 @@
         selectedAll: false,
         dialogVisible: false,
         dialogVisible2: false,
-        dialogVisible4:false,
-        storeName: '',
+        dialogVisible4: false,
+        searchName: '',
         dishesData: [],
         p: {page: 1, size: 20, total: 0},
         data5: [],
@@ -295,22 +298,34 @@
           children: 'child',
           label: 'levelname'
         },
+        levelName: '',
         levelId: -1,//左边树ID
         number: 1,
-        oneList:{},//一条菜品
-        brandList:[],
-        dataLeft:[],
-        fileList:[],
-        fileurl:'',
-        brandid:'',
-        isOver:false,
+        oneList: {},//一条菜品
+        brandList: [],
+        dataLeft: [],
+        fileList: [],
+        fileurl: '',
+        brandid: '',
+        isOver: false,
       }
     },
     watch: {},
     methods: {
-      open4(){
+      search() {
+        if (this.searchName === '') {
+          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.levelId)
+        } else {
+          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.levelId, this.searchName)
+
+        }
       },
-      close4(){
+      test() {
+        console.log(this)
+      },
+      open4() {
+      },
+      close4() {
         this.brandid = '';
         this.xlsFile = '';
         this.fileList = []
@@ -319,24 +334,24 @@
         this.fileList = fileList.slice(-1);
       },
       submitUploadXls() {
-        if(this.brandid === ''){
+        if (this.brandid === '') {
           this.$message('请选择成员');
           return
         }
-        if(this.fileurl === ''){
+        if (this.fileurl === '') {
           this.$message('需要上传XLS文件');
           return
         }
         let over = '';
-        if(this.isOver === false){
+        if (this.isOver === false) {
           over = 0
-        }else {
+        } else {
           over = 1
         }
 
-        getApi.updateXlsDishesFile(this.brandid,this.fileurl,over).then((res)=>{
+        getApi.updateXlsDishesFile(this.brandid, this.fileurl, over).then((res) => {
           console.log(res)
-          if(res.data.errcode === 0){
+          if (res.data.errcode === 0) {
             this.$message({
               type: 'info',
               message: '上传成功'
@@ -361,10 +376,10 @@
         }
         return isLt5M;
       },
-      importXls(){
+      importXls() {
         getLeft().then((res) => {
           console.log(res)
-          if(res.data.errcode === 0){
+          if (res.data.errcode === 0) {
             this.dataLeft = res.data.data;
             this.dialogVisible4 = true
           }
@@ -388,13 +403,13 @@
         }
         return img && isLt5M;
       },
-      handleAvatarSuccess1(res, file,list) {
+      handleAvatarSuccess1(res, file, list) {
         this.oneList.imgurl_1 = file.response.data.file_url;
       },
-      handleAvatarSuccess2(res, file,list) {
+      handleAvatarSuccess2(res, file, list) {
         this.oneList.imgurl_2 = file.response.data.file_url;
       },
-      handleAvatarSuccess3(res, file,list) {
+      handleAvatarSuccess3(res, file, list) {
         this.oneList.imgurl_3 = file.response.data.file_url;
       },
       removeDomain(item) {
@@ -404,7 +419,7 @@
         }
       },
       addDomain() {
-        this.oneList.productcodes.push( {name: '', providerid: ''});
+        this.oneList.productcodes.push({name: '', providerid: ''});
       },
       goToAddDishes() {
         if (this.number < 1) {
@@ -414,31 +429,32 @@
         }
       },
       addDishes() {
-        if (this.levelId === "") {
+        if (this.levelName === "") {
           this.$message('请选择门店库');
         } else {
           this.dialogVisible2 = true;
 
         }
       },
-      nodeClickDishes(data, data1, data2){
+      nodeClickDishes(data, data1, data2) {
         this.brandid = data.id;
       },
       nodeClick(data, data1, data2) {
         console.log(data.levelname)
+
+        this.levelName = data.levelname;
         this.levelId = data.id;
-        this.showProductList(this.p = {page: 1, size: 20, total: 0},this.levelId)
+        this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.levelId, this.searchName = '')
 
       },
       getPage(page) {
         this.p.page = page;
-        this.showProductList(this.p,this.levelId);
+        this.showProductList(this.p, this.levelId, this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showProductList(this.p,this.levelId);
+        this.showProductList(this.p, this.levelId, this.searchName);
       },
-
 
       handleCheckAll(bool) {
         if (bool.target.checked === true) {
@@ -497,13 +513,13 @@
         );
 
       },
-      editOne(formRules){
+      editOne(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             console.log(this.oneList)
-            getApi.updateProduct(this.oneList).then((res)=>{
+            getApi.updateProduct(this.oneList).then((res) => {
               console.log(res)
-              if(res.data.errcode === 0){
+              if (res.data.errcode === 0) {
                 this.showProductList(this.p, this.levelId);
                 this.dialogVisible = false
               }
@@ -516,17 +532,15 @@
       },
 
       edit(id) {
-        getApi.getOne(id).then((res)=>{
+        getApi.getOne(id).then((res) => {
           console.log(res)
-          if(res.data.errcode === 0){
+          if (res.data.errcode === 0) {
             this.oneList = res.data.data[0];
-            getApi.getBrand(res.data.data[0].levelid).then((res)=>{
-              getApi.getBrand(res.data.data[0].pid).then((res)=>{
-                console.log(res)
-                this.brandList = res.data.data
-              })
+            getApi.getBrand(this.levelId).then((res) => {
+              console.log(res)
+              this.brandList = res.data.data
             })
-            this.dialogVisible=true
+            this.dialogVisible = true
           }
         })
       },
@@ -559,23 +573,23 @@
       },
       delSelected() {
         let list = [];
-        this.dishesData.forEach((item)=>{
-          if(item.select){
+        this.dishesData.forEach((item) => {
+          if (item.select) {
             list.push(item.id)
           }
         });
 
-        if(list.length === 0){
+        if (list.length === 0) {
           this.$message('请勾选门店');
-        }else {
+        } else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.delProduct(list.join(",")).then((res)=>{
+            getApi.delProduct(list.join(",")).then((res) => {
               console.log(res)
-              if(res.data.errcode === 0){
+              if (res.data.errcode === 0) {
                 this.$message({
                   type: 'info',
                   message: '删除成功'
@@ -592,7 +606,7 @@
       },
 
       showLevel() {
-        getApi.getLevel('', 0).then((res) => {
+        getApi.getLevel('', 1).then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
             console.log(this.data5)
@@ -601,15 +615,16 @@
         })
       },
 
-      showProductList(p, levelid) {
-       getApi.getProductList(p, levelid).then((res) => {
+      showProductList(p, levelid, searchName = '') {
+        getApi.getProductList(p, levelid, searchName).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
 
-            for(let map of res.data.data.list){
+            for (let map of res.data.data.list) {
               this.$set(map, 'select', false)
             }
             this.dishesData = res.data.data.list
+            this.p.total = res.data.data.count
           }
         })
       }

@@ -24,7 +24,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess1"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imgList.business_src_img" :src="imgList.business_src_img" class="avatar">
+            <img v-if="imgList.business_src" :src="imgList.business_src" class="avatar">
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
@@ -39,7 +39,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess2"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imgList.businesscode_src_img" :src="imgList.businesscode_src_img" class="avatar">
+            <img v-if="imgList.businesscode_src" :src="imgList.businesscode_src" class="avatar">
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
@@ -52,7 +52,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess3"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imgList.account_src_img" :src="imgList.account_src_img" class="avatar">
+            <img v-if="imgList.account_src" :src="imgList.account_src" class="avatar">
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
@@ -65,7 +65,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess4"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imgList.tax_src_img" :src="imgList.tax_src_img" class="avatar">
+            <img v-if="imgList.tax_src" :src="imgList.tax_src" class="avatar">
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
@@ -78,7 +78,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess5"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imgList.legalman_1_img" :src="imgList.legalman_1_img" class="avatar">
+            <img v-if="imgList.legalman_1" :src="imgList.legalman_1" class="avatar">
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
@@ -91,7 +91,7 @@
             :show-file-list="false"
             :on-success="handleAvatarSuccess6"
             :before-upload="beforeAvatarUpload">
-            <img v-if="imgList.legalman_2_img" :src="imgList.legalman_2_img" class="avatar">
+            <img v-if="imgList.legalman_2" :src="imgList.legalman_2" class="avatar">
             <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
           </el-upload>
         </div>
@@ -233,17 +233,11 @@
         provinceList: [],
         imgList: {
           business_src: '',
-          business_src_url: '',
           businesscode_src: '',
-          businesscode_src_url: '',
           account_src: '',
-          account_src_url: '',
           tax_src: '',
-          tax_src_url: '',
           legalman_1: '',
-          legalman_1_url: '',
           legalman_2: '',
-          legalman_2_url: '',
         },
         storeData: [],
         va: "",
@@ -255,19 +249,14 @@
     watch: {},
     methods: {
       addRow(row, index) {
+        console.log(this.storeData[index].business_src)
         this.imgList = {
-          business_src: '',
-          business_src_img: '',
-          businesscode_src: '',
-          businesscode_src_img: '',
-          account_src: '',
-          account_src_img: '',
-          tax_src: '',
-          tax_src_img: '',
-          legalman_1: '',
-          legalman_1_img: '',
-          legalman_2: '',
-          legalman_2_img: '',
+          business_src: (this.storeData[index].business_src)?this.storeData[index].business_src:'',
+          businesscode_src: (this.storeData[index].businesscode_src)?this.storeData[index].businesscode_src:'',
+          account_src: (this.storeData[index].account_src)?this.storeData[index].account_src:'',
+          tax_src: (this.storeData[index].tax_src)?this.storeData[index].tax_src:'',
+          legalman_1: (this.storeData[index].legalman_1)?this.storeData[index].legalman_1:'',
+          legalman_2: (this.storeData[index].legalman_2)?this.storeData[index].legalman_2:'',
         };
 
         this.index = index;
@@ -443,27 +432,21 @@
       },
       handleAvatarSuccess1(res, file) {
         this.imgList.business_src = file.response.data.file_url;
-        this.imgList.business_src_img = URL.createObjectURL(file.raw);
       },
       handleAvatarSuccess2(res, file) {
         this.imgList.businesscode_src = file.response.data.file_url;
-        this.imgList.businesscode_src_img = URL.createObjectURL(file.raw);
       },
       handleAvatarSuccess3(res, file) {
         this.imgList.account_src = file.response.data.file_url;
-        this.imgList.account_src_img = URL.createObjectURL(file.raw);
       },
       handleAvatarSuccess4(res, file) {
         this.imgList.tax_src = file.response.data.file_url;
-        this.imgList.tax_src_img = URL.createObjectURL(file.raw);
       },
       handleAvatarSuccess5(res, file) {
         this.imgList.legalman_1 = file.response.data.file_url;
-        this.imgList.legalman_1_img = URL.createObjectURL(file.raw);
       },
       handleAvatarSuccess6(res, file) {
         this.imgList.legalman_2 = file.response.data.file_url;
-        this.imgList.legalman_2_img = URL.createObjectURL(file.raw);
       },
     },
     created() {

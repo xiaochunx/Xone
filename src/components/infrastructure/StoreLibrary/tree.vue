@@ -19,9 +19,7 @@
     overflow: hidden;
     transition: all .3s
   }
-  .tree-node {
-    white-space: nowrap;
-  }
+
   .tree-node:hover {
     background: #e4e8f1;
   }

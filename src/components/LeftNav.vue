@@ -197,14 +197,14 @@
 //                name: '客户端批量设置',
 //                route: '/infrastructure/VolumeSet'
 //              },
-//              {
-//                name: '支付方式',
-//                route: '/infrastructure/PaymentWay'
-//              },
-//              {
-//                name: '支付通道',
-//                route: '/infrastructure/PayChannels'
-//              },
+             {
+               name: '支付方式',
+               route: '/infrastructure/PaymentWay'
+             },
+             {
+               name: '支付通道',
+               route: '/infrastructure/PayChannels'
+             },
               {
                 name: '门店库',
                 route: '/infrastructure/StoreLibrary'

@@ -433,7 +433,7 @@
           console.log(res)
           if(res.data.errcode === 0){
             this.$message('操作成功');
-            this.getBsList(this.p = {page: 1, size: 20, total: 0});
+            this.getBsList(this.p,this.showAdd.levelid);
             this.dialogVisible1 = false
           }
         })
@@ -555,7 +555,7 @@
                   type: 'info',
                   message: '删除成功'
                 });
-                this.getBsList();
+                this.getBsList(this.p,this.showAdd.levelid);
               }
             })
           }).catch(() => {
@@ -572,7 +572,7 @@
             getApi.updateBsOne(formEdit).then((res)=>{
               console.log(res)
               if(res.data.errcode === 0){
-                this.getBsList();
+                this.getBsList(this.p,this.showAdd.levelid);
                 this.dialogVisible = false
                 this.dialogVisible1 = false
               }
@@ -592,11 +592,11 @@
       },
       getPage(page) {
         this.p.page = page;
-        this.getBsList(this.p);
+        this.getBsList(this.p,this.showAdd.levelid,this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.getBsList(this.p);
+        this.getBsList(this.p,this.showAdd.levelid,this.searchName);
       },
 
      async show(row) {
@@ -761,7 +761,7 @@
                 type: 'info',
                 message: '删除成功'
               });
-              this.getBsList();
+              this.getBsList(this.p,this.showAdd.levelid);
             } else {
               this.$message({
                 type: 'info',
@@ -805,7 +805,7 @@
           }
         })
       },
-      getBsList(p = {page: 1, size: 20, total: 0}, levelId = -1,storeName = ''){
+      getBsList(p, levelId,storeName = ''){
         getApi.getBsList(p,levelId, storeName).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
@@ -820,38 +820,32 @@
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       },
       handleAvatarSuccess1(res, file) {
-        this.formEdit.business_src_url = file.response.data.file_url;
-        this.formEdit.business_src = URL.createObjectURL(file.raw);
+        this.formEdit.business_src = file.response.data.file_url;
       },
       handleAvatarSuccess2(res, file) {
-        this.formEdit.businesscode_src_url = file.response.data.file_url;
-        this.formEdit.businesscode_src = URL.createObjectURL(file.raw);
+        this.formEdit.businesscode_src = file.response.data.file_url;
       },
       handleAvatarSuccess3(res, file) {
-        this.formEdit.account_src_url = file.response.data.file_url;
-        this.formEdit.account_src = URL.createObjectURL(file.raw);
+        this.formEdit.account_src = file.response.data.file_url;
       },
       handleAvatarSuccess4(res, file) {
-        this.formEdit.tax_src_url = file.response.data.file_url;
-        this.formEdit.tax_src = URL.createObjectURL(file.raw);
+        this.formEdit.tax_src = file.response.data.file_url;
       },
       handleAvatarSuccess5(res, file) {
-        this.formEdit.legalman_1_url = file.response.data.file_url;
-        this.formEdit.legalman_1 = URL.createObjectURL(file.raw);
+        this.formEdit.legalman_1 = file.response.data.file_url;
       },
       handleAvatarSuccess6(res, file) {
-        this.formEdit.legalman_2_url = file.response.data.file_url;
-        this.formEdit.legalman_2 = URL.createObjectURL(file.raw);
+        this.formEdit.legalman_2 = file.response.data.file_url;
       },
       beforeAvatarUpload(file) {
         const isPNG = file.type === 'image/png';
@@ -891,7 +885,7 @@
         this.$set(map, 'select', false)
       })
       this.showLevel();
-      this.getBsList();
+      this.getBsList(this.p, this.showAdd.levelid);
     },
 
 
@@ -906,20 +900,7 @@
         this.recurSelected(this.data5,e.levelid)
       });
       Hub.$on('getBsList', (e) => {
-        getApi.getBsList({page: 1, size: 20, total: 0}, e.levelid,'').then((res) => {
-          console.log(res)
-          if(res.data.errcode === 0){
-            res.data.data.list.forEach((item)=>{
-              if(item.status === 1){
-                item.status = "开启"
-              }else {
-                item.status = "关闭"
-              }
-              item.select = false
-            });
-            this.storeData = res.data.data.list
-          }
-        })
+        this.getBsList(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '')
       })
 
     },

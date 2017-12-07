@@ -20,7 +20,7 @@ Vue.prototype.$http = Axios;
 // 'http://x0test.kuan1.cn'       // 开发环境
 // 'http://bs.com'                // 本地环境
 
-let url = 'http://test0.kuan1.cn';
+let url = 'http://bs.com';
 Axios.defaults.baseURL = `${url}/kybase/`;
 //图片上传地址
 Vue.prototype.$updateUrl = `${url}/oss/index.php?controller=index&action=upload_img`;
