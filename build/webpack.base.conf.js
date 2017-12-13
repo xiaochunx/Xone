@@ -83,13 +83,6 @@ module.exports = {
         }
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?\S*)?$/,
-        loader: 'file-loader',
-        query: {
-          name: 'img/[name].[ext]?[hash]'
-        }
-      },
-      {
         test: /\.less$/,
         loader: "style-loader!css-loader!less-loader",
       }

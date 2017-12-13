@@ -21,9 +21,9 @@ Vue.prototype.$http = Axios;
 // 'http://bs.com'                // 本地环境
 
 // let url = 'http://test0.kuan1.cn';
-let url = 'http://x0test.kuan1.cn';
+// let url = 'http://x0test.kuan1.cn';
 // let url = 'http://x.kuan1.cn';
-// let url = 'http://bs.com';
+let url = 'http://bs.com';
 
 Axios.defaults.baseURL = `${url}/kybase/`;
 //图片上传地址

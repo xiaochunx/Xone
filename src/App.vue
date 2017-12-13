@@ -37,7 +37,6 @@ export default {
 
 
     Axios.interceptors.response.use(data => {// 响应成功关闭loading
-
       loadinginstace.close()
       if (data.data.errcode){
         // token失效,重新登录
@@ -53,14 +52,13 @@ export default {
             });
           }
         }else if (data.data.errcode != 0){
-          alert(1);
           this.$alert(data.data.errmsg, '提示', {
             confirmButtonText: '确定',
             callback: action => {
-              this.$message({
+              /*this.$message({
                 type: 'warning',
                 message: data.data.errmsg
-              });
+              });*/
             }
           });
         }
