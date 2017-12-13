@@ -78,20 +78,16 @@
       title="编辑用户"
       :visible.sync="dialogVisible"
       width="50%">
-      <el-form ref="formRules" :model="form" label-width="100px">
-        <el-form-item label="编码:">
-          <el-input v-model="form.code" :disabled="true"></el-input>
-        </el-form-item>
+      <el-form ref="formRules2" :model="formUser" label-width="100px">
 
-        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="form.name" placeholder="请输入内容"></el-input>
+        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formUser.nickname" placeholder="请输入内容"></el-input>
         </el-form-item>
-        <el-form-item label="手机:" prop="name" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
-          <el-input v-model="form.tel" placeholder="请输入内容"></el-input>
+        <el-form-item label="手机:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
+          <el-input v-model="formUser.phone" placeholder="请输入内容"></el-input>
         </el-form-item>
-        <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+        <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -105,8 +101,7 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -121,24 +116,38 @@
             <div class="m-storeCode margin_l_10" @click="addDomain()">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(form.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formUser.billHuman.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
           </div>
         </div>
 
-        <el-form-item label="所属部门:" v-if="isEdit">
+        <el-form-item label="所属部门:" >
+          <div>{{formUser.group_id}}</div>
 
-          <el-button @click="showAside = !showAside"> {{department}}</el-button>
+        </el-form-item>
+        <el-form-item label="拥有权限:" >
+          <div>{{formUser.power_id}}</div>
 
+        </el-form-item>
+
+        <el-form-item label="角色:">
+          <el-select v-model="formUser.role_id" multiple placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.label"
+              :value="item.id">
+            </el-option>
+          </el-select>
 
         </el-form-item>
 
         <el-form-item label="状态:">
 
           <el-switch
-            v-model="form.status"
+            v-model="formUser.status"
             on-color="#13ce66"
             off-color="#ff4949">
           </el-switch>
@@ -146,7 +155,7 @@
 
         <div class="margin_t_10">
           <!--<el-button>取消</el-button>-->
-          <el-button type="primary">确认</el-button>
+          <el-button type="primary" @click="submitFrom2('formRules2')">确认</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -272,28 +281,32 @@
           label: 'levelname'
         },
         data5: [],
-        form: {
-          name: '',
-          code: '',
-          tel: '',
-          status: '',
-          thirdPartyCoding: [
+        formUser: {
+          id:'',
+          nickname: '',
+          phone:'',
+          group_id:'',
+          power_id:'',
+          role_id:'',
+          billHuman: [
             {value: '', value1: ''}
           ],
+          status:''
         },
         isOver:false,
         fileList:[],
         isEdit: true,
         value: "",
         options: [{
-          value: 1,
+          id: 1,
           label: '民生银行'
         }, {
-          value: 2,
+          id: 2,
           label: '易极付'
         }],
         levelName:'',
         p: {page: 1, size: 20, total: 0},
+        levelId:''//左边树ID
       }
     },
     watch: {},
@@ -329,16 +342,13 @@
         this.$router.push('/storeManage/storeList/newAddStore')
       },
       removeDomain(item) {
-        var index = this.form.thirdPartyCoding.indexOf(item)
+        var index = this.formUser.billHuman.indexOf(item)
         if (index !== -1) {
-          this.form.thirdPartyCoding.splice(index, 1)
+          this.formUser.billHuman.splice(index, 1)
         }
       },
       addDomain() {
-        this.form.thirdPartyCoding.push({
-          value: '',
-          key: Date.now()
-        });
+        this.formUser.billHuman.push({value: '', value1: ''});
       },
 
 
@@ -425,10 +435,19 @@
         getApi.getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
+            this.levelId = res.data.data[0].id;
+            getApi.getPowerList(this.levelId,this.p.page).then((res)=>{
+              console.log(res)
+            })
             console.log(this.data5)
             this.recur(this.data5)
           } else {
-
+            this.$alert('请重新登录', '超时', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$router.push('/login')
+              }
+            })
           }
         })
       },
@@ -456,10 +475,17 @@
     created() {
       this.showLevel()
 
+
+
+
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.levelName = e.levelName;
+        this.levelId = e.levelid;
+        getApi.getPowerList(this.levelId,this.p.page).then((res)=>{
+          console.log(res)
+        })
         this.recurSelected(this.data5, e.levelid)
       });
     },

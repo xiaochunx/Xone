@@ -197,8 +197,12 @@
 //                name: '客户端批量设置',
 //                route: '/infrastructure/VolumeSet'
 //              },
+              {
+                name: '支付管理',
+                route: '/infrastructure/PaymentManagement'
+              },
              {
-               name: '支付方式',
+               name: '支付配置',
                route: '/infrastructure/PaymentWay'
              },
              {
@@ -225,10 +229,10 @@
 //                name: '操作日志',
 //                route: '/infrastructure/OperationLog'
 //              },
-//               {
-//                 name: '公众号管理',
-//                 route: '/infrastructure/PublicManagement'
-//               },
+              {
+                name: '公众号管理',
+                route: '/infrastructure/PublicManagement'
+              },
 //              {
 //                name: '根',
 //                route: '/'

@@ -88,26 +88,22 @@
       </el-form>
     </el-dialog>
 
-    <!--用户-->
+    <!--新增用户-->
 
     <el-dialog
       title="新增用户"
       :visible.sync="dialogVisible2"
       width="50%">
       <el-form ref="formRules2" :model="formUser" label-width="100px">
-        <el-form-item label="编码:">
-          <el-input v-model="formUser.code" :disabled="true"></el-input>
-        </el-form-item>
 
-        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formUser.name" placeholder="请输入内容"></el-input>
+        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formUser.nickname" placeholder="请输入内容"></el-input>
         </el-form-item>
-        <el-form-item label="手机:" prop="tel" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
-          <el-input v-model="formUser.tel" placeholder="请输入内容"></el-input>
+        <el-form-item label="手机:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
+          <el-input v-model="formUser.phone" placeholder="请输入内容"></el-input>
         </el-form-item>
-        <div v-for="(domain, index) in formUser.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+        <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -121,8 +117,7 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -137,7 +132,7 @@
             <div class="m-storeCode margin_l_10" @click="addDomain2()">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(formUser.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formUser.billHuman.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain2(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
@@ -145,6 +140,23 @@
         </div>
 
         <el-form-item label="所属部门:" >
+          <div>{{formUser.group_id}}</div>
+
+        </el-form-item>
+        <el-form-item label="拥有权限:" >
+          <div>{{formUser.power_id}}</div>
+
+        </el-form-item>
+
+        <el-form-item label="角色:">
+          <el-select v-model="formUser.role_id" multiple placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.label"
+              :value="item.id">
+            </el-option>
+          </el-select>
 
         </el-form-item>
 
@@ -204,7 +216,7 @@
 <script>
 
   import Hub from '../../utility/commun'
-  // import getApi from './storeLibrary.service'
+   import getApi from './permissionManagement.service'
 
   export default {
     name: 'trees',
@@ -231,20 +243,59 @@
           ],
         },
         formUser: {
-          levelname: '',
-          tel:'',
-          type:'',
-          department:'',
-          thirdPartyCoding: [
+          id:'',
+          nickname: '',
+          phone:'',
+          group_id:'',
+          power_id:'',
+          role_id:'',
+          billHuman: [
             {value: '', value1: ''}
           ],
+          status:''
         },
         id:'',//组织id
         levelname:'',
+        options: [{
+          id: 1,
+          label: '黄金糕'
+        }, {
+          id: 2,
+          label: '双皮奶'
+        }, {
+          id: 3,
+          label: '蚵仔煎'
+        }, {
+          id: 4,
+          label: '龙须面'
+        }, {
+          id: 5,
+          label: '北京烤鸭'
+        }],
+
       }
     },
     methods: {
-      submitFrom2(){
+      submitFrom2(formRules2){
+
+        this.$refs[formRules2].validate((valid) => {
+          if (valid) {
+
+
+            getApi.newlyAddAccount(this.formUser).then((res)=>{
+              console.log(res)
+            })
+
+
+
+
+            this.dialogVisible2 = false
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
 
       },
       submitFrom(formRules) {
@@ -290,14 +341,17 @@
       },
       addBig2(id,title) {
         this.form= {
-          levelname: '',
-          tel:'',
-          type:'',
-          department:'',
-          thirdPartyCoding: [
-            {name: '', providerid: ''}
+          id:'',
+          nickname: '',
+          phone:'',
+          group_id:'',
+          power_id:'',
+          role_id:'',
+          billHuman: [
+            {value: '', value1: ''}
           ],
-        },
+          status:''
+        };
 
         this.dialogVisible2 = true
       },
@@ -322,13 +376,13 @@
         this.form.levelcodes.push({name: '', providerid: ''});
       },
       removeDomain2(item) {
-        let index = this.formUser.thirdPartyCoding.indexOf(item)
+        let index = this.formUser.billHuman.indexOf(item)
         if (index !== -1) {
-          this.formUser.thirdPartyCoding.splice(index, 1)
+          this.formUser.billHuman.splice(index, 1)
         }
       },
       addDomain2() {
-        this.formUser.thirdPartyCoding.push({value: '', value1: ''});
+        this.formUser.billHuman.push({value: '', value1: ''});
       },
 
       beforeEnter: function (el) {
