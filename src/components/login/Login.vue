@@ -20,7 +20,7 @@
       <el-checkbox v-model="checked" class="remember">记住密码</el-checkbox>
 
       <el-form-item style="width:100%;">
-        <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">登录
+        <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2">登录
         </el-button>
         <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
       </el-form-item>
@@ -34,7 +34,6 @@
   export default {
     data() {
       return {
-        logining: false,
         ruleForm2: {
           account: '',
           checkPass: ''
@@ -61,9 +60,6 @@
         console.log(this.$refs.ruleForm2.validate);
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            //_this.$router.replace('/table');
-            this.logining = true;
-            //NProgress.start();
 
             let loginParams = {username: this.ruleForm2.account, password: this.ruleForm2.checkPass};
 
@@ -83,10 +79,10 @@
                 this.$localStorage.set("user", res.data.data.username);
                 this.$router.push('/operate/runningState');
               }
+
             });
 
             //this.$router.push('/operate/runningState');
-
             // 提交给后台服务器
             /*requestLogin(loginParams).then(data => {
               this.logining = false;
@@ -102,8 +98,10 @@
                 this.$router.push({ path: '/main' });
               }
             });*/
+
           } else {
             console.log('error submit!!');
+
             return false;
           }
         });
@@ -158,6 +156,7 @@
       text-align: center;
       color: #505458;
       display: flex;
+      justify-content: space-evenly;
     }
     .remember {
       margin: 10px 0px 25px 0px;
