@@ -25,7 +25,7 @@
         <el-table :data="storeData" border>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号">
             <template slot-scope="scope">
-              <div>{{scope.$index}}</div>
+              <div>{{scope.$index + 1 }}</div>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="authorizer_appid" label="APPID">
@@ -125,6 +125,7 @@
       auth(){
         getApi.threeAuthorize(this.levelId).then((res)=>{
           console.log(res)
+          window.location.href = res.data.data
         })
 
       },
@@ -137,41 +138,8 @@
       edit() {
         this.dialogVisible = true
       },
-      getName(name) {
-        this.name = name
-      },
-
-      addAccount() {
-        this.dialogVisible = true
-      },
-      batchAdd() {
-        this.$router.push('/storeManage/storeList/newAddStore')
-      },
-      removeDomain(item) {
-        var index = this.form.thirdPartyCoding.indexOf(item)
-        if (index !== -1) {
-          this.form.thirdPartyCoding.splice(index, 1)
-        }
-      },
-      addDomain() {
-        this.form.thirdPartyCoding.push({
-          value: '',
-          key: Date.now()
-        });
-      },
 
 
-      getOneList() {
-        this.$router.push('/storeManage/storeList/seeTheStore')
-      },
-
-      editGroup(item) {
-        this.item = item;
-        this.dialogVisible = true
-      },
-      del() {
-
-      },
       showResouce(id){
         getApi.getGzhInfo(id).then((res)=>{
           console.log(res)

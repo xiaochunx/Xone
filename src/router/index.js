@@ -36,9 +36,8 @@ import BusinessInfo from '@/components/infrastructure/BusinessInfo/Index.vue'
 import BackupAcc from '@/components/infrastructure/BackupAcc/Index.vue'
 import VolumeSet from '@/components/infrastructure/VolumeSet/Index.vue'
 import NewAdd from '@/components/infrastructure/VolumeSet/NewAdd/Index.vue'
+import PaymentManagement from '@/components/infrastructure/PaymentManagement/Index.vue'
 import PaymentWay from '@/components/infrastructure/PaymentWay/Index.vue'
-import NewPayment from '@/components/infrastructure/PaymentWay/NewPayment/Index.vue'
-import NewPayChannels from '@/components/infrastructure/PayChannels/NewPayChannels/Index.vue'
 import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
 import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
 
@@ -227,19 +226,19 @@ export default new Router({
           name: '基础设置/客户端批量设置/新增门店',
           component: NewAdd
         },
-        // 基础设置/支付方式
+        // 基础设置/支付管理
+        {
+          path: '/infrastructure/PaymentManagement',
+          meta: { auth: true },
+          name: '基础设置/支付管理',
+          component: PaymentManagement
+        },
+        // 基础设置/支付配置
         {
           path: '/infrastructure/PaymentWay',
           meta: { auth: true },
-          name: '基础设置/支付方式',
+          name: '基础设置/支付配置',
           component: PaymentWay
-        },
-        // 基础设置/支付方式/新增支付方式
-        {
-          path: '/infrastructure/PaymentWay/NewPayment',
-          meta: { auth: true },
-          name: '基础设置/支付方式/新增支付方式',
-          component: NewPayment
         },
         // 基础设置/支付通道
         {
@@ -248,13 +247,7 @@ export default new Router({
           name: '基础设置/支付通道',
           component: PayChannels
         },
-        // 基础设置/支付通道/新增支付通道
-        {
-          path: '/infrastructure/PayChannels/NewPayChannels',
-          meta: { auth: true },
-          name: '基础设置/支付通道/新增支付通道',
-          component: NewPayChannels
-        },
+
         //基础设置/菜品库
         {
           path: '/infrastructure/DishesLibrary',

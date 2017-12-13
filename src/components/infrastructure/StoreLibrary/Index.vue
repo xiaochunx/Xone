@@ -10,11 +10,12 @@
           <el-button size="small" @click="batchAdd()" :disabled="!showAdd.showAdd">批量新增</el-button>
           <el-button size="small" @click="delSelected()">批量删除</el-button>
           <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
+          <el-button size="small" @click="test()">testtt</el-button>
         </div>
 
         <div class="flex_a">
           <div class="margin_r_10">
-            <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
+            <el-input size="small" v-model="searchName" placeholder="请输入门店名称"></el-input>
           </div>
           <el-button size="small" @click="search()">搜索</el-button>
           <el-button size="small" type="primary" @click="importXls()">+导入门店</el-button>
@@ -406,6 +407,10 @@
     },
     watch: {},
     methods: {
+      test(){
+        let allInput = document.querySelectorAll('#all span input');
+        console.log(allInput)
+      },
       open4(){
       },
       close4(){
@@ -435,6 +440,9 @@
             this.$message('操作成功');
             this.getBsList(this.p,this.showAdd.levelid);
             this.dialogVisible1 = false
+
+
+
           }
         })
       },
@@ -678,7 +686,7 @@
         });
 
         if (count === this.storeData.length) {
-          this.selectedAll = true;
+          //this.selectedAll = true;
           this.$nextTick(() => {
             let all = document.querySelector('#all span');
             all.classList.add('is-checked');
@@ -686,7 +694,7 @@
             allInput.checked = true
           })
         } else {
-          this.selectedAll = false;
+          //this.selectedAll = false;
           this.$nextTick(() => {
             let all = document.querySelector('#all span');
             all.classList.remove('is-checked');
@@ -706,7 +714,9 @@
                 'class': {},
                 on: {
                   change: this.handleCheckAll,
+
                   input: (event) => {
+                    console.log(event)
                   }
                 }
               }, ['序号']
@@ -762,6 +772,7 @@
                 message: '删除成功'
               });
               this.getBsList(this.p,this.showAdd.levelid);
+
             } else {
               this.$message({
                 type: 'info',
@@ -827,6 +838,12 @@
             //   }
             // })
           }
+          this.$nextTick(() => {
+            let all = document.querySelector('#all span');
+            all.classList.remove('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = false
+          })
         })
       },
       handleAvatarSuccess1(res, file) {
