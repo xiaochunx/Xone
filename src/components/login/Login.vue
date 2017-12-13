@@ -78,8 +78,12 @@
                 this.$localStorage.set("token", res.data.data.token);
                 this.$localStorage.set("user", res.data.data.username);
                 this.$router.push('/operate/runningState');
-              }
 
+                this.$message({
+                  message: '登录成功',
+                  type: 'success'
+                });
+              }
             });
 
             //this.$router.push('/operate/runningState');
