@@ -13,7 +13,7 @@ let getLeft = () => {
 
 
 //获取门店列表
-let getList = (p,storeName,levelId) => {
+let getList = (p,levelId,storeName) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeList");

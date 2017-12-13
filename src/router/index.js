@@ -41,6 +41,9 @@ import NewPayment from '@/components/infrastructure/PaymentWay/NewPayment/Index.
 import NewPayChannels from '@/components/infrastructure/PayChannels/NewPayChannels/Index.vue'
 import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
 import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
+
+import AddDishes from '@/components/infrastructure/DishesLibrary/addDishes/Index.vue'
+
 import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
 import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue'
 import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
@@ -258,6 +261,13 @@ export default new Router({
           meta: { auth: true },
           name: '基础设置/菜品库',
           component: DishesLibrary
+        },
+        //基础设置/菜品库/新增菜品
+        {
+          path: '/infrastructure/DishesLibrary/addDishes/:number/:levelid',
+          meta: { auth: true },
+          name: '基础设置/菜品库/新增菜品',
+          component: AddDishes
         },
         //门店库
         {

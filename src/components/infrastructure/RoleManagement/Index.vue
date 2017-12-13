@@ -36,7 +36,7 @@
       ></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="edit()">配置权限</el-button>
+          <el-button size="small" type="primary" @click="config(scope.row)">配置权限</el-button>
           <el-button size="small" @click="edit()">修改</el-button>
 
 
@@ -46,25 +46,26 @@
 
 
     <footer>
-      <!--<xo-pagination></xo-pagination>-->
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
 
-    <!--弹窗-->
+    <!--弹窗新增角色-->
     <el-dialog
       title="新增角色"
       :visible.sync="dialogVisible"
       @close="dialogClose"
       width="30%">
       <el-form ref="formRules" :model="form" label-width="100px">
-        <el-form-item label="编码:" prop="code">
-          <el-input v-model="form.code" placeholder="请输入内容" disabled></el-input>
-        </el-form-item>
+        <!--<el-form-item label="编码:" prop="code">-->
+        <!--<el-input v-model="form.code" placeholder="请输入内容" disabled></el-input>-->
+        <!--</el-form-item>-->
 
         <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
           <el-input v-model="form.name" placeholder="请输入内容"></el-input>
         </el-form-item>
 
-        <el-form-item label="角色类型:" prop="type" :rules="{type:'number',required: true, message: '请选择角色类型', trigger: 'change'}">
+        <el-form-item label="角色类型:" prop="type"
+                      :rules="{type:'number',required: true, message: '请选择角色类型', trigger: 'change'}">
 
 
           <el-select v-model="form.type" placeholder="请选择">
@@ -79,13 +80,12 @@
 
 
         <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
-                        :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+          <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value"></el-input>
+                    <el-input v-model="domain.value" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -94,13 +94,12 @@
           <div class="m-rank">
             <div class="m-rank-child"></div>
           </div>
-          <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value1'"
-                        :rules="{required: true, message: '第三方编码不能为空!', trigger: 'blur'}">
+          <el-form-item label-width="0" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value1"></el-input>
+                    <el-input v-model="domain.value1" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -139,9 +138,10 @@
       :visible.sync="dialogVisible2"
       @close="roleClose"
       @open="roleOpen"
-      width="50%">
+      width="50%" size="large">
       <div>
         <roleTree :data="roleList" :count=0></roleTree>
+        <el-button @click="test()">test</el-button>
         <div class="flex_a" style="margin-top: 30px">
           <div class="margin_r_10">
             <el-checkbox v-model="add1">接单</el-checkbox>
@@ -159,49 +159,59 @@
       </div>
     </el-dialog>
 
+    <!--<div v-if="item.children.length === 0" class="margin_r_10">-->
+    <!--<el-checkbox v-model="item.add" @change="()=>cell(item)">新增</el-checkbox>-->
+    <!--</div>-->
+    <!--<div v-if="item.children.length === 0" class="margin_r_10">-->
+    <!--<el-checkbox v-model="item.del" @change="()=>cell(item)">删除</el-checkbox>-->
+    <!--</div>-->
+    <!--<div v-if="item.children.length === 0" class="margin_r_10">-->
+    <!--<el-checkbox v-model="item.edit" @change="()=>cell(item)">修改</el-checkbox>-->
+    <!--</div>-->
+    <!--<div v-if="item.children.length === 0" class="margin_r_10">-->
+    <!--<el-checkbox v-model="item.find" @change="()=>cell(item)">查询</el-checkbox>-->
+    <!--</div>-->
+
+
   </div>
 </template>
 
 <script>
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
+  import getApi from './roleManagement.service'
+  import ElButton from "element-ui/packages/button/src/button";
 
   export default {
     components: {
+      ElButton,
       roleTree: {
         name: 'roleTrees',
         props: ['data', 'count'],
         template: `
-<div>
-      <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-        <div class="flex_a">
-          <el-checkbox v-model="item.checked" @change="()=>changeTree(item)">{{item.name}}</el-checkbox>
-          <div class="flex_a" style="margin-left: 50px">
-                    <div v-if="item.children.length === 0" class="margin_r_10">
-          <el-checkbox v-model="item.add" @change="()=>cell(item)">新增</el-checkbox>
-          </div>
-          <div v-if="item.children.length === 0" class="margin_r_10">
-             <el-checkbox v-model="item.del" @change="()=>cell(item)">删除</el-checkbox>
-          </div>
-          <div v-if="item.children.length === 0" class="margin_r_10">
-             <el-checkbox v-model="item.edit" @change="()=>cell(item)">修改</el-checkbox>
-          </div>
-          <div v-if="item.children.length === 0" class="margin_r_10">
-            <el-checkbox v-model="item.find" @change="()=>cell(item)"">查询</el-checkbox>
-          </div>
-          </div>
+            <div>
+                  <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
+                    <div class="flex_a">
+                      <el-checkbox v-model="item.checked" @change="()=>changeTree(item)">{{item.name}} {{item.checked}}</el-checkbox>
+                      <div class="flex_a" style="margin-left: 50px">
 
-        </div>
-        <roleTrees :data='item.children'  :count='count' class="heightTran"></roleTrees>
-    </div>
-</div>
+                      <div class="margin_r_10" v-for="(item1,index) in item.arr">
+                        <el-checkbox v-model="item1.checked" @change="()=>cell(item1)">{{item1.name}}</el-checkbox>
+
+                      </div>
+
+                      </div>
+
+                    </div>
+                    <roleTrees :data='item.children'  :count='count' class="heightTran"></roleTrees>
+                </div>
+            </div>
         `,
         data() {
-          return {
-
-          }
+          return {}
         },
         methods: {
+
           cell(item) {
             if (item.add === true && item.del === true && item.edit === true && item.find === true) {
               this.$set(item, "checked", true);
@@ -219,16 +229,19 @@
           },
           recur(data, bool) {
             if (data.children.length === 0 && bool === true) {
-              this.$set(data, "add", true);
-              this.$set(data, "del", true);
-              this.$set(data, "edit", true);
-              this.$set(data, "find", true);
+              // this.$set(data, "add", true);
+              // this.$set(data, "del", true);
+              // this.$set(data, "edit", true);
+              // this.$set(data, "find", true);
             } else {
-              this.$set(data, "add", false);
-              this.$set(data, "del", false);
-              this.$set(data, "edit", false);
-              this.$set(data, "find", false);
+              // this.$set(data, "add", false);
+              // this.$set(data, "del", false);
+              // this.$set(data, "edit", false);
+              // this.$set(data, "find", false);
             }
+
+            console.log(data)
+
             data.children.forEach((map) => {
               if (map.children) {
                 this.$set(map, "checked", bool);
@@ -246,28 +259,11 @@
         del1: '',
         edit1: '',
         find1: '',
-        roleList: [
-          {
-            name: '全部', checked: false, children: [
-            {
-              name: '基础设置', checked: false, children: [
-              {name: '支付方式', checked: false, add: true, del: true, edit: true, find: true, children: []},
-              {name: '支付通道', checked: false, add: false, del: false, edit: false, find: false, children: []},
-              {name: '权限管理', checked: false, add: false, del: false, edit: false, find: false, children: []},
-              {name: '门店管理', checked: false, add: false, del: false, edit: false, find: false, children: []}]
-            },
-            {
-              name: '系统工具', checked: false, children: [
-              {name: '操作日志', checked: false, add: false, del: false, edit: false, find: false, children: []}]
-            }
-          ]
-          }
-        ],
+        roleList: [],
         form: {
-          code: '',
           name: '',
-          status: '',
-          type:'',
+          status: false,
+          type: '',
           thirdPartyCoding: [
             {value: '', value1: ''}
           ],
@@ -288,41 +284,28 @@
         }],
 
         storeName: '',
-        storeData: [{
-          select: false,
-          code: '837893',
-          name: 'aaa',
-          status: '启用'
-        }, {
-          select: false,
-          code: '837894',
-          name: 'bbb',
-          status: '启用'
-        }],
-
+        storeData: [{}],
+        p: {page: 1, size: 20, total: 0},
       }
     },
     watch: {},
     methods: {
+      test() {
+        console.log(this)
+      },
+      getPage(page) {
+        this.p.page = page;
+        this.showRoleList(this.p);
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        this.showRoleList(this.p);
+      },
       roleOpen() {
-        this.roleList = [{
-          name: '全部', checked: false, children: [
-            {
-              name: '基础设置', checked: false, children: [
-              {name: '支付方式', checked: false, add: true, del: true, edit: true, find: true, children: []},
-              {name: '支付通道', checked: false, add: false, del: false, edit: false, find: false, children: []},
-              {name: '权限管理', checked: false, add: false, del: false, edit: false, find: false, children: []},
-              {name: '门店管理', checked: false, add: false, del: false, edit: false, find: false, children: []}]
-            },
-            {
-              name: '系统工具', checked: false, children: [
-              {name: '操作日志', checked: false, add: false, del: false, edit: false, find: false, children: []}]
-            }
-          ]
-        }]
+
       },
       roleClose() {
-        console.log(22)
+        this.roleList = []
 
       },
       removeDomain(item) {
@@ -338,14 +321,26 @@
         });
       },
       dialogClose() {
-        console.log(444)
+        this.form = {
+          name: '',
+          status: false,
+          type: '',
+          thirdPartyCoding: [
+            {value: '', value1: ''}
+          ],
+        };
         this.$refs['formRules'].resetFields();
       },
       submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
+            getApi.saveRole(this.form).then((res) => {
+              console.log(res)
+              if (res.data.errcode === 0) {
 
-            this.dialogVisible = false
+                this.dialogVisible = false
+              }
+            })
           } else {
             console.log('error submit!!');
             return false;
@@ -416,23 +411,113 @@
         );
       },
 
+      recurRole(list) {
+
+
+        console.log(list)
+        list.forEach((item) => {
+          if (item.is_select === 0) {
+            item.selected = false
+          } else {
+            item.selected = true
+          }
+
+          item.arr.forEach((item1) => {
+            if (item1.is_select === 0) {
+              item1.selected = false
+            } else {
+              item1.selected = true
+            }
+          })
+        })
+        this.recurRole(item.children)
+
+        // data.children.forEach((map) => {
+        //   if (map.children) {
+        //     this.$set(map, "checked",);
+        //     this.recurRole(map, )
+        //   }
+        // })
+      },
+
+      config(row) {
+        this.dialogVisible2 = true
+        getApi.rolePower(row.id).then((res) => {
+          //console.log(res)
+          if (res.data.errcode === 0) {
+
+
+            this.recurRole(res.data.data)
+
+
+            //this.roleList = res.data.data
+          }
+        })
+      },
       edit() {
         this.dialogVisible = true
       },
       del() {
 
-      },
-      append(store, data) {
-        console.log(store)
-        console.log(data)
+        let list = [];
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        if (list.length === 0) {
+          this.$message('请勾选角色');
+        } else {
+          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            getApi.delRole(list.join(",")).then((res) => {
+              console.log(res)
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+              this.showRoleList(this.p = {page: 1, size: 20, total: 0});
+            })
 
-        store.append({id: id++, label: 'testtest' + id, children: []}, data);
+
+          }).catch(() => {
+            //
+          });
+        }
+
       },
+
+      showRoleList(p) {
+        getApi.getRoleList(p = {page: 1, size: 20, total: 0}).then((res) => {
+          console.log(res)
+          if (res.data.errcode === 0) {
+            res.data.data.list.forEach((data) => {
+              data.select = false;
+
+              if (data.status === 1) {
+                data.status = true
+              } else {
+                data.status = false
+
+              }
+
+            });
+            // this.storeData = res.data.data.list;
+            // this.p.total = res.data.data.count
+          }
+
+
+        })
+      }
     },
     created() {
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
+      this.showRoleList(this.p)
     },
     mounted() {
 

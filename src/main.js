@@ -21,16 +21,22 @@ Vue.prototype.$http = Axios;
 // 'http://bs.com'                // 本地环境
 
 // let url = 'http://test0.kuan1.cn';
-let url = 'http://x.kuan1.cn';
+let url = 'http://x0test.kuan1.cn';
+// let url = 'http://x.kuan1.cn';
 // let url = 'http://bs.com';
+
 Axios.defaults.baseURL = `${url}/kybase/`;
 //图片上传地址
 Vue.prototype.$updateUrl = `${url}/oss/index.php?controller=index&action=upload_img`;
 
 //上传xls地址
 Vue.prototype.$updateXlsUrl = `${url}/oss/index.php?controller=index&action=upload_file&dir=file`;
-//下载xls地址
+//下载xls地址 门店
 Vue.prototype.$xlsUrl = `${url}/kybase/uploads/x0read.xlsx`;
+
+//下载xls地址 菜品
+Vue.prototype.$xlsDishesUrl = `${url}/kybase/uploads/x0readproduct.xlsx`;
+
 //打开夸域cookie
 Axios.defaults.withCredentials = true;
 

@@ -18,13 +18,12 @@
               </el-form-item>
 
               <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-                <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.code1'"
-                              :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+                <el-form-item label="第三方编码" :key="domain.key">
                   <div>
                     <el-row>
                       <el-col>
                         <div style="width:150px">
-                          <el-input v-model="domain.code1"></el-input>
+                          <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
                         </div>
                       </el-col>
                     </el-row>
@@ -33,13 +32,12 @@
                 <div class="m-rank">
                   <div class="m-rank-child"></div>
                 </div>
-                <el-form-item label-width="0" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.code2'"
-                              :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
+                <el-form-item label-width="0" :key="domain.key">
                   <div>
                     <el-row>
                       <el-col>
                         <div style="width:150px">
-                          <el-input v-model="domain.code2"></el-input>
+                          <el-input v-model="domain.code2" placeholder="请输入编码"></el-input>
                         </div>
                       </el-col>
                     </el-row>

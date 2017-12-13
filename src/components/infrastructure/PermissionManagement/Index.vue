@@ -33,9 +33,9 @@
     </div>
 
     <div class="flex_r">
-      <div ref="tree" style="min-width: 200px;">
+      <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
 
-        <permission-tree :data='data5' :count=0></permission-tree>
+        <permission-tree :data='data5' :count=0 style="width: max-content"></permission-tree>
 
       </div>
 
