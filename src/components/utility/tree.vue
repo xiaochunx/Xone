@@ -7,7 +7,7 @@
   }
 
   .tree-node:hover {
-    background: #e4e8f1;
+    background: #48576a;
   }
 
 
@@ -15,17 +15,16 @@
 
 <template>
   <div>
-
     <div v-for='(item,index) in data' style="line-height: 36px;">
-      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}">
+      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#48576a':''}">
 
-        <span :style="{display:(item.child && item.child.length != 0)?'none':'inline-block'}"
+        <span :style="{display:(item.children && item.children.length !== 0)?'none':'inline-block'}"
               style="vertical-align: middle;width: 25px"></span>
-        <span @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length != 0'
+        <span @click.stop.self='item.show=!item.show' v-if='item.children && item.children.length !== 0'
               :style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}" style="margin-right: 8px;"
               class="el-tree-node__expand-icon"></span>
 
-        <span @click.stop.self="test(item)" class="pointer el-tree-node__label">{{item.levelname}}</span>
+        <span @click.stop.self="test(item)" class="pointer el-tree-node__label" style="color: #bfcbd9">{{item.name}}</span>
 
       </div>
       <transition
@@ -39,16 +38,14 @@
         v-on:after-leave="afterLeave"
         v-on:leave-cancelled="leaveCancelled"
       >
-        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran" ></trees>
+        <trees :data='item.children' v-if="item.show" :count='count +1' class="heightTran" ></trees>
       </transition>
     </div>
   </div>
 </template>
 
 <script>
-
-  import Hub from '../../utility/commun'
-   import getApi from './permissionManagement.service'
+  import Hub from '../utility/commun'
 
   export default {
     name: 'trees',
@@ -61,18 +58,12 @@
       return {
         myHeight: '',
         item: {},
-        levelname:'',
+
       }
     },
     methods: {
-
       test(item) {
-        //console.log(item)
-        this.levelname = item.levelname;
-
-       // Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
-
-          Hub.$emit('showAdd',{levelid:item.id,type:item.type,levelName:item.levelname});
+        Hub.$emit('showAdd',{levelid:item.id,action:item.action});
 
 //        item.show = !item.show
       },

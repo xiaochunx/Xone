@@ -36,7 +36,7 @@
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
-                           type="index" width="70">
+                           type="index" width="100">
             <template slot-scope="scope">
 
               <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
@@ -68,9 +68,9 @@
             </template>
           </el-table-column>
           <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">-->
-            <!--<template scope="scope">-->
-              <!--<el-button type="text" @click="operation(scope.row)">操作</el-button>-->
-            <!--</template>-->
+          <!--<template scope="scope">-->
+          <!--<el-button type="text" @click="operation(scope.row)">操作</el-button>-->
+          <!--</template>-->
           <!--</el-table-column>-->
         </el-table>
         <footer>
@@ -91,14 +91,18 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerid" label="打印机ID">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerid"
+                         label="打印机ID">
 
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerip" label="IP地址">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerip"
+                         label="IP地址">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printertype" label="型号">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printertype"
+                         label="型号">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerstatus" label="状态">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerstatus"
+                         label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -114,13 +118,17 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="clientserver" label="服务版本">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="clientserver"
+                         label="服务版本">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installdata" label="安装日期">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installdata"
+                         label="安装日期">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installlocation" label="安装位置">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installlocation"
+                         label="安装位置">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="linkstatus" label="状态">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="linkstatus"
+                         label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -140,9 +148,11 @@
         </el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" prop="posip" label="IP地址">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="poslocation" label="位置">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="poslocation"
+                         label="位置">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="poststatus" label="状态">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="poststatus"
+                         label="状态">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -200,6 +210,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './runningState.service'
   import {getLeft} from '../../utility/communApi'
+
   export default {
     components: {},
     data() {
@@ -256,28 +267,30 @@
     },
     watch: {},
     methods: {
-      search(){
+      search() {
         console.log(this.levelId)
-        if(this.searchName === ''){
-          this.showResouce(-1)
-        }else {
-          getApi.getService(this.levelId,this.searchName).then((res)=>{
-            console.log(res)
-            if (res.data.errcode === 0) {
-              res.data.data.list.forEach((item)=>{
-                if(item.status === 1){
-                  item.status = "开启"
-                }else {
-                  item.status = "关闭"
-                }
-                item.select = false
-              });
-              this.storeData = res.data.data.list;
-              this.p.total = res.data.data.count
-            } else {
-
-            }
-          })
+        if (this.searchName === '') {
+          this.showResouce(this.p = {page: 1, size: 20, total: 0}, -1)
+        } else {
+           this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.searchName)
+          // this.p = {page: 1, size: 20, total: 0}
+          // getApi.getService({page: 1, size: 20, total: 0},this.levelId, this.searchName).then((res) => {
+          //   console.log(res)
+          //   if (res.data.errcode === 0) {
+          //     res.data.data.list.forEach((item) => {
+          //       if (item.status === 1) {
+          //         item.status = "开启"
+          //       } else {
+          //         item.status = "关闭"
+          //       }
+          //       item.select = false
+          //     });
+          //     this.storeData = res.data.data.list;
+          //     //this.p.total = res.data.data.count
+          //   } else {
+          //
+          //   }
+          // })
         }
       },
 
@@ -285,15 +298,15 @@
         console.log(item.id);
         this.levelId = item.id
 
-        this.showResouce(item.id)
+        this.showResouce(this.p, item.id)
       },
       getPage(page) {
         this.p.page = page;
-        this.showResouce(this.levelId);
+        this.showResouce(this.p, this.levelId,this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce(this.levelId);
+        this.showResouce(this.p, this.levelId,this.searchName);
       },
       headerUpdate(h) {
         return h(
@@ -397,7 +410,7 @@
       },
       posStatus(row) {
         console.log(row)
-this.POSList = row.storeposs
+        this.POSList = row.storeposs
         this.dialogVisible3 = true
       },
       operation(row) {
@@ -414,8 +427,8 @@ this.POSList = row.storeposs
       del() {
 
       },
-      showResouce(id) {
-        getApi.getService(id).then((res) => {
+      showResouce(p,id,storename = '') {
+        getApi.getService(p,id,storename).then((res) => {
           this.storeData = res.data.data.list
           this.p.total = res.data.data.count
         })
@@ -424,16 +437,13 @@ this.POSList = row.storeposs
     created() {
 
       getLeft().then((res) => {
-        if(res.data.errcode === 0){
+        if (res.data.errcode === 0) {
           this.dataLeft = res.data.data
         }
       });
 
-      getApi.getService(-1).then((res) => {
-        console.log(res)
-        this.storeData = res.data.data.list
-        this.p.total = res.data.data.count
-      })
+      this.showResouce(this.p, -1)
+
     },
     mounted() {
 

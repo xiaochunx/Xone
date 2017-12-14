@@ -72,6 +72,21 @@ let delChannel = (id) => {
   })
 };
 
+//商家自定义支付通道勾选支付方式
+
+let setChannelPayment = (channelId,paymentId,status) => {
+  return new Promise((resolve, reject) => {
+
+    let formData = new FormData();
+    formData.append("channelId", channelId);
+    formData.append("paymentId", paymentId);
+    formData.append("status", status);
+    axios.post(`index.php?controller=payment&action=setChannelPayment&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
 //基础支付通道配置
 let getCommonChannelList = () => {
   return new Promise((resolve, reject) => {
@@ -88,7 +103,4 @@ let getCommonChannelList = () => {
 };
 
 
-export default {getChannelList,getChannelInfo,addCannel,editChannel,delChannel,getCommonChannelList}
-
-
-
+export default {getChannelList,getChannelInfo,addCannel,editChannel,delChannel,setChannelPayment,getCommonChannelList}

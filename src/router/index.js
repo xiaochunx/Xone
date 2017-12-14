@@ -46,6 +46,7 @@ import AddDishes from '@/components/infrastructure/DishesLibrary/addDishes/Index
 import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
 import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue'
 import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
+import PermissionUserManagement from '@/components/infrastructure/PermissionManagement/user/Index.vue'
 import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
 
 /************************** 运营 ***************************/
@@ -283,7 +284,13 @@ export default new Router({
           name: '基础设置/权限管理',
           component: PermissionManagement
         },
-
+        //权限管理/查看用户
+        {
+          path: '/infrastructure/PermissionManagement/User',
+          meta: { auth: true },
+          name: '基础设置/权限管理/查看用户',
+          component: PermissionUserManagement
+        },
 
 
         //操作日志

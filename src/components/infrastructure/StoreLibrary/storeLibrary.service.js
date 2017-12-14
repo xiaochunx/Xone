@@ -75,7 +75,12 @@ let delLevel = (id) => {
 //获取基础门店列表
 let getBsList = (p,levelid,storename) => {
   return new Promise((resolve, reject) => {
-    axios.get(`index.php?controller=stores&action=index&token=${get('token')}&levelid=${levelid}&storename=${storename}&page=${p.page}&pagesize=${p.size}`).then((res)=>{
+    axios.get(`index.php?controller=stores&action=index&token=${get('token')}`,{ params: {
+        levelid:levelid,
+        storename:storename,
+        page:p.page,
+        pagesize:p.size
+      },}).then((res)=>{
       resolve(res)
     })
   })

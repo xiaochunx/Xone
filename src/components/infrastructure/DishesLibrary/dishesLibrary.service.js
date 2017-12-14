@@ -26,7 +26,12 @@ let getProductList = (p,levelid,searchName) => {
     // formData.append("x2", '');
     // formData.append("productIdIn", '');
 
-    axios.get(`index.php?controller=product&action=index&token=${get('token')}&levelid=${levelid}&page=${p.page}&pagesize=${p.size}&product_name=${searchName}`).then((res)=>{
+    axios.get(`index.php?controller=product&action=index&token=${get('token')}`,{ params: {
+        levelid:levelid,
+        product_name:searchName,
+        page:p.page,
+        pagesize:p.size
+      },}).then((res)=>{
       resolve(res)
     })
   })

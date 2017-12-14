@@ -10,9 +10,7 @@
           <el-button size="small" @click="batchAdd()" :disabled="!showAdd.showAdd">批量新增</el-button>
           <el-button size="small" @click="delSelected()">批量删除</el-button>
           <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
-          <el-button size="small" @click="test()">testtt</el-button>
         </div>
-
         <div class="flex_a">
           <div class="margin_r_10">
             <el-input size="small" v-model="searchName" placeholder="请输入门店名称"></el-input>
@@ -407,10 +405,7 @@
     },
     watch: {},
     methods: {
-      test(){
-        let allInput = document.querySelectorAll('#all span input');
-        console.log(allInput)
-      },
+
       open4(){
       },
       close4(){

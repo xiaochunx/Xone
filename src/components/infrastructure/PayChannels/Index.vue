@@ -191,12 +191,12 @@
         } else {
           status = 0
         }
-        // getApi.eidtChannelPayment(id, item.id, status).then((res) => {
-        //   console.log(res)
-        //   if (res.data.errcode === 0) {
-        //     this.getCommonChannelList(this.p, this.searchName);
-        //   }
-        // })
+        getApi.setChannelPayment(id, item.id, status).then((res) => {
+          console.log(res)
+          if (res.data.errcode === 0) {
+            this.getChannelList(this.p, this.searchName);
+          }
+        })
       },
       selectedChennel(id) {
         this.options.forEach((item) => {
@@ -309,8 +309,6 @@
         this.dialogVisible = true
       },
       del(row) {
-
-
         this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
