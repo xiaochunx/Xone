@@ -806,6 +806,7 @@
             this.data5 = res.data.data;
             console.log(this.data5)
             this.recur(this.data5)
+            this.recurSelected(this.data5,-1)
           } else {
 
           }

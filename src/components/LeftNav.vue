@@ -75,35 +75,35 @@
               }
             ]
           },
-//          {
-//            name: '统计报表',
-//            children: [
-//              {
-//                name: '交易列表',
-//                route: '/report/transactionList'
-//              },
-//              {
-//                name: '交易统计',
-//                route: '/report/transactionCount'
-//              },
-//              {
-//                name: '结算记录',
-//                route: '/report/settlementRecord'
-//              },
-//              {
-//                name: '差异账单查询',
-//                route: '/report/billQuery'
-//              },
-//              {
-//                name: '对账单',
-//                route: '/report/accountStatement'
-//              },
-//              {
-//                name: '发票',
-//                route: '/report/invoice'
-//              }
-//            ]
-//          },
+         {
+           name: '统计报表',
+           children: [
+             {
+               name: '交易列表',
+               route: '/report/transactionList'
+             },
+             {
+               name: '交易统计',
+               route: '/report/transactionCount'
+             },
+             // {
+             //   name: '结算记录',
+             //   route: '/report/settlementRecord'
+             // },
+             // {
+             //   name: '差异账单查询',
+             //   route: '/report/billQuery'
+             // },
+             // {
+             //   name: '对账单',
+             //   route: '/report/accountStatement'
+             // },
+             // {
+             //   name: '发票',
+             //   route: '/report/invoice'
+             // }
+           ]
+         },
           {
             name: '基础设置',
             children: [

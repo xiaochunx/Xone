@@ -735,7 +735,7 @@
                     <el-form-item label="">
                       <div class="margin_r_10 ">
                         <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
-                                   placeholder="请选择">
+                                   placeholder="请选择通道列表">
                           <el-option
                             v-for="item in getChannelInfo"
                             :key="item.id"
@@ -748,7 +748,7 @@
 
                     <el-form-item label="">
                       <div class="margin_r_10 ">
-                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择">
+                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表">
                           <el-option
                             v-for="item1 in item.getCanUseAccountList"
                             :key="item1.id"
@@ -791,7 +791,7 @@
 <script>
 
   import getApi from './editStoreAccount.service';
-
+  import {getWayInfo,getChannelInfo} from '../../../../utility/communApi'
   export default {
     components: {},
     data() {
@@ -1124,12 +1124,12 @@ console.log(list)
         console.log(res.data.data)
       })
 
-      getApi.getWayInfo().then((res) => {
+      getWayInfo().then((res) => {
         console.log(res)
         this.getWayInfo = res.data.data
       })
 
-      getApi.getChannelInfo().then((res) => {
+      getChannelInfo().then((res) => {
         this.getChannelInfo = res.data.data
       })
 

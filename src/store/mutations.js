@@ -8,7 +8,7 @@ const state = {
   height: 0,
   navPath: [],
   isLoading: false,
-  token:''//token
+  publicLevelId:-1//公众号levelid
 };
 
 const mutations = {
@@ -21,8 +21,8 @@ const mutations = {
   [types.UPDATELOADINGSTATUS](state, payload) {
     state.isLoading = payload.isLoading
   },
-  [types.SETTOKEN](state, token){
-    state.token = token
+  [types.PUBLICLEVELID](state, obj){
+    state.publicLevelId = obj.levelId
   }
 };
 

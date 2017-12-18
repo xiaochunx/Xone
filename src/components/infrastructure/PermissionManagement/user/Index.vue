@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <el-table :data="storeData" border :height="tableHeight">
+    <el-table :data="userList" border :height="tableHeight">
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                        type="index" width="70">
         <template slot-scope="scope">
@@ -105,9 +105,9 @@
         <el-form-item label="所属用户组:">
           <el-select v-model="formUser.group_id" placeholder="请选择">
             <el-option
-              v-for="item in options"
+              v-for="item in groupList"
               :key="item.id"
-              :label="item.label"
+              :label="item.name"
               :value="item.id">
             </el-option>
           </el-select>
@@ -115,11 +115,11 @@
         </el-form-item>
 
         <el-form-item label="角色:">
-          <el-select v-model="formUser.group_id" multiple placeholder="请选择">
+          <el-select v-model="formUser.role_id" multiple placeholder="请选择">
             <el-option
-              v-for="item in options"
+              v-for="item in roleList"
               :key="item.id"
-              :label="item.label"
+              :label="item.name"
               :value="item.id">
             </el-option>
           </el-select>
@@ -195,20 +195,42 @@
         </div>
       </div>
 
-      <div class="flex">
-        <el-transfer
-          class="transfer"
-          v-model="value3"
-          :props="{
-            key: 'id',
-            label: 'name'
-          }"
-          @change="handleChange"
-          :render-content="renderFunc"
-          :titles="['Source', 'Target']"
-          :data="data">
-        </el-transfer>
-      </div>
+      <!--<div class="flex">-->
+        <!--<el-transfer-->
+          <!--class="transfer"-->
+          <!--v-model="value3"-->
+          <!--:props="{-->
+            <!--key: 'id',-->
+            <!--label: 'name'-->
+          <!--}"-->
+          <!--@change="handleChange"-->
+          <!--:render-content="renderFunc"-->
+          <!--:titles="['Source', 'Target']"-->
+          <!--:data="data">-->
+        <!--</el-transfer>-->
+      <!--</div>-->
+<div class="flex_r">
+  <div style="width: 200px" class="margin_r_10">
+    <el-tree
+      :data="dataLeft"
+      :props="defaultProps"
+      @node-click="nodeClick"
+      node-key="id"
+
+      :highlight-current="true"
+      :expand-on-click-node="false"
+    >
+    </el-tree>
+  </div>
+  <div >
+
+      <el-checkbox v-for="(item,index) in storeList" :key="item.id">{{item.storeName}}</el-checkbox>
+
+  </div>
+
+</div>
+
+
 
     </el-dialog>
 
@@ -217,7 +239,7 @@
 
 <script>
   import {getScrollHeight} from '../../../utility/getScrollHeight'
-  import {getLeft, getArea} from '../../../utility/communApi'
+  import {getLeft, getArea,getList} from '../../../utility/communApi'
   import getApi from './user.service'
   import ElCheckbox from "element-ui/packages/checkbox/src/checkbox";
 
@@ -250,34 +272,10 @@
           {x: 'x1', operation: [{name: '列表', is: true}, {name: '删除', is: false}, {name: '编辑', is: false}]},
           {x: 'x2', operation: [{name: '列表', is: true}, {name: '删除', is: true}, {name: '编辑', is: true}]}
         ],
-        storeData: [{
-          NO: true,
-          account: '83789',
-          name: '炳胜（马场店）',
-          status: '开启',
-          role: '系统管理人员、产品'
-        }, {
-          NO: false,
-          account: '837892',
-          name: '炳胜（马场店）',
-          status: '开启',
-          role: '系统管理人员、产品'
-        }, {
-          NO: false,
-          account: '837893',
-          name: '炳胜（马场店）',
-          status: '开启',
-          role: '系统管理人员、产品'
-        }],
-
+        userList: [],
+        groupList:[],
         value: "",
-        options: [{
-          id: 1,
-          label: '民生银行'
-        }, {
-          id: 2,
-          label: '易极付'
-        }],
+        roleList: [],
         levelName: '款易',
         p: {page: 1, size: 20, total: 0},
         levelId: '',//左边树ID
@@ -285,6 +283,8 @@
           nickname: '',
           phone: '',
           group_id: '',
+          role_id:[],
+          power_id:[],
           billHuman: [
             {value: '', value1: ''}
           ],
@@ -297,11 +297,57 @@
         cityList: [],
         areaId: '',
         areaList: [],
-        inputArea: ''
+        inputArea: '',
+        dataLeft:[],
+        defaultProps: {
+          children: 'child',
+          label: 'levelname'
+        },
+        storeList:[]
       }
     },
     watch: {},
     methods: {
+      submitFrom2(formRules){
+        this.$refs[formRules].validate((valid) => {
+          if (valid) {
+            // console.log(formEdit)
+            // getApi.updateBsOne(formEdit).then((res)=>{
+            //   console.log(res)
+            //   if(res.data.errcode === 0){
+            //     this.getBsList(this.p,this.showAdd.levelid);
+            //     this.dialogVisible = false
+            //     this.dialogVisible1 = false
+            //   }
+            // })
+
+
+            let levelId = this.$route.params.levelId;
+
+            if(this.userName === '添加用户'){
+              getApi.newlyAddAccount(this.formUser,levelId).then((res)=>{
+                if(res.data.errcode === 0){
+
+                }
+              })
+            }else {
+              getApi.editor(this.formUser,levelId).then((res)=>{
+                if(res.data.errcode === 0){
+
+                }
+              })
+
+            }
+
+
+
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
       handleChange(value, direction, movedKeys) {
         console.log(value, direction, movedKeys);
       },
@@ -310,7 +356,7 @@
         //   res.data.data.forEach((map) => {
         //     this.$set(map, 'select', false)
         //   });
-        //   this.storeData = res.data.data
+        //   this.userList = res.data.data
         // })
 
       },
@@ -350,6 +396,8 @@
           nickname: '',
           phone: '',
           group_id: '',
+          role_id:[],
+          power_id:[],
           billHuman: [
             {value: '', value1: ''}
           ],
@@ -411,7 +459,17 @@
           //
         });
       },
+      nodeClick(data, data1, data2) {
 
+        this.levelId = data.id;
+        getList(this.levelId).then((res)=>{
+
+          console.log(res)
+          this.storeList = res.data.data.list
+        })
+
+
+      },
 
       getPage(page) {
         this.p.page = page;
@@ -421,6 +479,17 @@
         this.p.size = size;
         //this.getBsList(this.p);
       },
+
+
+      getUserFromGroup(){
+        let id = this.$route.params.id;
+        getApi.getUserFromGroup(id).then((res)=>{
+          console.log(res)
+          this.userList = res.data.data
+
+        })
+      }
+
     },
     created() {
       getArea('').then((res) => {
@@ -434,7 +503,22 @@
             }
           })
         }
+      });
+        getLeft().then((res) => {
+          this.dataLeft = res.data.data
+        });
+        this.getUserFromGroup()
+
+      getApi.getRoleList().then((res)=>{
+        this.roleList = res.data.data.list
       })
+
+      let levelId = this.$route.params.levelId;
+      getApi.getGroupList(levelId).then((res)=>{
+        this.groupList = res.data.data
+      })
+
+
     },
     mounted() {
 

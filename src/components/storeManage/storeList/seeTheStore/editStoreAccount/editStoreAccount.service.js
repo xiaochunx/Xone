@@ -84,24 +84,6 @@ let editStoreAccount = (storeId,data) => {
   })
 };
 
-//支付方式列表
-let getWayInfo = () => {
-  return new Promise((resolve, reject) => {
-    axios.post(`index.php?controller=jichu&action=getWayInfo&token=${get('token')}`).then((res)=>{
-      resolve(res)
-    })
-  })
-};
-
-//支付通道列表
-let getChannelInfo = () => {
-  return new Promise((resolve, reject) => {
-    axios.post(`index.php?controller=jichu&action=getChannelInfo&token=${get('token')}`).then((res)=>{
-      resolve(res)
-    })
-  })
-};
-
 //获取符合要求的账户列表
 let getCanUseAccountList = (paymentMethod,paymentChannel) => {
   return new Promise((resolve, reject) => {
@@ -116,7 +98,7 @@ let getCanUseAccountList = (paymentMethod,paymentChannel) => {
 };
 
 
-export default {getFirst,getStoreAccount,getList,editStore,editStoreAccount,getWayInfo,getChannelInfo,getCanUseAccountList}
+export default {getFirst,getStoreAccount,getList,editStore,editStoreAccount,getCanUseAccountList}
 
 
 

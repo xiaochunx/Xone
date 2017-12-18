@@ -10,7 +10,7 @@
           <div>
             {{levelName}}
             <el-button size="small" @click="addAccountGroup('添加用户组')">添加用户组</el-button>
-            <el-button size="small" @click="dialogVisible1 = true">批量开启/关闭</el-button>
+            <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
             <el-button size="small" @click="addAccount()">新增用户</el-button>
           </div>
         </div>
@@ -31,16 +31,16 @@
       </div>
 
       <div :style="{width:tableWidth + 'px'}">
-        <el-table :data="storeData" border :height="tableHeight">
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
+        <el-table :data="groupList" border :height="tableHeight">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="select" label="序号"
                            type="index" width="70">
             <template slot-scope="scope">
 
-              <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
+              <el-checkbox v-model="scope.row.select">{{scope.$index + 1 }}</el-checkbox>
 
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="account"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                            label="用户组编码"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
                            label="用户组名称"></el-table-column>
@@ -48,9 +48,9 @@
                            width="80"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
             <template slot-scope="scope">
-              <el-button size="small" @click="editAccount('编辑用户组')">编辑</el-button>
+              <el-button size="small" @click="editAccount('编辑用户组',scope.row)">编辑</el-button>
               <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
-              <el-button size="small" type="primary" @click="goToUser()">查看用户</el-button>
+              <el-button size="small" type="primary" @click="goToUser(scope.row)">查看用户</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -69,17 +69,17 @@
       width="50%">
       <el-form ref="formRules" :model="formUserGroup" label-width="100px">
 
-        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formUserGroup.nickname" placeholder="请输入内容"></el-input>
+        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formUserGroup.name" placeholder="请输入内容"></el-input>
         </el-form-item>
 
-        <div v-for="(domain, index) in formUserGroup.billHuman" class="flex_r">
+        <div v-for="(domain, index) in formUserGroup.third_code" class="flex_r">
           <el-form-item label="第三方编码" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value"></el-input>
+                    <el-input v-model="domain.code1"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -93,7 +93,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.value1"></el-input>
+                    <el-input v-model="domain.code2"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -103,7 +103,7 @@
             <div class="m-storeCode margin_l_10" @click="addDomain()">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(formUserGroup.billHuman.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formUserGroup.third_code.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
@@ -111,8 +111,8 @@
         </div>
 
         <div class="margin_t_10">
-          <!--<el-button>取消</el-button>-->
-          <el-button type="primary" @click="submitFrom2('formRules')">确认</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitFrom('formRules')">确认</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -123,13 +123,13 @@
       :visible.sync="dialogVisible1"
       width="50%" size="tiny">
       <el-switch
-        v-model="value2"
+        v-model="storeStatusValue"
         on-color="#13ce66"
         off-color="#ff4949">
       </el-switch>
       <div class="margin_t_10">
         <el-button @click="dialogVisible1 = false">取消</el-button>
-        <el-button type="primary">确认</el-button>
+        <el-button type="primary" @click="changeStoresStatus()">确认</el-button>
       </div>
     </el-dialog>
 
@@ -148,17 +148,21 @@
 
         <div class="margin_t_10">文件中的成员将会被导入至</div>
 
-        <div ref="tree" style="width: 100%;">
-          <el-tree
-            :data="dataLeft"
-            :props="defaultProps"
-            @node-click="nodeClick"
-            node-key="id"
-            default-expand-all
-            :highlight-current="true"
-            :expand-on-click-node="false"
-          >
-          </el-tree>
+        <div ref="tree" class="flex">
+          <el-form ref="formRules3" :model="formSubmit" label-width="120px">
+            <el-form-item label="请选择用户组:" prop="group_id"
+                          :rules="{type:'number',required: true, message: '请选择用户组', trigger: 'change'}">
+              <el-select v-model="formSubmit.group_id" placeholder="请选择用户组">
+                <el-option
+                  v-for="item in options"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id">
+                </el-option>
+
+              </el-select>
+            </el-form-item>
+          </el-form>
         </div>
 
         <div class="margin_t_10 width_100">
@@ -181,7 +185,7 @@
         </div>
         <div class="margin_t_10">
           <el-button @click="dialogVisible2 = false">取消</el-button>
-          <el-button type="primary" @click="submitUploadXls">提交</el-button>
+          <el-button type="primary" @click="submitUploadXls('formRules3')">提交</el-button>
 
         </div>
       </div>
@@ -283,51 +287,35 @@
     },
     data() {
       return {
-
+        formSubmit: {
+          group_id: ''
+        },
         dialogVisible: false,
         dialogVisible1: false,
         dialogVisible2: false,
-        dialogVisible3:false,
+        dialogVisible3: false,
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
-        value2: '',
-        data5:[],
+        storeStatusValue: false,
+        data5: [],
         payValue: 2,
         storeName: '',
-        storeData: [{
-          NO: true,
-          account: '83789',
-          name: '炳胜（马场店）',
-          status: '开启',
-          role: '系统管理人员、产品'
-        }, {
-          NO: false,
-          account: '837892',
-          name: '炳胜（马场店）',
-          status: '开启',
-          role: '系统管理人员、产品'
-        }, {
-          NO: false,
-          account: '837893',
-          name: '炳胜（马场店）',
-          status: '开启',
-          role: '系统管理人员、产品'
-        }],
-        dataLeft:[],
+        groupList: [],
+        dataLeft: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
         },
 
         formUserGroup: {
-          nickname: '',
-          billHuman: [
-            {value: '', value1: ''}
+          name: '',
+          third_code: [
+            {code1: '', code2: ''}
           ],
         },
-        isOver:false,
-        fileList:[],
+        isOver: false,
+
         isEdit: true,
         value: "",
         options: [{
@@ -337,31 +325,102 @@
           id: 2,
           label: '易极付'
         }],
-        levelName:'款易',
+        levelName: '款易',
         p: {page: 1, size: 20, total: 0},
-        levelId:'',//左边树ID
+        levelId: -1,//左边树ID
         formUser: {
           nickname: '',
-          phone:'',
-          group_id:'',
+          phone: '',
+          group_id: '',
           billHuman: [
             {value: '', value1: ''}
           ],
-          status:''
+          status: ''
         },
-        groupName:''
+        groupName: '',
+        group_id: '',
+        fileList: [],
+        fileurl: '',
       }
     },
     watch: {},
     methods: {
-      goToUser(){
-        this.$router.push('/infrastructure/PermissionManagement/User')
+      submitFrom(formRules) {
+        this.$refs[formRules].validate((valid) => {
+          if (valid) {
+            if (this.groupName === '添加用户组') {
+              getApi.newLyGroup(this.formUserGroup, this.levelId).then((res) => {
+                if (res.data.errcode === 0) {
+                  this.getGroupList(this.p = {page: 1, size: 20, total: 0},this.levelId);
+                  this.dialogVisible = false
+                }
+              })
+            } else {
+              getApi.editorGroup(this.formUserGroup, this.levelId).then((res) => {
+                if (res.data.errcode === 0) {
+                  this.getGroupList(this.p,this.levelId);
+                  this.dialogVisible = false
+                }
+              })
+
+            }
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+      },
+      isSwitch() {
+        this.storeStatusValue = false;
+        let list = [];
+        this.groupList.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+
+        if (list.length === 0) {
+          this.$message('请勾选门店');
+        } else {
+          this.dialogVisible1 = true
+        }
+      },
+      //批量状态设置
+      changeStoresStatus() {
+        let list = [];
+        this.groupList.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+
+        let type;
+        if (this.storeStatusValue) {
+          type = "on"
+        } else {
+          type = "off"
+        }
+
+        getApi.settingBatch(list.join(','), this.levelId,type).then((res) => {
+          console.log(res)
+          if (res.data.errcode === 0) {
+            this.$message('操作成功');
+            //this.getBsList(this.p,this.showAdd.levelid);
+            this.dialogVisible1 = false
+
+          }
+        })
+      },
+      goToUser(row) {
+        this.$router.push(`/infrastructure/PermissionManagement/User/${row.id}/${this.levelId}`)
       },
       dialogClose() {
         this.formUserGroup = {
-          nickname: '',
-          billHuman: [
-            {value: '', value1: ''}
+          name: '',
+          third_code: [
+            {code1: '', code2: ''}
           ],
         };
         this.$refs['formRules'].resetFields();
@@ -369,44 +428,76 @@
       dialogClose2() {
         this.formUser = {
           nickname: '',
-            phone:'',
-            group_id:'',
-            billHuman: [
+          phone: '',
+          group_id: '',
+          billHuman: [
             {value: '', value1: ''}
           ],
-            status:''
+          status: ''
         };
         this.$refs['formRules2'].resetFields();
       },
-      addAccountGroup(name){
+      addAccountGroup(name) {
         this.groupName = name;
         this.dialogVisible = true
       },
       handleChange(file, fileList) {
         this.fileList = fileList.slice(-1);
       },
-      beforeAvatarUploadXls(file){
+      beforeAvatarUploadXls(file) {
         const isLt5M = file.size / 1024 / 1024 < 5;
         if (!isLt5M) {
           this.$message.error('上传文件大小不能超过 5MB!');
         }
         return isLt5M;
       },
-      handleAvatarSuccessXls(){
-
+      handleAvatarSuccessXls() {
+        this.fileurl = file.response.data.file_url
       },
       nodeClick() {
 
       },
-      submitUploadXls() {
+      submitUploadXls(formRules3) {
+
+        this.$refs[formRules3].validate((valid) => {
+          if (valid) {
+            if (this.fileurl === '') {
+              this.$message('需要上传XLS文件');
+              return
+            }
+            let over = '';
+            if (this.isOver === false) {
+              over = 0
+            } else {
+              over = 1
+            }
+            // getApi.updateXlsFile(this.brandid,this.fileurl,over).then((res)=>{
+            //   console.log(res)
+            //   if(res.data.errcode === 0){
+            //     this.$message({
+            //       type: 'info',
+            //       message: '上传成功'
+            //     });
+            //     this.dialogVisible4 = false
+            //   }
+            //
+            // })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
 
       },
       close2() {
         this.brandid = '';
         this.xlsFile = '';
-        this.fileList = []
+        this.fileList = [];
+        this.$refs['formRules3'].resetFields();
       },
-      editAccount(name) {
+      editAccount(name,row) {
+        this.formUserGroup = row;
         this.groupName = name;
         this.dialogVisible = true
       },
@@ -414,13 +505,13 @@
         this.$router.push('/storeManage/storeList/newAddStore')
       },
       removeDomain(item) {
-        var index = this.formUserGroup.billHuman.indexOf(item)
+        var index = this.formUserGroup.third_code.indexOf(item)
         if (index !== -1) {
-          this.formUserGroup.billHuman.splice(index, 1)
+          this.formUserGroup.third_code.splice(index, 1)
         }
       },
       addDomain() {
-        this.formUserGroup.billHuman.push({value: '', value1: ''});
+        this.formUserGroup.third_code.push({code1: '', code2: ''});
       },
       removeDomain2(item) {
         let index = this.formUser.billHuman.indexOf(item)
@@ -440,61 +531,29 @@
         this.item = item;
         this.dialogVisible = true
       },
-      delSelected() {
-        let list = [];
-        this.storeData.forEach((item) => {
-          if (item.NO) {
-            list.push(item.id)
-          }
-        });
 
-        if (list.length === 0) {
-          this.$message('请勾选门店');
-        } else {
-          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            // getApi.delBsOne(list.join(",")).then((res)=>{
-            //   console.log(res)
-            //   if(res.data.errcode === 0){
-            //     this.$message({
-            //       type: 'info',
-            //       message: '删除成功'
-            //     });
-            //     this.getBsList();
-            //   }
-            // })
-          }).catch(() => {
-            //
-          });
-        }
-
-
-      },
       del(row) {
         this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // getApi.delBsOne(row.id).then((res) => {
-          //   console.log(res)
-          //   if (res.data.errcode === 0) {
-          //     this.$message({
-          //       type: 'info',
-          //       message: '删除成功'
-          //     });
-          //     this.getBsList();
-          //   } else {
-          //     this.$message({
-          //       type: 'info',
-          //       message: res.data.data
-          //     });
-          //   }
-          //
-          // })
+          getApi.deletGroup(row.id).then((res) => {
+            console.log(res)
+            if (res.data.errcode === 0) {
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+              this.getGroupList(this.p,this.levelId)
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.data
+              });
+            }
+
+          })
         }).catch(() => {
           //
         });
@@ -513,12 +572,13 @@
         getApi.getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
-            this.levelId = res.data.data[0].id;
+            // this.levelId = res.data.data[0].id;
             // getApi.getPowerList(this.levelId,this.p.page).then((res)=>{
             //   console.log(res)
             // })
             console.log(this.data5)
             this.recur(this.data5)
+            this.recurSelected(this.data5, -1)
           } else {
             this.$alert('请重新登录', '超时', {
               confirmButtonText: '确定',
@@ -541,19 +601,40 @@
           }
         })
       },
+
+      getGroupList(p, level_id) {
+        getApi.getGroupList(p, level_id).then((res) => {
+
+          console.log(res)
+          res.data.data.forEach((item)=>{
+            item.select = false
+            if(item.status === 1){
+              item.status = "开启"
+            } else {
+              item.status = "关闭"
+
+            }
+
+          });
+          this.groupList = res.data.data
+
+
+        })
+      },
+
+
       getPage(page) {
         this.p.page = page;
-        //this.getBsList(this.p);
+        this.getGroupList(this.p,this.levelId)
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.getBsList(this.p);
+        this.getGroupList(this.p,this.levelId)
       },
     },
     created() {
       this.showLevel()
-
-
+      this.getGroupList(this.p,this.levelId)
 
 
     },
@@ -561,9 +642,10 @@
       Hub.$on('showAdd', (e) => {
         this.levelName = e.levelName;
         this.levelId = e.levelid;
-        // getApi.getPowerList(this.levelId,this.p.page).then((res)=>{
-        //   console.log(res)
-        // })
+
+
+        this.getGroupList(this.p,this.levelId)
+
         this.recurSelected(this.data5, e.levelid)
       });
     },

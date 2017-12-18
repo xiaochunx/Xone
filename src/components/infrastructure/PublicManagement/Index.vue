@@ -9,16 +9,21 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
 
-        <el-tree
-          :data="dataLeft"
-          :props="defaultProps"
-          @node-click="nodeClick"
-          node-key="id"
-          default-expand-all
-          :highlight-current="true"
-          :expand-on-click-node="false"
-        >
-        </el-tree>
+        <!--<el-tree-->
+          <!--:data="dataLeft"-->
+          <!--:props="defaultProps"-->
+          <!--@node-click="nodeClick"-->
+          <!--node-key="id"-->
+          <!--default-expand-all-->
+          <!--:highlight-current="true"-->
+          <!--:expand-on-click-node="false"-->
+          <!--:filter-node-method="filterNode"-->
+          <!--ref="tree2"-->
+        <!--&gt;-->
+        <!--</el-tree>-->
+
+
+        <public-tree :data='dataLeft' :count=0 style="width: max-content"></public-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
@@ -41,14 +46,14 @@
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" type="primary" @click="edit()">修改</el-button>
+              <el-button size="mini" type="primary" @click="edit(scope.row)">修改</el-button>
 
             </template>
           </el-table-column>
 
         </el-table>
         <div class="margin_10">
-          <el-button type="primary" @click="auth()">公众号授权</el-button>
+          <el-button type="primary" @click="auth()" :disabled="this.storeData.length === 0">公众号授权</el-button>
         </div>
         <el-dialog
           title="公众号"
@@ -56,18 +61,18 @@
           width="50%">
           <el-form ref="formRules" :model="form" label-width="100px">
             <el-form-item label="公众号:">
-              <el-input v-model="form.code"></el-input>
+              <el-input v-model="form.code" disabled></el-input>
             </el-form-item>
 
 
             <el-form-item label="修改授权:" prop="name">
-              <el-button type="primary">公众号授权</el-button>
+              <el-button type="primary" @click="auth()">公众号授权</el-button>
             </el-form-item>
 
 
             <div class="margin_t_10">
-              <el-button type="primary">提交</el-button>
-              <el-button>重置</el-button>
+              <!--<el-button type="primary">提交</el-button>-->
+              <!--<el-button>重置</el-button>-->
             </div>
           </el-form>
         </el-dialog>
@@ -84,11 +89,15 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
   import {getLeft,getArea} from '../../utility/communApi'
   import getApi from './publicManagement.service'
-
+  import publicTree from './publicTree'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    components: {
+      publicTree,
+    },
     data() {
       return {
         showAside: false,
@@ -102,68 +111,99 @@
         payValue: 2,
         storeName: '',
         storeData: [],
-        levelId: '',
         dataLeft: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
         },
         form: {
-          name: '',
           code: '',
-          tel: '',
-          status: '',
-          thirdPartyCoding: [
-            {value: '', value1: ''}
-          ],
         },
 
       }
     },
-    watch: {},
+    watch: {
+
+    },
     methods: {
+      ...mapActions(['setPublicLevelId']),
+      ...mapGetters(['getPublicLevelId']),
+      filterNode(value, data) {
+
+        // if (!value) return true;
+         return data.type !== value;
+      },
+
       auth(){
-        getApi.threeAuthorize(this.levelId).then((res)=>{
+        getApi.threeAuthorize(this.$localStorage.get_s('publicLevelId')).then((res)=>{
           console.log(res)
           window.location.href = res.data.data
         })
-
       },
       nodeClick(data, data1, data2) {
         console.log(data.levelname)
-        this.levelId = data.id;
+
+        this.setPublicLevelId({levelId:data.id});
         this.showResouce(data.id)
 
       },
-      edit() {
+      edit(row) {
+        this.form.code = row.nick_name;
         this.dialogVisible = true
       },
-
-
+      recur(data) {
+        data.forEach((map) => {
+          if (map.child) {
+            this.$set(map, "show", true);
+            this.$set(map, "selected", false);
+            this.recur(map.child)
+          }
+        })
+      },
+      recurSelected(data, levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          } else {
+            this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.recurSelected(map.child, levelId)
+          }
+        })
+      },
       showResouce(id){
         getApi.getGzhInfo(id).then((res)=>{
           console.log(res)
           if(res.data.errcode === 0){
             this.storeData = res.data.data
+
           }
         })
       }
 
     },
     created() {
-      this.showResouce(-1)
+      this.showResouce(this.$localStorage.get_s('publicLevelId'));
       getLeft().then((res) => {
         if(res.data.errcode === 0){
-          this.dataLeft = res.data.data
+          this.dataLeft = res.data.data;
+          this.recur(this.dataLeft);
+          this.recurSelected(this.dataLeft, this.$localStorage.get_s('publicLevelId'))
         }
-
       });
 
     },
     mounted() {
-
+      Hub.$on('showAdd', (e) => {
+        this.levelName = e.levelName;
+        this.$localStorage.set_s('publicLevelId',e.levelid);
+        this.showResouce(e.levelid);
+        this.recurSelected(this.dataLeft, e.levelid)
+      });
     },
     updated() {
+      //this.$refs.tree2.filter(5);
       let bodyWidth = document.querySelector('.content div').clientWidth;
       this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
       getScrollHeight().then((h) => {

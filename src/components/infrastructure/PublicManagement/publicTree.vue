@@ -17,7 +17,7 @@
   <div>
 
     <div v-for='(item,index) in data' style="line-height: 36px;">
-      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}">
+      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}" v-if="item.type < 5">
 
         <span :style="{display:(item.child && item.child.length !== 0)?'none':'inline-block'}"
               style="vertical-align: middle;width: 25px"></span>
@@ -48,7 +48,7 @@
 <script>
 
   import Hub from '../../utility/commun'
-   import getApi from './permissionManagement.service'
+
 
   export default {
     name: 'trees',

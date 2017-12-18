@@ -1,37 +1,22 @@
-import axios from 'axios'
+import {axios,get} from '../../utility/communApi'
 
-let getList =(params)=>{
-  return new  Promise((resolve,reject)=>{
-    axios.request({
-      url: 'index.php?',
-      method: 'get',
-      // headers: {'token': 'PT201512191013130'},
-      params
-    }).then((res) => {
+
+
+//获取账号列表
+let getAccountList = () => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.accountmanage.accountList");
+
+    formData.append("paymentMethod", '');
+    formData.append("paymentChannel", '');
+    formData.append("accountName", '');
+    formData.append("page", 1);
+    formData.append("pagesize", 1000);
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
-    });
+    })
   })
-}
+};
 
-let postTest =(formData)=>{
-  return new  Promise((resolve,reject)=>{
-
-    axios.request({
-    url: 'http://yk.com:80/posmanage/index.php?controller=user&action=login',
-    method: 'post',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    withCredentials: false,//true为携带 cookie 信息
-    data: formData,
-  }).then((res) => {
-    console.log(res)
-    resolve(res)
-  });
-
-
-})
-}
-
-
-
-
-export default {getList,postTest}
+export default {getAccountList}

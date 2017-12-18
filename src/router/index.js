@@ -286,7 +286,7 @@ export default new Router({
         },
         //权限管理/查看用户
         {
-          path: '/infrastructure/PermissionManagement/User',
+          path: '/infrastructure/PermissionManagement/User/:id/:levelId',
           meta: { auth: true },
           name: '基础设置/权限管理/查看用户',
           component: PermissionUserManagement

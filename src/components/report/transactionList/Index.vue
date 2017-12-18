@@ -22,22 +22,22 @@
               <div>门店</div>
               <el-select v-model="value" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in storeData"
+                  :key="item.id"
+                  :label="item.storeName"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
 
             <div class=" margin_r_10">
               <div>支付方式</div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="paymentId" placeholder="请选择支付方式">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in getWayInfo"
+                  :key="item.id"
+                  :label="item.memo"
+                  :value="item.id">
                 </el-option>
               </el-select>
 
@@ -45,24 +45,24 @@
 
             <div class=" margin_r_10">
               <div>支付通道</div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="paymentChannelId" placeholder="请选择通道列表">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in getChannelInfo"
+                  :key="item.id"
+                  :label="item.memo"
+                  :value="item.id">
                 </el-option>
               </el-select>
 
             </div>
             <div class=" margin_r_10">
               <div>账户</div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="value" placeholder="请选择账户">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in accountList"
+                  :key="item.id"
+                  :label="item.accountName"
+                  :value="item.id">
                 </el-option>
               </el-select>
 
@@ -139,9 +139,8 @@
       </el-table>
 
 
-    <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
-      <xo-pagination></xo-pagination>
+      <!--<xo-pagination></xo-pagination>-->
     </footer>
 
   </div>
@@ -150,7 +149,7 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './transactionList.service';
-
+  import {getWayInfo,getChannelInfo,getList} from '../../utility/communApi'
   export default {
     components: {
 
@@ -241,7 +240,13 @@
           payNo: '2',
           shopNo: '3'
         }],
-        dateSelected: []
+        dateSelected: [],
+        getWayInfo:[],
+        paymentId:'',
+        getChannelInfo:[],
+        paymentChannelId:'',
+        storeData: [],
+        accountList:[]
       }
     },
     computed: {
@@ -274,7 +279,7 @@
               });
             } else {
               //ok
-              console.log(new Date(this.dateSelected[0]), new Date(this.dateSelected[1]))
+              console.log(new Date(this.dateSelected[0]) ,new Date(this.dateSelected[1]))
             }
         }
 
@@ -285,16 +290,28 @@
       },
 
       getRadioDate(d) {
+
         this.dateSelected = d
       },
 
     },
-   async created() {
+    created() {
 
-      await getApi.getList({ 'action': 'store', 'controller': 'store', 'storeid': 1245, 'btype': 1 })
-        .then((res) => {
-        console.log(res)
-        })
+      getList().then((res)=>{
+        this.storeData = res.data.data.list
+      })
+
+      getWayInfo().then((res) => {
+        this.getWayInfo = res.data.data
+      })
+
+      getChannelInfo().then((res) => {
+        this.getChannelInfo = res.data.data
+      })
+
+      getApi.getAccountList().then((res)=> {
+        this.accountList = res.data.data.list
+      })
 
     },
     mounted() {

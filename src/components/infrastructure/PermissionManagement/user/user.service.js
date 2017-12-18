@@ -9,15 +9,41 @@ let getLevel = () => {
   })
 };
 
+//角色列表
+let getRoleList = () => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("name", "");
 
-//返回权限管理页面数据
+    formData.append("page", 1);
+    formData.append("pagesize", 1000);
 
-let getPowerList = (level_id,page) => {
+    axios.post(`index.php?controller=role&action=roleList&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+//获取用户组列表
+
+let getGroupList = (level_id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("level_id", level_id);
-    formData.append("page", page);
-    axios.post(`index.php?controller=power&action=resultData&token=${get('token')}`,formData).then((res)=>{
+    formData.append("page", 1);
+    formData.append("pagesize", 1000);
+    axios.post(`index.php?controller=power&action=getGroupList&token=${get('token')}`, formData).then((res) => {
+      resolve(res)
+    })
+  })
+};
+
+//用户组查看用户
+let getUserFromGroup = (group_id) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("group_id", group_id);
+    axios.post(`index.php?controller=power&action=getUserFromGroup&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -36,18 +62,7 @@ let delBatch = (company_id,id) => {
   })
 };
 
-//批量启动/关闭
-let settingBatch = (company_id,id) => {
-  return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("company_id", company_id);
-    formData.append("id", id);
 
-    axios.post(`index.php?controller=power&action=settingBatch&token=${get('token')}`,formData).then((res)=>{
-      resolve(res)
-    })
-  })
-};
 
 
 //查看账户拥有的权限
@@ -71,7 +86,7 @@ let editor = (formUser) => {
     formData.append("phone", formUser.phone);
     formData.append("group_id", formUser.group_id);
     formData.append("role_id", formUser.role_id);
-    formData.append("billHuman", formUser.billHuman);
+    formData.append("billHuman", window.JSON.stringify(formUser.billHuman) );
     formData.append("power_id", formUser.power_id);
     formData.append("status", formUser.status);
     axios.post(`index.php?controller=power&action=editor&token=${get('token')}`,formData).then((res)=>{
@@ -81,37 +96,30 @@ let editor = (formUser) => {
 };
 
 //新增账户
-let newlyAddAccount = (formUser) => {
+let newlyAddAccount = (formUser,level_id) => {
   return new Promise((resolve, reject) => {
+    console.log(formUser)
+    console.log(level_id)
+
     let formData = new FormData();
-    formData.append("id", formUser.id);
     formData.append("nickname", formUser.nickname);
     formData.append("phone", formUser.phone);
     formData.append("group_id", formUser.group_id);
-    formData.append("role_id", formUser.role_id);
-    formData.append("billHuman", formUser.billHuman);
+    formData.append("role_id", formUser.role_id.join(','));
+    formData.append("billHuman", window.JSON.stringify(formUser.billHuman) );
     formData.append("power_id", formUser.power_id);
     formData.append("status", formUser.status);
+    formData.append("level_id", level_id);
+
     axios.post(`index.php?controller=power&action=newlyAddAccount&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
 };
 
-//上传文件
-let updateXlsFile = (brandid,fileurl,over) => {
-  return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("brandid", brandid);
-    formData.append("fileurl", fileurl);
-    formData.append("over", over);
-    axios.post(`index.php?controller=stores&action=upload&token=${get('token')}`,formData).then((res)=>{
-      resolve(res)
-    })
-  })
-};
 
-export default {getLevel,getPowerList,delBatch,settingBatch,lookUser,editor,newlyAddAccount,updateXlsFile}
+
+export default {getLevel,getRoleList,getGroupList,getUserFromGroup,delBatch,lookUser,editor,newlyAddAccount}
 
 
 

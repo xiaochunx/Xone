@@ -16,7 +16,7 @@ export default{
   getLoadingStatus(state){
     return state.isLoading;
   },
-  getToken(state){
-    return state.token;
+  getPublicLevelId(state){
+    return state.publicLevelId;
   }
 }
