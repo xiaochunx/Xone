@@ -8,7 +8,8 @@ const state = {
   height: 0,
   navPath: [],
   isLoading: false,
-  publicLevelId:-1//公众号levelid
+  publicLevelId:-1,//公众号levelid
+  permissionLevelId:-1,//权限levelid
 };
 
 const mutations = {
@@ -23,6 +24,9 @@ const mutations = {
   },
   [types.PUBLICLEVELID](state, obj){
     state.publicLevelId = obj.levelId
+  },
+  [types.PERMISSIONLEVELID](state, obj){
+    state.permissionLevelId = obj.levelId
   }
 };
 

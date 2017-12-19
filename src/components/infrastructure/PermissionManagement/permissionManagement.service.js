@@ -65,11 +65,10 @@ let getGroupList = (p, level_id) => {
 
 
 //批量启动/关闭
-let settingBatch = (id, company_id,type) => {
+let settingBatch = (id,type) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("id", id);
-    formData.append("company_id", company_id);
     formData.append("type", type);
 
     axios.post(`index.php?controller=power&action=settingBatch&token=${get('token')}`, formData).then((res) => {
@@ -92,19 +91,37 @@ let lookUser = (id) => {
 };
 
 
-//新增账户
-let newlyAddAccount = (formUser) => {
+//根据组ID获取用户组信息
+let infoByGroupId = (group_id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append("id", formUser.id);
+    formData.append("group_id", group_id);
+
+    axios.post(`index.php?controller=power&action=infoByGroupId&token=${get('token')}`, formData).then((res) => {
+      resolve(res)
+    })
+  })
+};
+
+
+//新增账户
+let newlyAddAccount = (formUser,level_id) => {
+  return new Promise((resolve, reject) => {
+    let status;
+    if(formUser.status === true){
+      status = 1
+    }else {
+      status = 0
+    }
+    let formData = new FormData();
     formData.append("nickname", formUser.nickname);
     formData.append("phone", formUser.phone);
     formData.append("group_id", formUser.group_id);
-    formData.append("role_id", formUser.role_id);
-    formData.append("billHuman", formUser.billHuman);
-    formData.append("power_id", formUser.power_id);
-    formData.append("status", formUser.status);
-    axios.post(`index.php?controller=power&action=newlyAddAccount&token=${get('token')}`, formData).then((res) => {
+    formData.append("billHuman", window.JSON.stringify(formUser.billHuman) );
+    formData.append("status", status);
+    formData.append("level_id", level_id);
+
+    axios.post(`index.php?controller=power&action=newlyAddAccount&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })
@@ -130,6 +147,7 @@ export default {
   editorGroup,
   getGroupList,
   settingBatch,
+  infoByGroupId,
   lookUser,
   newlyAddAccount,
   updateXlsFile

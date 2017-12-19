@@ -19,28 +19,16 @@ let getAccountList = () => {
   })
 };
 
-//交易状态
-let putOrderStatus = () => {
-  return new Promise((resolve, reject) => {
-    axios.get(`index.php?controller=jichuapi&action=getCommon&token=${get('token')}&data=[["key","payStatusConfig"]]`).then((res)=>{
-      resolve(res)
-    })
-  })
-};
 
-let orderList = (start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1) => {
+
+let orderCount = (start_time,end_time,store_id,p,export1) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append("redirect", "x1.order.orderList");
+    formData.append("redirect", "x1.order.orderCount");
     formData.append("start_time", start_time);
     formData.append("end_time", end_time);
     formData.append("store_id", store_id);
-    formData.append("iway", iway);
-    formData.append("ichannel", ichannel);
-    formData.append("account", account);
-    formData.append("pay_status", pay_status);
-    formData.append("order_no", order_no);
-    formData.append("out_order_no", out_order_no);
+
     formData.append("pageCount", p.size);
     formData.append("pageNumber", p.page);
     formData.append("export", export1);
@@ -50,4 +38,4 @@ let orderList = (start_time,end_time,store_id,iway,ichannel,account,pay_status,o
   })
 };
 
-export default {getAccountList,putOrderStatus,orderList}
+export default {getAccountList,orderCount}

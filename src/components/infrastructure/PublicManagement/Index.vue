@@ -53,7 +53,7 @@
 
         </el-table>
         <div class="margin_10">
-          <el-button type="primary" @click="auth()" :disabled="this.storeData.length === 0">公众号授权</el-button>
+          <el-button type="primary" @click="auth()" :disabled="type !== 4">公众号授权</el-button>
         </div>
         <el-dialog
           title="公众号"
@@ -105,10 +105,7 @@
         tableHeight: 0,
         tableWidth: 0,
         navList: [{name: "基础设置", url: ''}, {name: "公众号管理", url: ''}],
-
         name: '',
-        department: '部门',
-        payValue: 2,
         storeName: '',
         storeData: [],
         dataLeft: [],
@@ -119,7 +116,7 @@
         form: {
           code: '',
         },
-
+        type:''
       }
     },
     watch: {
@@ -153,6 +150,9 @@
       },
       recur(data) {
         data.forEach((map) => {
+          if(map.id === this.$localStorage.get_s('publicLevelId')){
+            this.type = map.type
+          }
           if (map.child) {
             this.$set(map, "show", true);
             this.$set(map, "selected", false);
@@ -162,6 +162,9 @@
       },
       recurSelected(data, levelId) {
         data.forEach((map) => {
+
+
+
           if (map.id === levelId) {
             this.$set(map, "selected", true);
           } else {
@@ -197,6 +200,7 @@
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.levelName = e.levelName;
+        this.type = e.type;
         this.$localStorage.set_s('publicLevelId',e.levelid);
         this.showResouce(e.levelid);
         this.recurSelected(this.dataLeft, e.levelid)

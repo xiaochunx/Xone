@@ -12,6 +12,9 @@ export default {
   },
   setPublicLevelId({commit},obj){
     commit(types.PUBLICLEVELID,obj);
+  },
+  setPermissionLevelId({commit},obj){
+    commit(types.PERMISSIONLEVELID,obj);
   }
 
 }

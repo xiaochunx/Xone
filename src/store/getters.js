@@ -18,5 +18,8 @@ export default{
   },
   getPublicLevelId(state){
     return state.publicLevelId;
+  },
+  getPermissionLevelId(state){
+    return state.permissionLevelId;
   }
 }

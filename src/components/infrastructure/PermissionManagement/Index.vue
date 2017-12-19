@@ -10,7 +10,7 @@
           <div>
             {{levelName}}
             <el-button size="small" @click="addAccountGroup('添加用户组')">添加用户组</el-button>
-            <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
+            <!--<el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>-->
             <el-button size="small" @click="addAccount()">新增用户</el-button>
           </div>
         </div>
@@ -57,7 +57,6 @@
         <footer>
           <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
-
       </div>
     </div>
 
@@ -133,10 +132,92 @@
       </div>
     </el-dialog>
 
+    <!--新增用户-->
+
+    <el-dialog
+      title="新增用户"
+      @open="open2"
+      @close="dialogClose2"
+      :visible.sync="dialogVisible3"
+      width="50%">
+      <el-form ref="formRules2" :model="formUser" label-width="100px">
+
+        <el-form-item label="昵称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formUser.nickname" placeholder="请输入内容"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
+          <el-input v-model="formUser.phone" placeholder="请输入内容"></el-input>
+        </el-form-item>
+        <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
+          <el-form-item label="第三方编码" :key="domain.key">
+            <div>
+              <el-row>
+                <el-col>
+                  <div style="width:150px">
+                    <el-input v-model="domain.code1"></el-input>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
+          <div class="m-rank">
+            <div class="m-rank-child"></div>
+          </div>
+          <el-form-item label-width="0" :key="domain.key">
+            <div>
+              <el-row>
+                <el-col>
+                  <div style="width:150px">
+                    <el-input v-model="domain.code2"></el-input>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
+          <div class="flex_a" style="margin-bottom: 22px">
+            <div class="m-storeCode margin_l_10" @click="addDomain2()">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            </div>
+            <div v-if="(formUser.billHuman.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                 @click.prevent="removeDomain2(domain)">
+              <i class="fa fa-minus-circle" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+
+        <el-form-item label="所属用户组:">
+          <el-select v-model="formUser.group_id"  placeholder="请选择">
+            <el-option
+              v-for="item in selectGroupList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+
+        </el-form-item>
+
+        <el-form-item label="状态:">
+
+          <el-switch
+            v-model="formUser.status"
+            on-color="#13ce66"
+            off-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+
+        <div class="margin_t_10">
+          <el-button @click="dialogVisible3 = false">取消</el-button>
+          <el-button type="primary" @click="submitFrom2('formRules2')">确认</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
+
     <!--导入用户-->
     <el-dialog
       title="导入用户"
       :visible.sync="dialogVisible2"
+      @open="open2"
       @close="close2"
       width="50%" size="tiny">
       <div class="flex_f flex">
@@ -154,9 +235,9 @@
                           :rules="{type:'number',required: true, message: '请选择用户组', trigger: 'change'}">
               <el-select v-model="formSubmit.group_id" placeholder="请选择用户组">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in selectGroupList"
                   :key="item.id"
-                  :label="item.label"
+                  :label="item.name"
                   :value="item.id">
                 </el-option>
 
@@ -191,87 +272,6 @@
       </div>
     </el-dialog>
 
-
-    <!--新增用户-->
-
-    <el-dialog
-      title="新增用户"
-      @close="dialogClose2"
-      :visible.sync="dialogVisible3"
-      width="50%">
-      <el-form ref="formRules2" :model="formUser" label-width="100px">
-
-        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formUser.nickname" placeholder="请输入内容"></el-input>
-        </el-form-item>
-        <el-form-item label="手机:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
-          <el-input v-model="formUser.phone" placeholder="请输入内容"></el-input>
-        </el-form-item>
-        <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
-            <div>
-              <el-row>
-                <el-col>
-                  <div style="width:150px">
-                    <el-input v-model="domain.value"></el-input>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </el-form-item>
-          <div class="m-rank">
-            <div class="m-rank-child"></div>
-          </div>
-          <el-form-item label-width="0" :key="domain.key">
-            <div>
-              <el-row>
-                <el-col>
-                  <div style="width:150px">
-                    <el-input v-model="domain.value1"></el-input>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </el-form-item>
-          <div class="flex_a" style="margin-bottom: 22px">
-            <div class="m-storeCode margin_l_10" @click="addDomain2()">
-              <i class="fa fa-plus-circle" aria-hidden="true"></i>
-            </div>
-            <div v-if="(formUser.billHuman.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
-                 @click.prevent="removeDomain2(domain)">
-              <i class="fa fa-minus-circle" aria-hidden="true"></i>
-            </div>
-          </div>
-        </div>
-
-        <el-form-item label="所属用户组:">
-          <el-select v-model="formUser.group_id" multiple placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.label"
-              :value="item.id">
-            </el-option>
-          </el-select>
-
-        </el-form-item>
-
-        <el-form-item label="状态:">
-
-          <el-switch
-            v-model="formUser.status"
-            on-color="#13ce66"
-            off-color="#ff4949">
-          </el-switch>
-        </el-form-item>
-
-        <div class="margin_t_10">
-          <el-button @click="dialogVisible3 = false">取消</el-button>
-          <el-button type="primary" @click="submitFrom2('formRules2')">确认</el-button>
-        </div>
-      </el-form>
-    </el-dialog>
-
   </div>
 </template>
 
@@ -280,6 +280,7 @@
   import permissionTree from './permissionTree'
   import getApi from './permissionManagement.service'
   import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
 
   export default {
     components: {
@@ -299,7 +300,6 @@
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
         storeStatusValue: false,
         data5: [],
-        payValue: 2,
         storeName: '',
         groupList: [],
         dataLeft: [],
@@ -307,7 +307,6 @@
           children: 'child',
           label: 'levelname'
         },
-
         formUserGroup: {
           name: '',
           third_code: [
@@ -316,18 +315,9 @@
         },
         isOver: false,
 
-        isEdit: true,
-        value: "",
-        options: [{
-          id: 1,
-          label: '民生银行'
-        }, {
-          id: 2,
-          label: '易极付'
-        }],
-        levelName: '款易',
+        levelName: '',
         p: {page: 1, size: 20, total: 0},
-        levelId: -1,//左边树ID
+
         formUser: {
           nickname: '',
           phone: '',
@@ -338,27 +328,63 @@
           status: ''
         },
         groupName: '',
-        group_id: '',
         fileList: [],
         fileurl: '',
+        selectGroupList:[]
       }
     },
     watch: {},
     methods: {
+      ...mapActions(['setPermissionLevelId']),
+      ...mapGetters(['getPermissionLevelId']),
+      submitFrom2(formRules){
+        this.$refs[formRules].validate((valid) => {
+          if (valid) {
+
+            getApi.newlyAddAccount(this.formUser,this.getPermissionLevelId()).then((res)=>{
+              if(res.data.errcode === 0){
+                this.dialogVisible3 = false;
+                this.getGroupList(this.p = {page: 1, size: 20, total: 0},this.getPermissionLevelId());
+              }
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      open2(){
+        getApi.getGroupList({page: 1, size: 1000, total: 0},this.getPermissionLevelId()).then((res)=>{
+          this.selectGroupList = res.data.data.list
+        })
+      },
+      dialogClose2() {
+        this.formUser = {
+          nickname: '',
+          phone: '',
+          group_id: '',
+          billHuman: [
+            {value: '', value1: ''}
+          ],
+          status: ''
+        };
+        this.selectGroupList =[];
+          this.$refs['formRules2'].resetFields();
+      },
       submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             if (this.groupName === '添加用户组') {
-              getApi.newLyGroup(this.formUserGroup, this.levelId).then((res) => {
+              getApi.newLyGroup(this.formUserGroup, this.getPermissionLevelId()).then((res) => {
                 if (res.data.errcode === 0) {
-                  this.getGroupList(this.p = {page: 1, size: 20, total: 0},this.levelId);
+                  this.getGroupList(this.p = {page: 1, size: 20, total: 0},this.getPermissionLevelId());
                   this.dialogVisible = false
                 }
               })
             } else {
-              getApi.editorGroup(this.formUserGroup, this.levelId).then((res) => {
+              getApi.editorGroup(this.formUserGroup, this.getPermissionLevelId()).then((res) => {
                 if (res.data.errcode === 0) {
-                  this.getGroupList(this.p,this.levelId);
+                  this.getGroupList(this.p,this.getPermissionLevelId());
                   this.dialogVisible = false
                 }
               })
@@ -403,18 +429,18 @@
           type = "off"
         }
 
-        getApi.settingBatch(list.join(','), this.levelId,type).then((res) => {
+        getApi.settingBatch(list.join(','),type).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             this.$message('操作成功');
-            //this.getBsList(this.p,this.showAdd.levelid);
+            this.getGroupList(this.p,this.getPermissionLevelId());
             this.dialogVisible1 = false
 
           }
         })
       },
       goToUser(row) {
-        this.$router.push(`/infrastructure/PermissionManagement/User/${row.id}/${this.levelId}`)
+        this.$router.push(`/infrastructure/PermissionManagement/User/${row.id}/${this.getPermissionLevelId()}`)
       },
       dialogClose() {
         this.formUserGroup = {
@@ -425,18 +451,7 @@
         };
         this.$refs['formRules'].resetFields();
       },
-      dialogClose2() {
-        this.formUser = {
-          nickname: '',
-          phone: '',
-          group_id: '',
-          billHuman: [
-            {value: '', value1: ''}
-          ],
-          status: ''
-        };
-        this.$refs['formRules2'].resetFields();
-      },
+
       addAccountGroup(name) {
         this.groupName = name;
         this.dialogVisible = true
@@ -471,6 +486,7 @@
             } else {
               over = 1
             }
+
             // getApi.updateXlsFile(this.brandid,this.fileurl,over).then((res)=>{
             //   console.log(res)
             //   if(res.data.errcode === 0){
@@ -497,8 +513,12 @@
         this.$refs['formRules3'].resetFields();
       },
       editAccount(name,row) {
-        this.formUserGroup = row;
         this.groupName = name;
+        getApi.infoByGroupId(row.id).then((res)=>{
+          console.log(res)
+          this.formUserGroup = res.data.data[0];
+        });
+
         this.dialogVisible = true
       },
       batchAdd() {
@@ -545,7 +565,7 @@
                 type: 'info',
                 message: '删除成功'
               });
-              this.getGroupList(this.p,this.levelId)
+              this.getGroupList(this.p,this.getPermissionLevelId())
             } else {
               this.$message({
                 type: 'info',
@@ -561,6 +581,9 @@
 
       recur(data) {
         data.forEach((map) => {
+          if(map.id === this.getPermissionLevelId()){
+            this.levelName = map.levelname
+          }
           if (map.child) {
             this.$set(map, "show", true);
             this.$set(map, "selected", false);
@@ -578,7 +601,7 @@
             // })
             console.log(this.data5)
             this.recur(this.data5)
-            this.recurSelected(this.data5, -1)
+            this.recurSelected(this.data5, this.getPermissionLevelId())
           } else {
             this.$alert('请重新登录', '超时', {
               confirmButtonText: '确定',
@@ -606,46 +629,44 @@
         getApi.getGroupList(p, level_id).then((res) => {
 
           console.log(res)
-          res.data.data.forEach((item)=>{
-            item.select = false
-            if(item.status === 1){
-              item.status = "开启"
-            } else {
-              item.status = "关闭"
+          if(res.data.errcode === 0){
+            res.data.data.list.forEach((item)=>{
+              item.select = false;
+              if(item.status === 1){
+                item.status = "开启"
+              } else {
+                item.status = "关闭"
 
-            }
-
-          });
-          this.groupList = res.data.data
-
-
+              }
+            });
+            this.groupList = res.data.data.list;
+            this.p.total = res.data.data.count
+          }
         })
       },
 
 
       getPage(page) {
         this.p.page = page;
-        this.getGroupList(this.p,this.levelId)
+        this.getGroupList(this.p,this.getPermissionLevelId())
       },
       getPageSize(size) {
         this.p.size = size;
-        this.getGroupList(this.p,this.levelId)
+        this.getGroupList(this.p,this.getPermissionLevelId())
       },
     },
     created() {
       this.showLevel()
-      this.getGroupList(this.p,this.levelId)
+      this.getGroupList(this.p,this.getPermissionLevelId())
 
 
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.levelName = e.levelName;
-        this.levelId = e.levelid;
+        this.setPermissionLevelId({levelId:e.levelid});
 
-
-        this.getGroupList(this.p,this.levelId)
-
+        this.getGroupList(this.p,e.levelid);
         this.recurSelected(this.data5, e.levelid)
       });
     },

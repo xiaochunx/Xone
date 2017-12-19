@@ -21,9 +21,10 @@ Vue.prototype.$http = Axios;
 // 'http://bs.com'                // 本地环境
 
 // let url = 'http://test0.kuan1.cn';
-let url = 'http://x0test.kuan1.cn';
+// let url = 'http://x0test.kuan1.cn';
 // let url = 'http://x.kuan1.cn';
 // let url = 'http://bs.com';
+let url = "http://laowang.com";
 
 Axios.defaults.baseURL = `${url}/kybase/`;
 //图片上传地址
@@ -51,7 +52,23 @@ Object.keys(utility).forEach(function (item) {
   Vue.component(`${item}`, utility[item])
 });
 
-
+Date.prototype.format = function(fmt) {
+  var o = {
+    "M+" : this.getMonth()+1,                 //月份
+    "d+" : this.getDate(),                    //日
+    "h+" : this.getHours(),                   //小时
+    "m+" : this.getMinutes(),                 //分
+    "s+" : this.getSeconds(),                 //秒
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度
+    "S"  : this.getMilliseconds()             //毫秒
+  };
+  if(/(y+)/.test(fmt))
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+  for(var k in o)
+    if(new RegExp("("+ k +")").test(fmt))
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length===1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+  return fmt;
+};
 
 router.beforeEach(({ meta, path }, from, next) => {
   const { auth = true } = meta;
