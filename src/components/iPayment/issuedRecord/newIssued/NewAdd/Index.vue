@@ -9,11 +9,13 @@
           <el-col :span="24" style="border-bottom: 1px solid gainsboro">
             <h3 style="margin-bottom: 10px;">添加门店</h3>
           </el-col>
+
+
+
           <el-form ref="form" :model="form" label-width="0px">
             <el-col :span="24" class="cell">
               <el-col :span="24">
                 <el-form-item>
-
 
                   <div class="flex_a">
                     <el-select :class="{isSelected:form.provinceClass === true}" v-model="form.province"
@@ -25,6 +27,7 @@
                         :value="item.name">
                       </el-option>
                     </el-select>
+
                     <div class="margin_l_10">
                       <el-select :class="{isSelected:form.cityClass === true}" v-model="form.city"
                                  @change="myChange(form,'city','cityClass','isCity')" placeholder="请选择市">
@@ -36,6 +39,7 @@
                         </el-option>
                       </el-select>
                     </div>
+
                     <div class="margin_l_10">
                       <el-select :class="{isSelected:form.areaClass === true}" v-model="form.area"
                                  @change="myChange(form,'area','areaClass')" placeholder="请选择区">
@@ -106,6 +110,9 @@
               </el-col>
             </el-col>
           </el-form>
+
+
+
           <el-col :span="24">
             <el-col :span="12" class="flex-jc">
               <el-button>取消</el-button>

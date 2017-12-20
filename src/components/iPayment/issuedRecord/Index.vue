@@ -91,7 +91,6 @@
           >
             <template slot-scope="scope">
 
-
               <el-tag
                 :type="scope.row.statusCode === 1 ? 'primary' : 'danger'"
                 close-transition>{{scope.row.status}}
@@ -101,7 +100,6 @@
 
             </template>
           </el-table-column>
-
 
           <el-table-column
             label="操作">
@@ -115,13 +113,12 @@
           title="下发记录详情"
           :visible.sync="dialogVisible"
           size="small"
-          :before-close="handleClose">
-
+          :before-close="handleClose"
+        >
           <div>操作员: {{checkData.operator}}</div>
           <div>添加时间: {{checkData.addTime}}</div>
           <div>执行时间: {{checkData.doTime}}</div>
           <div>状态: {{checkData.status}}</div>
-
           <div>下发账户</div>
           <el-table
             style="width: 100%"
@@ -224,7 +221,6 @@
 
 
           <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
   </span>
         </el-dialog>
@@ -282,7 +278,7 @@
       handleClose(done) {
         done();
       },
-      search(){
+      search() {
         this.api();
       },
       examine(scope) {
@@ -314,7 +310,7 @@
         });
 
       },
-      checkApi(value){
+      checkApi(value) {
         var param = {
           redirect: 'x1.accountmanage.accountUseLogInfo',
           id: value

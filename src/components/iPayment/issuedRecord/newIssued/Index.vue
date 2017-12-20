@@ -9,116 +9,160 @@
           <el-col :span="24" style="border-bottom: 1px solid gainsboro">
             <h3 style="margin-bottom: 10px;">添加门店</h3>
           </el-col>
-          <el-form ref="form" :model="form" label-width="120px">
+          <el-form ref="ruleForm" :model="form" label-width="120px" :rules="rules">
 
             <!-- 账户 -->
-            <el-col :span="24">
-              <el-form-item v-for="(domain, index) in form.account"
-                            :label="'账户 ' + index + ':'"
-                            :key="domain.key"
-                            class="cell"
-                            :prop="'account.' + index + '.value'"
-              >
-                <el-col :span="24">
-                  <el-col :span="6">
-                    <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="getStore(index,0)">
-                      <el-option
-                        v-for="item in domain.options1"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+            <el-col :span="24" v-for="(domain, index) in form.account" :key="index">
+              <el-col :span="10">
+                <el-form-item label="账号"
+                              :key="domain.key"
+                              class="cell"
+                              :prop="'account.' + index + '.paymentMethod'"
+                              :rules="{ required: true, message: '支付方式不能为空',type: 'number', trigger: 'blur'}"
+                >
 
-                  <el-col :span="6">
-                    <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,0)">
-                      <el-option
-                        v-for="item in domain.options2"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="getStore(index,0)">
+                    <el-option
+                      v-for="item in domain.options1"
+                      :key="item.id"
+                      :label="item.memo"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
 
-                  <el-col :span="6">
-                    <el-select v-model="domain.accountId" placeholder="账户名">
-                      <el-option
-                        v-for="item in domain.options3"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+                </el-form-item>
+              </el-col>
 
-                  <div class="flex_sc">
-                    <div class="m-storeCode margin_l_10" @click="addDomain('account')">
-                      <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                    </div>
-                    <div v-if="(form.account.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
-                         @click.prevent="removeDomain(domain,'account')">
-                      <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                    </div>
-                  </div>
-                </el-col>
-              </el-form-item>
+              <el-col :span="1"></el-col>
+
+              <el-col :span="6">
+                <el-form-item :key="domain.key"
+                              label-width="0"
+                              class="cell"
+                              :prop="'account.' + index + '.paymentChannel'"
+                              :rules="{required: true, message: '支付通道不能为空', trigger: 'blur',type: 'number'}"
+                >
+                  <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,0)">
+                    <el-option
+                      v-for="item in domain.options2"
+                      :key="item.id"
+                      :label="item.memo"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="1"></el-col>
+
+              <el-col :span="6">
+                <el-form-item :key="domain.key"
+                              label-width="0"
+                              class="cell"
+                              :prop="'account.' + index + '.accountId'"
+                              :rules="{required: true, message: '账户名不能为空', trigger: 'change', type: 'number'}"
+                >
+                  <el-select v-model="domain.accountId" placeholder="账户名">
+                    <el-option
+                      v-for="item in domain.options3"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
+              <div class="flex" style="height: 78px">
+                <div class="m-storeCode margin_l_10" @click="addDomain('account')">
+                  <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                </div>
+                <div v-if="(form.account.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                     @click.prevent="removeDomain(domain,'account')">
+                  <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                </div>
+              </div>
             </el-col>
+
 
             <!-- 备用账户 -->
-            <el-col :span="24">
-              <el-form-item v-for="(domain, index) in form.reserveAcc"
-                            :label="'备用账户 ' + index + ':'"
-                            :key="domain.key"
-                            :prop="'reserveAcc.' + index + '.value'"
-              >
-                <el-col :span="24">
-                  <el-col :span="6">
-                    <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="getStore(index,1)">
-                      <el-option
-                        v-for="item in domain.options1"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+            <el-col :span="24" v-for="(domain, index) in form.reserveAcc" :key="index + 'value'">
 
-                  <el-col :span="6">
-                    <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,1)">
-                      <el-option
-                        v-for="item in domain.options2"
-                        :key="item.id"
-                        :label="item.memo"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-col>
 
-                  <el-col :span="6">
-                    <el-select v-model="domain.accountId" placeholder="账户名">
-                      <el-option
-                        v-for="item in domain.options3"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-col>
+              <el-col :span="10">
+                <el-form-item :label="'备用账户 ' + index + ':'"
+                              :key="domain.key"
+                              :prop="'reserveAcc.' + index + '.value'"
+                              class="cell"
+                >
 
-                  <div class="flex_sc">
-                    <div class="m-storeCode margin_l_10" @click="addDomain('reserveAcc')">
-                      <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                    </div>
-                    <div v-if="(form.reserveAcc.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
-                         @click.prevent="removeDomain(domain,'reserveAcc')">
-                      <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                    </div>
-                  </div>
-                </el-col>
-              </el-form-item>
+                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="getStore(index,1)">
+                    <el-option
+                      v-for="item in domain.options1"
+                      :key="item.id"
+                      :label="item.memo"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="1"></el-col>
+
+
+              <el-col :span="6">
+                <el-form-item :key="domain.key"
+                              label-width="0"
+                              class="cell"
+                              :prop="'reserveAcc.' + index + '.value2'"
+                >
+                  <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,1)">
+                    <el-option
+                      v-for="item in domain.options2"
+                      :key="item.id"
+                      :label="item.memo"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+
+                </el-form-item>
+              </el-col>
+
+
+              <el-col :span="1"></el-col>
+
+
+              <el-col :span="6">
+                <el-form-item :key="domain.key"
+                              label-width="0"
+                              class="cell"
+                              :prop="'reserveAcc.' + index + '.value3'"
+                >
+                  <el-select v-model="domain.accountId" placeholder="账户名">
+                    <el-option
+                      v-for="item in domain.options3"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+
+                </el-form-item>
+              </el-col>
+
+
+              <div class="flex" style="height: 78px">
+                <div class="m-storeCode margin_l_10" @click="addDomain('reserveAcc')">
+                  <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                </div>
+                <div v-if="(form.reserveAcc.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                     @click.prevent="removeDomain(domain,'reserveAcc')">
+                  <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                </div>
+              </div>
             </el-col>
+
 
             <!-- 选择门店 -->
             <el-col :span="24">
@@ -199,70 +243,89 @@
             </el-col>
 
             <!-- 下发规则 -->
-            <!--<el-col :span="24">
-            <el-form-item label="下发规则:">
-
-            <el-col :span="6">
-            <el-radio class="radio" v-model="form.rules" label="1">替换</el-radio>
-            <el-popover
-            ref="popover1"
-            placement="top-start"
-            title="标题"
-            width="200"
-            trigger="hover">
-            <p>sjdlajflk</p>
-            </el-popover>
-            <el-button v-popover:popover1 style="border: none;position: relative" size="small"><i
-            class="fa fa-question-circle-o icon-style"></i></el-button>
-            </el-col>
-
-            <el-col :span="6">
-            <el-radio class="radio" v-model="form.rules" label="2">更新</el-radio>
-            <el-popover
-            ref="popover2"
-            placement="top-start"
-            title="以支付方式为对比依据，例如："
-            width="200"
-            trigger="hover">
-            <p>1、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
-            <p>2、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
-            <p>3、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
-            </el-popover>
-            <el-button v-popover:popover2 style="border: none;position: relative" size="small"><i
-            class="fa fa-question-circle-o icon-style"></i></el-button>
-            </el-col>
-            </el-form-item>
-            </el-col>
-
-            &lt;!&ndash; 执行时间 &ndash;&gt;
             <el-col :span="24">
-            <el-form-item label="执行时间">
-            <el-radio class="radio" v-model="form.runTime" label="1">立即执行</el-radio>
-            <el-radio class="radio" v-model="form.runTime" label="2">定时执行</el-radio>
-            </el-form-item>
-            <el-form-item v-if="form.runTime == '2'">
-            <el-col :span="24">
-            <el-col :span="7">
-            <div class="block">
-            <el-date-picker
-            v-model="form.runTimeValue"
-            type="datetime"
-            placeholder="选择日期时间">
-            </el-date-picker>
-            </div>
+              <el-form-item label="下发规则:">
+
+                <el-col :span="6">
+                  <el-radio class="radio" v-model="form.rules" label="1">替换</el-radio>
+                  <el-popover
+                    ref="popover1"
+                    placement="top-start"
+                    title="替换:"
+                    width="200"
+                    trigger="hover">
+                    <p>指: 替换原有的</p>
+                  </el-popover>
+                  <el-button v-popover:popover1 style="border: none;position: relative" size="small"><i
+                    class="fa fa-question-circle-o icon-style"></i></el-button>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-radio class="radio" v-model="form.rules" label="2">更新</el-radio>
+                  <el-popover
+                    ref="popover2"
+                    placement="top-start"
+                    title="更新:"
+                    width="200"
+                    trigger="hover">
+                    <p>1、若下发账户和原来的配置均有支付宝，则用新账户替换原有的账户；</p>
+                    <p>2、若下发账户中有支付宝，原来的配置无支付宝，则新增该账户；</p>
+                    <p>3、若下发账户中无支付宝，原来的配置有支付宝，则保留原有的账户；</p>
+                  </el-popover>
+                  <el-button v-popover:popover2 style="border: none;position: relative" size="small"><i
+                    class="fa fa-question-circle-o icon-style"></i></el-button>
+                </el-col>
+              </el-form-item>
+
             </el-col>
 
-            <el-col :span="10">
-            <el-card>
-            若执行失败，则在
-            <el-input v-model="form.delayTime" placeholder="请输入执行的时间"></el-input>
-            分钟后重新发起执行
-            (为空则不发起）
-            </el-card>
+            <!-- 是否停用 -->
+            <el-col :span="24">
+              <el-form-item label="是否停用:">
+                <el-checkbox v-model="form.checked">停用</el-checkbox>
+                <el-popover
+                  ref="popover3"
+                  placement="top-start"
+                  title="停用:"
+                  width="200"
+                  trigger="hover">
+                  <p>指：停用选择的账号的支付方式／t通道</p>
+                </el-popover>
+                <el-button v-popover:popover3 style="border: none;position: relative" size="small"><i
+                  class="fa fa-question-circle-o icon-style"></i></el-button>
+              </el-form-item>
+
             </el-col>
+
+            <!-- 执行时间 -->
+            <el-col :span="24">
+              <el-form-item label="执行时间">
+                <el-radio class="radio" v-model="form.runTime" label="1">立即执行</el-radio>
+                <el-radio class="radio" v-model="form.runTime" label="2">定时执行</el-radio>
+              </el-form-item>
+              <el-form-item v-if="form.runTime == '2'">
+                <el-col :span="24">
+                  <el-col :span="7">
+                    <div class="block">
+                      <el-date-picker
+                        v-model="form.runTimeValue"
+                        type="datetime"
+                        placeholder="选择日期时间">
+                      </el-date-picker>
+                    </div>
+                  </el-col>
+
+                  <el-col :span="10">
+                    <el-card>
+                      若执行失败，则在
+                      <el-input v-model="form.delayTime" placeholder="请输入执行的时间"></el-input>
+                      分钟后重新发起执行
+                      (为空则不发起）
+                    </el-card>
+                  </el-col>
+                </el-col>
+              </el-form-item>
             </el-col>
-            </el-form-item>
-            </el-col>-->
 
           </el-form>
           <el-col :span="24">
@@ -272,7 +335,7 @@
               </router-link>
             </el-col>
             <el-col :span="12" class="flex-jc">
-              <el-button type="primary" @click="submitForm('form')">确定</el-button>
+              <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
             </el-col>
           </el-col>
         </el-row>
@@ -290,36 +353,9 @@
     data() {
       return {
         form: {
-          data: ["ssss"], // 已选门店key
-          data2: [
-            {
-              key: 10,
-              label: '门店组1',
-            },
-            {
-              key: 2,
-              label: '门店组2',
-            },
-            {
-              key: 3,
-              label: '门店组3',
-            }],
-          options: [{
-            value: '选项1',
-            label: '黄金糕'
-          }, {
-            value: '选项2',
-            label: '双皮奶'
-          }, {
-            value: '选项3',
-            label: '蚵仔煎'
-          }, {
-            value: '选项4',
-            label: '龙须面'
-          }, {
-            value: '选项5',
-            label: '北京烤鸭'
-          }],
+          data: [], // 已选门店key
+          data2: [],
+          options: [],
           value: '',
           storeInfo: '',
           shop: '1',
@@ -327,12 +363,7 @@
           runTime: '1',
           runTimeValue: '',
           delayTime: '',
-          store: [
-            {label: '一级 1', id: "ssss", children: [{label: '二级 2', id: 11}]},
-            {label: '一级 2', id: 1},
-            {label: '一级 3', id: 3},
-            {label: '一级 4', id: 4},
-          ],
+          store: [],
           account: [{
             paymentMethod: '',
             paymentChannel: '',
@@ -349,6 +380,7 @@
             options2: [],
             options3: [],
           }],
+          checked: true
         },
         height: 0,
         payOptions: [],       // 支付方式选项
@@ -364,6 +396,7 @@
         province: '',
         storeName: '',
         tag: '',
+        rules: {}
       }
     },
     props: {
@@ -391,6 +424,10 @@
           this.form.reserveAcc.splice(index, 1)
         }
       },
+      /**
+       * 添加账户与备用账户
+       * @param status
+       */
       addDomain(status) {
         if (status == 'reserveAcc') {
           this.form.reserveAcc.push({
@@ -580,17 +617,28 @@
             }
           }
         }
+
+
         var params = {
           redirect: 'x1.accountmanage.saveAccountUse',
           account: account,
           reserveAcc: reserveAcc,
           shop: this.form.shop,                  // 下发门店
           selectStore: selectStore,              // 选中门店id
-          rules: 2,
-          runTime: 1,
-          runTimeValue: '',
-          delayTime: '',
+          rules: this.form.rules,
+          runTime: this.form.runTime,
         };
+
+        if (this.form.runTime == '2'){
+           params.runTimeValue = this.form.runTimeValue;
+           params.delayTime = this.form.delayTime;
+        }
+
+        if (this.form.checked){
+           params.isStop = 1;
+        }else {
+          params.isStop = 0;
+        }
 
         console.log(params);
 

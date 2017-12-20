@@ -8,7 +8,8 @@
     </el-form-item>
 
     <div v-for="(domain, index) in ruleForm.domains" class="flex_r">
-      <el-form-item label="第三方编码" :key="domain.key" :prop="'domains.' + index + '.code1'"
+      <el-form-item label="第三方编码"
+                    :key="domain.key" :prop="'domains.' + index + '.code1'"
                     :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
         <div>
           <el-row>
@@ -23,7 +24,9 @@
       <el-col :span="1" style="text-align: center;line-height: 36px;">
         -
       </el-col>
-      <el-form-item label-width="0" :key="domain.key" :prop="'domains.' + index + '.code2'"
+      <el-form-item label-width="0"
+                    :key="domain.key"
+                    :prop="'domains.' + index + '.code2'"
                     :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
         <div>
           <el-row>
