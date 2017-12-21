@@ -36,6 +36,7 @@
         <el-table
           :data="tableData"
           :height="height"
+          v-loading.body="loading"
           border
           style="width: 100%">
           <el-table-column
@@ -243,6 +244,7 @@
     data() {
       return {
         p: {page: 1, size: 10, total: 0},
+        loading: true,
         form: {
           options: [],
           status: ''
@@ -305,6 +307,8 @@
             this.p.total = res.data.count;
             this.tableData = res.data.list;
           }
+
+          this.loading = false;
         }).catch((err) => {
           console.log(err);
         });

@@ -165,41 +165,9 @@
         p: {page:1, size:10, total:0},
         ruleForm: {
           payMethod: '', // 支付方式
-          payOptions: [{
-            value: '选项1',
-            label: '黄金糕'
-          }, {
-            value: '选项2',
-            label: '双皮奶'
-          }, {
-            value: '选项3',
-            label: '蚵仔煎'
-          }, {
-            value: '选项4',
-            label: '龙须面'
-          }, {
-            value: '选项5',
-            label: '北京烤鸭'
-          }
-          ],  // 支付方式
+          payOptions: [],  // 支付方式
           Payment: '', // 支付通道
-          paymentOptions: [{
-            value: '选项1',
-            label: '黄金糕'
-          }, {
-            value: '选项2',
-            label: '双皮奶'
-          }, {
-            value: '选项3',
-            label: '蚵仔煎'
-          }, {
-            value: '选项4',
-            label: '龙须面'
-          }, {
-            value: '选项5',
-            label: '北京烤鸭'
-          }
-          ],  // 支付通道
+          paymentOptions: [],  // 支付通道
           userName: ''  // 用户名
         },
         tableData: [],
@@ -226,42 +194,24 @@
         console.log(index, row);
       },
       handleDelete(index, row) {
-        const h = this.$createElement;
-        this.$msgbox({
-          title: '消息',
-          message: "此操作将永久删除该文件, 是否继续?",
-          showCancelButton: true,
+
+        this.$confirm('确认删除?', '提示', {
           confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-              instance.confirmButtonLoading = true;
-              instance.confirmButtonText = '执行中...';
+          type: 'warning',
+        }).then(() => {
+          var params = {
+            redirect: 'x1.accountmanage.delAccount',
+            id: row
+          };
 
-              var params = {
-                redirect: 'x1.accountmanage.delAccount',
-                id: row
-              };
-
-              oneTwoApi(params).then((res) => {
-                if (res.errcode == 0){
-                  done();
-                  instance.confirmButtonLoading = false;
-                  this.api();
-                }
-              }).catch((err) => {
-                instance.confirmButtonLoading = false;
-                console.log(err);
-              })
-
-            } else {
-              done();
+          oneTwoApi(params).then((res) => {
+            if (res.errcode == 0){
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.api();
             }
-          }
-        }).then(action => {
-          this.$message({
-            type: 'success',
-            message: "删除成功"
           });
         });
       },
