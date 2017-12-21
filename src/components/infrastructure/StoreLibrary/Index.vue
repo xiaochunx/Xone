@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  v-show="getTreeArr['列表']">
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -7,9 +7,9 @@
 
       <div class="flex_es">
         <div>
-          <el-button size="small" @click="batchAdd()" :disabled="!showAdd.showAdd">批量新增</el-button>
-          <el-button size="small" @click="delSelected()">批量删除</el-button>
-          <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
+          <el-button size="small" @click="batchAdd()" :disabled="!getShowStoreTree().showAdd" v-show="getTreeArr['批量新增']">批量新增</el-button>
+          <el-button size="small" @click="delSelected()" v-show="getTreeArr['删除']">批量删除</el-button>
+          <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>
         </div>
         <div class="flex_a">
           <div class="margin_r_10">
@@ -22,7 +22,7 @@
     </div>
 
     <div class="flex_r">
-      <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
+      <div ref="tree" style="min-width: 200px;overflow: auto;" :style="{height:tableHeight + 'px'}">
         <!--<el-tree-->
         <!--:data="data5"-->
         <!--:props="defaultProps"-->
@@ -32,11 +32,11 @@
         <!--:render-content="renderContent">-->
         <!--</el-tree>-->
 
-        <tree :data='data5' :count=0 style="width: max-content"></tree>
+        <tree :data='getStoreTreeList()' :count=0 style="width: max-content;"></tree>
 
       </div>
 
-      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10 width_100" >
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                            width="100">
@@ -87,15 +87,15 @@
                   </div>
 
                   <div class="flex_r margin_t_10">
-                    <el-button type="primary" @click="log(showAsideObj)">日志</el-button>
+                    <el-button type="primary" @click="log(showAsideObj)"  v-show="getTreeArr['日志']">日志</el-button>
 
                   </div>
                 </div>
               </el-popover>
 
-              <el-button size="small" type="primary" v-popover:popover4>查看</el-button>
-              <el-button size="small" @click.stop="edit(scope.row)">编辑</el-button>
-              <el-button size="small" type="danger" @click.stop="del(scope.row)">删除</el-button>
+              <el-button size="small" type="primary" v-popover:popover4 >查看</el-button>
+              <el-button size="small" @click.stop="edit(scope.row)" v-show="getTreeArr['编辑']">编辑</el-button>
+              <el-button size="small" type="danger" @click.stop="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
               <!--<el-button size="small" type="primary">上传资料</el-button>-->
             </template>
           </el-table-column>
@@ -356,13 +356,18 @@
   import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
 
   import Hub from '../../utility/commun'
-  import {getLeft,getArea} from '../../utility/communApi'
+  import {getLeft,getArr,getArea} from '../../utility/communApi'
   import tree from './tree.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './storeLibrary.service'
   import ElCheckbox from "../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
-
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
       ElCheckbox,
       ElInput,
@@ -379,14 +384,12 @@
         dialogVisible3:false,
         dialogVisible4:false,//导入文件窗口
         tableHeight: 0,
-        tableWidth: 0,
         navList: [{name: "门店库", url: ''}],
         brandid:'',
         storeGroup: 1,
         payValue: 2,
         searchName: '',
         storeData: [],
-        data5: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
@@ -394,18 +397,17 @@
         showAsideObj: {},//侧滑内容
         formEdit: {},//编辑弹窗
         p: {page: 1, size: 20, total: 0},
-        showAdd: {levelid: -1, type: '', showAdd: false},
         number: 1,
         logList:{},
         dataLeft:[],
         fileList: [],
         fileurl:''
-
       }
     },
     watch: {},
     methods: {
-
+      ...mapActions(['setStoreTreeList','setShowStoreTree','setTreeArr']),
+      ...mapGetters(['getStoreTreeList','getShowStoreTree']),
       open4(){
       },
       close4(){
@@ -430,13 +432,10 @@
         }
 
         getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
-          console.log(res)
           if(res.data.errcode === 0){
             this.$message('操作成功');
-            this.getBsList(this.p,this.showAdd.levelid);
+            this.getBsList(this.p,this.getShowStoreTree().levelid);
             this.dialogVisible1 = false
-
-
 
           }
         })
@@ -460,9 +459,6 @@
         this.fileList = fileList.slice(-1);
       },
       handleAvatarSuccessXls(res, file) {
-        console.log(res)
-        console.log(file)
-
         this.fileurl = file.response.data.file_url
 
       },
@@ -489,7 +485,7 @@
           over = 1
         }
         getApi.updateXlsFile(this.brandid,this.fileurl,over).then((res)=>{
-          console.log(res)
+
           if(res.data.errcode === 0){
             this.$message({
               type: 'info',
@@ -502,7 +498,7 @@
 
       },
       nodeClick(data, data1, data2) {
-        console.log(data.levelname)
+
         this.levelId = data.id;
 
         this.brandid = data.id;
@@ -510,7 +506,6 @@
       },
       importXls(){
         getLeft().then((res) => {
-          console.log(res)
           if(res.data.errcode === 0){
             this.dataLeft = res.data.data;
             this.dialogVisible4 = true
@@ -519,17 +514,15 @@
         });
       },
       search(){
-        console.log(this.showAdd.levelid)
+
         if(this.searchName === ''){
-          this.getBsList(this.p = {page: 1, size: 20, total: 0},this.showAdd.levelid)
+          this.getBsList(this.p = {page: 1, size: 20, total: 0},this.getShowStoreTree().levelid)
         }else {
-          this.getBsList(this.p = {page: 1, size: 20, total: 0},this.showAdd.levelid,this.searchName)
+          this.getBsList(this.p = {page: 1, size: 20, total: 0},this.getShowStoreTree().levelid,this.searchName)
         }
       },
       log(data){
-        console.log(data)
         getApi.log(data.id).then((res)=>{
-          console.log(res)
           this.dialogVisible3 = true;
           this.logList = res.data.data
         })
@@ -552,13 +545,12 @@
             type: 'warning'
           }).then(() => {
             getApi.delBsOne(list.join(",")).then((res)=>{
-              console.log(res)
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
                   message: '删除成功'
                 });
-                this.getBsList(this.p,this.showAdd.levelid);
+                this.getBsList(this.p,this.getShowStoreTree().levelid);
               }
             })
           }).catch(() => {
@@ -571,11 +563,9 @@
       submitFrom(formRules,formEdit){
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            console.log(formEdit)
             getApi.updateBsOne(formEdit).then((res)=>{
-              console.log(res)
               if(res.data.errcode === 0){
-                this.getBsList(this.p,this.showAdd.levelid);
+                this.getBsList(this.p,this.getShowStoreTree().levelid);
                 this.dialogVisible = false
                 this.dialogVisible1 = false
               }
@@ -590,29 +580,26 @@
         if(this.number < 1){
           this.$message('需要最少一家门店');
         }else {
-          this.$router.push({path: `/storeManage/storeList/newAddStore/${this.number}/${this.showAdd.levelid}/${this.showAdd.type}`})
+          this.$router.push({path: `/storeManage/storeList/newAddStore/${this.number}/${this.getShowStoreTree().levelid}/${this.getShowStoreTree().type}`})
         }
       },
       getPage(page) {
         this.p.page = page;
-        this.getBsList(this.p,this.showAdd.levelid,this.searchName);
+        this.getBsList(this.p,this.getShowStoreTree().levelid,this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.getBsList(this.p,this.showAdd.levelid,this.searchName);
+        this.getBsList(this.p,this.getShowStoreTree().levelid,this.searchName);
       },
 
      async show(row) {
 
-        console.log(row)
-      let province,city,area;
+      let province = '',city = '',area = '';
       await  getArea('').then((res) => {
-        console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.forEach((item)=>{
               if(item.id === row.provinceid){
                 province = item.address
-                console.log(province)
               }
             })
           } else {
@@ -642,7 +629,8 @@
         this.showAsideObj = {
           storeName: row.storename,
           storeCode: row.storecodeid,
-          address:`${province} ${city} ${area}`,tel:row.tel,
+          address:`${province} ${city} ${area} ${row.address}`,
+          tel:row.tel,
           storeCodes:row.storecodes,
           levelname:row.levelname,
           id:row.id
@@ -711,7 +699,7 @@
                   change: this.handleCheckAll,
 
                   input: (event) => {
-                    console.log(event)
+
                   }
                 }
               }, ['序号']
@@ -742,9 +730,7 @@
 
       edit(row) {
         getApi.getBsOne(row.id).then((res)=>{
-          console.log(res)
           this.formEdit = res.data.data[0];
-
           this.dialogVisible = true
         })
 
@@ -760,13 +746,12 @@
           type: 'warning'
         }).then(() => {
           getApi.delBsOne(row.id).then((res) => {
-            console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
                 message: '删除成功'
               });
-              this.getBsList(this.p,this.showAdd.levelid);
+              this.getBsList(this.p,this.getShowStoreTree().levelid);
 
             } else {
               this.$message({
@@ -800,13 +785,24 @@
           }
         })
       },
+      recurSelected(data,levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          }else {
+            this.$set(map, "selected", false);
+          }
+          if(map.child ){
+            this.recurSelected(map.child,levelId)
+          }
+        })
+      },
       showLevel() {
         getApi.getLevel().then((res) => {
           if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
-            console.log(this.data5)
-            this.recur(this.data5)
-            this.recurSelected(this.data5,-1)
+            this.setStoreTreeList({list:res.data.data});
+            this.recur(res.data.data);
+            this.recurSelected(res.data.data,this.getShowStoreTree().levelid)
           } else {
 
           }
@@ -814,7 +810,6 @@
       },
       getBsList(p, levelId,storeName = ''){
         getApi.getBsList(p,levelId, storeName).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((item)=>{
               if(item.status === 1){
@@ -878,27 +873,17 @@
         return img && isLt5M;
       },
 
-
-      recurSelected(data,levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          }else {
-            this.$set(map, "selected", false);
-          }
-          if(map.child ){
-            this.recurSelected(map.child,levelId)
-          }
-        })
-      },
     },
     created() {
-      this.token = this.$localStorage.get('token');
+
       this.storeData.forEach((map) => {
         this.$set(map, 'select', false)
       })
-      this.showLevel();
-      this.getBsList(this.p, this.showAdd.levelid);
+      if(this.getStoreTreeList().length === 0){
+        this.showLevel();
+      }
+
+      this.getBsList(this.p, this.getShowStoreTree().levelid);
     },
 
 
@@ -909,17 +894,20 @@
         this.showLevel();
       });
       Hub.$on('showAdd', (e) => {
-        this.showAdd = e;
-        this.recurSelected(this.data5,e.levelid)
+        this.setShowStoreTree({obj:e});
+        this.recurSelected(this.getStoreTreeList(),e.levelid)
       });
       Hub.$on('getBsList', (e) => {
         this.getBsList(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '')
       })
 
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+
     },
     updated() {
-      let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
@@ -927,7 +915,8 @@
     destroyed(){
       Hub.$off("treeEventEditDel");
       Hub.$off("showAdd");
-      Hub.$off("getBsList")
+      Hub.$off("getBsList");
+      Hub.$off("arr")
     }
   }
 </script>

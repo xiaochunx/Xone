@@ -50,26 +50,30 @@
   export default {
     name: 'trees',
     props: ['data', 'count'],
-    watch: {
-
-    },
-
+    watch: {},
     data() {
       return {
-        myHeight: '',
         item: {},
-
       }
     },
     methods: {
       test(item) {
-        Hub.$emit('showAdd',{levelid:item.id,action:item.action});
+
+        if(item.router !== ''){
+          this.$router.push(item.router);
+
+
+          Hub.$emit('showLeftTree',{levelid:item.id,item:item,path:this.$route.path});
+
+          this.$nextTick(()=>{
+            Hub.$emit('arr',item.arr);
+          })
+        }
+
+
 
 //        item.show = !item.show
       },
-
-
-
       beforeEnter: function (el) {
         el.style.height = '0';
       },
@@ -104,7 +108,6 @@
       },
     },
     created() {
-
     },
     mounted() {
     },

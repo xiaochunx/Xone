@@ -128,13 +128,14 @@ let newlyAddAccount = (formUser,level_id) => {
 };
 
 //上传文件
-let updateXlsFile = (brandid, fileurl, over) => {
+let updateXlsFile = (group_id, fileurl, level_id) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append("brandid", brandid);
+    formData.append("group_id", group_id);
     formData.append("fileurl", fileurl);
-    formData.append("over", over);
-    axios.post(`index.php?controller=stores&action=upload&token=${get('token')}`, formData).then((res) => {
+    formData.append("level_id", level_id);
+    // formData.append("over", over);
+    axios.post(`index.php?controller=power&action=upload&token=${get('token')}`, formData).then((res) => {
       resolve(res)
     })
   })

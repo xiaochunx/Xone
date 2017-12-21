@@ -57,12 +57,11 @@
       },
       handleSubmit2(ev) {
         var _this = this;
-        console.log(this.$refs.ruleForm2.validate);
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
 
             let loginParams = {username: this.ruleForm2.account, password: this.ruleForm2.checkPass};
-
+            //this.$localStorage.set("treeArr",[{"name":"列表"}]);
             // 跳转路由
             let formData = new FormData();
             formData.append("user_name", loginParams.username);
@@ -73,12 +72,15 @@
               headers: {'Content-Type': 'application/x-www-form-urlencoded'},
               data: formData,
             }).then((res) => {
-              console.log(res)
               if (res.data.errcode === 0) {
                 this.$localStorage.set("token", res.data.data.token);
                 this.$localStorage.set("user", res.data.data.username);
                 this.$router.push('/home');
 
+                if(this.checked === true){
+                  localStorage.setItem('account', this.ruleForm2.account);
+                  localStorage.setItem('checkPass', this.ruleForm2.checkPass);
+                }
                 this.$message({
                   message: '登录成功',
                   type: 'success'

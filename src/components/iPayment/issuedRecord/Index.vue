@@ -1,5 +1,5 @@
 <template>
-  <div id="issuedRecord">
+  <div id="issuedRecord" v-show="getTreeArr['列表']">
     <div class="contentMsg">
       <el-row>
         <el-col :span="24">
@@ -8,7 +8,7 @@
           </el-col>
           <el-col :span="2" :offset="2">
             <router-link to="/iPayment/issuedRecord/newIssued">
-              <el-button size="small" type="primary" icon="plus">新增下发</el-button>
+              <el-button size="small" type="primary" icon="plus" v-show="getTreeArr['新增下发']">新增下发</el-button>
             </router-link>
           </el-col>
         </el-col>
@@ -239,7 +239,8 @@
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
   import {oneTwoApi} from '@/api/api.js'
-
+  import Hub from '../../utility/commun'
+  import {getArr} from '../../utility/communApi'
   export default {
     data() {
       return {
@@ -263,6 +264,7 @@
       }
     },
     methods: {
+      ...mapActions(['setTreeArr']),
       getPage(value) {
         this.p.page = value;
         this.api();
@@ -335,7 +337,8 @@
     computed: {
       ...mapGetters([
         'getTopHeight',
-        'getLoadingStatus'
+        'getLoadingStatus',
+        'getTreeArr'
       ]),
     },
     components: {
@@ -364,6 +367,12 @@
 
 
       this.api();
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     }
   }
 </script>

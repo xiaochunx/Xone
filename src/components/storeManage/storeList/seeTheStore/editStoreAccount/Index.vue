@@ -516,7 +516,7 @@
       <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="基础信息" name="first">
+      <el-tab-pane label="基础信息" name="first" v-show="getTreeArr['编辑基础信息']">
         <div class="m-seeAddStore">
           <div class="m-seeAddStore-basic">
             <el-row>
@@ -576,7 +576,7 @@
 
                   </el-form-item>
                   <el-form-item label="所属门店组:">
-                    <el-select v-model="storeData.storeLabelId" placeholder="请选择">
+                    <el-select v-model="storeData.storeLabelId" multiple placeholder="请选择">
                       <el-option
                         v-for="(item,index) in storeGroup"
                         :key="item.id"
@@ -646,7 +646,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="收款账户" name="second">
+      <el-tab-pane label="收款账户" name="second" v-show="getTreeArr['编辑收款账户']">
         <div class="m-seeAddStore">
           <div class="m-seeAddStore-basic">
             <el-row>
@@ -792,7 +792,13 @@
 
   import getApi from './editStoreAccount.service';
   import {getWayInfo,getChannelInfo} from '../../../../utility/communApi'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {},
     data() {
       return {
@@ -1102,15 +1108,20 @@ console.log(list)
             if (res.data.data.thirdCode.length === 0) {
               res.data.data.thirdCode.push({"code1": "", "code2": ""})
             }
+            let list = [];
+            res.data.data.label.forEach((item)=>{
+              list.push(item.id)
+            });
+            res.data.data.storeLabelId = list;
+
             this.storeData = res.data.data;
-            console.log(this.storeData)
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
 
         })

@@ -7,10 +7,10 @@
 
       <div class="flex_es">
         <div>
-          <el-button size="small" @click="addStore()">新增门店</el-button>
-          <el-button size="small" @click="delSelected()">批量删除</el-button>
-          <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
-          <el-button size="small" @click="setUrl()">批量设置url</el-button>
+          <el-button size="small" @click="addStore()" v-show="getTreeArr['添加门店']">新增门店</el-button>
+          <el-button size="small" @click="delSelected()" v-show="getTreeArr['删除']">批量删除</el-button>
+          <el-button size="small" @click="isSwitch()" v-show="getTreeArr['开启、关闭']">批量开启/关闭</el-button>
+          <el-button size="small" @click="setUrl()" v-show="getTreeArr['设置url']">批量设置url</el-button>
         </div>
 
         <div class="flex_a">
@@ -38,14 +38,12 @@
         </el-tree>
       </div>
 
-      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10" :style="{width:tableWidth + 'px'}" v-show="getTreeArr['门店列表']">
         <el-table :data="storeData" border :height="tableHeight">
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
-                           type="index" width="90">
+          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
+                           width="100">
             <template slot-scope="scope">
-
-              <el-checkbox v-model="scope.row.NO">{{scope.$index + 1 }}</el-checkbox>
-
+              <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
@@ -110,7 +108,7 @@
             <template slot-scope="scope">
               <el-button size="small" type="primary" @click.stop="getOneList(scope.row.id)">查看</el-button>
               <el-button size="small" @click.stop="edit(scope.row.id)">编辑</el-button>
-              <el-button size="small" type="danger" @click.stop="del(scope.row.id)">删除</el-button>
+              <el-button size="small" type="danger" @click.stop="del(scope.row.id)" v-show="getTreeArr['删除']">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -231,11 +229,17 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
-  import {getLeft,getArea} from '../../../utility/communApi'
+  import {getLeft,getArr,getArea} from '../../../utility/communApi'
   import ElCheckbox from "../../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
-
+  import Hub from '../../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
       ElButton,
       ElCheckbox},
@@ -276,11 +280,70 @@
         }],
         p: {page: 1, size: 20, total: 0},
         baseStore: {},//点击新增时的门店
-        levelId:''//左边树ID
+        levelId:'',//左边树ID
+
       }
     },
     watch: {},
     methods: {
+      ...mapActions(['setTreeArr']),
+      handleCheckAll(bool) {
+        if (bool.target.checked === true) {
+          this.storeData.forEach((data) => {
+            data.select = true
+          })
+        } else {
+          this.storeData.forEach((data) => {
+            data.select = false
+          })
+        }
+      },
+      handleChecked(data) {
+        let count = 0;
+        this.storeData.forEach((data) => {
+          if (data.select === true) {
+            count += data.select * 1
+          }
+        });
+
+        if (count === this.storeData.length) {
+          //this.selectedAll = true;
+          this.$nextTick(() => {
+            let all = document.querySelector('#all span');
+            all.classList.add('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = true
+          })
+        } else {
+          //this.selectedAll = false;
+          this.$nextTick(() => {
+            let all = document.querySelector('#all span');
+            all.classList.remove('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = false
+          })
+        }
+
+      },
+      selectAll(h) {
+        return h(
+          'div',
+          {},
+          [
+            h('el-checkbox', {
+                attrs: {id: "all"},
+                'class': {},
+                on: {
+                  change: this.handleCheckAll,
+                  input: (event) => {
+                  }
+                }
+              }, ['序号']
+            )
+          ]
+        );
+      },
+
       search(){
         this.showResouce(this.p = {page: 1, size: 20, total: 0},this.levelId,this.storeName);
       },
@@ -290,7 +353,7 @@
           if(res.data.errcode === 0){
             this.$message('操作成功');
           }
-          console.log(res)
+
         })
       },
       add(){
@@ -306,7 +369,7 @@
           this.$message('请选择门店');
         }else {
           getApi.addStore(list.join(',')).then((res)=>{
-            console.log(res)
+
             this.dialogVisible2 = false
             this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.storeName = '');
           })
@@ -319,7 +382,7 @@
         }else {
           this.dialogVisible2 = true;
           getApi.getBaseStore(this.levelId).then((res)=>{
-            console.log(res.data.data)
+
             this.baseStore = res.data.data
           })
         }
@@ -329,7 +392,7 @@
         let list = [];
 
         this.storeData.forEach((item)=>{
-          if(item.NO){
+          if(item.select){
             list.push(item.id)
           }
         });
@@ -350,7 +413,7 @@
           storeStatusValue = 0
         }
         getApi.storesStatus(data.id, storeStatusValue).then((res) => {
-          console.log(res)
+
           if(res.data.errcode === 0){
             this.$message('操作成功');
             this.showResouce(this.p, this.levelId);
@@ -363,7 +426,7 @@
         let list = [];
 
         this.storeData.forEach((item)=>{
-          if(item.NO){
+          if(item.select){
             list.push(item.id)
           }
         });
@@ -376,7 +439,7 @@
         }
 
           getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
-            console.log(res)
+
             if(res.data.errcode === 0){
               this.$message('操作成功');
               this.showResouce(this.p, this.levelId);
@@ -394,18 +457,18 @@
       },
 
       nodeClick(data, data1, data2) {
-        console.log(data.levelname)
+
         this.levelId = data.id;
         this.showResouce(this.p = {page: 1, size: 20, total: 0}, data.id,this.searchName = '')
 
       },
       setChecked(data, checked, deep) {
-        console.log(data)
+
       },
       delSelected() {
         let list = [];
         this.storeData.forEach((item)=>{
-          if(item.NO){
+          if(item.select){
             list.push(item.id)
           }
         });
@@ -418,7 +481,7 @@
             type: 'warning'
           }).then(() => {
             getApi.del(list.join(",")).then((res)=>{
-              console.log(res)
+
               this.$message({
                 type: 'info',
                 message: '删除成功'
@@ -474,7 +537,7 @@
           type: 'warning'
         }).then(() => {
           getApi.del(id).then((res) => {
-            console.log(res)
+
             if (res) {
 
             }
@@ -493,11 +556,10 @@
       },
       showResouce(p,levelId,storeName = "") {
         getApi.getList(p,levelId, storeName).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {
               data.inputChecked = true
-              data.NO = false
+              data.select = false
 
               if(data.status === 1){
                 data.status = true
@@ -509,12 +571,12 @@
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       }
@@ -528,7 +590,12 @@
 
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;

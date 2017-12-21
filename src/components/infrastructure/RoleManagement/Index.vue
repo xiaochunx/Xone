@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -8,8 +8,8 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <el-button size="small" @click="addRole('新增')">新增</el-button>
-          <el-button size="small" type="danger" @click="del()">删除</el-button>
+          <el-button size="small" @click="addRole('新增')" v-show="getTreeArr['新增']">新增</el-button>
+          <el-button size="small" type="danger" @click="del()" v-show="getTreeArr['删除']">删除</el-button>
         </div>
         <div class="flex_r">
           <el-input size="small" v-model="searchName" icon="search" placeholder="请输入内容">
@@ -37,8 +37,8 @@
       ></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="config(scope.row)">配置权限</el-button>
-          <el-button size="small" @click="editRole('修改',scope.row)">修改</el-button>
+          <el-button size="small" type="primary" @click="config(scope.row)" v-show="getTreeArr['配置权限']">配置权限</el-button>
+          <el-button size="small" @click="editRole('修改',scope.row)" v-show="getTreeArr['编辑']">修改</el-button>
 
 
         </template>
@@ -152,8 +152,15 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './roleManagement.service'
   import ElButton from "element-ui/packages/button/src/button";
-
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
       ElButton,
       roleTree: {
@@ -182,7 +189,6 @@
         },
         methods: {
           recurParent(list,pid,parent){
-            console.log(parent)
             list.forEach((item) => {
               if(item.id === pid){
                 item.selected = true;
@@ -226,7 +232,7 @@
                 item.selected = false
               })
             }
-            console.log(data)
+
 
             // data.children.forEach((map) => {
             //   if (map.children) {
@@ -264,11 +270,12 @@
         storeData: [],
         p: {page: 1, size: 20, total: 0},
         roleId:'',
-        searchName:''
+        searchName:'',
       }
     },
     watch: {},
     methods: {
+      ...mapActions(['setTreeArr']),
       search(){
         if(this.searchName === ''){
           this.showRoleList(this.p = {page: 1, size: 20, total: 0})
@@ -291,17 +298,12 @@
 
       },
       submitRole() {
-
         let list1 = [];
-
 
         this.recurRoleOk(this.roleList,list1);
 
-
-        console.log(list1)
-
         getApi.saveRolePower(this.roleId,list1).then((res)=>{
-          console.log(res)
+
           this.dialogVisible2 = false
         })
 
@@ -346,7 +348,6 @@
           if (valid) {
             if(this.name === "新增"){
               getApi.saveRole(this.form).then((res) => {
-                console.log(res)
                 if (res.data.errcode === 0) {
                   this.showRoleList(this.p = {page: 1, size: 20, total: 0});
                   this.dialogVisible = false
@@ -354,7 +355,6 @@
               })
             } else {
               getApi.saveRoleEdit(this.form).then((res)=>{
-                console.log(res)
                 if (res.data.errcode === 0) {
                   this.showRoleList(this.p);
                   this.dialogVisible = false
@@ -373,7 +373,7 @@
         this.dialogVisible = true
       },
       handle() {
-        console.log(this)
+
 
       },
       handleCheckAll(bool) {
@@ -464,9 +464,7 @@
       },
       editRole(name,row) {
         this.name = name;
-
         getApi.roleInfo(row.id).then((res)=>{
-          console.log(res)
           if(res.data.errcode === 0){
             if(res.data.data.status === 1){
               res.data.data.status = true
@@ -498,7 +496,7 @@
             type: 'warning'
           }).then(() => {
             getApi.delRole(list.join(",")).then((res) => {
-              console.log(res)
+
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
@@ -509,7 +507,6 @@
 
             })
 
-
           }).catch(() => {
             //
           });
@@ -519,7 +516,6 @@
 
       showRoleList(p,name = "") {
         getApi.getRoleList(p,name).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {
               data.select = false;
@@ -535,12 +531,12 @@
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
           }else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       }
@@ -555,14 +551,18 @@
       })
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
     },
     updated() {
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
     },
-
+    destroyed(){
+      Hub.$off("arr")
+    }
   }
 </script>
 

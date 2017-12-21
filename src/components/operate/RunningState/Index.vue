@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -33,7 +33,7 @@
         </el-tree>
       </div>
 
-      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10 width_100"  >
         <el-table :data="storeData" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="NO" label="序号"
                            type="index" width="100">
@@ -209,10 +209,16 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './runningState.service'
-  import {getLeft} from '../../utility/communApi'
-
+  import {getLeft,getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
     components: {},
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     data() {
       return {
         printList: [
@@ -265,17 +271,21 @@
         },
       }
     },
-    watch: {},
+    watch: {
+
+    },
+
     methods: {
+      ...mapActions(['setTreeArr']),
       search() {
-        console.log(this.levelId)
+
         if (this.searchName === '') {
           this.showResouce(this.p = {page: 1, size: 20, total: 0}, -1)
         } else {
            this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.searchName)
           // this.p = {page: 1, size: 20, total: 0}
           // getApi.getService({page: 1, size: 20, total: 0},this.levelId, this.searchName).then((res) => {
-          //   console.log(res)
+
           //   if (res.data.errcode === 0) {
           //     res.data.data.list.forEach((item) => {
           //       if (item.status === 1) {
@@ -295,7 +305,7 @@
       },
 
       nodeClick(item, data1, data2) {
-        console.log(item.id);
+
         this.levelId = item.id
 
         this.showResouce(this.p, item.id)
@@ -318,7 +328,7 @@
                 'class': {},
                 on: {
                   click: () => {
-                    console.log(111)
+
                   },
 
                 }
@@ -337,7 +347,7 @@
                 'class': {},
                 on: {
                   click: () => {
-                    console.log(111)
+
                   },
 
                 }
@@ -356,7 +366,7 @@
                 'class': {},
                 on: {
                   click: () => {
-                    console.log(111)
+
                   },
 
                 }
@@ -375,7 +385,7 @@
                 'class': {},
                 on: {
                   click: () => {
-                    console.log(111)
+
                   },
 
                 }
@@ -385,7 +395,7 @@
         );
       },
       print() {
-        console.log(this)
+
       },
       open() {
 
@@ -397,25 +407,20 @@
 
       },
       printStatus(row) {
-        console.log(row)
-
         this.printList = row.storeprinters;
-
         this.dialogVisible = true
       },
       clientStatus(row) {
-        console.log(row)
+
         this.clientList = row.storeclients
         this.dialogVisible2 = true
       },
       posStatus(row) {
-        console.log(row)
+
         this.POSList = row.storeposs
         this.dialogVisible3 = true
       },
       operation(row) {
-        console.log(row)
-
         this.dialogVisible4 = true
 
       },
@@ -446,15 +451,18 @@
 
     },
     mounted() {
-
+        Hub.$on('arr', (e) => {
+          this.setTreeArr({obj:getArr(e)})
+        });
     },
     updated() {
-      let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
     },
+    destroyed(){
+      Hub.$off("arr")
+    }
   }
 </script>
 

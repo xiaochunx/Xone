@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -36,7 +36,7 @@
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="基础支付通道"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="payment" label="基础支付方式" width="120">
         <template slot-scope="scope">
-          <div v-for="(item,index) in scope.row.payment" class="flex_r">
+          <div v-for="(item,index) in scope.row.payment" class="flex_r" v-show="getTreeArr['勾选支付方式']">
             <el-checkbox v-model="item.status" @change="(e)=>{
               return handleCheckedWay(e,item,scope.row.id)
             }">{{item.name}}</el-checkbox>
@@ -76,8 +76,16 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './paymentWay.service'
   import ElButton from "element-ui/packages/button/src/button";
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
 
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {},
     data() {
       return {
@@ -97,6 +105,7 @@
     },
     watch: {},
     methods: {
+      ...mapActions(['setTreeArr']),
       handleCheckedWay(e,item,id){
         let status;
         if(item.status === true){
@@ -105,7 +114,6 @@
           status = 0
         }
         getApi.eidtChannelPayment(id,item.id,status).then((res)=>{
-          console.log(res)
           if(res.data.errcode === 0){
             this.getCommonChannelList(this.p,this.searchName);
           }
@@ -128,7 +136,6 @@
         }
 
         getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
-          console.log(res)
           if(res.data.errcode === 0){
             this.$message('操作成功');
             this.getCommonChannelList(this.p,this.searchName);
@@ -170,9 +177,7 @@
 
       getCommonChannelList(p,name = "") {
         getApi.getCommonChannelList(p,name).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
-
             res.data.data.list.forEach((item)=>{
               item.select = false
               item.payment.forEach((item1)=>{
@@ -186,12 +191,12 @@
             this.payWayList = res.data.data.list;
             this.p.total = res.data.data.count
           }else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       },
@@ -261,7 +266,12 @@
 
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       getScrollHeight().then((h) => {

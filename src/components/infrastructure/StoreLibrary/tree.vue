@@ -229,19 +229,19 @@
         <!--:style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}"-->
         <!--class="el-icon-caret-right pointer heightTran "></i>-->
 
-        <span :style="{display:(item.child && item.child.length != 0)?'none':'inline-block'}"
+        <span :style="{display:(item.child && item.child.length !== 0)?'none':'inline-block'}"
               style="vertical-align: middle;width: 25px"></span>
-        <span @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length != 0'
+        <span @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length !== 0'
               :style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}" style="margin-right: 8px;"
               class="el-tree-node__expand-icon"></span>
 
         <span @click.stop.self="test(item)" class="pointer el-tree-node__label">{{item.levelname}}</span>
 
-        <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 1" @click="addBig(item,'新建大商户')"></i>
+        <i slot="reference" class="el-icon-plus pointer add" v-if="item.type === 1" @click="addBig(item,'新增大商户')"></i>
 
         <el-popover placement="right" width="200" trigger="click">
           <el-button size="mini" type="text" @click="addBig(item,'新增集团')" v-if="item.type === 2">新增集团</el-button>
-          <el-button size="mini" type="text" @click="addBig(item,'新增企业')" v-if="item.type === 3">新增企业</el-button>
+          <el-button size="mini" type="text" @click="addBig(item,'新增品牌')" v-if="item.type === 3">新增品牌</el-button>
           <el-button size="mini" type="text" @click="addBig(item,'添加子部门')" v-if="item.type === 4">添加子部门</el-button>
 
           <el-button size="mini" type="text" @click="edit(item,'修改')">修改</el-button>
@@ -328,7 +328,7 @@
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             this.form.id = this.id;
-            if(this.title === '新建大商户' || this.title === '新增集团' || this.title === '新增企业' || this.title === '添加子部门'){
+            if(this.title === '新增大商户' || this.title === '新增集团' || this.title === '新增品牌' || this.title === '添加子部门'){
 
               getApi.addLevel(this.form).then((res)=>{
                 console.log(res)
@@ -486,10 +486,7 @@
         }
       },
       addDomain() {
-        this.form.levelcodes.push({
-          value: '',
-          key: Date.now()
-        });
+        this.form.levelcodes.push({name: '', providerid: ''});
       },
 
 

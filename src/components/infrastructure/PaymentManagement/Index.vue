@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -8,11 +8,11 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <el-button size="small" @click="addPay('新增')">新增</el-button>
+          <el-button size="small" @click="addPay('新增')" v-show="getTreeArr['新增']">新增</el-button>
           <!--<el-button size="small" type="danger" @click="del()">删除</el-button>-->
         </div>
         <div class="flex_r">
-          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入内容">
+          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入支付方式名称">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <el-button class="margin_l_10" size="small" @click="search()">搜索</el-button>
@@ -39,7 +39,7 @@
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="payment" label="基础支付方式"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button size="small" @click="editPay('编辑',scope.row)">编辑</el-button>
+          <el-button size="small" @click="editPay('编辑',scope.row)" v-show="getTreeArr['编辑']">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -125,8 +125,15 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './paymentManagement.service'
   import ElButton from "element-ui/packages/button/src/button";
-
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {},
     data() {
       return {
@@ -156,6 +163,7 @@
     },
     watch: {},
     methods: {
+      ...mapActions(['setTreeArr']),
       search(){
         if(this.searchName === ''){
           this.getPaymentList(this.p = {page: 1, size: 20, total: 0})
@@ -202,7 +210,6 @@
           if (valid) {
             if(this.name === "新增"){
               getApi.addPayment(this.form).then((res) => {
-                console.log(res)
                 if (res.data.errcode === 0) {
                   this.getPaymentList(this.p = {page: 1, size: 20, total: 0});
                   this.dialogVisible = false
@@ -210,7 +217,6 @@
               })
             } else {
               getApi.editPayment(this.form).then((res)=>{
-                console.log(res)
                 if (res.data.errcode === 0) {
                   this.getPaymentList(this.p);
                   this.dialogVisible = false
@@ -231,7 +237,7 @@
       editPay(name,row) {
         this.name = name;
         getApi.paymentInfo(row.id).then((res)=>{
-          console.log(res)
+
           if(res.data.errcode === 0){
             this.form = res.data.data
           }
@@ -255,7 +261,7 @@
             type: 'warning'
           }).then(() => {
             // getApi.delRole(list.join(",")).then((res) => {
-            //   console.log(res)
+
             //   if(res.data.errcode === 0){
             //     this.$message({
             //       type: 'info',
@@ -275,18 +281,17 @@
 
       getPaymentList(p,name = "") {
         getApi.getPaymentList(p,name).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
 
             this.paymentList = res.data.data.list;
             this.p.total = res.data.data.count
           }else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       }
@@ -297,14 +302,18 @@
 
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
     },
     updated() {
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
     },
-
+    destroyed(){
+      Hub.$off("arr")
+    }
   }
 </script>
 

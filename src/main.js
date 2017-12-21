@@ -15,15 +15,12 @@ import 'font-awesome/css/font-awesome.css'
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
 
-// 'http://x.kuan1.cn'            // 正式环境
-// 'http://test0.kuan1.cn'        // 测试环境
-// 'http://x0test.kuan1.cn'       // 开发环境
-// 'http://bs.com'                // 本地环境
 
-// let url = 'http://test0.kuan1.cn';
-// let url = 'http://x0test.kuan1.cn';
-// let url = 'http://x.kuan1.cn';
-let url = 'http://bs.com';
+
+let url = 'http://test0.kuan1.cn';  // 测试环境
+// let url = 'http://x0test.kuan1.cn'; // 开发环境
+// let url = 'http://x.kuan1.cn';      // 正式环境
+// let url = 'http://bs.com';          // 本地环境
 // let url = "http://laowang.com";
 
 Axios.defaults.baseURL = `${url}/kybase/`;
@@ -37,6 +34,9 @@ Vue.prototype.$xlsUrl = `${url}/kybase/uploads/x0read.xlsx`;
 
 //下载xls地址 菜品
 Vue.prototype.$xlsDishesUrl = `${url}/kybase/uploads/x0readproduct.xlsx`;
+
+//下载xls地址 权限 用户
+Vue.prototype.$xlsDishesUser ='http://images.kuan1.cn/kuan1/upload/file/20171220/20171220142722_65041.xlsx';
 
 //打开夸域cookie
 Axios.defaults.withCredentials = true;

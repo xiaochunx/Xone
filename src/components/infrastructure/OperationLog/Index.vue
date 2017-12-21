@@ -8,67 +8,68 @@
 </style>
 
 <template>
-  <div class="scroll_of">
+  <div class="scroll_of" v-show="getTreeArr['列表']">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-      <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
+      <xo-datePicker @getRadioDate="getRadioDate"></xo-datePicker>
 
         <div class="flex_es padding_t_10">
           <div class="flex_a">
             <div class=" margin_r_10">
               <div>操作人</div>
-              <el-select v-model="value" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input class="margin_r_10" v-model="user_name"></el-input>
             </div>
 
             <div >
               <div>操作类型</div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="power_attr" clearable placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in logType"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
           </div>
 
           <div class="flex_ec">
-            <el-input class="margin_r_10" v-model="input"></el-input>
-            <el-button>查询</el-button>
+            <el-input class="margin_r_10" v-model="name"></el-input>
+            <el-button @click="search()">查询</el-button>
           </div>
 
         </div>
 
     </div>
       <el-table :data="tableData" border :height="tableHeight">
-        <el-table-column header-align="center" align="center" prop="operation" label="操作人" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="operationType" label="操作类型" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="operationAction" label="操作动作"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="operationTime" label="操作时间" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="user_name" label="操作人" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="power_attr" label="操作类型" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="power_name" label="操作动作"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="add_time_formated" label="操作时间" ></el-table-column>
         <el-table-column header-align="center" align="center" prop="ip" label="IP" ></el-table-column>
-        <el-table-column header-align="center" align="center" prop="remarks" label="备注" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="remark" label="备注" ></el-table-column>
       </el-table>
 
-    <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
-      <xo-pagination></xo-pagination>
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
   </div>
 </template>
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
+  import getApi from './operationLog.service';
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components:{
     },
     data() {
@@ -76,60 +77,96 @@
         width:0,
         tableHeight:0,
         navList:[{name:"基础设置",url:''},{name:"操作日志",url:''}],
-        input:'',
-        input1:'',
-        input2:'',
-        options: [{
-          value: '选项1',
-          label: '11'
-        }, {
-          value: '选项2',
-          label: '22'
-        }],
+
         value: '',
-        tableData: [{
-          operation: '1',
-          operationType: '2',
-          operationAction: '3',
-          operationTime:'',
-          ip:'',
-          remarks:''
-        },{
-          operation: '1',
-          operationType: '2',
-          operationAction: '3',
-          operationTime:'',
-          ip:'',
-          remarks:''
-        }]
+        tableData: [],
+        p: {page: 1, size: 20, total: 0},
+        dateSelected:[],
+        name:'',
+        logType:[],
+        power_attr:'',
+        user_name:''
       }
     },
-    computed:{
-      pageState(){
-        return {page:1}
-      }
-    },
+
     methods: {
-      getPage(){},
-      getPageSize(){},
+      ...mapActions(['setTreeArr']),
+      search() {
+        if (this.dateSelected[0] === '' && this.dateSelected[1] ==='') {
+          this.$message({
+            message: '请选择时间',
+            type: 'warning'
+          });
+        } else {
+          if (this.dateSelected[0] === '') {
+            this.$message({
+              message: '开始时间不能为空',
+              type: 'warning'
+            });
+          } else if (this.dateSelected[1] === '') {
+            this.$message({
+              message: '结束时间不能为空',
+              type: 'warning'
+            });
+          } else if (this.dateSelected[0] > this.dateSelected[1]) {
+            this.$message({
+              message: '开始时间不能大于结束时间',
+              type: 'warning'
+            });
+          } else {
+            //ok
+            console.log(this.dateSelected[0] ,this.dateSelected[1])
+
+            this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p)
+
+          }
+        }
+
+      },
+      getPage(page) {
+        this.p.page = page;
+        this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p)
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p)
+      },
+
       getRadioDate(d){
         console.log(d)
+        this.dateSelected = d
       },
-      getStartTime(d){
-        console.log(d)
-      },
-      getEndTime(d){
-        console.log(d)
-      },
+      getAdminLogList(start_time,end_time,user_name,power_attr,name,p){
+        getApi.getAdminLogList(start_time,end_time,user_name,power_attr,name,p).then((res)=>{
+          if(res.data.errcode === 0){
+            console.log(res)
+            this.tableData = res.data.data.list;
+            this.p.total = res.data.data.count
+
+          }
+        })
+      }
     },
     created(){
-
+      getApi.getAdminLogType().then((res)=>{
+        console.log(res)
+       this.logType = res.data.data
+      })
     },
     updated(){
       getScrollHeight().then((h)=>{
         this.tableHeight = h;
       })
     },
+    mounted() {
+      this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p);
 
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
+    }
   }
 </script>

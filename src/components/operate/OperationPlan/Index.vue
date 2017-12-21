@@ -4,7 +4,7 @@
       <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
     <div>
-      <el-table :data="tableData" border :height="tableHeight" style="width: 100%">
+      <el-table :data="tableData" border :height="tableHeight" style="width: 100%" v-show="getTreeArr['列表']">
         <el-table-column header-align="center" align="center" label="序号" width="65">
           <template slot-scope="scope">
             <span>{{ scope.$index + 1}}</span>
@@ -31,15 +31,15 @@
         </el-table-column>
         <el-table-column header-align="center" align="center" label="操作" width="100">
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.isOpen"
-              on-color="#13ce66"
-              off-color="#ff4949"
-              on-value="1"
-              off-value="0"
-              @change="changeSwitch(scope.row.isOpen,scope.row.id)"
-            >
-            </el-switch>
+              <el-switch v-show="getTreeArr['开启、关闭']"
+                v-model="scope.row.isOpen"
+                on-color="#13ce66"
+                off-color="#ff4949"
+                on-value="1"
+                off-value="0"
+                @change="changeSwitch(scope.row.isOpen,scope.row.id)"
+              >
+              </el-switch>
           </template>
         </el-table-column>
       </el-table>
@@ -54,8 +54,16 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './operationPlan.service'
   import {oneTwoApi} from '@/api/api.js'
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
 
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {},
     data() {
       return {
@@ -63,9 +71,12 @@
         navList: [{name: "运营方案", url: ''}],
         tableData: [],
         p: {page: 1, size: 20, total: 0},
+        arr:{}
       }
     },
+
     methods: {
+      ...mapActions(['setTreeArr']),
       getPage(page) {
         this.p.page = page;
         this.showResouce();
@@ -76,15 +87,11 @@
       },
       showResouce() {
         getApi.getProject(this.p).then((res) => {
-          console.log(res.data);
-
           this.tableData = res.data.data.list;
           this.p.total = res.data.data.count
         })
       },
       changeSwitch(statue, id) {
-        console.log(statue);
-        console.log(id);
 
         var params = {
           redirect: 'x1.accountmanage.setProjectOpen',
@@ -98,13 +105,23 @@
           console.log(err);})
       }
     },
+
     updated() {
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
     },
     created() {
-      this.showResouce()
+      this.showResouce();
+
+    },
+    mounted(){
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     }
   }
 </script>

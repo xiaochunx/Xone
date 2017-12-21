@@ -176,7 +176,8 @@
         cityList: [],
         areaId: '',
         areaList: [],
-        inputArea: ''
+        inputArea: '',
+
       }
     },
     components: {
@@ -193,8 +194,7 @@
 
         this.searchList = list
 
-        console.log(list)
-       // console.log(this.searchList)
+
       },
       submitAdd() {
         let list = [];
@@ -340,17 +340,16 @@
       }
     },
     created() {
-
       getArea('').then((res) => {
         if (res.data.errcode === 0) {
           this.providerList = res.data.data
         } else {
-          this.$alert('请重新登录', '超时', {
-            confirmButtonText: '确定',
-            callback: action => {
-              this.$router.push('/login')
-            }
-          })
+          // this.$alert('请重新登录', '超时', {
+          //   confirmButtonText: '确定',
+          //   callback: action => {
+          //     this.$router.push('/login')
+          //   }
+          // })
         }
       })
     }

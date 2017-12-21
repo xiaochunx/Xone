@@ -9,7 +9,7 @@
 </style>
 
 <template>
-  <div class="scroll_of">
+  <div class="scroll_of" v-show="getTreeArr['列表']">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -96,7 +96,7 @@
 
           <div class="flex_ec">
             <el-button @click="search()">查询</el-button>
-            <el-button type="primary" @click="out()">导出</el-button>
+            <el-button type="primary" @click="out()" v-show="getTreeArr['导出']">导出</el-button>
           </div>
         </div>
     </div>
@@ -155,8 +155,15 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './transactionList.service';
-  import {getWayInfo,getChannelInfo,getList} from '../../utility/communApi'
+  import {getWayInfo,getChannelInfo,getList,getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
 
     },
@@ -185,12 +192,9 @@
         store_id_list:[]
       }
     },
-    computed: {
-      pageState() {
-        return {page: 1}
-      }
-    },
+
     methods: {
+      ...mapActions(['setTreeArr']),
       store(){
         let store;
         if(this.store_id === ''){
@@ -204,8 +208,7 @@
        let store = this.store();
         getApi.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p,1).then((res)=>{
           if(res.data.errcode === 0){
-            console.log(res)
-            window.location.href = "http://laowang.com/kybase/uploads/x0read.xlsx"
+            window.location.href = res.data.data
           }
         })
       },
@@ -259,7 +262,6 @@
       orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1 = ''){
         getApi.orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1).then((res)=>{
           if(res.data.errcode === 0){
-            console.log(res)
             res.data.data.list.forEach((item)=>{
               item.add_time = new Date(item.add_time).format("yyyy-MM-dd hh:mm:ss");
               if(item.refund_time){
@@ -309,7 +311,12 @@
 
         this.storeData = res.data.data.list
       });
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       getScrollHeight().then((h) => {

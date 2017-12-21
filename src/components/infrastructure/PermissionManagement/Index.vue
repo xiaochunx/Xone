@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  v-show="getTreeArr['列表']">
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -9,16 +9,16 @@
         <div>
           <div>
             {{levelName}}
-            <el-button size="small" @click="addAccountGroup('添加用户组')">添加用户组</el-button>
-            <!--<el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>-->
-            <el-button size="small" @click="addAccount()">新增用户</el-button>
+            <el-button size="small" @click="addAccountGroup('添加用户组')"  v-show="getTreeArr['新增用户组']">添加用户组</el-button>
+            <!--<el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>-->
+            <el-button size="small" @click="addAccount()" v-show="getTreeArr['新增用户']">新增用户</el-button>
           </div>
         </div>
         <div class="flex_a">
           <el-input size="small" v-model="storeName" icon="search" placeholder="请输入内容">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
-          <el-button class="margin_l_10" size="small" type="primary" @click="dialogVisible2 = true">导入用户</el-button>
+          <el-button class="margin_l_10" size="small" type="primary" @click="dialogVisible2 = true" v-show="getTreeArr['导入用户']">导入用户</el-button>
         </div>
       </div>
     </div>
@@ -30,7 +30,7 @@
 
       </div>
 
-      <div :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="groupList" border :height="tableHeight">
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="select" label="序号"
                            type="index" width="70">
@@ -48,8 +48,8 @@
                            width="80"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="240">
             <template slot-scope="scope">
-              <el-button size="small" @click="editAccount('编辑用户组',scope.row)">编辑</el-button>
-              <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
+              <el-button size="small" @click="editAccount('编辑用户组',scope.row)" v-show="getTreeArr['编辑']">编辑</el-button>
+              <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
               <el-button size="small" type="primary" @click="goToUser(scope.row)">查看用户</el-button>
             </template>
           </el-table-column>
@@ -224,7 +224,7 @@
 
         <div>
           请按照我们提供的标准模板填写信息
-          <a style="color: #52CBF8" :href="$xlsUrl">下载标准模板</a>
+          <a style="color: #52CBF8" :href="$xlsDishesUser">下载标准模板</a>
         </div>
 
         <div class="margin_t_10">文件中的成员将会被导入至</div>
@@ -261,7 +261,7 @@
 
           </el-upload>
           <div class="margin_t_10">
-            <el-checkbox v-model="isOver">手机号相同时，覆盖原有的信息</el-checkbox>
+            <!--<el-checkbox v-model="isOver">手机号相同时，覆盖原有的信息</el-checkbox>-->
           </div>
         </div>
         <div class="margin_t_10">
@@ -279,10 +279,16 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import permissionTree from './permissionTree'
   import getApi from './permissionManagement.service'
+  import {getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
 
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
       permissionTree,
     },
@@ -330,12 +336,12 @@
         groupName: '',
         fileList: [],
         fileurl: '',
-        selectGroupList:[]
+        selectGroupList:[],
       }
     },
     watch: {},
     methods: {
-      ...mapActions(['setPermissionLevelId']),
+      ...mapActions(['setPermissionLevelId','setTreeArr']),
       ...mapGetters(['getPermissionLevelId']),
       submitFrom2(formRules){
         this.$refs[formRules].validate((valid) => {
@@ -466,7 +472,7 @@
         }
         return isLt5M;
       },
-      handleAvatarSuccessXls() {
+      handleAvatarSuccessXls(res, file) {
         this.fileurl = file.response.data.file_url
       },
       nodeClick() {
@@ -486,25 +492,22 @@
             } else {
               over = 1
             }
+            getApi.updateXlsFile(this.formSubmit.group_id,this.fileurl,this.getPermissionLevelId()).then((res)=>{
+              console.log(res)
+              if(res.data.errcode === 0){
+                this.$message({
+                  type: 'info',
+                  message: '上传成功'
+                });
+                this.dialogVisible2 = false
+              }
 
-            // getApi.updateXlsFile(this.brandid,this.fileurl,over).then((res)=>{
-            //   console.log(res)
-            //   if(res.data.errcode === 0){
-            //     this.$message({
-            //       type: 'info',
-            //       message: '上传成功'
-            //     });
-            //     this.dialogVisible4 = false
-            //   }
-            //
-            // })
+            })
           } else {
             console.log('error submit!!');
             return false;
           }
         });
-
-
       },
       close2() {
         this.brandid = '';
@@ -603,12 +606,12 @@
             this.recur(this.data5)
             this.recurSelected(this.data5, this.getPermissionLevelId())
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       },
@@ -661,6 +664,7 @@
 
 
     },
+
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.levelName = e.levelName;
@@ -669,6 +673,13 @@
         this.getGroupList(this.p,e.levelid);
         this.recurSelected(this.data5, e.levelid)
       });
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;

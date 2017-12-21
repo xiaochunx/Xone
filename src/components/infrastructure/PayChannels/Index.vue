@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -8,7 +8,7 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <el-button size="small" @click="addPay('新增')">新增</el-button>
+          <el-button size="small" @click="addPay('新增')" v-show="getTreeArr['新增']">新增</el-button>
         </div>
         <div class="flex_r">
           <el-input size="small" v-model="searchName" icon="search" placeholder="请输入内容">
@@ -53,8 +53,8 @@
 
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="140">
         <template slot-scope="scope">
-          <el-button size="small" @click="editPay('编辑',scope.row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
+          <el-button size="small" @click="editPay('编辑',scope.row)" v-show="getTreeArr['编辑']">编辑</el-button>
+          <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -155,8 +155,15 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './payChannels.service'
   import ElButton from "element-ui/packages/button/src/button";
-
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {},
     data() {
       return {
@@ -179,11 +186,12 @@
         paymentList: [],
         p: {page: 1, size: 20, total: 0},
         searchName: '',
-        options: [],
+        options: []
       }
     },
     watch: {},
     methods: {
+      ...mapActions(['setTreeArr']),
       handleCheckedWay(e, item, id) {
         let status;
         if (item.status === true) {
@@ -192,7 +200,6 @@
           status = 0
         }
         getApi.setChannelPayment(id, item.id, status).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             this.getChannelList(this.p, this.searchName);
           }
@@ -254,7 +261,6 @@
           if (valid) {
             if (this.name === "新增") {
               getApi.addCannel(this.form).then((res) => {
-                console.log(res)
                 if (res.data.errcode === 0) {
                   this.getChannelList(this.p = {page: 1, size: 20, total: 0});
                   this.dialogVisible = false
@@ -262,7 +268,6 @@
               })
             } else {
               getApi.editChannel(this.form).then((res) => {
-                console.log(res)
                 if (res.data.errcode === 0) {
                   this.getChannelList(this.p);
                   this.dialogVisible = false
@@ -288,11 +293,9 @@
       editPay(name, row) {
         this.name = name;
         getApi.getCommonChannelList().then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             this.options = res.data.data.list;
             getApi.getChannelInfo(row.id).then((res) => {
-              console.log(res)
               if (res.data.errcode === 0) {
                 let list = [];
                 res.data.data.payment.forEach((item) => {
@@ -315,7 +318,6 @@
           type: 'warning'
         }).then(() => {
           getApi.delChannel(row.id).then((res) => {
-            console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
@@ -335,7 +337,6 @@
 
       getChannelList(p, name = "") {
         getApi.getChannelList(p, name).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((item) => {
               item.payment.forEach((item1) => {
@@ -349,12 +350,12 @@
             this.paymentList = res.data.data.list;
             this.p.total = res.data.data.count
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       }
@@ -366,7 +367,12 @@
 
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       getScrollHeight().then((h) => {

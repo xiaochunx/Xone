@@ -21,5 +21,14 @@ export default{
   },
   getPermissionLevelId(state){
     return state.permissionLevelId;
-  }
+  },
+  getStoreTreeList(state){
+    return state.storeTreeList;
+  },
+  getShowStoreTree(state){
+    return state.showStoreTree;
+  },
+  getTreeArr(state){
+    return state.treeArr;
+  },
 }

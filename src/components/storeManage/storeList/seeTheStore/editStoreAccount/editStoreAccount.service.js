@@ -39,7 +39,7 @@ let editStore = (storeData) => {
     formData.append("id", storeData.id);
 
     formData.append("thirdCode", window.JSON.stringify(storeData.thirdCode) );
-    formData.append("labelId", storeData.storeLabelId);
+    formData.append("labelId", storeData.storeLabelId.join(','));
     formData.append("openTimeStart", storeData.openTimeStart);
     formData.append("openTimeEnd", storeData.openTimeEnd);
     formData.append("orderPrompting", storeData.orderPrompting);

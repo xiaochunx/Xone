@@ -484,12 +484,12 @@
         if (res.data.errcode === 0) {
           this.provinceList = res.data.data
         } else {
-          this.$alert('请重新登录', '超时', {
-            confirmButtonText: '确定',
-            callback: action => {
-              this.$router.push('/login')
-            }
-          })
+          // this.$alert('请重新登录', '超时', {
+          //   confirmButtonText: '确定',
+          //   callback: action => {
+          //     this.$router.push('/login')
+          //   }
+          // })
         }
       })
 

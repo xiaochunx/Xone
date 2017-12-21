@@ -10,9 +10,9 @@
           <div>
 
             <el-button size="small" type="text" @click="$router.go(-1)"> 返回用户组</el-button>
-            <el-button size="small" @click="addAccount('添加用户')">添加用户</el-button>
+            <el-button size="small" @click="addAccount('添加用户')" v-show="getTreeArr['新增用户']">添加用户</el-button>
             <!--<el-button size="small" @click="showStore()">关联门店</el-button>-->
-            <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
+            <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>
 
           </div>
         </div>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <el-table :data="userList" border :height="tableHeight">
+    <el-table :data="userList" border :height="tableHeight" v-show="getTreeArr['用户列表']">
       <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
                        width="100">
         <template slot-scope="scope">
@@ -51,13 +51,14 @@
 
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="280">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="showStore(scope.row)">关联门店</el-button>
-          <el-button size="small" @click="editAccount('查看',scope.row)">查看</el-button>
-          <el-button size="small" @click="editAccount('编辑用户',scope.row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
+          <el-button size="small" type="primary" @click="showStore(scope.row)" v-show="getTreeArr['关联门店']">关联门店</el-button>
+          <el-button size="small" @click="editAccount('查看',scope.row)" v-show="getTreeArr['查看用户详情']">查看</el-button>
+          <el-button size="small" @click="editAccount('编辑用户',scope.row)" v-show="getTreeArr['编辑用户']">编辑</el-button>
+          <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除用户']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    {{getTreeArr}}
     <footer>
       <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
     </footer>
@@ -296,8 +297,13 @@
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import {getLeft,getList} from '../../../utility/communApi'
   import getApi from './user.service'
-
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
 
       roleTree: {

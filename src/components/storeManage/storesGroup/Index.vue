@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
     <div class="padding_b_10 flex_sb bodyTop">
       <xo-nav-path :navList="navList"></xo-nav-path>
-      <el-button size="small" type="primary" @click="addGroup()">新增门店组</el-button>
+      <el-button size="small" type="primary" @click="addGroup()" v-show="getTreeArr['新增']">新增门店标签</el-button>
     </div>
     <div>
       <el-table empty-text=" " :data="tableData" border :height="tableHeight" style="width: 100%">
@@ -11,19 +11,19 @@
             <span>{{ scope.$index + 1}}</span>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="id" label="门店组编码">
+        <el-table-column header-align="center" align="center" prop="id" label="门店标签编码">
 
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="name" label="门店组名称">
+        <el-table-column header-align="center" align="center" prop="name" label="门店标签名称">
 
         </el-table-column>
         <el-table-column header-align="center" align="center" label="操作" width="200">
           <template slot-scope="scope">
             <div class="flex">
 
-              <el-button size="small" type="primary" @click="showStore(scope.row)">查看门店</el-button>
-              <el-button size="small" @click="edit(scope.row)">编辑</el-button>
-              <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              <el-button size="small" type="primary" @click="showStore(scope.row)" v-show="getTreeArr['查看门店']">查看门店</el-button>
+              <el-button size="small" @click="edit(scope.row)" v-show="getTreeArr['编辑']">编辑</el-button>
+              <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)" v-show="getTreeArr['删除']">删除</el-button>
             </div>
 
           </template>
@@ -141,8 +141,15 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './storeGroup.service';
-
+  import {getArr} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {},
     data() {
       return {
@@ -157,6 +164,7 @@
       }
     },
     methods: {
+      ...mapActions(['setTreeArr']),
       getPage(page) {
         this.p.page = page;
         this.showResouce();
@@ -169,8 +177,7 @@
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             getApi.updateOne(data).then((res) => {
-              console.log(res)
-              this.dialogVisible1 = false
+              this.dialogVisible1 = false;
               this.showResouce();
             })
           } else {
@@ -250,7 +257,6 @@
       },
       edit(row) {
         getApi.getOneStore(row).then((res)=>{
-          console.log(res)
           res.data.data.store.forEach((item)=>{
             item.select = true
           });
@@ -261,23 +267,23 @@
       showStore(row) {
         this.dialogVisible = true;
         getApi.getOne(row.id).then((res) => {
-          console.log(res)
+
           this.storeData = res.data.data.list
         })
 
       },
       handleEdit(index, row) {
-        console.log(index, row);
+
       },
       handleDelete(index, row) {
-        console.log(index, row);
+
         this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           getApi.delOne(row.id).then((res) => {
-            console.log(res)
+
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
@@ -306,17 +312,16 @@
       },
       showResouce() {
         getApi.getList(this.p).then((res) => {
-          console.log(res.data.data)
           if (res.data.errcode === 0) {
             this.tableData = res.data.data.list;
             this.p.total = res.data.data.count
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
         })
       }
@@ -333,6 +338,14 @@
       });
       this.showResouce()
 
+    },
+    mounted() {
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     }
   }
 </script>

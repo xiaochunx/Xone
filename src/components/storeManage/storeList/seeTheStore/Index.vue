@@ -4,7 +4,7 @@
       <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="基础信息" name="first">
+      <el-tab-pane label="基础信息" name="first" v-show="getTreeArr['查看基础信息']">
         <div class="m-seeAddStore">
           <div class="m-seeAddStore-basic">
             <el-row>
@@ -29,7 +29,9 @@
 
                   </el-form-item>
                   <el-form-item label="所属门店组:">
-                    <span>{{storeData.storeLabel}}</span>
+                    <div v-for="(item,index) in storeData.label">
+                      {{item.name}}
+                    </div>
                   </el-form-item>
                   <el-form-item label="公众号:">
                     <span>{{storeData.wx_id}}</span>
@@ -66,7 +68,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="收款账户" name="second">
+      <el-tab-pane label="收款账户" name="second" v-show="getTreeArr['查看收款账户']">
         <div class="m-seeAddStore">
           <div class="m-seeAddStore-basic">
             <el-row>
@@ -253,8 +255,13 @@
 <script>
   import ElInput from "../../../../../node_modules/element-ui/packages/input/src/input.vue";
   import getApi from './seeTheStore.service';
-
+  import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
       ElInput
 
@@ -339,12 +346,12 @@
             this.storeAccount = res.data.data
             console.log(this.storeAccount)
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
 
         })
@@ -355,12 +362,12 @@
             res.data.data.urlCode = res.data.data.urlWithCode * 1;
             this.storeData = res.data.data;
           } else {
-            this.$alert('请重新登录', '超时', {
-              confirmButtonText: '确定',
-              callback: action => {
-                this.$router.push('/login')
-              }
-            })
+            // this.$alert('请重新登录', '超时', {
+            //   confirmButtonText: '确定',
+            //   callback: action => {
+            //     this.$router.push('/login')
+            //   }
+            // })
           }
 
         })

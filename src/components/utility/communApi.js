@@ -60,4 +60,23 @@ let getList = (levelId = -1) => {
   })
 };
 
-export {getLeft,getArea,get,getWayInfo,getChannelInfo,getList,axios}
+//页面权限
+let getArr = (arr) => {
+  let listMap = {};
+  if(arr){
+    for (let i = 0, id, name, key; i < arr.length; i++) {
+      id = arr[i].id;
+      name = arr[i].name;
+      key = name;
+      if (!!listMap[key]) {
+        listMap[key]++;
+      } else {
+        listMap[key] = name;
+      }
+    }
+
+    return listMap;
+  }
+}
+
+export {getLeft,getArea,get,getWayInfo,getChannelInfo,getList,getArr,axios}

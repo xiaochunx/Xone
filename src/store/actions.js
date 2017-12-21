@@ -15,6 +15,14 @@ export default {
   },
   setPermissionLevelId({commit},obj){
     commit(types.PERMISSIONLEVELID,obj);
-  }
-
+  },
+  setStoreTreeList({commit},obj){
+    commit(types.STORETREELIST,obj);
+  },
+  setShowStoreTree({commit},obj){
+    commit(types.SHOWSTORETREE,obj);
+  },
+  setTreeArr({commit},obj){
+    commit(types.TREEARR,obj);
+  },
 }

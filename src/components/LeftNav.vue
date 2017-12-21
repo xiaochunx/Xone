@@ -1,22 +1,22 @@
 <template>
   <div id="xoMenu" :style="{height:ListHeight+'px'}">
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark" :width="300">
+    <!--<el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark" :width="300">-->
 
-      <!--后期加上-->
-      <el-submenu v-for="(value,index1) in leftList" :index=index1.toString() :key="index1">
-        <template slot="title">{{value.name}}</template>
-        <router-link v-for="(item,index2) in value.children" :key="item.route" :to=item.route><el-menu-item :index=formatNum(index1,index2) :key="index2">{{item.name}}</el-menu-item></router-link>
-      </el-submenu>
-    </el-menu>
+      <!--&lt;!&ndash;后期加上&ndash;&gt;-->
+      <!--<el-submenu v-for="(value,index1) in leftList" :index=index1.toString() :key="index1">-->
+        <!--<template slot="title">{{value.name}}</template>-->
+        <!--<router-link v-for="(item,index2) in value.children" :key="item.route" :to=item.route><el-menu-item :index=formatNum(index1,index2) :key="index2">{{item.name}}</el-menu-item></router-link>-->
+      <!--</el-submenu>-->
+    <!--</el-menu>-->
 
       <tree :data='leftData' :count=0></tree>
 
   </div>
 </template>
 <script>
-  import {mapGetters} from 'vuex'
   import tree from './utility/tree'
   import Hub from './utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
     props: {
 
@@ -147,10 +147,10 @@
                 name: '权限管理',
                 route: '/infrastructure/PermissionManagement'
               },
-//              {
-//                name: '操作日志',
-//                route: '/infrastructure/OperationLog'
-//              },
+             {
+               name: '操作日志',
+               route: '/infrastructure/OperationLog'
+             },
               {
                 name: '公众号管理',
                 route: '/infrastructure/PublicManagement'
@@ -167,12 +167,21 @@
       }
     },
     methods: {
-      recur(data) {
+      ...mapActions(['setTreeArr']),
+      ...mapGetters(['getTreeArr']),
+      recur(data,path) {
         data.forEach((map) => {
           if (map.children) {
             this.$set(map, "show", true);
-            this.$set(map, "selected", false);
-            this.recur(map.children)
+            if(map.router === path){
+
+              Hub.$emit('arr',map.arr);
+
+              this.$set(map, "selected", true);
+            }else {
+              this.$set(map, "selected", false);
+            }
+            this.recur(map.children,path)
           }
         })
       },
@@ -206,26 +215,29 @@
     created(){
       let token = this.$localStorage.get('token');
       this.$http.get(`index.php?controller=user&action=getMenu&token=${token}`).then((res) => {
-        console.log(res)
         if (res.data.errcode === 0) {
-          this.leftData = res.data.data
-          this.recur(this.leftData)
+          this.leftData = res.data.data;
+          this.recur(this.leftData,this.$route.path)
         }
       });
-
 
     },
     mounted(){
       this.ListHeight = window.innerHeight - this.getTopHeight;
 
-      Hub.$on('showAdd', (e) => {
-        // getApi.getPowerList(this.levelId,this.p.page).then((res)=>{
-        //   console.log(res)
-        // })
+      Hub.$on('showLeftTree', (e) => {
 
-        console.log(e)
+        console.log(e.item)
         this.recurSelected(this.leftData, e.levelid)
       });
+
+    },
+    updated(){
+
+    },
+
+    destroyed(){
+
     },
     computed: {
       ...mapGetters([

@@ -3,7 +3,7 @@
     <div class="contentMsg">
       <xo-nav-path></xo-nav-path>
     </div>
-    <el-card style="height: calc(100% - 38px)">
+    <el-card style="height: calc(100% - 38px)" v-show="getTreeArr['账户列表']">
       <div class="contentMsg">
         <div id="detailMsg">
           <el-form :inline="true" :model="ruleForm" class="demo-form-inline" :label-position="'top'">
@@ -40,7 +40,7 @@
 
             <el-form-item style="vertical-align: bottom">
               <router-link to="/iPayment/accountList/account">
-                <el-button type="primary" icon="edit">新增账号</el-button>
+                <el-button type="primary" icon="edit" v-show="getTreeArr['新增、保存账户']">新增账号</el-button>
               </router-link>
             </el-form-item>
 
@@ -126,7 +126,7 @@
                 <el-button
                   size="small"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row.acountCode)">删除
+                  @click="handleDelete(scope.$index, scope.row.acountCode)" v-show="getTreeArr['删除']">删除
                 </el-button>
               </template>
             </el-table-column>
@@ -144,6 +144,8 @@
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
   import {oneTwoApi, payMethods, payMent} from '@/api/api.js'
+  import Hub from '../../utility/commun'
+  import {getArr} from '../../utility/communApi'
 
   export default{
     data(){
@@ -167,6 +169,7 @@
       xoNavPath
     },
     methods: {
+      ...mapActions(['setTreeArr']),
       getPage(value){
         console.log(1);
         this.p.page = value;
@@ -281,7 +284,8 @@
     computed: {
       ...mapGetters([
         'getTopHeight',
-        'getLoadingStatus'
+        'getLoadingStatus',
+        'getTreeArr'
       ]),
     },
     mounted(){
@@ -323,6 +327,13 @@
       });
 
       this.api();
+
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     }
   }
 </script>

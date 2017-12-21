@@ -23,10 +23,10 @@
         <!--</el-tree>-->
 
 
-        <public-tree :data='dataLeft' :count=0 style="width: max-content"></public-tree>
+        <public-tree :data='dataLeft' :count=0 ></public-tree>
       </div>
 
-      <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
+      <div class="padding_l_10 width_100" v-show="getTreeArr['列表']">
         <el-table :data="storeData" border>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号">
             <template slot-scope="scope">
@@ -89,12 +89,17 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import {getLeft,getArea} from '../../utility/communApi'
+  import {getLeft,getArr,getArea} from '../../utility/communApi'
   import getApi from './publicManagement.service'
   import publicTree from './publicTree'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
   export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     components: {
       publicTree,
     },
@@ -103,7 +108,7 @@
         showAside: false,
         dialogVisible: false,
         tableHeight: 0,
-        tableWidth: 0,
+
         navList: [{name: "基础设置", url: ''}, {name: "公众号管理", url: ''}],
         name: '',
         storeName: '',
@@ -116,14 +121,14 @@
         form: {
           code: '',
         },
-        type:''
+        type:'',
       }
     },
     watch: {
 
     },
     methods: {
-      ...mapActions(['setPublicLevelId']),
+      ...mapActions(['setPublicLevelId','setTreeArr']),
       ...mapGetters(['getPublicLevelId']),
       filterNode(value, data) {
 
@@ -133,12 +138,10 @@
 
       auth(){
         getApi.threeAuthorize(this.$localStorage.get_s('publicLevelId')).then((res)=>{
-          console.log(res)
           window.location.href = res.data.data
         })
       },
       nodeClick(data, data1, data2) {
-        console.log(data.levelname)
 
         this.setPublicLevelId({levelId:data.id});
         this.showResouce(data.id)
@@ -162,9 +165,6 @@
       },
       recurSelected(data, levelId) {
         data.forEach((map) => {
-
-
-
           if (map.id === levelId) {
             this.$set(map, "selected", true);
           } else {
@@ -177,7 +177,7 @@
       },
       showResouce(id){
         getApi.getGzhInfo(id).then((res)=>{
-          console.log(res)
+
           if(res.data.errcode === 0){
             this.storeData = res.data.data
 
@@ -205,11 +205,17 @@
         this.showResouce(e.levelid);
         this.recurSelected(this.dataLeft, e.levelid)
       });
+
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       //this.$refs.tree2.filter(5);
-      let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
