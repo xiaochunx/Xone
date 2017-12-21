@@ -23,8 +23,11 @@
 
 <template>
   <div ref="getTop" class="header-top flex_sb">
-    <div class="flex_a">
-      //
+    <div class="flex">
+      <img src="../assets/home/mingsheng-log.png" alt="" style="width: 291px;height: 35px;">
+      <img src="../assets/home/vertical-line.png" alt="" style="width: 2px;height: 30px;margin-left: 10px;">
+      <img src="../assets/home/happy-font.png" alt="" style="width: 30px;height: 30px;margin-left: 10px;">
+      <img src="../assets/home/zhihuicanyin-log.png" alt="" style="width: 95px;height: 23px;margin-left: 10px;">
     </div>
     <div>
       <span class="login">帮助</span>

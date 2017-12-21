@@ -77,7 +77,7 @@
               if (res.data.errcode === 0) {
                 this.$localStorage.set("token", res.data.data.token);
                 this.$localStorage.set("user", res.data.data.username);
-                this.$router.push('/operate/runningState');
+                this.$router.push('/home');
 
                 this.$message({
                   message: '登录成功',

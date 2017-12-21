@@ -6,6 +6,8 @@ import Login from '../components/login/Login.vue'
 import Users from '../components/user/Users.vue'
 import NotFound from '@/components/404/NotFound.vue'
 
+/************************** home-logo ***************************/
+import HomeLogo from '@/components/Home.vue'
 
 /************************** 支付管理 ***************************/
 import Account from '../components/iPayment/accountList/account/Index.vue'
@@ -70,6 +72,14 @@ export default new Router({
       name: '首页',
       component: Main,
       children:[
+        /********************* logo  *************************/
+        {
+          // 支付管理/账户列表
+          path: '/home',
+          meta: { auth: true },
+          name: 'home-logo',
+          component: HomeLogo,
+        },
         /**********************支付管理**************************/
         {
           // 支付管理/账户列表

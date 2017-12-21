@@ -38,10 +38,6 @@
               <el-button @click="search">搜索</el-button>
             </el-form-item>
 
-           <!-- <el-form-item style="vertical-align: bottom">
-              <el-button type="primary" @click="save">保存</el-button>
-            </el-form-item>-->
-
             <el-form-item style="vertical-align: bottom">
               <router-link to="/iPayment/accountList/account">
                 <el-button type="primary" icon="edit">新增账号</el-button>
@@ -81,14 +77,6 @@
                   <el-col :span="24">
                     <el-input v-model="scope.row.accountName" placeholder=""></el-input>
                   </el-col>
-                  <!--<el-col :span="5" :offset="1" style="line-height: 36px">
-                    <el-button
-                      size="small"
-                      type="primary"
-                      @click="handleSave(scope.$index, scope.row)">保存
-                    </el-button>
-                  </el-col>-->
-
                 </el-row>
               </template>
             </el-table-column>
@@ -152,12 +140,10 @@
   </div>
 </template>
 <script>
-
   import xoDetailMsg from './DetailMsg.vue'
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
   import {oneTwoApi, payMethods, payMent} from '@/api/api.js'
-
 
   export default{
     data(){

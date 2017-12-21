@@ -81,5 +81,6 @@
 <style scoped lang="less">
   .content {
     padding: 25px;
+    height: calc(~'100% - 50px');
   }
 </style>
