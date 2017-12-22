@@ -260,7 +260,7 @@
         tableWidth: 0,
         navList: [{name: "运营状态", url: ''}],
 
-        levelId: -1,//左边树ID
+        levelId: '',//左边树ID
         searchName: '',
         storeData: [],
         p: {page: 1, size: 20, total: 0},
@@ -280,7 +280,7 @@
       search() {
 
         if (this.searchName === '') {
-          this.showResouce(this.p = {page: 1, size: 20, total: 0}, -1)
+          this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId)
         } else {
            this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.searchName)
           // this.p = {page: 1, size: 20, total: 0}
@@ -443,12 +443,11 @@
 
       getLeft().then((res) => {
         if (res.data.errcode === 0) {
-          this.dataLeft = res.data.data
+          this.dataLeft = res.data.data;
+          this.levelId = res.data.data[0].id;
+          this.showResouce(this.p, res.data.data[0].id)
         }
       });
-
-      this.showResouce(this.p, -1)
-
     },
     mounted() {
         Hub.$on('arr', (e) => {

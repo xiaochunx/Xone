@@ -220,7 +220,7 @@
     <el-dialog
       title=""
       :visible.sync="dialogVisible1"
-      width="50%" size="large">
+      width="100%" size="full">
       <!--<el-table :data="storeData1" border>-->
         <!--<el-table-column label-class-name="table_head" header-align="center" align="center" prop="x" width="120"-->
                          <!--label="模块"></el-table-column>-->
@@ -653,6 +653,7 @@
       dialogClose2() {
         this.uid = '';
         this.username = '';
+        this.selectedOptions =[]
       },
       dialogClose() {
         this.formUser = {
@@ -670,14 +671,12 @@
         this.dialogVisible = true
       },
 
-
       editAccount(name,row) {
         if(name === '查看'){
           this.showDetail = true
         } else {
           this.showDetail = false
         }
-
 
         this.userName = name;
         getApi.userInfoById(row.id).then((res)=>{

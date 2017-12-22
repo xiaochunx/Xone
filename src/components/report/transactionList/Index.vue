@@ -76,7 +76,7 @@
                   v-for="item in transactionStatus"
                   :key="item.id"
                   :label="item.memo"
-                  :value="item.id">
+                  :value="item.value">
                 </el-option>
               </el-select>
 
@@ -285,9 +285,9 @@
         this.getChannelInfo = res.data.data
       });
 
-      getApi.getAccountList().then((res)=> {
-        this.accountList = res.data.data.list
-      });
+      // getApi.getAccountList().then((res)=> {
+      //   this.accountList = res.data.data.list
+      // });
 
       getApi.putOrderStatus().then((res)=>{
         if(res.data.errcode === 0){
