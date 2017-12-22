@@ -569,13 +569,7 @@
                 message: '删除成功'
               });
               this.getGroupList(this.p,this.getPermissionLevelId())
-            } else {
-              this.$message({
-                type: 'info',
-                message: res.data.data
-              });
             }
-
           })
         }).catch(() => {
           //

@@ -349,7 +349,7 @@
       // 高度调整
       var topH = document.querySelector('.el-form--label-top').clientHeight;
       var pageH = document.querySelector('.el-pagination').clientHeight;
-      this.height = window.innerHeight - this.getTopHeight - topH - pageH - 150;
+      this.height = window.innerHeight - this.getTopHeight - topH - pageH - 180;
 
       // 下发状态接口
       var params = {
