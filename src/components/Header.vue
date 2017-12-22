@@ -54,11 +54,16 @@
       }
     },
     methods: {
+      ...mapActions(['setStoreTreeList','setShowStoreTree','setPermissionLevelId']),
       loginOut: function () {
         this.$http.get(`?controller=user&action=logout&token=${this.$localStorage.get("token")}`).then((res) => {
           if(res.data.errcode === 0){
             this.$localStorage.remove("token");
             this.$localStorage.remove("user");
+            this.$localStorage.remove("treeArr");
+            this.setStoreTreeList({list:[]});
+            this.setShowStoreTree({obj:{levelid:'', type: '', showAdd: false}});
+            this.setPermissionLevelId({levelId:''});
             this.$router.push("/login")
           }else {
             this.$message(res.data.errmsg)

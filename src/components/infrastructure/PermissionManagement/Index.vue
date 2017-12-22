@@ -10,7 +10,7 @@
           <div>
             {{levelName}}
             <el-button size="small" @click="addAccountGroup('添加用户组')"  v-show="getTreeArr['新增用户组']">添加用户组</el-button>
-            <!--<el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>-->
+            <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启关闭用户组']">批量开启/关闭</el-button>
             <el-button size="small" @click="addAccount()" v-show="getTreeArr['新增用户']">新增用户</el-button>
           </div>
         </div>
@@ -18,6 +18,7 @@
           <el-input size="small" v-model="storeName" icon="search" placeholder="请输入内容">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
+          <el-button class="margin_l_10" size="small" @click="search()">搜索</el-button>
           <el-button class="margin_l_10" size="small" type="primary" @click="dialogVisible2 = true" v-show="getTreeArr['导入用户']">导入用户</el-button>
         </div>
       </div>
@@ -32,12 +33,10 @@
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
         <el-table :data="groupList" border :height="tableHeight">
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="select" label="序号"
-                           type="index" width="70">
+          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
+                           width="100">
             <template slot-scope="scope">
-
-              <el-checkbox v-model="scope.row.select">{{scope.$index + 1 }}</el-checkbox>
-
+              <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
@@ -142,11 +141,11 @@
       width="50%">
       <el-form ref="formRules2" :model="formUser" label-width="100px">
 
-        <el-form-item label="昵称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formUser.nickname" placeholder="请输入内容"></el-input>
+        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formUser.nickname" placeholder="请输入名称"></el-input>
         </el-form-item>
-        <el-form-item label="手机号:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
-          <el-input v-model="formUser.phone" placeholder="请输入内容"></el-input>
+        <el-form-item label="手机号:" prop="phone" :rules="{validator: checkPhone,required: true, trigger: 'blur'}">
+          <el-input v-model="formUser.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
         </el-form-item>
         <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
           <el-form-item label="第三方编码" :key="domain.key">
@@ -185,7 +184,7 @@
           </div>
         </div>
 
-        <el-form-item label="所属用户组:">
+        <el-form-item label="所属用户组:" prop="group_id" :rules="{type:'number',required: true, message: '请选择用户组', trigger: 'change'}">
           <el-select v-model="formUser.group_id"  placeholder="请选择">
             <el-option
               v-for="item in selectGroupList"
@@ -293,6 +292,7 @@
       permissionTree,
     },
     data() {
+
       return {
         formSubmit: {
           group_id: ''
@@ -337,12 +337,97 @@
         fileList: [],
         fileurl: '',
         selectGroupList:[],
+
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setPermissionLevelId','setTreeArr']),
       ...mapGetters(['getPermissionLevelId']),
+      search(){
+        if(this.storeName === ''){
+          //this.showRoleList(this.p = {page: 1, size: 20, total: 0})
+
+
+
+        }else {
+          //this.showRoleList(this.p = {page: 1, size: 20, total: 0},this.storeName)
+
+
+        }
+
+
+      },
+      handleCheckAll(bool) {
+        if (bool.target.checked === true) {
+          this.groupList.forEach((data) => {
+            data.select = true
+          })
+        } else {
+          this.groupList.forEach((data) => {
+            data.select = false
+          })
+        }
+      },
+      handleChecked(data) {
+        let count = 0;
+        this.groupList.forEach((data) => {
+          if (data.select === true) {
+            count += data.select * 1
+          }
+        });
+
+        if (count === this.groupList.length) {
+          //this.selectedAll = true;
+          this.$nextTick(() => {
+            let all = document.querySelector('#all span');
+            all.classList.add('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = true
+          })
+        } else {
+          //this.selectedAll = false;
+          this.$nextTick(() => {
+            let all = document.querySelector('#all span');
+            all.classList.remove('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = false
+          })
+        }
+
+      },
+      selectAll(h) {
+        return h(
+          'div',
+          {},
+          [
+            h('el-checkbox', {
+                attrs: {id: "all"},
+                'class': {},
+                on: {
+                  change: this.handleCheckAll,
+
+                  input: (event) => {
+                    console.log(event)
+                  }
+                }
+              }, ['序号']
+            )
+          ]
+        );
+      },
+      checkPhone(rule, value, callback){
+          let re = /^1[3|5|7|8]\d{9}$/;
+          if (value === '') {
+            callback(new Error('请输入手机'));
+          }else {
+            if(re.test(value)){
+              callback()
+            }else {
+              callback(new Error('请输入正确手机号码'));
+            }
+          }
+      },
       submitFrom2(formRules){
         this.$refs[formRules].validate((valid) => {
           if (valid) {
@@ -428,14 +513,14 @@
           }
         });
 
-        let type;
+        let status;
         if (this.storeStatusValue) {
-          type = "on"
+          status = 1
         } else {
-          type = "off"
+          status = 0
         }
 
-        getApi.settingBatch(list.join(','),type).then((res) => {
+        getApi.settingBatchUserGroup(list.join(','),status).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             this.$message('操作成功');
@@ -592,12 +677,12 @@
         getApi.getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
-            // this.levelId = res.data.data[0].id;
-            // getApi.getPowerList(this.levelId,this.p.page).then((res)=>{
-            //   console.log(res)
-            // })
-            console.log(this.data5)
-            this.recur(this.data5)
+            if(this.getPermissionLevelId() === ''){
+              this.setPermissionLevelId({levelId:res.data.data[0].id});
+            }
+            this.getGroupList(this.p,this.getPermissionLevelId());
+
+            this.recur(this.data5);
             this.recurSelected(this.data5, this.getPermissionLevelId())
           } else {
             // this.$alert('请重新登录', '超时', {
@@ -637,7 +722,13 @@
               }
             });
             this.groupList = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.p.total = res.data.data.count;
+            this.$nextTick(() => {
+              let all = document.querySelector('#all span');
+              all.classList.remove('is-checked');
+              let allInput = document.querySelector('#all span input');
+              allInput.checked = false
+            })
           }
         })
       },
@@ -654,9 +745,6 @@
     },
     created() {
       this.showLevel()
-      this.getGroupList(this.p,this.getPermissionLevelId())
-
-
     },
 
     mounted() {

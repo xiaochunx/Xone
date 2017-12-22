@@ -60,6 +60,18 @@ let getList = (levelId = -1) => {
   })
 };
 
+
+//获取门店列表（全权限）
+let getStoreListAll = () => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.order.storeList");
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
 //页面权限
 let getArr = (arr) => {
   let listMap = {};
@@ -77,6 +89,6 @@ let getArr = (arr) => {
 
     return listMap;
   }
-}
+};
 
-export {getLeft,getArea,get,getWayInfo,getChannelInfo,getList,getArr,axios}
+export {getLeft,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios}

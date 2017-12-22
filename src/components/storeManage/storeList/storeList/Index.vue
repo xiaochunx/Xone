@@ -208,6 +208,7 @@
     <el-dialog
       title="新增门店"
       :visible.sync="dialogVisible2"
+      @close="close2"
       width="50%" size="tiny">
       <div class="margin_b_10" v-for="(item,index) in baseStore">
         <div>
@@ -343,7 +344,13 @@
           ]
         );
       },
-
+      close2(){
+        for(let map in this.baseStore){
+          this.baseStore[map].forEach((item)=>{
+            item.OK = false
+          })
+        }
+      },
       search(){
         this.showResouce(this.p = {page: 1, size: 20, total: 0},this.levelId,this.storeName);
       },
@@ -382,8 +389,14 @@
         }else {
           this.dialogVisible2 = true;
           getApi.getBaseStore(this.levelId).then((res)=>{
-
-            this.baseStore = res.data.data
+            if(res.data.errcode === 0){
+              for(let map in res.data.data){
+                res.data.data[map].forEach((item)=>{
+                  item.OK = false
+                })
+              }
+              this.baseStore = res.data.data
+            }
           })
         }
       },
@@ -569,7 +582,13 @@
               }
             });
             this.storeData = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.p.total = res.data.data.count;
+            this.$nextTick(() => {
+              let all = document.querySelector('#all span');
+              all.classList.remove('is-checked');
+              let allInput = document.querySelector('#all span input');
+              allInput.checked = false
+            })
           } else {
             // this.$alert('请重新登录', '超时', {
             //   confirmButtonText: '确定',

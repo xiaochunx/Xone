@@ -55,18 +55,18 @@
               </el-select>
 
             </div>
-            <div class=" margin_r_10">
-              <div>账户</div>
-              <el-select v-model="account" clearable placeholder="请选择账户">
-                <el-option
-                  v-for="item in accountList"
-                  :key="item.id"
-                  :label="item.accountName"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+            <!--<div class=" margin_r_10">-->
+              <!--<div>账户</div>-->
+              <!--<el-select v-model="account" clearable placeholder="请选择账户">-->
+                <!--<el-option-->
+                  <!--v-for="item in accountList"-->
+                  <!--:key="item.id"-->
+                  <!--:label="item.accountName"-->
+                  <!--:value="item.id">-->
+                <!--</el-option>-->
+              <!--</el-select>-->
 
-            </div>
+            <!--</div>-->
 
             <div class=" margin_r_10">
               <div>交易状态
@@ -119,7 +119,7 @@
                          width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="ichannel" label="支付通道"
                          width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="account" label="帐户" width="70"></el-table-column>
+        <!--<el-table-column header-align="center" align="center" prop="account" label="帐户" width="70"></el-table-column>-->
         <el-table-column header-align="center" align="center" prop="pay_money" label="支付金额"
                          width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="refund_money" label="退款金额"
@@ -155,7 +155,7 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './transactionList.service';
-  import {getWayInfo,getChannelInfo,getList,getArr} from '../../utility/communApi'
+  import {getStoreListAll,getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
   export default {
@@ -263,9 +263,9 @@
         getApi.orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1).then((res)=>{
           if(res.data.errcode === 0){
             res.data.data.list.forEach((item)=>{
-              item.add_time = new Date(item.add_time).format("yyyy-MM-dd hh:mm:ss");
+              item.add_time = new Date((item.add_time + '000') * 1).format("yyyy-MM-dd hh:mm:ss");
               if(item.refund_time){
-                item.refund_time = new Date(item.refund_time).format("yyyy-MM-dd hh:mm:ss")
+                item.refund_time = new Date((item.refund_time +'000') * 1).format("yyyy-MM-dd hh:mm:ss")
               }
             });
             this.tableData = res.data.data.list;
@@ -277,13 +277,11 @@
     },
     created() {
 
-
-
-      getWayInfo().then((res) => {
+      getApi.getWayInfo().then((res) => {
         this.getWayInfo = res.data.data
       });
 
-      getChannelInfo().then((res) => {
+      getApi.getChannelInfo().then((res) => {
         this.getChannelInfo = res.data.data
       });
 
@@ -300,16 +298,17 @@
 
     },
     mounted() {
-      getList().then((res)=>{
+      getStoreListAll().then((res)=>{
         let list = [];
-        res.data.data.list.forEach((item)=>{
+        console.log(res)
+        res.data.data.forEach((item)=>{
           list.push(item.id)
         });
         this.store_id_list = list;
 
         this.orderList(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p)
 
-        this.storeData = res.data.data.list
+        this.storeData = res.data.data
       });
       Hub.$on('arr', (e) => {
         this.setTreeArr({obj:getArr(e)})

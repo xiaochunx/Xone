@@ -215,11 +215,14 @@
 
           },
 
-          changeTree(data) {
-            if (data.selected === true) {
-              this.recur(data, true)
+          changeTree(item) {
+            if (item.selected === true) {
+              this.recur(item, true)
             } else {
-              this.recur(data, false)
+              this.recur(item, false)
+            }
+            if(this.$parent.data){
+              this.recurParent(this.$parent.data,item.pid,this.$parent)
             }
           },
           recur(data, bool) {

@@ -46,8 +46,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="time" label="日期" width="70"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="store_name" label="门店" width="70"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="time" label="日期" width="200"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="store_name" label="门店" ></el-table-column>
         <el-table-column header-align="center" align="center" prop="total_money" label="总支付金额" width="120"></el-table-column>
         <el-table-column header-align="center" align="center" prop="total_num" label="总支付笔数" width="120"></el-table-column>
         <el-table-column header-align="center" align="center" prop="ali_money" label="支付宝" width="100"></el-table-column>
@@ -60,7 +60,7 @@
         <!--<el-table-column header-align="center" align="center" prop="qqCount" label="QQ钱包笔数" width="140"></el-table-column>-->
         <el-table-column header-align="center" align="center" prop="refund_money" label="退款金额" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="refund_num" label="退款笔数" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="receive_money" label="实收金额（总）" width="100"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="receive_money" label="实收金额（总）" width="140"></el-table-column>
       </el-table>
 
     <footer>
@@ -72,7 +72,7 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './transactionCount.service';
-  import {getWayInfo,getChannelInfo,getList,getArr} from '../../utility/communApi'
+  import {getWayInfo,getChannelInfo,getStoreListAll,getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
   export default {
@@ -186,16 +186,16 @@
 
     },
     mounted() {
-      getList().then((res)=>{
+      getStoreListAll().then((res)=>{
         let list = [];
-        res.data.data.list.forEach((item)=>{
+        res.data.data.forEach((item)=>{
           list.push(item.id)
         });
         this.store_id_list = list;
 
         this.orderCount(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.p);
 
-        this.storeData = res.data.data.list
+        this.storeData = res.data.data
       });
       Hub.$on('arr', (e) => {
         this.setTreeArr({obj:getArr(e)})

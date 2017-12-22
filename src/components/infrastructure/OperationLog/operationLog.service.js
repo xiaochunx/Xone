@@ -10,8 +10,8 @@ let getAdminLogList = (timeStart,timeEnd,user_name,power_attr,name,p) => {
     formData.append("power_attr", power_attr);
     formData.append("user_name", user_name);
     formData.append("name", name);
-    formData.append("pageCount", p.size);
-    formData.append("pageNumber", p.page);
+    formData.append("page", p.page);
+    formData.append("pagesize", p.size);
 
     axios.post(`index.php?controller=adminlog&action=getAdminLogList&token=${get('token')}`,formData).then((res)=>{
       resolve(res)

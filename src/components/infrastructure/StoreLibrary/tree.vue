@@ -473,9 +473,9 @@
 
         Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
         if(item.type === 5 ||item.type === 4){
-          Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:true});
+          Hub.$emit('showPermissionTree',{levelid:item.id,type:item.type,showAdd:true});
         }else {
-          Hub.$emit('showAdd',{levelid:item.id,type:item.type,showAdd:false});
+          Hub.$emit('showPermissionTree',{levelid:item.id,type:item.type,showAdd:false});
         }
 //        item.show = !item.show
       },
