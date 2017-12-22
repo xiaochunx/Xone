@@ -12,7 +12,7 @@
             <el-button size="small" type="text" @click="$router.go(-1)"> 返回用户组</el-button>
             <el-button size="small" @click="addAccount('添加用户')" v-show="getTreeArr['新增用户']">添加用户</el-button>
             <!--<el-button size="small" @click="showStore()">关联门店</el-button>-->
-            <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>
+            <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭用户']">批量开启/关闭</el-button>
 
           </div>
         </div>
@@ -58,7 +58,6 @@
         </template>
       </el-table-column>
     </el-table>
-    {{getTreeArr}}
     <footer>
       <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
     </footer>
@@ -76,8 +75,8 @@
         <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
           <el-input v-model="formUser.nickname" placeholder="请输入内容"></el-input>
         </el-form-item>
-        <el-form-item label="手机:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
-          <el-input v-model="formUser.phone" placeholder="请输入内容"></el-input>
+        <el-form-item label="手机号:" prop="phone" :rules="{validator: checkPhone,required: true,  trigger: 'blur'}">
+          <el-input v-model="formUser.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
         </el-form-item>
         <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
           <el-form-item label="第三方编码" :key="domain.key">
@@ -143,8 +142,8 @@
         <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
           <el-input v-model="formUserEdit.nickname" placeholder="请输入内容" :disabled="showDetail"></el-input>
         </el-form-item>
-        <el-form-item label="手机:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
-          <el-input v-model="formUserEdit.phone" placeholder="请输入内容" :disabled="showDetail"></el-input>
+        <el-form-item label="手机号:" prop="phone" :rules="{validator: checkPhone,required: true, trigger: 'blur'}">
+          <el-input v-model="formUserEdit.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
         </el-form-item>
 
 
@@ -403,6 +402,18 @@
     },
     watch: {},
     methods: {
+      checkPhone(rule, value, callback){
+        let re = /^1[3|5|7|8]\d{9}$/;
+        if (value === '') {
+          callback(new Error('请输入手机'));
+        }else {
+          if(re.test(value)){
+            callback()
+          }else {
+            callback(new Error('请输入正确手机号码'));
+          }
+        }
+      },
       handleCheckAll(bool) {
         if (bool.target.checked === true) {
           this.userList.forEach((data) => {
@@ -696,13 +707,13 @@
       },
 
       removeDomain3(item) {
-        let index = this.formUser.formUserEdit.indexOf(item);
+        let index = this.formUserEdit.billHuman.indexOf(item);
         if (index !== -1) {
-          this.formUser.formUserEdit.splice(index, 1)
+          this.formUserEdit.billHuman.splice(index, 1)
         }
       },
       addDomain3() {
-        this.formUser.formUserEdit.push({code1: '', code2: ''});
+        this.formUserEdit.billHuman.push({code1: '', code2: ''});
       },
 
 
@@ -755,6 +766,14 @@
             item.select = false
           }
           this.userList = res.data.data.list
+
+          this.$nextTick(() => {
+            let all = document.querySelector('#all span');
+            all.classList.remove('is-checked');
+            let allInput = document.querySelector('#all span input');
+            allInput.checked = false
+          })
+
         })
       }
 

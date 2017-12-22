@@ -516,8 +516,8 @@
       <xo-nav-path :navList="navList"></xo-nav-path>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="基础信息" name="first" v-show="getTreeArr['编辑基础信息']">
-        <div class="m-seeAddStore">
+      <el-tab-pane label="基础信息" name="first">
+        <div class="m-seeAddStore"  v-show="getTreeArr['编辑基础信息']">
           <div class="m-seeAddStore-basic">
             <el-row>
               <el-col :span="16">
@@ -646,8 +646,8 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="收款账户" name="second" v-show="getTreeArr['编辑收款账户']">
-        <div class="m-seeAddStore">
+      <el-tab-pane label="收款账户" name="second" >
+        <div class="m-seeAddStore" v-show="getTreeArr['编辑收款账户']">
           <div class="m-seeAddStore-basic">
             <el-row>
               <el-col :span="24">

@@ -44,8 +44,8 @@
 
     </div>
       <el-table :data="tableData" border :height="tableHeight">
-        <el-table-column header-align="center" align="center" prop="user_name" label="操作人" width="100"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="power_attr" label="操作类型" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="user_name" label="操作人"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="power_attr" label="操作类型" width="160"></el-table-column>
         <el-table-column header-align="center" align="center" prop="power_name" label="操作动作"></el-table-column>
         <el-table-column header-align="center" align="center" prop="add_time_formated" label="操作时间" ></el-table-column>
         <el-table-column header-align="center" align="center" prop="ip" label="IP" ></el-table-column>

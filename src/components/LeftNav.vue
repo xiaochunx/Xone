@@ -174,9 +174,7 @@
           if (map.children) {
             this.$set(map, "show", true);
             if(map.router === path){
-
               Hub.$emit('arr',map.arr);
-
               this.$set(map, "selected", true);
             }else {
               this.$set(map, "selected", false);
@@ -224,10 +222,7 @@
     },
     mounted(){
       this.ListHeight = window.innerHeight - this.getTopHeight;
-
       Hub.$on('showLeftTree', (e) => {
-
-        console.log(e.item)
         this.recurSelected(this.leftData, e.levelid)
       });
 

@@ -10,9 +10,9 @@ const state = {
   isLoading: false,
   treeArr:{},//页面权限
   storeTreeList:[],//门店库树
-  showStoreTree: {levelid: -1, type: '', showAdd: false},////门店库树状态
-  publicLevelId:-1,//公众号levelid
-  permissionLevelId:-1,//权限levelid
+  showStoreTree: {levelid: '', type: '', showAdd: false},//门店库树状态
+  publicLevelId:'',//公众号levelid(没有使用)
+  permissionLevelId:'',//权限levelid
 };
 
 const mutations = {
@@ -38,7 +38,8 @@ const mutations = {
     state.showStoreTree = obj.obj
   },
   [types.TREEARR](state, obj){
-    state.treeArr = obj.obj
+    state.treeArr = obj.obj;
+    window.localStorage.setItem('treeArr',window.JSON.stringify(obj.obj))
   },
 };
 

@@ -177,28 +177,26 @@
       },
       showResouce(id){
         getApi.getGzhInfo(id).then((res)=>{
-
           if(res.data.errcode === 0){
             this.storeData = res.data.data
-
           }
         })
       }
 
     },
     created() {
-      this.showResouce(this.$localStorage.get_s('publicLevelId'));
       getLeft().then((res) => {
         if(res.data.errcode === 0){
+          this.showResouce(this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id);
           this.dataLeft = res.data.data;
           this.recur(this.dataLeft);
-          this.recurSelected(this.dataLeft, this.$localStorage.get_s('publicLevelId'))
+          this.recurSelected(this.dataLeft, this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id)
         }
       });
 
     },
     mounted() {
-      Hub.$on('showAdd', (e) => {
+      Hub.$on('showAddPub', (e) => {
         this.levelName = e.levelName;
         this.type = e.type;
         this.$localStorage.set_s('publicLevelId',e.levelid);
@@ -211,6 +209,7 @@
       });
     },
     destroyed(){
+      Hub.$off("showAddPub");
       Hub.$off("arr")
     },
     updated() {

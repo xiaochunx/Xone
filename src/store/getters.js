@@ -29,6 +29,9 @@ export default{
     return state.showStoreTree;
   },
   getTreeArr(state){
-    return state.treeArr;
+    //需要打印才能正常return
+     console.log(state.treeArr)
+    // return state.treeArr;
+    return window.JSON.parse(window.localStorage.getItem('treeArr'));
   },
 }

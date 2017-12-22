@@ -64,20 +64,6 @@ let getGroupList = (p, level_id) => {
 };
 
 
-//批量启动/关闭
-let settingBatch = (id,type) => {
-  return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("id", id);
-    formData.append("type", type);
-
-    axios.post(`index.php?controller=power&action=settingBatch&token=${get('token')}`, formData).then((res) => {
-      resolve(res)
-    })
-  })
-};
-
-
 //查看账户拥有的权限
 let lookUser = (id) => {
   return new Promise((resolve, reject) => {
@@ -141,17 +127,29 @@ let updateXlsFile = (group_id, fileurl, level_id) => {
   })
 };
 
+//批量更新用户组
+let settingBatchUserGroup = (ids,status) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("ids", ids);
+    formData.append("status", status);
+    axios.post(`index.php?controller=power&action=settingBatchUserGroup&token=${get('token')}`, formData).then((res) => {
+      resolve(res)
+    })
+  })
+};
+
 export default {
   getLevel,
   newLyGroup,
   deletGroup,
   editorGroup,
   getGroupList,
-  settingBatch,
   infoByGroupId,
   lookUser,
   newlyAddAccount,
-  updateXlsFile
+  updateXlsFile,
+  settingBatchUserGroup
 }
 
 

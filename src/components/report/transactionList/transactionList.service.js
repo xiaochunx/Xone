@@ -19,10 +19,29 @@ let getAccountList = () => {
   })
 };
 
+
+
+//交易方式
+let getWayInfo = () => {
+  return new Promise((resolve, reject) => {
+    axios.get(`index.php?controller=jichuapi&action=getCommon&token=${get('token')}&data=[["key","way"]]`).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+//交易通道
+let getChannelInfo = () => {
+  return new Promise((resolve, reject) => {
+    axios.get(`index.php?controller=jichuapi&action=getCommon&token=${get('token')}&data=[["key","channel"]]`).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
 //交易状态
 let putOrderStatus = () => {
   return new Promise((resolve, reject) => {
-    axios.get(`index.php?controller=jichuapi&action=getCommon&token=${get('token')}&data=[["key","payStatusConfig"]]`).then((res)=>{
+    axios.get(`index.php?controller=jichuapi&action=getCommon&token=${get('token')}&data=[["key","payStatus"]]`).then((res)=>{
       resolve(res)
     })
   })
@@ -50,4 +69,6 @@ let orderList = (start_time,end_time,store_id,iway,ichannel,account,pay_status,o
   })
 };
 
-export default {getAccountList,putOrderStatus,orderList}
+
+
+export default {getWayInfo,getChannelInfo,getAccountList,putOrderStatus,orderList}

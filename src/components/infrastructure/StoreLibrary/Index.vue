@@ -70,7 +70,7 @@
                   </div>
                   <div class="flex_r margin_t_10">
                     <div class="flex_1 flex_ce">门店编码：</div>
-                    <div class="flex_2">{{showAsideObj.storeCode}}</div>
+                    <div class="flex_2">{{showAsideObj.id}}</div>
                   </div>
 
                   <div class="flex_r margin_t_10" v-for="(item,index) in showAsideObj.storeCodes">
@@ -287,7 +287,9 @@
       width="50%" size="tiny">
       <div class="flex_f flex">
 
-        <div>message:{{logList.message}}</div>
+        <div v-for="(item,index) in logList">
+         <div class="margin_b_10">{{item}}</div>
+        </div>
 
         <div class="margin_t_10">
           <el-button type="primary" @click="dialogVisible3 = false">确认</el-button>
@@ -398,7 +400,7 @@
         formEdit: {},//编辑弹窗
         p: {page: 1, size: 20, total: 0},
         number: 1,
-        logList:{},
+        logList:[],
         dataLeft:[],
         fileList: [],
         fileurl:''
@@ -797,17 +799,7 @@
           }
         })
       },
-      showLevel() {
-        getApi.getLevel().then((res) => {
-          if (res.data.errcode === 0) {
-            this.setStoreTreeList({list:res.data.data});
-            this.recur(res.data.data);
-            this.recurSelected(res.data.data,this.getShowStoreTree().levelid)
-          } else {
 
-          }
-        })
-      },
       getBsList(p, levelId,storeName = ''){
         getApi.getBsList(p,levelId, storeName).then((res) => {
           if (res.data.errcode === 0) {
@@ -872,18 +864,27 @@
         }
         return img && isLt5M;
       },
+      showLevel() {
+        getApi.getLevel().then((res) => {
+          if (res.data.errcode === 0) {
+            this.setShowStoreTree({obj:{levelid: res.data.data[0].id, type: '', showAdd: false}});
+            this.setStoreTreeList({list:res.data.data});
+            this.getBsList(this.p, this.getShowStoreTree().levelid);
+            this.recur(res.data.data);
+            this.recurSelected(res.data.data,this.getShowStoreTree().levelid)
+          } else {
 
+          }
+        })
+      },
     },
-    created() {
 
-      this.storeData.forEach((map) => {
-        this.$set(map, 'select', false)
-      })
+    created() {
       if(this.getStoreTreeList().length === 0){
         this.showLevel();
+      }else {
+        this.getBsList(this.p, this.getShowStoreTree().levelid);
       }
-
-      this.getBsList(this.p, this.getShowStoreTree().levelid);
     },
 
 
@@ -893,7 +894,7 @@
       Hub.$on('treeEventEditDel', (e) => {
         this.showLevel();
       });
-      Hub.$on('showAdd', (e) => {
+      Hub.$on('showPermissionTree', (e) => {
         this.setShowStoreTree({obj:e});
         this.recurSelected(this.getStoreTreeList(),e.levelid)
       });
@@ -914,7 +915,7 @@
     },
     destroyed(){
       Hub.$off("treeEventEditDel");
-      Hub.$off("showAdd");
+      Hub.$off("showPermissionTree");
       Hub.$off("getBsList");
       Hub.$off("arr")
     }
