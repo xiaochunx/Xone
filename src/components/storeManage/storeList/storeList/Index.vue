@@ -356,11 +356,12 @@
       },
       //设置url
       setOneUrl(row){
+        console.log(row);
         getApi.urlStatus(row.id,row.payJumpUrl).then((res)=>{
           if(res.data.errcode === 0){
             this.$message('操作成功');
+            row.inputChecked = true;
           }
-
         })
       },
       add(){
