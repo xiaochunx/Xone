@@ -146,6 +146,8 @@
         <el-form-item label="手机:" prop="phone" :rules="{required: true, message: '请输入手机', trigger: 'blur'}">
           <el-input v-model="formUserEdit.phone" placeholder="请输入内容" :disabled="showDetail"></el-input>
         </el-form-item>
+
+
         <div v-for="(domain, index) in formUserEdit.billHuman" class="flex_r">
           <el-form-item label="第三方编码" :key="domain.key">
             <div>
@@ -263,7 +265,7 @@
           }"
           @change="handleChangeTran"
           :render-content="renderFunc"
-          :titles="['Source', 'Target']"
+          :titles="['全部门店', '已选门店']"
           :data="storeDataOld">
         </el-transfer>
       </div>

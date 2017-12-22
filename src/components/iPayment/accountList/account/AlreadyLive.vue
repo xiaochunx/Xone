@@ -99,15 +99,8 @@
           accountName: '',    // 账户名称
           Merchants: '',      // 商户号
           payOptions: [],    // 支付方式
-          checkboxGroup: [1],
-          paymentOptions: [{     // 支付通道
-            value: '选项1',
-            memo: '黄金糕',
-            id: 1
-          }, {
-            value: '选项2',
-            memo: '双皮奶'
-          }],
+          checkboxGroup: [],
+          paymentOptions: [], // 支付方式
           Payment: '',    // 支付通道
           domains: [{  // 第三方编码
             code1: '',
@@ -142,7 +135,6 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-
             this.loading = true;
 
             // 拼接支付方式格式
