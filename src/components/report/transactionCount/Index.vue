@@ -19,7 +19,7 @@
           <div class="flex_a">
             <div class=" margin_r_10">
               <div>门店</div>
-              <el-select v-model="store_id" clearable placeholder="请选择">
+              <el-select v-model="store_id" clearable placeholder="请选择" @change="selectStore">
                 <el-option
                   v-for="item in storeData"
                   :key="item.id"
@@ -42,7 +42,7 @@
         <el-table-column header-align="center" align="center" prop="no" label="序号" width="70">
           <template slot-scope="scope">
             <div>
-              {{scope.$index +1}}
+              {{scope.row.NO}}
             </div>
           </template>
         </el-table-column>
@@ -64,7 +64,7 @@
       </el-table>
 
     <footer>
-      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
+      <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
     </footer>
   </div>
 </template>
@@ -95,6 +95,7 @@
         tableData: [],
         store_id_list:[],
         store_id:'',
+        store_name:'',
         p: {page: 1, size: 20, total: 0},
         dateSelected:[],
       }
@@ -102,9 +103,23 @@
 
     methods: {
       ...mapActions(['setTreeArr']),
+      selectStore(id){
+        //console.log(id)
+        if(id === ''){
+          this.store_name = ''
+        }else {
+          this.storeData.forEach((item)=>{
+
+            if(item.id === id){
+              this.store_name = item.storeName
+            }
+          })
+        }
+        console.log(this.store_name)
+      },
       out(){
         let store = this.store();
-        getApi.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.p,1).then((res)=>{
+        getApi.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.store_name,this.p,1).then((res)=>{
           if(res.data.errcode === 0){
             window.location.href = res.data.data
           }
@@ -140,7 +155,7 @@
             let store = this.store();
 
 
-            this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.p)
+            this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.store_name,this.p)
 
 
           }
@@ -160,22 +175,32 @@
       getPage(page) {
         this.p.page = page;
         let store = this.store();
-        this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.p)
+        this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.store_name,this.p)
 
       },
       getPageSize(size) {
         this.p.size = size;
         let store = this.store();
 
-        this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.p)
+        this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.store_name,this.p)
 
       },
       getRadioDate(d){
         this.dateSelected = d
       },
-      orderCount(start_time,end_time,store_id,p,export1 = ''){
-        getApi.orderCount(start_time,end_time,store_id,p,export1).then((res)=>{
+      orderCount(start_time,end_time,store_id,store_name,p,export1 = ''){
+        getApi.orderCount(start_time,end_time,store_id,store_name,p,export1).then((res)=>{
           if(res.data.errcode === 0){
+            for(let i = 0;i<res.data.data.list.length;i++){
+              res.data.data.list[i].NO = i + 1;
+
+              if(res.data.data.list[i].NO === res.data.data.list.length){
+                res.data.data.list[i].NO = "合计"
+              }
+              if(res.data.data.list[i].time === 0 || res.data.data.list[i].time === "总计"){
+                res.data.data.list[i].time = ''
+              }
+            }
             this.tableData = res.data.data.list;
             this.p.total = res.data.data.count
           }
@@ -193,7 +218,7 @@
         });
         this.store_id_list = list;
 
-        this.orderCount(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.p);
+        this.orderCount(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.store_name,this.p);
 
         this.storeData = res.data.data
       });

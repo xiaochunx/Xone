@@ -386,7 +386,7 @@
       },
       addStore() {
         if(this.levelId === ""){
-          this.$message('请选择门店库');
+          this.$message('请选择门店所属部门');
         }else {
           this.dialogVisible2 = true;
           getApi.getBaseStore(this.levelId).then((res)=>{
@@ -603,10 +603,11 @@
     },
     created() {
       getLeft().then((res) => {
-        this.dataLeft = res.data.data
-      });
+        this.dataLeft = res.data.data;
+        this.levelId = res.data.data[0].id;
+        this.showResouce(this.p, this.levelId);
 
-      this.showResouce(this.p, this.levelId);
+      });
 
     },
     mounted() {

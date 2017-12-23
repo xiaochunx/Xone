@@ -136,10 +136,11 @@
       :visible.sync="dialogVisible2"
       @close="roleClose"
       @open="roleOpen"
-      width="100%" size="full">
+      width="100%" size="large">
       <div>
         <roleTree :data="roleList" :count=0></roleTree>
         <el-button type="primary" @click="submitRole()">确定</el-button>
+        <el-button @click="dialogVisible2 = false">取消</el-button>
 
       </div>
     </el-dialog>
@@ -169,18 +170,16 @@
         template: `
             <div >
               <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-                <div class="flex_a">
+                <div class="flex_r">
 
-                 <el-checkbox v-model="item.selected" @change="()=>changeTree(item)">{{item.name}}</el-checkbox>
+                  <el-checkbox v-model="item.selected" @change="()=>changeTree(item)">{{item.name}}</el-checkbox>
 
-                  <div class="flex_a" style="margin-left: 50px">
+                  <div  style="margin-left: 50px;">
 
-                    <div class="margin_r_10" v-for="(item1,index) in item.arr">
+                    <div class="margin_r_10" style="display: inline-block" v-for="(item1,index) in item.arr">
                       <el-checkbox v-model="item1.selected" @change="()=>cell(item1,item)">{{item1.name}}</el-checkbox>
                     </div>
-
                   </div>
-
                 </div>
                 <roleTrees :data='item.children'  :count='count' class="heightTran"></roleTrees>
             </div>

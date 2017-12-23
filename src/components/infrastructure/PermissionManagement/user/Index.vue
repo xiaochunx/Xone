@@ -49,7 +49,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="280">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="300">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="showStore(scope.row)" v-show="getTreeArr['关联门店']">关联门店</el-button>
           <el-button size="small" @click="editAccount('查看',scope.row)" v-show="getTreeArr['查看用户详情']">查看</el-button>
@@ -220,7 +220,7 @@
     <el-dialog
       title=""
       :visible.sync="dialogVisible1"
-      width="100%" size="full">
+      width="100%" size="large">
       <!--<el-table :data="storeData1" border>-->
         <!--<el-table-column label-class-name="table_head" header-align="center" align="center" prop="x" width="120"-->
                          <!--label="模块"></el-table-column>-->
@@ -313,11 +313,12 @@
         template: `
             <div>
               <div v-for='(item,index) in data' :style="{'margin-left': count +20 + 'px'}" style="line-height: 35px;">
-                <div class="flex_a">
+                <div class="flex_r">
                   <el-checkbox v-model="item.selected" disabled>{{item.name}}</el-checkbox>
-                  <div class="flex_a" style="margin-left: 50px">
 
-                    <div class="margin_r_10" v-for="(item1,index) in item.arr">
+                  <div  style="margin-left: 50px">
+
+                    <div class="margin_r_10" style="display: inline-block" v-for="(item1,index) in item.arr">
                       <el-checkbox v-model="item1.selected" disabled>{{item1.name}}</el-checkbox>
                     </div>
 
@@ -346,7 +347,7 @@
           return<div class="equal">
             <div class="row">
 
-            <div class="two">门店名称：{ option.storeName }</div>
+            <div class="two">{ option.storeName }</div>
             </div>
             </div>;
         },

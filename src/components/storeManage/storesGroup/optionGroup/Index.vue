@@ -55,12 +55,12 @@
               </div>
 
 
-              <el-form-item label="门店:">
-                <div class="flex_a margin_b_10">
-                  <el-input class="margin_r_10" v-model="searchValue" placeholder="请输入门店"></el-input>
-                  <el-button @click="searchSelect()">搜索</el-button>
-                </div>
-              </el-form-item>
+              <!--<el-form-item label="门店:">-->
+                <!--<div class="flex_a margin_b_10">-->
+                  <!--<el-input class="margin_r_10" v-model="searchValue" placeholder="请输入门店"></el-input>-->
+                  <!--<el-button @click="searchSelect()">搜索</el-button>-->
+                <!--</div>-->
+              <!--</el-form-item>-->
 
               <el-form-item label="">
                 <el-table :data="searchList" border>

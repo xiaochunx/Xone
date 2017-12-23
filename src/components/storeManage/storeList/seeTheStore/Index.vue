@@ -28,7 +28,7 @@
                     </div>
 
                   </el-form-item>
-                  <el-form-item label="所属门店组:">
+                  <el-form-item label="所属门店标签:">
                     <div v-for="(item,index) in storeData.label">
                       {{item.name}}
                     </div>

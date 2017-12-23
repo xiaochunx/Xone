@@ -90,13 +90,9 @@ let setChannelPayment = (channelId,paymentId,status) => {
 //基础支付通道配置
 let getCommonChannelList = () => {
   return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("name", '');
 
-    formData.append("page", 1);
-    formData.append("pagesize", 1000);
 
-    axios.post(`index.php?controller=jichu&action=commonChannel&token=${get('token')}`,formData).then((res)=>{
+    axios.post(`index.php?controller=payment&action=commonChannel&token=${get('token')}`).then((res)=>{
       resolve(res)
     })
   })

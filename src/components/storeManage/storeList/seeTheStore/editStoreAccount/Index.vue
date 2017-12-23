@@ -575,7 +575,7 @@
                     </div>
 
                   </el-form-item>
-                  <el-form-item label="所属门店组:">
+                  <el-form-item label="所属门店标签:">
                     <el-select v-model="storeData.storeLabelId" multiple placeholder="请选择">
                       <el-option
                         v-for="(item,index) in storeGroup"
@@ -596,25 +596,47 @@
                   <!--</el-select>-->
                   <!--</el-form-item>-->
                   <el-form-item label="营业时间:">
+
+
                     <el-time-select
                       v-model="storeData.openTimeStart"
                       :picker-options="{
-                        start: '08:30',
+                        start: '00:00',
                         step: '00:15',
-                        end: '23:30'
+                        end: '24:00'
                       }"
-                      placeholder="选择时间">
+                      placeholder="开始时间">
                     </el-time-select>
+
+                    <!--<el-time-picker-->
+                      <!--v-model="storeData.openTimeStart"-->
+                      <!--:picker-options="{-->
+                      <!--selectableRange: '00:00:00 - 24:00:00'-->
+                      <!--}"-->
+                      <!--placeholder="开始时间">-->
+                    <!--</el-time-picker>-->
+
+
                     --
                     <el-time-select
                       v-model="storeData.openTimeEnd"
                       :picker-options="{
-                        start: '08:30',
-                        step: '00:15',
-                        end: '23:30'
+                       start: '00:00',
+                       step: '00:15',
+                       end: '24:00'
                       }"
-                      placeholder="选择时间">
+                      placeholder="结束时间">
                     </el-time-select>
+
+                    <!--<el-time-picker-->
+                      <!--v-model="storeData.openTimeEnd"-->
+                      <!--:picker-options="{-->
+                      <!--selectableRange: '00:00:00 - 24:00:00'-->
+                      <!--}"-->
+                      <!--placeholder="结束时间">-->
+                    <!--</el-time-picker>-->
+
+
 
                   </el-form-item>
                   <el-form-item label="预结单提示语:">

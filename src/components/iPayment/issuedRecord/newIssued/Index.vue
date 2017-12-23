@@ -247,7 +247,7 @@
               <el-form-item label="下发规则:">
 
                 <el-col :span="6">
-                  <el-radio class="radio" v-model="form.rules" label="1">替换</el-radio>
+                  <el-radio class="radio" v-model="form.rules" label="2">替换</el-radio>
                   <el-popover
                     ref="popover1"
                     placement="top-start"
@@ -261,7 +261,7 @@
                 </el-col>
 
                 <el-col :span="6">
-                  <el-radio class="radio" v-model="form.rules" label="2">更新</el-radio>
+                  <el-radio class="radio" v-model="form.rules" label="1">更新</el-radio>
                   <el-popover
                     ref="popover2"
                     placement="top-start"
@@ -289,7 +289,7 @@
                   title="停用:"
                   width="200"
                   trigger="hover">
-                  <p>指：停用选择的账号的支付方式／t通道</p>
+                  <p>指：停用选择的账号的支付方式通道</p>
                 </el-popover>
                 <el-button v-popover:popover3 style="border: none;position: relative" size="small"><i
                   class="fa fa-question-circle-o icon-style"></i></el-button>
@@ -380,7 +380,7 @@
             options2: [],
             options3: [],
           }],
-          checked: true
+          checked: false
         },
         height: 0,
         payOptions: [],       // 支付方式选项

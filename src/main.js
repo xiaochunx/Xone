@@ -8,6 +8,8 @@ import element from 'element-ui'
 import store from './store'
 import utility from './components/utility'
 import localStorage from './components/utility/localStorage'
+//IE11
+import 'babel-polyfill'
 // 样式导入
 import 'element-ui/lib/theme-default/index.css'
 import 'font-awesome/css/font-awesome.css'
@@ -16,9 +18,9 @@ import 'font-awesome/css/font-awesome.css'
 Vue.prototype.$http = Axios;
 
 
-let url = 'http://test0.kuan1.cn';  // 测试环境
+// let url = 'http://test0.kuan1.cn';  // 测试环境
 // let url = 'http://x0test.kuan1.cn'; // 开发环境
-// let url = 'http://x.kuan1.cn';      // 正式环境
+let url = 'http://x.kuan1.cn';      // 正式环境
 // let url = 'http://bs.com';          // 本地环境
 // let url = "http://laowang.com";
 
