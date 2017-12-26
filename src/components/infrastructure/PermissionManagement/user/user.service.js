@@ -25,6 +25,20 @@ let getRoleList = () => {
 };
 
 
+//获取基础门店列表
+let getBsList = (levelid) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`index.php?controller=stores&action=index&token=${get('token')}`,{ params: {
+        levelid:levelid,
+        storename:'',
+        page:1,
+        pagesize:1000
+      },}).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
 
 //用户组查看用户
 let getUserFromGroup = (group_id) => {
@@ -166,7 +180,7 @@ let settingBatch = (id,type) => {
   })
 };
 
-export default {getLevel,getRoleList,getUserFromGroup,delBatch,lookUser,editor,newlyAddAccount,userInfoById,getUserStore,userStoreInfo,rolePower,settingBatch}
+export default {getLevel,getRoleList,getUserFromGroup,getBsList,delBatch,lookUser,editor,newlyAddAccount,userInfoById,getUserStore,userStoreInfo,rolePower,settingBatch}
 
 
 

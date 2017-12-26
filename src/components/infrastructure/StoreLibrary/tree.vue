@@ -468,7 +468,6 @@
       },
 
       test(item) {
-        console.log(item)
         this.levelname = item.levelname;
 
         Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});

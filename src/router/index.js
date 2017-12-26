@@ -61,6 +61,16 @@ import OperationPlan from '../components/operate/OperationPlan/Index.vue'
 import PublicManagement from '@/components/infrastructure/PublicManagement/Index.vue'
 
 
+/************************** 菜品管理 ***************************/
+import storeDishesManage from '@/components/dishesManagement/storeDishesManage/Index.vue'
+
+import editDishes from '@/components/dishesManagement/storeDishesManage/editDishes/Index.vue'
+
+import dishesGroup from '@/components/dishesManagement/dishesGroup/Index.vue'
+import addDishesGroup from '@/components/dishesManagement/dishesGroup/addDishesGroup/Index.vue'
+import dishesCategory from '@/components/dishesManagement/dishesCategory/Index.vue'
+import addCategory from '@/components/dishesManagement/dishesCategory/addCategory/Index.vue'
+
 
 Vue.use(Router);
 
@@ -346,6 +356,51 @@ export default new Router({
           meta: { auth: true },
           name: '运营方案',
           component: OperationPlan
+        },
+
+        /**********************菜品管理***************************/
+
+        //门店菜品管理
+        {
+          path: '/dishesManagement/storeDishesManage',
+          meta: { auth: true },
+          name: '菜品管理/门店菜品管理',
+          component: storeDishesManage
+        },
+        //门店菜品管理/编辑
+        {
+          path: '/dishesManagement/storeDishesManage/editDishes',
+          meta: { auth: true },
+          name: '菜品管理/编辑菜品',
+          component: editDishes
+        },
+        //菜品品类
+        {
+          path: '/dishesManagement/dishesCategory',
+          meta: { auth: false },
+          name: '菜品管理/菜品品类',
+          component: dishesCategory
+        },
+        //新增品类
+        {
+          path: '/dishesManagement/dishesCategory/addCategory/:number',
+          meta: { auth: false },
+          name: '菜品管理/新增品类',
+          component: addCategory
+        },
+        //菜品组
+        {
+          path: '/dishesManagement/dishesGroup',
+          meta: { auth: false },
+          name: '菜品管理/菜品组',
+          component: dishesGroup
+        },
+        //新增菜品组
+        {
+          path: '/dishesManagement/dishesGroup/addDishesGroup',
+          meta: { auth: false },
+          name: '菜品管理/菜品组',
+          component: addDishesGroup
         },
 
 

@@ -160,6 +160,44 @@
 //                route: '/'
 //              },
             ]
+          },
+          {
+            name: '菜品管理',
+            children: [
+              {
+                name: '菜品管理',
+                route: '/dishesManagement/storeDishesManage'
+              },
+              {
+                name: '菜品品类',
+                route: '/dishesManagement/dishesCategory'
+              },
+              {
+                name: '菜品组',
+                route: '/dishesManagement/dishesGroup'
+              },
+              {
+                name: '外卖菜品库',
+                route: '/dishesManagement/takeawayDishes'
+              },
+              {
+                name: '菜品规格',
+                route: '/dishesManagement/takeawayDishes/dishesSpec'
+              },
+              {
+                name: '菜品属性',
+                route: '/dishesManagement/takeawayDishes/dishesAttr'
+              },
+
+              // {
+              //   name: '下发记录',
+              //   route: '/dishesManagement/downRecord'
+              // },
+              // {
+              //   name: '门店ERP菜品',
+              //   route: '/dishesManagement/storeErp'
+              // },
+            ]
           }
         ],
         ListHeight: 0,

@@ -296,7 +296,7 @@
 
 <script>
   import {getScrollHeight} from '../../../utility/getScrollHeight'
-  import {getLeft,getList} from '../../../utility/communApi'
+  import {getStoreListAll} from '../../../utility/communApi'
   import getApi from './user.service'
   import { mapActions,mapGetters } from 'vuex';
   export default {
@@ -343,7 +343,7 @@
         storeDataSelected: [],
 
         renderFunc(h, option) {
-
+console.log(option)
           return<div class="equal">
             <div class="row">
 
@@ -566,8 +566,8 @@
         });
       },
       handleChange(value) {
-        getList(value[value.length -1]).then((res)=>{
-          console.log(res)
+        getApi.getBsList(value[value.length -1]).then((res)=>{
+
           // this.storeDataOld = res.data.data.list
 
           let arr =  res.data.data.list.concat(this.storeDataSelected);
@@ -575,7 +575,7 @@
           let listMap = {};
           for (let i = 0, id, storeName, key; i < arr.length; i++) {
             id = arr[i].id;
-            storeName = arr[i].storeName;
+            storeName = arr[i].storename;
             key = id + '-' + storeName;
             if (!!listMap[key]) {
               listMap[key]++;
@@ -779,11 +779,12 @@
 
     },
     created() {
-        getLeft().then((res) => {
-          if(res.data.errcode === 0){
-            this.dataLeft = res.data.data
-          }
-        });
+
+      getApi.getLevel().then((res) => {
+        if (res.data.errcode === 0) {
+          this.dataLeft = res.data.data
+        }
+      });
 
         this.getUserFromGroup();
 
