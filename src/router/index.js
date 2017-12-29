@@ -71,6 +71,11 @@ import addDishesGroup from '@/components/dishesManagement/dishesGroup/addDishesG
 import dishesCategory from '@/components/dishesManagement/dishesCategory/Index.vue'
 import addCategory from '@/components/dishesManagement/dishesCategory/addCategory/Index.vue'
 
+/************************** 发票方案 ***************************/
+
+
+import invoiceScheme from '@/components/invoice/invoiceScheme/Index.vue'
+import downRecord from '@/components/invoice/downRecord/Index.vue'
 
 Vue.use(Router);
 
@@ -403,6 +408,22 @@ export default new Router({
           component: addDishesGroup
         },
 
+        /**********************发票***************************/
+
+        //发票方案
+        {
+          path: '/invoice/invoiceScheme',
+          meta: { auth: false },
+          name: '发票方案',
+          component: invoiceScheme
+        },
+        //下发记录
+        {
+          path: '/invoice/downRecord',
+          meta: { auth: false },
+          name: '下发记录',
+          component: downRecord
+        },
 
       ]
     },

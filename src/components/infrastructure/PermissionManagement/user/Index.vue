@@ -343,7 +343,6 @@
         storeDataSelected: [],
 
         renderFunc(h, option) {
-console.log(option)
           return<div class="equal">
             <div class="row">
 
@@ -465,7 +464,7 @@ console.log(option)
                   change: this.handleCheckAll,
 
                   input: (event) => {
-                    console.log(event)
+
                   }
                 }
               }, ['序号']
@@ -505,7 +504,6 @@ console.log(option)
         }
 
         getApi.settingBatch(list.join(','),type).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             this.$message('操作成功');
             this.getUserFromGroup();
@@ -525,7 +523,6 @@ console.log(option)
         });
 
         getApi.userStoreInfo(data).then((res)=>{
-          console.log(res)
           if(res.data.errcode === 0){
             this.dialogVisible2 = false
           }
@@ -583,7 +580,6 @@ console.log(option)
               listMap[key] = 1;
             }
           }
-
           for (let item in listMap) {
             list2.push({
               id: item.split('-')[0] *1,
@@ -591,7 +587,6 @@ console.log(option)
             })
           }
         this.storeDataOld = list2
-
         })
       },
       handleChangeTran(value){
@@ -602,7 +597,6 @@ console.log(option)
         this.uid = row.id;
         this.username = row.username;
         getApi.getUserStore(row.id).then((res)=>{
-          console.log(res)
           if(res.data.errcode === 0){
             let list = [];
             res.data.data.list.forEach((item)=>{
@@ -681,7 +675,6 @@ console.log(option)
 
         this.userName = name;
         getApi.userInfoById(row.id).then((res)=>{
-          console.log(res)
           if(res.data.errcode === 0){
             if(res.data.data[0].status ===1) {
               res.data.data[0].status = true
@@ -724,7 +717,6 @@ console.log(option)
           type: 'warning'
         }).then(() => {
           getApi.delBatch(row.id).then((res) => {
-            console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
@@ -756,7 +748,6 @@ console.log(option)
       getUserFromGroup(){
         let id = this.$route.params.id;
         getApi.getUserFromGroup(id).then((res)=>{
-          console.log(res)
           for(let item of res.data.data.list){
             if(item.status === 1){
               item.status = "开启"
