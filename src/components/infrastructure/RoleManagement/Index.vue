@@ -20,14 +20,17 @@
       </div>
 
     </div>
-    <el-table :data="storeData" border :height="tableHeight">
-      <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                       width="100">
+    <el-table :data="storeData" border :height="tableHeight"  @select-all="handleSelectionChange" ref="multipleTable">
+      <el-table-column
+        header-align="center" align="center"
+        type="selection"
+        label-class-name="mySelect"
+        width="100">
         <template slot-scope="scope">
           <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
-
         </template>
       </el-table-column>
+
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                        label="角色编码"
                        width="100"></el-table-column>
@@ -54,6 +57,7 @@
     <el-dialog
       :title="name"
       :visible.sync="dialogVisible"
+      @open="dialogOpen"
       @close="dialogClose"
       width="30%">
       <el-form ref="formRules" :model="form" label-width="100px">
@@ -124,8 +128,8 @@
           </el-switch>
         </el-form-item>
         <div class="margin_t_10">
-          <!--<el-button>取消</el-button>-->
           <el-button type="primary" @click="submitFrom('formRules')">确认</el-button>
+          <el-button @click="dialogVisible = false">取消</el-button>
         </div>
       </el-form>
     </el-dialog>
@@ -275,11 +279,51 @@
         p: {page: 1, size: 20, total: 0},
         roleId:'',
         searchName:'',
+        multipleSelection:[]
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
+      handleChecked(data) {
+        let count = 0;
+        this.storeData.forEach((data) => {
+          if (data.select === true) {
+            count += data.select * 1
+          }
+        });
+        let list =  this.storeData.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
+        if (count === this.storeData.length) {
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
+          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
+        }
+      },
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.storeData.length){
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
+      },
       search(){
         if(this.searchName === ''){
           this.showRoleList(this.p = {page: 1, size: 20, total: 0})
@@ -336,15 +380,21 @@
       addDomain() {
         this.form.thirdCode.push({code1: '', code2: ''});
       },
-      dialogClose() {
-        this.form = {
-          name: '',
-          status: true,
-          typeId: '',
-          thirdCode: [
-            {code1: '', code2: ''}
-          ],
-        };
+      dialogOpen() {
+        if(this.name === "新增"){
+          this.form = {
+            name: '',
+            status: true,
+            typeId: '',
+            thirdCode: [
+              {code1: '', code2: ''}
+            ],
+          };
+
+        }
+
+      },
+      dialogClose(){
         this.$refs['formRules'].resetFields();
       },
       submitFrom(formRules) {
@@ -379,62 +429,6 @@
       handle() {
 
 
-      },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.storeData.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.storeData.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
-      handleChecked(data) {
-        let count = 0;
-        this.storeData.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
-
-        if (count === this.storeData.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
-          })
-        } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
-        }
-
-      },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-                  }
-                }
-              }, ['全选']
-            )
-          ]
-        );
       },
 
       recurRole(list) {
@@ -484,14 +478,7 @@
         this.dialogVisible = true
       },
       del() {
-
-        let list = [];
-        this.storeData.forEach((item) => {
-          if (item.select) {
-            list.push(item.id)
-          }
-        });
-        if (list.length === 0) {
+        if (this.multipleSelection.length === 0) {
           this.$message('请勾选角色');
         } else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
@@ -499,8 +486,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.delRole(list.join(",")).then((res) => {
-
+            getApi.delRole(this.multipleSelection.join(",")).then((res) => {
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
@@ -515,7 +501,6 @@
             //
           });
         }
-
       },
 
       showRoleList(p,name = "") {
@@ -533,14 +518,10 @@
 
             });
             this.storeData = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.p.total = res.data.data.count;
+            this.multipleSelection = [];
           }else {
-            // this.$alert('请重新登录', '超时', {
-            //   confirmButtonText: '确定',
-            //   callback: action => {
-            //     this.$router.push('/login')
-            //   }
-            // })
+
           }
         })
       }

@@ -48,7 +48,6 @@ let deletGroup = (group_id) => {
   })
 };
 
-
 //获取用户组列表
 
 let getGroupList = (p, level_id) => {

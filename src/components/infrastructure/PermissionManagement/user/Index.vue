@@ -20,13 +20,17 @@
       </div>
     </div>
 
-    <el-table :data="userList" border :height="tableHeight" v-show="getTreeArr['用户列表']">
-      <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                       width="100">
+    <el-table :data="userList" border :height="tableHeight" v-show="getTreeArr['用户列表']" @select-all="handleSelectionChange" ref="multipleTable">
+      <el-table-column
+        header-align="center" align="center"
+        type="selection"
+        label-class-name="mySelect"
+        width="100">
         <template slot-scope="scope">
           <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
         </template>
       </el-table-column>
+
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                        label="编码"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="phone"
@@ -67,6 +71,7 @@
 
     <el-dialog
       :title="userName"
+      @open="dialogOpen"
       @close="dialogClose"
       :visible.sync="dialogVisible"
       width="50%">
@@ -195,6 +200,18 @@
           </el-select>
         </el-form-item>
 
+
+        <el-form-item label="用户组:">
+          <el-select v-model="formUserEdit.groupId" placeholder="请选择" :disabled="showDetail">
+            <el-option
+              v-for="item in groupList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="拥有权限:">
           <el-button size="small" type="primary" @click="showPermission(formUserEdit.role_id)">查看</el-button>
         </el-form-item>
@@ -260,7 +277,7 @@
           v-model="storeDataNew"
           :props="{
             key: 'id',
-            label: 'storeName'
+            label: 'storename'
           }"
           @change="handleChangeTran"
           :render-content="renderFunc"
@@ -298,6 +315,7 @@
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import {getStoreListAll} from '../../../utility/communApi'
   import getApi from './user.service'
+  import getApi1 from '../permissionManagement.service'
   import { mapActions,mapGetters } from 'vuex';
   export default {
     computed: {
@@ -346,7 +364,7 @@
           return<div class="equal">
             <div class="row">
 
-            <div class="two">{ option.storeName }</div>
+            <div class="two">{ option.storename }</div>
             </div>
             </div>;
         },
@@ -358,7 +376,7 @@
         dialogVisible4:false,
         tableHeight: 0,
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
-
+        groupList:[],
         storeName: '',
         storeData1: [
           {x: 'x1', operation: [{name: '列表', is: true}, {name: '删除', is: false}, {name: '编辑', is: false}]},
@@ -380,6 +398,7 @@
         formUserEdit:{
           nickname: '',
           phone: '',
+          groupId:'',
           role_id:[],
           billHuman: [
             {code1: '', code2: ''}
@@ -397,7 +416,8 @@
         storeList:[],
         selectedOptions:[],
         uid:'',
-        username:''
+        username:'',
+        multipleSelection:[]
       }
     },
     watch: {},
@@ -425,6 +445,9 @@
           })
         }
       },
+
+
+
       handleChecked(data) {
         let count = 0;
         this.userList.forEach((data) => {
@@ -432,26 +455,40 @@
             count += data.select * 1
           }
         });
-
+        let list =  this.userList.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.userList.length) {
-          //this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          //this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
 
       },
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.userList.length){
+          this.userList.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.userList.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
+      },
+
       selectAll(h) {
         return h(
           'div',
@@ -489,13 +526,6 @@
       },
       //批量状态设置
       changeStoresStatus() {
-        let list = [];
-        this.userList.forEach((item) => {
-          if (item.select) {
-            list.push(item.id)
-          }
-        });
-
         let type;
         if (this.storeStatusValue) {
           type = "on"
@@ -503,12 +533,11 @@
           type = "off"
         }
 
-        getApi.settingBatch(list.join(','),type).then((res) => {
+        getApi.settingBatch(this.multipleSelection.join(','),type).then((res) => {
           if (res.data.errcode === 0) {
             this.$message('操作成功');
             this.getUserFromGroup();
             this.dialogVisible4 = false
-
           }
         })
       },
@@ -517,7 +546,7 @@
         this.storeDataOld.forEach((item)=>{
           this.storeDataNew.forEach((item1)=>{
             if(item.id === item1){
-              data.push({uid:this.uid,username:this.username,store_id:item.id,storename:item.storeName})
+              data.push({uid:this.uid,username:this.username,store_id:item.id,storename:item.storename})
             }
           })
         });
@@ -532,8 +561,8 @@
       submitFromEdit(formRules){
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            let group_id = this.$route.params.id;
-            getApi.editor(this.formUserEdit,group_id).then((res)=>{
+            //let group_id = this.$route.params.id;
+            getApi.editor(this.formUserEdit).then((res)=>{
               if(res.data.errcode === 0){
                 this.dialogVisible3 = false;
                 this.getUserFromGroup();
@@ -570,10 +599,10 @@
           let arr =  res.data.data.list.concat(this.storeDataSelected);
           let list2 = [];
           let listMap = {};
-          for (let i = 0, id, storeName, key; i < arr.length; i++) {
+          for (let i = 0, id, storename, key; i < arr.length; i++) {
             id = arr[i].id;
-            storeName = arr[i].storename;
-            key = id + '-' + storeName;
+            storename = arr[i].storename;
+            key = id + '-' + storename;
             if (!!listMap[key]) {
               listMap[key]++;
             } else {
@@ -583,7 +612,7 @@
           for (let item in listMap) {
             list2.push({
               id: item.split('-')[0] *1,
-              storeName: item.split('-')[1],
+              storename: item.split('-')[1],
             })
           }
         this.storeDataOld = list2
@@ -650,7 +679,7 @@
         this.username = '';
         this.selectedOptions =[]
       },
-      dialogClose() {
+      dialogOpen(){
         this.formUser = {
           nickname: '',
           phone: '',
@@ -659,6 +688,9 @@
           ],
           status:false
         };
+      },
+      dialogClose() {
+
         this.$refs['formRules'].resetFields();
       },
       addAccount(name) {
@@ -681,7 +713,9 @@
             }else {
               res.data.data[0].status = false
             }
+            res.data.data[0].groupId = res.data.data[0].group_id * 1;
             this.formUserEdit = res.data.data[0]
+            console.log(this.formUserEdit)
           }
         });
 
@@ -756,15 +790,8 @@
             }
             item.select = false
           }
-          this.userList = res.data.data.list
-
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
-
+          this.userList = res.data.data.list;
+          this.multipleSelection = []
         })
       }
 
@@ -782,6 +809,12 @@
       getApi.getRoleList().then((res)=>{
         if(res.data.errcode === 0){
           this.roleList = res.data.data.list
+        }
+      });
+
+      getApi1.getGroupList({page: 1, size: 1000, total: 0},this.$route.params.levelId).then((res)=>{
+        if(res.data.errcode === 0){
+          this.groupList = res.data.data.list
         }
       })
 

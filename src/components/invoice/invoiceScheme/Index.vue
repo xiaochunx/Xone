@@ -11,7 +11,7 @@
           <el-button size="small" @click="add('新增方案')">+新增方案</el-button>
         </div>
         <div class="flex_r">
-          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入内容">
+          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入名称">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <el-button class="margin_l_10" size="small" @click="search()">搜索</el-button>
@@ -76,7 +76,7 @@
     </el-dialog>
 
     <!--新增/修改方案-->
-    <el-dialog :title="showName" :visible.sync="dialogFormVisible1" @close="close1">
+    <el-dialog :title="showName" :visible.sync="dialogFormVisible1" @open="open1">
 
 
       <el-form ref="clientForm" :model="clientForm" label-width="180px">
@@ -161,19 +161,18 @@
 
               <div class="cell_title margin_b_10">购买方信息</div>
 
-              <div class="flex_r margin_b_10" v-if="showName === '查看' || showName === '修改'">
+              <div class="flex_r f_f margin_b_10" v-if="showName === '查看' || showName === '修改'">
                 <xo-button v-for="(item,index) in clientForm.purchasers" :key="item.id" :id="item.id" :showName="showName" :name="item.name" marginLeft="10px"  backgroundColor="#ffffff" :isBool="item.select"
                            @click="buyInfo"></xo-button>
               </div>
 
 
-              <div class="flex_r margin_b_10" v-if="showName === '新增方案'">
+              <div class="flex_r f_f margin_b_10" v-if="showName === '新增方案'">
                 <xo-button v-for="(item,index) in purchaserList" :key="item.id" :id="item.id" :showName="showName" :name="item.name" marginLeft="10px"  backgroundColor="#ffffff" :isBool="item.select"
                            @click="buyInfo"></xo-button>
               </div>
 
             </el-form-item>
-
 
           </el-tab-pane>
         </el-tabs>
@@ -224,12 +223,14 @@
       </div>
 
       <div class="margin_t_10">
-        <el-table :data="storeData1" border style="width: 100%;">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="storeData1" border style="width: 100%;" @select-all="handleSelectionChange" ref="multipleTable">
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
-
             </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="门店标签编码">
@@ -290,7 +291,7 @@
         roleType: [],
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-
+        multipleSelection:[],
         searchName: '',
         providerId: '',
         providerList: [],
@@ -304,14 +305,47 @@
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
+
+      handleChecked(data) {
+        let count = 0;
+        this.storeData1.forEach((data) => {
+          if (data.select === true) {
+            count += data.select * 1
+          }
+        });
+        let list =  this.storeData1.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
+        if (count === this.storeData1.length) {
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
+          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
+        }
+      },
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.storeData1.length){
+          this.storeData1.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.storeData1.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
+      },
       searchStore1(){
-
-          let all = document.querySelector('#all span');
-          all.classList.remove('is-checked');
-          let allInput = document.querySelector('#all span input');
-          allInput.checked = false
-
-
         getApi.searchStore(this.areaId, this.inputArea).then((res) => {
           res.data.data.forEach((map) => {
             this.$set(map, 'select', false)
@@ -324,16 +358,15 @@
 
       },
       submitFrom1(){
-        console.log(this.storeData1)
 
-        let list = [];
-        this.storeData1.forEach((item)=>{
-         if(item.select === true) {
-           list.push(item.id)
-         }
-        })
-
-        getApi.issuedInvoice(this.id,list.join(',')).then((res)=>{
+        if(this.multipleSelection.length === 0){
+          this.$message({
+            type: 'warning',
+            message: '请选择门店'
+          });
+          return
+        }
+        getApi.issuedInvoice(this.id,this.multipleSelection.join(',')).then((res)=>{
           if(res.data.errcode === 0){
             this.dialogFormVisible2 = false
           }
@@ -346,17 +379,9 @@
       async handleClick(tab, event) {
         if (tab.name === 'first') {
 
-
-
         }
       },
       open2(){
-        this.$nextTick(() => {
-          let all = document.querySelector('#all span');
-          all.classList.remove('is-checked');
-          let allInput = document.querySelector('#all span input');
-          allInput.checked = false
-        });
         this.providerId = '';
         this.cityId = '';
         this.cityList = [];
@@ -367,12 +392,6 @@
 
       },
       close2(){
-        this.$nextTick(() => {
-          let all = document.querySelector('#all span');
-          all.classList.remove('is-checked');
-          let allInput = document.querySelector('#all span input');
-          allInput.checked = false
-        });
         this.providerId = '';
         this.cityId = '';
         this.cityList = [];
@@ -381,16 +400,20 @@
         this.inputArea = '';
         this.storeData1 = [];
       },
-      close1(){
-        this.clientForm =  {
-          name: '',
-          third_code: [
-            {code1: '', code2: ''}
-          ],
-          status: false,
-          auto_log: false,
-          purchasers:[]
+      open1(){
+
+        if(this.showName === "新增方案"){
+          this.clientForm =  {
+            name: '',
+            third_code: [
+              {code1: '', code2: ''}
+            ],
+            status: false,
+            auto_log: false,
+            purchasers:[]
+          }
         }
+
       },
       submitFrom(formRules){
         this.$refs[formRules].validate((valid) => {
@@ -563,74 +586,8 @@
           }
         })
       },
-      handleCheckAll(bool) {
 
-        if (bool.target.checked === true) {
-          this.storeData1.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.storeData1.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
-      handleChecked(data) {
-        let count = 0;
-        this.storeData1.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
 
-        if (count === this.storeData1.length) {
-
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
-          })
-        } else {
-
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
-        }
-
-      },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                props: {
-
-                },
-
-                domProps: {
-
-                },
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-
-//                    this.$emit('input', event)
-                  }
-
-                }
-              }, ['全选']
-            )
-          ]
-        );
-
-      },
       myChange(id, name) {
         if (name === "provider") {
           this.cityId = "";

@@ -87,7 +87,7 @@ let editor = (formUser,group_id) => {
     formData.append("id", formUser.id);
     formData.append("nickname", formUser.nickname);
     formData.append("phone", formUser.phone);
-    formData.append("group_id", group_id);
+    formData.append("group_id", formUser.groupId);
     formData.append("role_id", formUser.role_id.join(','));
     formData.append("billHuman", window.JSON.stringify(formUser.billHuman) );
 

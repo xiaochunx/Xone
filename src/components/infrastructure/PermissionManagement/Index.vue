@@ -32,9 +32,12 @@
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
-        <el-table :data="groupList" border :height="tableHeight">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="groupList" border :height="tableHeight"  @select-all="handleSelectionChange" ref="multipleTable">
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
@@ -337,7 +340,7 @@
         fileList: [],
         fileurl: '',
         selectGroupList:[],
-
+        multipleSelection:[]
       }
     },
     watch: {},
@@ -358,17 +361,7 @@
 
 
       },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.groupList.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.groupList.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
+
       handleChecked(data) {
         let count = 0;
         this.groupList.forEach((data) => {
@@ -376,46 +369,40 @@
             count += data.select * 1
           }
         });
-
+        let list =  this.groupList.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.groupList.length) {
-          //this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          //this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
 
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-
-                  input: (event) => {
-                    console.log(event)
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.groupList.length){
+          this.groupList.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.groupList.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
       },
+
       checkPhone(rule, value, callback){
           let re = /^1[3|5|7|8]\d{9}$/;
           if (value === '') {
@@ -491,14 +478,8 @@
       },
       isSwitch() {
         this.storeStatusValue = false;
-        let list = [];
-        this.groupList.forEach((item) => {
-          if (item.select) {
-            list.push(item.id)
-          }
-        });
 
-        if (list.length === 0) {
+        if (this.multipleSelection.length === 0) {
           this.$message('请勾选门店');
         } else {
           this.dialogVisible1 = true
@@ -506,26 +487,18 @@
       },
       //批量状态设置
       changeStoresStatus() {
-        let list = [];
-        this.groupList.forEach((item) => {
-          if (item.select) {
-            list.push(item.id)
-          }
-        });
-
         let status;
         if (this.storeStatusValue) {
           status = 1
         } else {
           status = 0
         }
-
-        getApi.settingBatchUserGroup(list.join(','),status).then((res) => {
+        getApi.settingBatchUserGroup(this.multipleSelection.join(','),status).then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             this.$message('操作成功');
             this.getGroupList(this.p,this.getPermissionLevelId());
-            this.dialogVisible1 = false
+            this.dialogVisible1 = false;
 
           }
         })
@@ -685,12 +658,7 @@
             this.recur(this.data5);
             this.recurSelected(this.data5, this.getPermissionLevelId())
           } else {
-            // this.$alert('请重新登录', '超时', {
-            //   confirmButtonText: '确定',
-            //   callback: action => {
-            //     this.$router.push('/login')
-            //   }
-            // })
+
           }
         })
       },
@@ -709,8 +677,6 @@
 
       getGroupList(p, level_id) {
         getApi.getGroupList(p, level_id).then((res) => {
-
-          console.log(res)
           if(res.data.errcode === 0){
             res.data.data.list.forEach((item)=>{
               item.select = false;
@@ -723,12 +689,7 @@
             });
             this.groupList = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.$nextTick(() => {
-              let all = document.querySelector('#all span');
-              all.classList.remove('is-checked');
-              let allInput = document.querySelector('#all span input');
-              allInput.checked = false
-            })
+            this.multipleSelection = [];
           }
         })
       },

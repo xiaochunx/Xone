@@ -1,8 +1,5 @@
 <style scoped>
   .myButton{
-    height: 36px;
-
-
     border: 1px solid;
     border-radius: 5px;
     cursor: pointer;
@@ -21,9 +18,9 @@
 </style>
 
 <template>
-  <button @click="handleClick" class="myButton" :style="{'margin-left':marginLeft,'color':!isBool?'black':'red','border-color':!isBool?'#C3C4C3':'red','background-color':backgroundColor}">
+  <div @click="handleClick" class="myButton" style="margin-bottom: 10px" :style="{'margin-left':marginLeft,'color':!isBool?'black':'red','border-color':!isBool?'#C3C4C3':'red','background-color':backgroundColor}">
     {{name}}
-  </button>
+  </div>
 
 </template>
 

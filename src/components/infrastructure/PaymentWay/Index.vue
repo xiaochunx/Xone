@@ -8,10 +8,10 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <!--<el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>-->
+          <!--<el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>-->
         </div>
         <div class="flex_r">
-          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入内容">
+          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入支付通道">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <el-button class="margin_l_10" size="small" @click="search()">搜索</el-button>
@@ -19,14 +19,18 @@
       </div>
 
     </div>
-    <el-table :data="payWayList" border :height="tableHeight">
-      <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                       width="100">
+    <el-table :data="payWayList" border :height="tableHeight" @select-all="handleSelectionChange" ref="multipleTable">
+
+      <el-table-column
+        header-align="center" align="center"
+        type="selection"
+        label-class-name="mySelect"
+        width="100">
         <template slot-scope="scope">
           <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
-
         </template>
       </el-table-column>
+
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="基础支付通道编码"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="thirdCode" label="第三方编码">
         <template slot-scope="scope">
@@ -89,17 +93,14 @@
     components: {},
     data() {
       return {
-
         dialogVisible1:false,
         storeStatusValue: false,
         tableHeight: 0,
         navList: [{name: "基础设置", url: ''}, {name: "支付配置", url: ''}],
 
-        selectedAll: false,
-
         payWayList: [],
         p: {page: 1, size: 20, total: 0},
-
+        multipleSelection:[],
         searchName:''
       }
     },
@@ -189,30 +190,14 @@
               })
             });
             this.payWayList = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.p.total = res.data.data.count;
+            this.multipleSelection = [];
           }else {
-            // this.$alert('请重新登录', '超时', {
-            //   confirmButtonText: '确定',
-            //   callback: action => {
-            //     this.$router.push('/login')
-            //   }
-            // })
+
           }
         })
       },
 
-
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.payWayList.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.payWayList.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
       handleChecked(data) {
         let count = 0;
         this.payWayList.forEach((data) => {
@@ -220,43 +205,37 @@
             count += data.select * 1
           }
         });
-
+        let list =  this.payWayList.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.payWayList.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
-
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.payWayList.length){
+          this.payWayList.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.payWayList.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
       },
 
     },

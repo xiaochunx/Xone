@@ -9,7 +9,7 @@
         <div>
           <el-button size="small" @click="addStore()" v-show="getTreeArr['添加门店']">新增门店</el-button>
           <el-button size="small" @click="delSelected()" v-show="getTreeArr['删除']">批量删除</el-button>
-          <el-button size="small" @click="isSwitch()" v-show="getTreeArr['开启、关闭']">批量开启/关闭</el-button>
+          <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>
           <el-button size="small" @click="setUrl()" v-show="getTreeArr['设置url']">批量设置url</el-button>
         </div>
 
@@ -39,13 +39,18 @@
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}" v-show="getTreeArr['门店列表']">
-        <el-table :data="storeData" border :height="tableHeight">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="storeData" border :height="tableHeight" @select-all="handleSelectionChange" ref="multipleTable">
+
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
+
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
                            label="编码"
                            width="100"></el-table-column>
@@ -282,23 +287,13 @@
         p: {page: 1, size: 20, total: 0},
         baseStore: {},//点击新增时的门店
         levelId:'',//左边树ID
-
+        multipleSelection:[]
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.storeData.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.storeData.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
+
       handleChecked(data) {
         let count = 0;
         this.storeData.forEach((data) => {
@@ -306,44 +301,41 @@
             count += data.select * 1
           }
         });
-
+        let list =  this.storeData.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.storeData.length) {
-          //this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          //this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
+      },
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.storeData.length){
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
+      },
 
-      },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
-      },
+
+
       close2(){
         for(let map in this.baseStore){
           this.baseStore[map].forEach((item)=>{
@@ -437,14 +429,6 @@
       },
       //批量状态设置
       changeStoresStatus() {
-        let list = [];
-
-        this.storeData.forEach((item)=>{
-          if(item.select){
-            list.push(item.id)
-          }
-        });
-
         let storeStatusValue;
         if (this.storeStatusValue) {
           storeStatusValue = 1
@@ -452,7 +436,7 @@
           storeStatusValue = 0
         }
 
-          getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
+          getApi.storesStatus(this.multipleSelection.join(','), storeStatusValue).then((res) => {
 
             if(res.data.errcode === 0){
               this.$message('操作成功');
@@ -480,13 +464,8 @@
 
       },
       delSelected() {
-        let list = [];
-        this.storeData.forEach((item)=>{
-          if(item.select){
-            list.push(item.id)
-          }
-        });
-        if(list.length === 0){
+
+        if(this.multipleSelection.length === 0){
           this.$message('请勾选门店');
         }else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
@@ -494,7 +473,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.del(list.join(",")).then((res)=>{
+            getApi.del(this.multipleSelection.join(",")).then((res)=>{
 
               this.$message({
                 type: 'info',
@@ -584,19 +563,9 @@
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.$nextTick(() => {
-              let all = document.querySelector('#all span');
-              all.classList.remove('is-checked');
-              let allInput = document.querySelector('#all span input');
-              allInput.checked = false
-            })
+            this.multipleSelection = []
           } else {
-            // this.$alert('请重新登录', '超时', {
-            //   confirmButtonText: '确定',
-            //   callback: action => {
-            //     this.$router.push('/login')
-            //   }
-            // })
+
           }
         })
       }

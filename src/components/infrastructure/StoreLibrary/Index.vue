@@ -37,13 +37,17 @@
       </div>
 
       <div class="padding_l_10 width_100" >
-        <el-table :data="storeData" border :height="tableHeight">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="storeData" border :height="tableHeight"  @select-all="handleSelectionChange" ref="multipleTable">
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
+
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                            label="编码"
                            width="100"></el-table-column>
@@ -95,7 +99,7 @@
 
               <el-button size="small" type="primary" v-popover:popover4 >查看</el-button>
               <el-button size="small" @click.stop="edit(scope.row)" v-show="getTreeArr['编辑']">编辑</el-button>
-              <el-button size="small" type="danger" @click.stop="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
+              <el-button size="small" type="danger" @click.stop="del(scope.row)" v-show="getTreeArr['删除部门']">删除</el-button>
               <!--<el-button size="small" type="primary">上传资料</el-button>-->
             </template>
           </el-table-column>
@@ -403,7 +407,8 @@
         logList:[],
         dataLeft:[],
         fileList: [],
-        fileurl:''
+        fileurl:'',
+        multipleSelection:[]
       }
     },
     watch: {},
@@ -419,12 +424,6 @@
       },
       //批量状态设置
       changeStoresStatus() {
-        let list = [];
-        this.storeData.forEach((item)=>{
-          if(item.select){
-            list.push(item.id)
-          }
-        });
 
         let storeStatusValue;
         if (this.storeStatusValue) {
@@ -433,25 +432,19 @@
           storeStatusValue = 0
         }
 
-        getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
+        getApi.storesStatus(this.multipleSelection.join(','), storeStatusValue).then((res) => {
           if(res.data.errcode === 0){
             this.$message('操作成功');
             this.getBsList(this.p,this.getShowStoreTree().levelid);
-            this.dialogVisible1 = false
-
+            this.dialogVisible1 = false;
           }
         })
       },
       isSwitch(){
         this.storeStatusValue = false;
-        let list = [];
-        this.storeData.forEach((item)=>{
-          if(item.select){
-            list.push(item.id)
-          }
-        });
 
-        if(list.length === 0){
+
+        if(this.multipleSelection.length === 0){
           this.$message('请勾选门店');
         }else {
           this.dialogVisible1 = true
@@ -516,7 +509,6 @@
         });
       },
       search(){
-
         if(this.searchName === ''){
           this.getBsList(this.p = {page: 1, size: 20, total: 0},this.getShowStoreTree().levelid)
         }else {
@@ -531,14 +523,8 @@
 
       },
       delSelected() {
-        let list = [];
-        this.storeData.forEach((item)=>{
-          if(item.select){
-            list.push(item.id)
-          }
-        });
 
-        if(list.length === 0){
+        if(this.multipleSelection.length === 0){
           this.$message('请勾选门店');
         }else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
@@ -546,7 +532,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.delBsOne(list.join(",")).then((res)=>{
+            getApi.delBsOne(this.multipleSelection.join(",")).then((res)=>{
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
@@ -651,17 +637,7 @@
         </span>
         </span>);
       },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.storeData.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.storeData.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
+
       handleChecked(data) {
         let count = 0;
         this.storeData.forEach((data) => {
@@ -669,46 +645,39 @@
             count += data.select * 1
           }
         });
-
+        let list =  this.storeData.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.storeData.length) {
-          //this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          //this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
-
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-
-                  input: (event) => {
-
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.storeData.length){
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
       },
+
       addBig() {
         this.title = title
         this.dialogVisible = true
@@ -812,21 +781,12 @@
               item.select = false
             });
             this.storeData = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.p.total = res.data.data.count;
+            this.multipleSelection = []
           } else {
-            // this.$alert('请重新登录', '超时', {
-            //   confirmButtonText: '确定',
-            //   callback: action => {
-            //     this.$router.push('/login')
-            //   }
-            // })
+
           }
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+
         })
       },
       handleAvatarSuccess1(res, file) {

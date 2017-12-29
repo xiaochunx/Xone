@@ -173,7 +173,7 @@ export default new Router({
           // 新增门店组
           path: '/storeManage/storeGroup/addGroup',
           meta: { auth: true },
-          name: '门店管理/门店组',
+          name: '门店管理/门店组/新增门店组',
           component: addGroup,
         },
 
@@ -404,7 +404,7 @@ export default new Router({
         {
           path: '/dishesManagement/dishesGroup/addDishesGroup',
           meta: { auth: false },
-          name: '菜品管理/菜品组',
+          name: '菜品管理/菜品组/新增菜品组',
           component: addDishesGroup
         },
 
