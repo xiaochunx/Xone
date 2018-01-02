@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -8,7 +8,7 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <el-button size="small" @click="add('新增方案')">+新增方案</el-button>
+          <el-button size="small" @click="add('新增方案')" v-show="getTreeArr['新增方案']">+新增方案</el-button>
         </div>
         <div class="flex_r">
           <el-input size="small" v-model="searchName" icon="search" placeholder="请输入名称">
@@ -35,7 +35,7 @@
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="在用门店">
         <template slot-scope="scope">
 
-          <el-button size="small" @click="show(scope.row)">查看门店</el-button>
+          <el-button size="small" @click="show(scope.row)" v-show="getTreeArr['查看门店']">查看门店</el-button>
 
         </template>
       </el-table-column>
@@ -43,10 +43,10 @@
 
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="280">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="edit('修改',scope.row)">修改</el-button>
-          <el-button size="small" @click="edit('查看',scope.row)">查看</el-button>
-          <el-button size="small" @click="down(scope.row)">下发</el-button>
-          <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
+          <el-button size="small" type="primary" @click="edit('修改',scope.row)" v-show="getTreeArr['修改']">修改</el-button>
+          <el-button size="small" @click="edit('查看',scope.row)" v-show="getTreeArr['详情']">查看</el-button>
+          <el-button size="small" @click="down(scope.row)" v-show="getTreeArr['下发']">下发</el-button>
+          <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
 
         </template>
       </el-table-column>
@@ -351,6 +351,8 @@
             this.$set(map, 'select', false)
           });
           this.storeData1 = res.data.data;
+          this.multipleSelection = []
+
         })
 
       },
@@ -358,7 +360,6 @@
 
       },
       submitFrom1(){
-
         if(this.multipleSelection.length === 0){
           this.$message({
             type: 'warning',
@@ -399,6 +400,7 @@
         this.areaList = [];
         this.inputArea = '';
         this.storeData1 = [];
+        this.multipleSelection = []
       },
       open1(){
 
@@ -580,7 +582,8 @@
               data.select = false;
             });
             this.invoiceList = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.p.total = res.data.data.count;
+
           } else {
 
           }
@@ -620,15 +623,17 @@
 
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
-    },
-    destroyed() {
-
     }
   }
 </script>

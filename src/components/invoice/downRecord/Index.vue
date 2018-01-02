@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['列表']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -46,7 +46,7 @@
                        label="状态"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="100">
         <template slot-scope="scope">
-          <el-button size="small" @click="show(scope.row)">查看</el-button>
+          <el-button size="small" @click="show(scope.row)" v-show="getTreeArr['详情']">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -170,15 +170,17 @@
       this.issuedData(this.p)
     },
     mounted() {
-
+      Hub.$on('arr', (e) => {
+        this.setTreeArr({obj:getArr(e)})
+      });
+    },
+    destroyed(){
+      Hub.$off("arr")
     },
     updated() {
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
-    },
-    destroyed() {
-
     }
   }
 </script>

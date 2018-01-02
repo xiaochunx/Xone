@@ -30,7 +30,6 @@ import TransactionList from '../components/report/transactionList/Index.vue'
 import TransactionCount from '../components/report/transactionCount/Index.vue'
 import SettlementRecord from '../components/report/settlementRecord/Index.vue'
 import BillQuery from '../components/report/billQuery/Index.vue'
-import AccountStatement from '../components/report/accountStatement/Index.vue'
 import Invoice from '../components/report/invoice/Index.vue'
 
 /************************** 基础设置 ***************************/
@@ -44,9 +43,9 @@ import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
 import DishesLibrary from '@/components/infrastructure/DishesLibrary/Index.vue'
 
 import AddDishes from '@/components/infrastructure/DishesLibrary/addDishes/Index.vue'
-
 import StoreLibrary from '@/components/infrastructure/StoreLibrary/Index.vue'
 import RoleManagement from '@/components/infrastructure/RoleManagement/Index.vue'
+import UserManagement from '@/components/infrastructure/UserManagement/Index.vue'
 import PermissionManagement from '@/components/infrastructure/PermissionManagement/Index.vue'
 import PermissionUserManagement from '@/components/infrastructure/PermissionManagement/user/Index.vue'
 import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
@@ -208,14 +207,6 @@ export default new Router({
           component: BillQuery,
         },
         {
-          // 对账单
-          path: '/report/accountStatement',
-          meta: { auth: true },
-          name: '统计报表/对账单',
-          component: AccountStatement,
-        },
-
-        {
           // 发票
           path: '/report/invoice',
           meta: { auth: true },
@@ -316,7 +307,13 @@ export default new Router({
           name: '基础设置/权限管理/查看用户',
           component: PermissionUserManagement
         },
-
+        //用户管理
+        {
+          path: '/infrastructure/UserManagement',
+          meta: { auth: true },
+          name: '用户管理',
+          component: UserManagement
+        },
 
         //操作日志
         {

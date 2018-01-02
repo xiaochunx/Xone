@@ -95,10 +95,6 @@
              //   route: '/report/billQuery'
              // },
              // {
-             //   name: '对账单',
-             //   route: '/report/accountStatement'
-             // },
-             // {
              //   name: '发票',
              //   route: '/report/invoice'
              // }
@@ -119,100 +115,104 @@
 //                name: '客户端批量设置',
 //                route: '/infrastructure/VolumeSet'
 //              },
+//               {
+//                 name: '支付管理',
+//                 route: '/infrastructure/PaymentManagement'
+//               },
+//              {
+//                name: '支付配置',
+//                route: '/infrastructure/PaymentWay'
+//              },
+//              {
+//                name: '支付通道',
+//                route: '/infrastructure/PayChannels'
+//              },
+//               {
+//                 name: '门店库',
+//                 route: '/infrastructure/StoreLibrary'
+//               },
+//              {
+//                name: '菜品库',
+//                route: '/infrastructure/DishesLibrary'
+//              },
+//               {
+//                 name: '角色管理',
+//                 route: '/infrastructure/RoleManagement'
+//               },
+//               {
+//                 name: '权限管理',
+//                 route: '/infrastructure/PermissionManagement'
+//               },
               {
-                name: '支付管理',
-                route: '/infrastructure/PaymentManagement'
+                name: '用户管理',
+                route: '/infrastructure/UserManagement'
               },
-             {
-               name: '支付配置',
-               route: '/infrastructure/PaymentWay'
-             },
-             {
-               name: '支付通道',
-               route: '/infrastructure/PayChannels'
-             },
-              {
-                name: '门店库',
-                route: '/infrastructure/StoreLibrary'
-              },
-             {
-               name: '菜品库',
-               route: '/infrastructure/DishesLibrary'
-             },
-              {
-                name: '角色管理',
-                route: '/infrastructure/RoleManagement'
-              },
-              {
-                name: '权限管理',
-                route: '/infrastructure/PermissionManagement'
-              },
-             {
-               name: '操作日志',
-               route: '/infrastructure/OperationLog'
-             },
-              {
-                name: '公众号管理',
-                route: '/infrastructure/PublicManagement'
-              },
+             // {
+             //   name: '操作日志',
+             //   route: '/infrastructure/OperationLog'
+             // },
+             //  {
+             //    name: '公众号管理',
+             //    route: '/infrastructure/PublicManagement'
+             //  },
 //              {
 //                name: '根',
 //                route: '/'
 //              },
             ]
           },
-          {
-            name: '发票方案',
-            children: [
-              {
-                name: '发票方案',
-                route: '/invoice/invoiceScheme'
-              },
-              {
-                name: '下发记录',
-                route: '/invoice/downRecord'
-              },
-
-            ]
-          },
-          {
-            name: '菜品管理',
-            children: [
-              {
-                name: '菜品管理',
-                route: '/dishesManagement/storeDishesManage'
-              },
-              {
-                name: '菜品品类',
-                route: '/dishesManagement/dishesCategory'
-              },
-              {
-                name: '菜品组',
-                route: '/dishesManagement/dishesGroup'
-              },
-              {
-                name: '外卖菜品库',
-                route: '/dishesManagement/takeawayDishes'
-              },
-              {
-                name: '菜品规格',
-                route: '/dishesManagement/takeawayDishes/dishesSpec'
-              },
-              {
-                name: '菜品属性',
-                route: '/dishesManagement/takeawayDishes/dishesAttr'
-              },
-
-              // {
-              //   name: '下发记录',
-              //   route: '/dishesManagement/downRecord'
-              // },
-              // {
-              //   name: '门店ERP菜品',
-              //   route: '/dishesManagement/storeErp'
-              // },
-            ]
-          }
+          // {
+          //   name: '发票方案',
+          //   children: [
+          //     {
+          //       name: '发票方案',
+          //       route: '/invoice/invoiceScheme'
+          //     },
+          //     {
+          //       name: '下发记录',
+          //       route: '/invoice/downRecord'
+          //     },
+          //
+          //   ]
+          // },
+          // {
+          //   name: '菜品管理',
+          //   children: [
+          //     {
+          //       name: '菜品管理',
+          //       route: '/dishesManagement/storeDishesManage'
+          //     },
+          //     {
+          //       name: '菜品品类',
+          //       route: '/dishesManagement/dishesCategory'
+          //     },
+          //     {
+          //       name: '菜品组',
+          //       route: '/dishesManagement/dishesGroup'
+          //     },
+          //     {
+          //       name: '外卖菜品库',
+          //       route: '/dishesManagement/takeawayDishes'
+          //     },
+          //     {
+          //       name: '菜品规格',
+          //       route: '/dishesManagement/takeawayDishes/dishesSpec'
+          //     },
+          //     {
+          //       name: '菜品属性',
+          //       route: '/dishesManagement/takeawayDishes/dishesAttr'
+          //     },
+          //
+          //     // {
+          //     //   name: '下发记录',
+          //     //   route: '/dishesManagement/downRecord'
+          //     // },
+          //     // {
+          //     //   name: '门店ERP菜品',
+          //     //   route: '/dishesManagement/storeErp'
+          //     // },
+          //   ]
+          // }
         ],
         ListHeight: 0,
         leftData:[]
