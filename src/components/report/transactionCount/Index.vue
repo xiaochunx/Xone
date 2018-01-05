@@ -104,7 +104,6 @@
     methods: {
       ...mapActions(['setTreeArr']),
       selectStore(id){
-        //console.log(id)
         if(id === ''){
           this.store_name = ''
         }else {
@@ -149,15 +148,9 @@
             });
           } else {
             //ok
-            console.log(this.dateSelected[0] ,this.dateSelected[1])
-
-
             let store = this.store();
 
-
             this.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.store_name,this.p)
-
-
           }
         }
 

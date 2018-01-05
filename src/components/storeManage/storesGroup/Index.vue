@@ -140,7 +140,7 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import getApi from './storeGroup.service';
+  import {oneTwoApi} from '@/api/api.js'
   import {getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
@@ -176,10 +176,27 @@
       update(formRules, data) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            getApi.updateOne(data).then((res) => {
-              this.dialogVisible1 = false;
-              this.showResouce();
+            let list = [];
+            data.store.forEach((item)=>{
+              if(item.select === true){
+                list.push(item.code)
+              }
+            });
+            // 编辑门店标签
+            let params = {
+              redirect: "x1.store.editStoreLabel",
+              id: data.id,
+              name: data.name,
+              thirdCode: window.JSON.stringify(data.thirdCode),
+              storeIds: list.join(','),
+            };
+            oneTwoApi(params).then((res) => {
+              if(res.errcode === 0){
+                this.dialogVisible1 = false;
+                this.showResouce();
+              }
             })
+
           } else {
             console.log('error submit!!');
             return false;
@@ -256,21 +273,34 @@
         });
       },
       edit(row) {
-        getApi.getOneStore(row).then((res)=>{
-          res.data.data.store.forEach((item)=>{
-            item.select = true
-          });
-          this.formEdit = res.data.data;
-          this.dialogVisible1 = true;
+        // 获取门店标签详情
+        let params = {
+          redirect: "x1.store.storeLabelInfo",
+          id: row.id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            res.data.store.forEach((item)=>{
+              item.select = true
+            });
+            this.formEdit = res.data;
+            this.dialogVisible1 = true;
+          }
         })
       },
       showStore(row) {
         this.dialogVisible = true;
-        getApi.getOne(row.id).then((res) => {
 
-          this.storeData = res.data.data.list
+        // 获取标签下的门店列表
+        let params = {
+          redirect: "x1.store.getStoreListByLabelId",
+          id: row.id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.storeData = res.data.list
+          }
         })
-
       },
       handleEdit(index, row) {
 
@@ -282,21 +312,20 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          getApi.delOne(row.id).then((res) => {
 
-            if (res.data.errcode === 0) {
+          // 删除门店标签
+          let params = {
+            redirect: "x1.store.delStoreLabel",
+            id: row.id,
+          };
+          oneTwoApi(params).then((res) => {
+            if(res.errcode === 0){
               this.$message({
                 type: 'info',
                 message: '删除成功'
               });
               this.showResouce()
-            } else {
-//              this.$message({
-//                type: 'info',
-//                message: res.data.errmsg
-//              });
             }
-
           })
         }).catch(() => {
           //
@@ -311,17 +340,18 @@
         this.$router.push('/storeManage/storeGroup/addGroup')
       },
       showResouce() {
-        getApi.getList(this.p).then((res) => {
-          if (res.data.errcode === 0) {
-            this.tableData = res.data.data.list;
-            this.p.total = res.data.data.count
-          } else {
-            // this.$alert('请重新登录', '超时', {
-            //   confirmButtonText: '确定',
-            //   callback: action => {
-            //     this.$router.push('/login')
-            //   }
-            // })
+
+        // 获取门店标签列表
+        let params = {
+          redirect: "x1.store.storeLabelList",
+          page: this.p.page,
+          pagesize: this.p.size,
+
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.tableData = res.data.list;
+            this.p.total = res.data.count
           }
         })
       }

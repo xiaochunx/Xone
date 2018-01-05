@@ -23,7 +23,7 @@
         <!--</el-tree>-->
 
 
-        <public-tree :data='dataLeft' :count=0 ></public-tree>
+        <public-tree :data='dataLeft' :count=0 style="width: max-content;"></public-tree>
       </div>
 
       <div class="padding_l_10 width_100" v-show="getTreeArr['列表']">

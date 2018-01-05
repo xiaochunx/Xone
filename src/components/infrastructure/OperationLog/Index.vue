@@ -133,13 +133,11 @@
       },
 
       getRadioDate(d){
-        console.log(d)
         this.dateSelected = d
       },
       getAdminLogList(start_time,end_time,user_name,power_attr,name,p){
         getApi.getAdminLogList(start_time,end_time,user_name,power_attr,name,p).then((res)=>{
           if(res.data.errcode === 0){
-            console.log(res)
             this.tableData = res.data.data.list;
             this.p.total = res.data.data.count
 
@@ -149,7 +147,6 @@
     },
     created(){
       getApi.getAdminLogType().then((res)=>{
-        console.log(res)
        this.logType = res.data.data
       })
     },

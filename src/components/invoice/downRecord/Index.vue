@@ -9,7 +9,7 @@
       <div class="flex_sb">
         <div class="flex_a">
           <div class="margin_r_10">状态</div>
-          <el-select v-model="bank" clearable placeholder="请选择" size="small">
+          <el-select v-model="status" clearable placeholder="请选择" size="small">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -19,7 +19,7 @@
           </el-select>
         </div>
         <div class="flex_r">
-          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入方案">
+          <el-input size="small" v-model="searchName" icon="search" placeholder="请输入发票方案">
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <el-button class="margin_l_10" size="small" @click="search()">搜索</el-button>
@@ -117,8 +117,8 @@
         clientForm:{},
         dialogFormVisible: false,
         invoiceList: [],
-        options: [{id: 1, name: '成功'}, {id: 2, name: '失败'}, {id: 3, name: '待执行'}],
-        bank:'',
+        options: [],
+        status:'',
         tableHeight: 0,
         navList: [{name: "下发记录", url: ''}],
         roleType: [],
@@ -139,25 +139,25 @@
         })
       },
       search() {
-        if (this.searchName === '') {
+        if (this.searchName === '' && this.status === '') {
           this.issuedData(this.p = {page: 1, size: 20, total: 0})
         } else {
-          this.issuedData(this.p = {page: 1, size: 20, total: 0}, this.searchName)
+          this.issuedData(this.p = {page: 1, size: 20, total: 0}, this.searchName,this.status)
         }
       },
 
 
       getPage(page) {
         this.p.page = page;
-        this.issuedData(this.p, this.searchName);
+        this.issuedData(this.p, this.searchName,this.status);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.issuedData(this.p, this.searchName);
+        this.issuedData(this.p, this.searchName,this.status);
       },
 
-      issuedData(p, name = "") {
-        getApi.issuedData(p, name).then((res) => {
+      issuedData(p, name = "",status = "") {
+        getApi.issuedData(p, name,status).then((res) => {
           if (res.data.errcode === 0) {
             this.invoiceList = res.data.data.list;
             this.p.total = res.data.data.count
@@ -167,7 +167,10 @@
       }
     },
     created() {
-      this.issuedData(this.p)
+      this.issuedData(this.p);
+      getApi.getStatusList().then((res)=>{
+        this.options = res.data.data
+      })
     },
     mounted() {
       Hub.$on('arr', (e) => {

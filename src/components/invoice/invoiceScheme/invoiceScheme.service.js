@@ -145,7 +145,21 @@ let searchStore = (areaId ='',storeName = '') => {
   })
 };
 
-export default {getProgrammeList,getUseStoreList,getInvoiceInfo,update,add,del,getPurchaserList,issuedInvoice,searchStore}
+//获取门店标签列表
+let getList = (p,name) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("redirect", "x1.store.storeLabelList");
+    formData.append("name", name);
+    formData.append("page", p.page);
+    formData.append("pagesize", p.size);
+    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+export default {getProgrammeList,getUseStoreList,getInvoiceInfo,update,add,del,getPurchaserList,issuedInvoice,searchStore,getList}
 
 
 

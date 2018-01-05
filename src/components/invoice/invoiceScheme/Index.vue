@@ -70,7 +70,8 @@
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="门店编码">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="store_name" label="门店名称">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="store_name"
+                         label="门店名称">
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -116,7 +117,7 @@
             </div>
             <div v-if="(clientForm.third_code.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(index)">
-              <i class="fa fa-minus-circle" aria-hidden="true"></i>
+              <i class="fa fa-minus-circle" aria-hidden="true" style="font-size: 15px;"></i>
             </div>
           </div>
         </div>
@@ -126,7 +127,7 @@
 
           <el-tab-pane label="纸质发票" name="first">
 
-            <el-form-item label-width="50px" label="" >
+            <el-form-item label-width="50px" label="">
               <el-switch
                 v-model="clientForm.status"
                 on-color="#13ce66"
@@ -144,14 +145,17 @@
                   off-color="#ff4949" :disabled="showName === '查看'">
                 </el-switch>
 
-                <div class="margin_l_10 margin_r_10 t_a flex_1">
+                <div class="margin_l_10 margin_r_10 t_a">
                   自动记录开票方信息，再次开票免输入:
                 </div>
-                <el-card class="flex_1">
-                  <div>
-                    备注：客人开过一次发票后，系统将自动记录该开票信息，客人再次开票时，可免输入开票信息
-                  </div>
-                </el-card>
+                <el-popover
+                  placement="right"
+                  width="200"
+                  trigger="hover"
+                  content="备注：客人开过一次发票后，系统将自动记录该开票信息，客人再次开票时，可免输入开票信息">
+
+                  <i class="fa fa-info-circle" aria-hidden="true" slot="reference"></i>
+                </el-popover>
               </div>
 
             </el-form-item>
@@ -162,13 +166,16 @@
               <div class="cell_title margin_b_10">购买方信息</div>
 
               <div class="flex_r f_f margin_b_10" v-if="showName === '查看' || showName === '修改'">
-                <xo-button v-for="(item,index) in clientForm.purchasers" :key="item.id" :id="item.id" :showName="showName" :name="item.name" marginLeft="10px"  backgroundColor="#ffffff" :isBool="item.select"
+                <xo-button v-for="(item,index) in clientForm.purchasers" :key="item.id" :id="item.id"
+                           :showName="showName" :name="item.name" marginLeft="10px" backgroundColor="#ffffff"
+                           :isBool="item.select"
                            @click="buyInfo"></xo-button>
               </div>
 
 
               <div class="flex_r f_f margin_b_10" v-if="showName === '新增方案'">
-                <xo-button v-for="(item,index) in purchaserList" :key="item.id" :id="item.id" :showName="showName" :name="item.name" marginLeft="10px"  backgroundColor="#ffffff" :isBool="item.select"
+                <xo-button v-for="(item,index) in purchaserList" :key="item.id" :id="item.id" :showName="showName"
+                           :name="item.name" marginLeft="10px" backgroundColor="#ffffff" :isBool="item.select"
                            @click="buyInfo"></xo-button>
               </div>
 
@@ -188,15 +195,16 @@
 
     <!--下发-->
     <el-dialog title="" :visible.sync="dialogFormVisible2" @open="open2" @close="close2">
-      <!--<el-radio-group v-model="radio2">-->
-        <!--<el-radio :label="1">门店标签</el-radio>-->
-        <!--<el-radio :label="2">门店</el-radio>-->
-      <!--</el-radio-group>-->
+      <el-radio-group v-model="radio2" @change="changeRadio">
+        <el-radio :label="1">门店标签</el-radio>
+        <el-radio :label="2">门店</el-radio>
+      </el-radio-group>
 
-      <!--<div class="flex_a margin_t_10" v-if="radio2 === 1">-->
-        <!--<el-input size="small" placeholder="门店标签名称" class="margin_r_10" style="width: 200px"></el-input>-->
-        <!--<el-button size="small" @click="searchStore()">搜索</el-button>-->
-      <!--</div>-->
+      <div class="flex_a margin_t_10" v-if="radio2 === 1">
+        <el-input size="small" placeholder="门店标签名称" class="margin_r_10" style="width: 200px"
+                  v-model="inputArea0"></el-input>
+        <el-button size="small" @click="searchStore()">搜索</el-button>
+      </div>
 
       <div class="flex_a margin_t_10" v-if="radio2 === 2">
         <div class="margin_l_10">
@@ -217,13 +225,39 @@
           </el-select>
         </div>
         <div class="margin_l_10 flex_a">
-          <el-input placeholder="门店名称/编码" v-model="inputArea" icon="search" class="margin_r_10"></el-input>
+          <el-input placeholder="请输入门店名称" v-model="inputArea" icon="search" class="margin_r_10"></el-input>
           <el-button @click="searchStore1()">搜索</el-button>
         </div>
       </div>
 
-      <div class="margin_t_10">
-        <el-table :data="storeData1" border style="width: 100%;" @select-all="handleSelectionChange" ref="multipleTable">
+      <div class="margin_t_10" v-if="radio2 === 1">
+        <el-table :data="storeData0" border style="width: 100%;" @select-all="handleSelectionChange0"
+                  ref="multipleTable0">
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.select" @change="handleChecked0">{{scope.$index + 1 }}</el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="门店标签编码">
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
+                           label="门店标签名称">
+          </el-table-column>
+        </el-table>
+
+        <div class="flex margin_t_10">
+          <el-button type="primary" @click="submitFrom0()">确定</el-button>
+          <el-button @click="dialogFormVisible2 = false">取消</el-button>
+        </div>
+      </div>
+
+      <div class="margin_t_10" v-if="radio2 === 2">
+        <el-table :data="storeData1" border style="width: 100%;" @select-all="handleSelectionChange"
+                  ref="multipleTable">
           <el-table-column
             header-align="center" align="center"
             type="selection"
@@ -233,17 +267,20 @@
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="门店标签编码">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="门店编码">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="门店标签名称">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="门店名称">
           </el-table-column>
         </el-table>
+
+        <div class="flex margin_t_10">
+          <el-button type="primary" @click="submitFrom1()">确定</el-button>
+          <el-button @click="dialogFormVisible2 = false">取消</el-button>
+        </div>
+
       </div>
 
-      <div class="flex margin_t_10">
-        <el-button type="primary" @click="submitFrom1()">确定</el-button>
-        <el-button @click="dialogFormVisible2 = false">取消</el-button>
-      </div>
+
     </el-dialog>
 
   </div>
@@ -253,7 +290,7 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './invoiceScheme.service'
-  import {getArr,getArea} from '../../utility/communApi'
+  import {getArr, getArea} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {mapActions, mapGetters} from 'vuex';
 
@@ -266,32 +303,34 @@
     components: {},
     data() {
       return {
-        radio2:2,
-        activeName:'first',
-        showName:'',
-        purchaserList:[],
+        radio2: 1,
+        activeName: 'first',
+        showName: '',
+        purchaserList: [],
         clientForm: {
           name: '',
           third_code: [
             {code1: '', code2: ''}
           ],
-          status: false,
-          auto_log: false,
-          purchasers:[],
+          status: true,
+          auto_log: true,
+          purchasers: [],
         },
         dialogFormVisible: false,
         dialogFormVisible1: false,
         dialogFormVisible2: false,
         invoiceList: [],
-        storeData1:[],
+        storeData0: [],
+        storeData1: [],
         tableHeight: 0,
         navList: [{name: "发票方案", url: ''}],
         name: '',
-        id:'',
+        id: '',
         roleType: [],
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection:[],
+        multipleSelection0: [],
+        multipleSelection: [],
         searchName: '',
         providerId: '',
         providerList: [],
@@ -299,13 +338,60 @@
         cityList: [],
         areaId: '',
         areaList: [],
+        inputArea0: '',
         inputArea: '',
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
-
+      changeRadio(e) {
+        this.inputArea0 = '';
+        this.inputArea = '';
+        this.storeData0 = [];
+        this.storeData1 = [];
+        this.multipleSelection0 = [];
+        this.multipleSelection = []
+      },
+      handleChecked0(data) {
+        let count = 0;
+        this.storeData0.forEach((data) => {
+          if (data.select === true) {
+            count += data.select * 1
+          }
+        });
+        let list = this.storeData0.filter((item) => {
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item) => {
+          list1.push(item.id)
+        });
+        this.multipleSelection0 = list1;
+        if (count === this.storeData0.length) {
+          list.forEach((item) => {
+            this.$refs.multipleTable0.toggleRowSelection(item)
+          })
+        } else {
+          this.$refs.multipleTable0.clearSelection();
+        }
+      },
+      handleSelectionChange0(val) {
+        let list = [];
+        val.forEach((item) => {
+          list.push(item.id)
+        });
+        this.multipleSelection0 = list;
+        if (val.length === this.storeData0.length) {
+          this.storeData0.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        } else {
+          this.storeData0.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
+      },
       handleChecked(data) {
         let count = 0;
         this.storeData1.forEach((data) => {
@@ -313,39 +399,51 @@
             count += data.select * 1
           }
         });
-        let list =  this.storeData1.filter((item)=>{
+        let list = this.storeData1.filter((item) => {
           return item.select === true
         });
         let list1 = [];
-        list.forEach((item)=>{
+        list.forEach((item) => {
           list1.push(item.id)
         });
         this.multipleSelection = list1;
         if (count === this.storeData1.length) {
-          list.forEach((item)=>{
+          list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
           })
-        }else {
+        } else {
           this.$refs.multipleTable.clearSelection();
         }
       },
       handleSelectionChange(val) {
         let list = [];
-        val.forEach((item)=>{
+        val.forEach((item) => {
           list.push(item.id)
         });
         this.multipleSelection = list;
-        if(val.length === this.storeData1.length){
+        if (val.length === this.storeData1.length) {
           this.storeData1.forEach((map) => {
             this.$set(map, 'select', true)
           });
-        }else {
+        } else {
           this.storeData1.forEach((map) => {
             this.$set(map, 'select', false)
           });
         }
       },
-      searchStore1(){
+      searchStore() {
+
+        getApi.getList({page: 1, size: 1000, total: 0}, this.inputArea0).then((res) => {
+
+          res.data.data.list.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+          this.storeData0 = res.data.data.list;
+          this.multipleSelection0 = []
+        })
+
+      },
+      searchStore1() {
         getApi.searchStore(this.areaId, this.inputArea).then((res) => {
           res.data.data.forEach((map) => {
             this.$set(map, 'select', false)
@@ -354,26 +452,49 @@
           this.multipleSelection = []
 
         })
+      },
+      submitFrom0() {
+        if (this.multipleSelection0.length === 0) {
+          this.$message({
+            type: 'warning',
+            message: '请选择门店标签'
+          });
+          return
+        }
+
+        let str = "";
+        this.storeData0.forEach((item)=>{
+          this.multipleSelection0.forEach((item1)=>{
+            if(item.id === item1){
+              str += item.stores + ","
+            }
+          })
+        });
+
+       let store_id =  str.substr(0,str.lastIndexOf(","));
+
+        getApi.issuedInvoice(this.id, store_id).then((res) => {
+          if (res.data.errcode === 0) {
+            this.dialogFormVisible2 = false
+          }
+        })
 
       },
-      searchStore(){
-
-      },
-      submitFrom1(){
-        if(this.multipleSelection.length === 0){
+      submitFrom1() {
+        if (this.multipleSelection.length === 0) {
           this.$message({
             type: 'warning',
             message: '请选择门店'
           });
           return
         }
-        getApi.issuedInvoice(this.id,this.multipleSelection.join(',')).then((res)=>{
-          if(res.data.errcode === 0){
+        getApi.issuedInvoice(this.id, this.multipleSelection.join(',')).then((res) => {
+          if (res.data.errcode === 0) {
             this.dialogFormVisible2 = false
           }
         })
       },
-      down(row){
+      down(row) {
         this.id = row.id;
         this.dialogFormVisible2 = true
       },
@@ -382,66 +503,70 @@
 
         }
       },
-      open2(){
+      open2() {
         this.providerId = '';
         this.cityId = '';
         this.cityList = [];
         this.areaId = '';
         this.areaList = [];
+        this.inputArea0 = '';
         this.inputArea = '';
+        this.storeData0 = [];
         this.storeData1 = [];
-
       },
-      close2(){
+      close2() {
         this.providerId = '';
         this.cityId = '';
         this.cityList = [];
         this.areaId = '';
         this.areaList = [];
+        this.inputArea0 = '';
         this.inputArea = '';
+        this.storeData0 = [];
         this.storeData1 = [];
+        this.multipleSelection0 = [];
         this.multipleSelection = []
       },
-      open1(){
+      open1() {
 
-        if(this.showName === "新增方案"){
-          this.clientForm =  {
+        if (this.showName === "新增方案") {
+          this.clientForm = {
             name: '',
             third_code: [
               {code1: '', code2: ''}
             ],
-            status: false,
-            auto_log: false,
-            purchasers:[]
+            status: true,
+            auto_log: true,
+            purchasers: []
           }
         }
 
       },
-      submitFrom(formRules){
+      submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            if(this.showName === "新增方案"){
+            if (this.showName === "新增方案") {
               let list = [];
-              this.purchaserList.forEach((item)=>{
-                if(item.select === true){
+              this.purchaserList.forEach((item) => {
+                if (item.select === true) {
                   list.push(item.id)
                 }
               });
-              getApi.add(this.clientForm,list.join(',')).then((res)=>{
-                if(res.data.errcode === 0){
+              getApi.add(this.clientForm, list.join(',')).then((res) => {
+                if (res.data.errcode === 0) {
                   this.dialogFormVisible1 = false;
                   this.getProgrammeList(this.p = {page: 1, size: 20, total: 0})
                 }
               })
-            }else {
+            } else {
               let list = [];
-              this.clientForm.purchasers.forEach((item)=>{
-                if(item.select === true){
+              this.clientForm.purchasers.forEach((item) => {
+                if (item.select === true) {
                   list.push(item.id)
                 }
               });
-              getApi.update(this.clientForm,list.join(',')).then((res)=>{
-                if(res.data.errcode === 0){
+              getApi.update(this.clientForm, list.join(',')).then((res) => {
+                if (res.data.errcode === 0) {
                   this.dialogFormVisible1 = false;
                   this.getProgrammeList(this.p)
                 }
@@ -453,17 +578,17 @@
           }
         });
       },
-      buyInfo(id,bool){
+      buyInfo(id, bool) {
 
-        if(this.showName === "新增方案"){
-          this.purchaserList.forEach((item)=>{
-            if(item.id === id){
+        if (this.showName === "新增方案") {
+          this.purchaserList.forEach((item) => {
+            if (item.id === id) {
               item.select = bool
             }
           })
-        }else {
-          this.clientForm.purchasers.forEach((item)=>{
-            if(item.id === id){
+        } else {
+          this.clientForm.purchasers.forEach((item) => {
+            if (item.id === id) {
               item.select = bool
             }
           })
@@ -472,8 +597,8 @@
       },
       show(row) {
         this.dialogFormVisible = true;
-        getApi.getUseStoreList(row.id).then((res)=>{
-          if(res.data.errcode === 0){
+        getApi.getUseStoreList(row.id).then((res) => {
+          if (res.data.errcode === 0) {
             this.storeData = res.data.data
           }
         })
@@ -507,12 +632,12 @@
       add(name) {
         this.showName = name;
         this.dialogFormVisible1 = true;
-        getApi.getPurchaserList().then((res)=>{
-          if(res.data.errcode === 0){
-            res.data.data.forEach((item)=>{
-              if(item.select === 0){
+        getApi.getPurchaserList().then((res) => {
+          if (res.data.errcode === 0) {
+            res.data.data.forEach((item) => {
+              if (item.select === 0) {
                 item.select = false
-              }else {
+              } else {
                 item.select = true
               }
             });
@@ -521,56 +646,63 @@
         })
       },
 
-      edit(name,row) {
+      edit(name, row) {
         this.showName = name;
         this.dialogFormVisible1 = true;
-          getApi.getInvoiceInfo(row.id).then((res)=>{
-            if(res.data.errcode === 0){
-                if(res.data.data.status === 1){
-                  res.data.data.status = true
-                }else {
-                  res.data.data.status = false
-                }
-                if(res.data.data.auto_log === 1){
-                  res.data.data.auto_log = true
-                }else {
-                  res.data.data.auto_log = false
-                }
-              res.data.data.purchasers.forEach((item)=>{
-                if(item.select === 1){
-                  item.select = true
-                }else {
-                  item.select = false
-                }
-              });
-              this.clientForm = res.data.data
+        getApi.getInvoiceInfo(row.id).then((res) => {
+          if (res.data.errcode === 0) {
+            if (res.data.data.status === 1) {
+              res.data.data.status = true
+            } else {
+              res.data.data.status = false
             }
-          })
+            if (res.data.data.auto_log === 1) {
+              res.data.data.auto_log = true
+            } else {
+              res.data.data.auto_log = false
+            }
+            res.data.data.purchasers.forEach((item) => {
+              if (item.select === 1) {
+                item.select = true
+              } else {
+                item.select = false
+              }
+            });
+            this.clientForm = res.data.data
+          }
+        })
 
       },
       del(row) {
+        console.log(row)
+        if (row.status === "关闭") {
+          this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            getApi.del(row.id).then((res) => {
 
-        this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          getApi.del(row.id).then((res) => {
+              if (res.data.errcode === 0) {
+                this.$message({
+                  type: 'info',
+                  message: '删除成功'
+                });
 
-            if(res.data.errcode === 0){
-              this.$message({
-                type: 'info',
-                message: '删除成功'
-              });
+                this.getProgrammeList(this.p);
+              }
 
-              this.getProgrammeList(this.p);
-            }
+            })
 
-          })
-
-        }).catch(() => {
-          //
-        });
+          }).catch(() => {
+            //
+          });
+        } else {
+          this.$message({
+            type: 'info',
+            message: '此方案正在使用，不能删除！如须删除，请先禁用后删除。'
+          });
+        }
 
 
       },
@@ -624,10 +756,10 @@
     },
     mounted() {
       Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
+        this.setTreeArr({obj: getArr(e)})
       });
     },
-    destroyed(){
+    destroyed() {
       Hub.$off("arr")
     },
     updated() {

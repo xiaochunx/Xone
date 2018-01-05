@@ -53,11 +53,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="300">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="360">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="showStore(scope.row)" v-show="getTreeArr['关联门店']">关联门店</el-button>
           <el-button size="small" @click="editAccount('查看',scope.row)" v-show="getTreeArr['查看用户详情']">查看</el-button>
           <el-button size="small" @click="editAccount('编辑用户',scope.row)" v-show="getTreeArr['编辑用户']">编辑</el-button>
+          <el-button size="small" @click="passWord(scope.row)" >修改密码</el-button>
           <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除用户']">删除</el-button>
         </template>
       </el-table-column>
@@ -308,6 +309,42 @@
       </div>
     </el-dialog>
 
+    <!--修改密码-->
+    <el-dialog
+      title="修改密码"
+      :visible.sync="dialogVisible5"
+      @close="passClose"
+      @open="passOpen"
+      width="100%" size="tiny">
+      <div>
+
+        <el-form ref="formRules5" :model="formPassWord" label-width="100px">
+          <el-form-item label="原密码:" prop="oldPassWord" :rules="{required: true, message: '请输入原密码', trigger: 'blur'}">
+            <el-input type="password" v-model="formPassWord.oldPassWord" placeholder="请输入内容"></el-input>
+          </el-form-item>
+          <el-form-item label="新密码:" prop="newPassWord" :rules="{required: true, validator: validatePass, trigger: 'blur'}">
+            <el-input type="password" v-model="formPassWord.newPassWord" placeholder="请输入内容"></el-input>
+          </el-form-item>
+          <el-form-item label="确认新密码:" prop="confirmPassWord" :rules="{required: true, validator: validatePass2, trigger: 'blur'}">
+            <el-input type="password" v-model="formPassWord.confirmPassWord" placeholder="请输入内容"></el-input>
+          </el-form-item>
+          <el-form-item label="验证码:" prop="vCode" :rules="{required: true, message: '请确认验证码', trigger: 'blur'}">
+
+            <div class="flex_r">
+              <el-input v-model="formPassWord.vCode" placeholder="请输入内容"></el-input>
+              <!--<img src="../../../../assets/home/yunzang-logo.png" alt="">-->
+              <img class="margin_l_10 pointer" :src="authImg" alt="" @click="selectAuth()">
+            </div>
+
+          </el-form-item>
+        </el-form>
+
+        <el-button type="primary" @click="submit1('formRules5')">确定</el-button>
+        <el-button @click="dialogVisible5 = false">取消</el-button>
+
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -356,6 +393,7 @@
     },
     data() {
       return {
+        authImg:'',
         storeDataOld: [],
         storeDataNew: [],
         storeDataSelected: [],
@@ -374,6 +412,7 @@
         dialogVisible2: false,
         dialogVisible3:false,
         dialogVisible4:false,
+        dialogVisible5:false,
         tableHeight: 0,
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
         groupList:[],
@@ -417,11 +456,53 @@
         selectedOptions:[],
         uid:'',
         username:'',
-        multipleSelection:[]
+        multipleSelection:[],
+        formPassWord: {
+        },
       }
     },
     watch: {},
     methods: {
+      selectAuth(){
+        getApi.validateImg().then((res)=>{
+          this.authImg = `data:image/png;base64,${res.data.data}`
+        })
+      },
+      submit1(submit5){
+        this.$refs[submit5].validate((valid) => {
+          if (valid) {
+            getApi.updatePassword(this.uid,this.formPassWord).then((res)=>{
+              if(res.data.errcode === 0){
+                this.$message('修改成功');
+                this.dialogVisible5 = false
+              }
+            });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      passOpen() {
+        this.formPassWord = {
+          oldPassWord: '',
+          newPassWord: '',
+          confirmPassWord: '',
+          vCode: ''
+        };
+        getApi.validateImg().then((res)=>{
+          this.authImg = `data:image/png;base64,${res.data.data}`
+        })
+      },
+      passClose() {
+        this.uid = '';
+        this.$refs["formRules5"].resetFields();
+
+      },
+      passWord(row){
+        this.uid = row.id;
+        this.dialogVisible5 = true
+      },
       checkPhone(rule, value, callback){
         let re = /^1[3|5|7|8]\d{9}$/;
         if (value === '') {
@@ -793,8 +874,26 @@
           this.userList = res.data.data.list;
           this.multipleSelection = []
         })
+      },
+      validatePass(rule, value, callback){
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.formPassWord.confirmPassWord !== '') {
+            this.$refs.formRules5.validateField('confirmPassWord');
+          }
+          callback();
+        }
+      },
+      validatePass2(rule, value, callback){
+        if (value === '') {
+          callback(new Error('请再次输入密码'));
+        } else if (value !== this.formPassWord.newPassWord) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
       }
-
     },
     created() {
 

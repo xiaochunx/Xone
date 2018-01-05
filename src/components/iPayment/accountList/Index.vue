@@ -75,7 +75,8 @@
               <template slot-scope="scope">
                 <el-row>
                   <el-col :span="24">
-                    <el-input v-model="scope.row.accountName" placeholder=""></el-input>
+                    <!--<el-input v-model="scope.row.accountName" placeholder=""></el-input>-->
+                    <div>{{scope.row.accountName}}</div>
                   </el-col>
                 </el-row>
               </template>

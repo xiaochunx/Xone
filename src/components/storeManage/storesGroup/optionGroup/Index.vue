@@ -14,7 +14,7 @@
             <el-form ref="formRules" :model="form" label-width="100px">
 
               <el-form-item label="标签名称	:" prop="name" :rules="{required: true, message: '请输入标签名称', trigger: 'blur'}">
-                <el-input v-model="form.name" placeholder="请输入内容"></el-input>
+                <el-input v-model="form.name" placeholder="请输入标签名称"></el-input>
               </el-form-item>
 
               <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
@@ -56,10 +56,10 @@
 
 
               <!--<el-form-item label="门店:">-->
-                <!--<div class="flex_a margin_b_10">-->
-                  <!--<el-input class="margin_r_10" v-model="searchValue" placeholder="请输入门店"></el-input>-->
-                  <!--<el-button @click="searchSelect()">搜索</el-button>-->
-                <!--</div>-->
+              <!--<div class="flex_a margin_b_10">-->
+              <!--<el-input class="margin_r_10" v-model="searchValue" placeholder="请输入门店"></el-input>-->
+              <!--<el-button @click="searchSelect()">搜索</el-button>-->
+              <!--</div>-->
               <!--</el-form-item>-->
 
               <el-form-item label="">
@@ -128,13 +128,18 @@
       </div>
 
       <div class="margin_t_10">
-        <el-table :data="storeData" border style="width: 100%;">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="storeData" border style="width: 100%;" @select-all="handleSelectionChange" ref="multipleTable">
+
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
+
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="门店">
 
           </el-table-column>
@@ -152,8 +157,8 @@
 </template>
 <script>
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
-  import getApi from './optionGroup.service';
-  import {getLeft,getArea} from '../../../utility/communApi'
+  import {getLeft, getArea} from '../../../utility/communApi'
+  import {oneTwoApi} from '@/api/api.js'
 
   export default {
     data() {
@@ -168,7 +173,7 @@
           ],
         },
         searchList: [],
-        searchListTemp:[],
+        searchListTemp: [],
         storeData: [],
         providerId: '',
         providerList: [],
@@ -177,7 +182,7 @@
         areaId: '',
         areaList: [],
         inputArea: '',
-
+        multipleSelection: []
       }
     },
     components: {
@@ -234,25 +239,26 @@
       },
 
       search() {
-        getApi.searchStore(this.areaId, this.inputArea).then((res) => {
-          res.data.data.forEach((map) => {
-            this.$set(map, 'select', false)
-          });
-          this.storeData = res.data.data
+        // 标签添加门店时搜索
+        let params = {
+          redirect: "x1.store.searchStore",
+          areaId: this.areaId,
+          storeName: this.inputArea,
+
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+
+            res.data.forEach((map) => {
+              this.$set(map, 'select', false)
+            });
+            this.storeData = res.data;
+            this.multipleSelection = []
+          }
         })
 
       },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.storeData.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.storeData.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
+
       handleChecked(data) {
         let count = 0;
         this.storeData.forEach((data) => {
@@ -260,45 +266,40 @@
             count += data.select * 1
           }
         });
-
+        let list = this.storeData.filter((item) => {
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item) => {
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.storeData.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item) => {
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
         } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+          this.$refs.multipleTable.clearSelection();
         }
-
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
-
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item) => {
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if (val.length === this.storeData.length) {
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        } else {
+          this.storeData.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
       },
+
+
       openDialog() {
         this.dialogFormVisible = true;
       },
@@ -315,14 +316,15 @@
 
         this.$refs[formRules].validate((valid) => {
           if (valid) {
-            let list = [];
-            this.searchList.forEach((map) => {
-              list.push(map.id)
-            });
-            let storeIds = list.join(",");
-
-            getApi.addOne(this.form, storeIds).then((res) => {
-              if (res.data.errcode === 0) {
+            // 新增门店标签
+            let params = {
+              redirect: "x1.store.addStoreLabel",
+              name: this.form.name,
+              thirdCode: window.JSON.stringify(this.form.thirdPartyCoding),
+              storeIds: this.multipleSelection.join(","),
+            };
+            oneTwoApi(params).then((res) => {
+              if (res.errcode === 0) {
                 this.$alert('添加成功', '', {
                   confirmButtonText: '确定',
                   callback: action => {
@@ -344,12 +346,7 @@
         if (res.data.errcode === 0) {
           this.providerList = res.data.data
         } else {
-          // this.$alert('请重新登录', '超时', {
-          //   confirmButtonText: '确定',
-          //   callback: action => {
-          //     this.$router.push('/login')
-          //   }
-          // })
+
         }
       })
     }

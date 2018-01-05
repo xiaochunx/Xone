@@ -180,7 +180,32 @@ let settingBatch = (id,type) => {
   })
 };
 
-export default {getLevel,getRoleList,getUserFromGroup,getBsList,delBatch,lookUser,editor,newlyAddAccount,userInfoById,getUserStore,userStoreInfo,rolePower,settingBatch}
+//修改密码时获取验证码
+let validateImg = () => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    axios.post(`index.php?controller=power&action=validateImg&token=${get('token')}`, formData).then((res) => {
+      resolve(res)
+    })
+  })
+};
+
+//修改密码
+let updatePassword = (id,form) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("id", id);
+    formData.append("oldPassword", form.oldPassWord);
+    formData.append("password", form.newPassWord);
+    formData.append("repeatPassword", form.confirmPassWord);
+    formData.append("code", form.vCode);
+    axios.post(`index.php?controller=power&action=updatePassword&token=${get('token')}`, formData).then((res) => {
+      resolve(res)
+    })
+  })
+};
+
+export default {getLevel,getRoleList,getUserFromGroup,getBsList,delBatch,lookUser,editor,newlyAddAccount,userInfoById,getUserStore,userStoreInfo,rolePower,settingBatch,validateImg,updatePassword}
 
 
 

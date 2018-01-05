@@ -61,7 +61,7 @@
           if (valid) {
 
             let loginParams = {username: this.ruleForm2.account, password: this.ruleForm2.checkPass};
-            //this.$localStorage.set("treeArr",[{"name":"列表"}]);
+
             // 跳转路由
             let formData = new FormData();
             formData.append("user_name", loginParams.username);
@@ -125,6 +125,9 @@
           localStorage.removeItem('checkPass');
         }
       }
+    },
+    created(){
+      this.$localStorage.set("treeArr",{});
     },
     mounted() {
       this.ruleForm2.account = localStorage.getItem('account');

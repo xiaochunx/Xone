@@ -3,9 +3,15 @@
            v-loading="loading"
   >
     <!-- 账户编码 -->
-    <el-form-item label="账户编码">
-      <el-input v-model="ruleForm.accountCode" :disabled="true"></el-input>
+    <el-form-item label="">
+      <el-button type="primary" @click="auth()"> 口碑商家账号授权 </el-button>
     </el-form-item>
+
+    <el-tooltip class="item" effect="dark" content="授权码为您在授权登录口碑商家时，复制的那一串数字字母" placement="top">
+      <el-form-item label="授权ID" prop="Merchants">
+        <el-input v-model="ruleForm.Merchants"></el-input>
+      </el-form-item>
+    </el-tooltip>
 
     <div v-for="(domain, index) in ruleForm.domains" class="flex_r">
       <el-form-item label="第三方编码" :key="domain.key">
@@ -70,11 +76,6 @@
       </el-select>
     </el-form-item>
 
-    <!-- 商户号 -->
-    <el-form-item label="商户号:" prop="Merchants">
-      <el-input v-model="ruleForm.Merchants"></el-input>
-    </el-form-item>
-
     <el-form-item>
       <router-link to="/iPayment/accountList">
         <el-button> 取消 </el-button>
@@ -84,15 +85,14 @@
   </el-form>
 </template>
 <script>
-  import {oneTwoApi, payMethods, payMent} from '@/api/api.js'
-
+  import {oneTwoApi, payMethods, payMent,getAliTokenWay} from '@/api/api.js'
   export default {
     data() {
       return {
+        message:"qwe",
         ruleForm: {
-          accountCode: '系统自动生成', // 账户编码
+          Merchants: '',
           accountName: '',    // 账户名称
-          Merchants: '',      // 商户号
           payOptions: [],    // 支付方式
           checkboxGroup: [],
           paymentOptions: [], // 支付方式
@@ -111,8 +111,8 @@
             {required: true, message: '请输入活动名称', trigger: 'blur'},
             {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
           ],
-          Merchants: [  // 商户号
-            {required: true, message: '请输入商户号', trigger: 'change'}
+          Merchants: [  // ID
+            {required: true, message: '请输入授权ID', trigger: 'change'}
           ],
           payKey: [ // 支付秘钥
             {required: true, message: '请选择商户支付秘钥', trigger: 'change'}
@@ -123,10 +123,24 @@
           checkboxGroup: [
             { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
           ],
-        },
+        }
       };
     },
+    watch: {
+
+    },
     methods: {
+
+      auth(){
+        let params = {
+          redirect: "x1.accountmanage.getAliTokenWay",
+        };
+        let tempWindow = window.open();
+        oneTwoApi(params).then((res)=>{
+          tempWindow.location = res.data;
+        });
+
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -147,7 +161,7 @@
                 accountName: this.ruleForm.accountName,     // 账户名
                 paymentChannel: this.ruleForm.Payment,      // 支付通道
                 paymentMethod: paymentMethod,               // 支付方式
-                merchants: this.ruleForm.Merchants,         // 商户号
+                merchants: this.ruleForm.Merchants,         // 商户号/ID
               };
 
               oneTwoApi(params).then((res) => {
