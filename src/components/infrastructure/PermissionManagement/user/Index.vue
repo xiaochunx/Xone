@@ -402,7 +402,7 @@
           return<div class="equal">
             <div class="row">
 
-            <div class="two">{ option.storename }</div>
+            <div class="two">{option.storename}</div>
             </div>
             </div>;
         },
@@ -526,18 +526,6 @@
           }
         }
       },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.userList.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.userList.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
-
 
 
       handleChecked(data) {
@@ -666,16 +654,14 @@
       },
       handleChange(value) {
         getApi.getBsList(value[value.length -1]).then((res)=>{
-
           // this.storeDataOld = res.data.data.list
-
           let arr =  res.data.data.list.concat(this.storeDataSelected);
           let list2 = [];
           let listMap = {};
           for (let i = 0, id, storename, key; i < arr.length; i++) {
             id = arr[i].id;
             storename = arr[i].storename;
-            key = id + '-' + storename;
+            key = id + '|' + storename;
             if (!!listMap[key]) {
               listMap[key]++;
             } else {
@@ -684,8 +670,8 @@
           }
           for (let item in listMap) {
             list2.push({
-              id: item.split('-')[0] *1,
-              storename: item.split('-')[1],
+              id: item.split('|')[0] *1,
+              storename: item.split('|')[1],
             })
           }
         this.storeDataOld = list2
@@ -788,7 +774,6 @@
             }
             res.data.data[0].groupId = res.data.data[0].group_id * 1;
             this.formUserEdit = res.data.data[0]
-            console.log(this.formUserEdit)
           }
         });
 
