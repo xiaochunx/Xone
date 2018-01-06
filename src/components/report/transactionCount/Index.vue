@@ -71,7 +71,7 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import getApi from './transactionCount.service';
+  import {oneTwoApi} from '@/api/api.js';
   import {getWayInfo,getChannelInfo,getStoreListAll,getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
@@ -118,11 +118,23 @@
       },
       out(){
         let store = this.store();
-        getApi.orderCount(this.dateSelected[0] ,this.dateSelected[1],store,this.store_name,this.p,1).then((res)=>{
-          if(res.data.errcode === 0){
-            window.location.href = res.data.data
+        let params = {
+          redirect: "x1.order.orderCount",
+          start_time: this.dateSelected[0],
+          end_time: this.dateSelected[1],
+          store_id: store,
+          store_name: this.store_name,
+          pageCount: this.p.size,
+          pageNumber: this.p.page,
+          export: 1,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            window.location.href = res.data
           }
         })
+
+
       },
       search() {
         if (this.dateSelected[0] === '' && this.dateSelected[1] ==='') {
@@ -182,20 +194,30 @@
         this.dateSelected = d
       },
       orderCount(start_time,end_time,store_id,store_name,p,export1 = ''){
-        getApi.orderCount(start_time,end_time,store_id,store_name,p,export1).then((res)=>{
-          if(res.data.errcode === 0){
-            for(let i = 0;i<res.data.data.list.length;i++){
-              res.data.data.list[i].NO = i + 1;
 
-              if(res.data.data.list[i].NO === res.data.data.list.length){
-                res.data.data.list[i].NO = "合计"
+        let params = {
+          redirect: "x1.order.orderCount",
+          start_time: start_time,
+          end_time: end_time,
+          store_id: store_id,
+          store_name: store_name,
+          pageCount: p.size,
+          pageNumber: p.page,
+          export: export1,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            for(let i = 0;i<res.data.list.length;i++){
+              res.data.list[i].NO = i + 1;
+              if(res.data.list[i].NO === res.data.list.length){
+                res.data.list[i].NO = "合计"
               }
-              if(res.data.data.list[i].time === 0 || res.data.data.list[i].time === "总计"){
-                res.data.data.list[i].time = ''
+              if(res.data.list[i].time === 0 || res.data.list[i].time === "总计"){
+                res.data.list[i].time = ''
               }
             }
-            this.tableData = res.data.data.list;
-            this.p.total = res.data.data.count
+            this.tableData = res.data.list;
+            this.p.total = res.data.count
           }
         })
       }

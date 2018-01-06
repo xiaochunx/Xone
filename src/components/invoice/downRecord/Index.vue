@@ -100,7 +100,7 @@
 <script>
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import getApi from './downRecord.service'
+  import {oneTwoApi} from '@/api/api.js'
   import {getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {mapActions, mapGetters} from 'vuex';
@@ -132,11 +132,17 @@
 
       show(row) {
         this.dialogFormVisible = true;
-        getApi.issuedDataInfo(row.id).then((res)=>{
-          if(res.data.errcode === 0){
-            this.clientForm = res.data.data
+        // 下发记录详情
+        let params = {
+          redirect: "x1.invoice.issuedDataInfo",
+          id: row.id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.clientForm = res.data
           }
         })
+
       },
       search() {
         if (this.searchName === '' && this.status === '') {
@@ -157,20 +163,34 @@
       },
 
       issuedData(p, name = "",status = "") {
-        getApi.issuedData(p, name,status).then((res) => {
-          if (res.data.errcode === 0) {
-            this.invoiceList = res.data.data.list;
-            this.p.total = res.data.data.count
-          } else {
+        // 下发记录
+        let params = {
+          redirect: "x1.invoice.issuedData",
+          name: name,
+          status: status,
+          page: p.page,
+          pagesize: p.size,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.invoiceList = res.data.list;
+            this.p.total = res.data.count
           }
         })
       }
     },
     created() {
       this.issuedData(this.p);
-      getApi.getStatusList().then((res)=>{
-        this.options = res.data.data
+      // 状态
+      let params = {
+        redirect: "x1.invoice.getStatusList"
+      };
+      oneTwoApi(params).then((res) => {
+        if(res.errcode === 0){
+          this.options = res.data
+        }
       })
+
     },
     mounted() {
       Hub.$on('arr', (e) => {

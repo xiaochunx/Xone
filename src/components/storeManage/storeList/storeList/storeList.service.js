@@ -1,15 +1,5 @@
 import {axios,get} from '../../../utility/communApi'
-//左侧组织架构
 
-let getLeft = () => {
-  return new Promise((resolve, reject) => {
-    let formData = new FormData();
-    formData.append("redirect", "x1.store.storeLeft");
-    axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
-      resolve(res)
-    })
-  })
-};
 
 
 //获取门店列表
@@ -128,7 +118,7 @@ let addStore = (storeIds) => {
   })
 };
 
-export default {getLeft,getList, updateOne,getOne,del,storesStatus,urlStatus,getBaseStore,addStore}
+export default {getList, updateOne,getOne,del,storesStatus,urlStatus,getBaseStore,addStore}
 
 
 

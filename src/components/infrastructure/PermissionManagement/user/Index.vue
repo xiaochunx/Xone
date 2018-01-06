@@ -473,8 +473,19 @@
           if (valid) {
             getApi.updatePassword(this.uid,this.formPassWord).then((res)=>{
               if(res.data.errcode === 0){
-                this.$message('修改成功');
-                this.dialogVisible5 = false
+                // this.$message('修改成功');
+                // this.dialogVisible5 = false
+
+                this.$localStorage.remove("token");
+                this.$localStorage.remove("user");
+
+                this.$alert('密码修改成功，请重新登录', '', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    this.$router.push("/login")
+                  }
+                });
+
               }
             });
           } else {
@@ -570,26 +581,7 @@
         }
       },
 
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
 
-                  input: (event) => {
-
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
-      },
       isSwitch() {
         this.storeStatusValue = false;
         let list = [];

@@ -117,7 +117,7 @@
             </div>
             <div v-if="(clientForm.third_code.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(index)">
-              <i class="fa fa-minus-circle" aria-hidden="true" style="font-size: 15px;"></i>
+              <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@
                   trigger="hover"
                   content="备注：客人开过一次发票后，系统将自动记录该开票信息，客人再次开票时，可免输入开票信息">
 
-                  <i class="fa fa-info-circle" aria-hidden="true" slot="reference"></i>
+                  <i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>
                 </el-popover>
               </div>
 
@@ -289,7 +289,7 @@
 <script>
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import getApi from './invoiceScheme.service'
+  import {oneTwoApi} from '@/api/api.js'
   import {getArr, getArea} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {mapActions, mapGetters} from 'vuex';
@@ -432,26 +432,42 @@
         }
       },
       searchStore() {
+        // 获取门店标签列表
+        let params = {
+          redirect: "x1.store.storeLabelList",
+          name: this.inputArea0,
+          page: 1,
+          pagesize: 1000,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            res.data.list.forEach((map) => {
+              this.$set(map, 'select', false)
+            });
+            this.storeData0 = res.data.list;
+            this.multipleSelection0 = []
 
-        getApi.getList({page: 1, size: 1000, total: 0}, this.inputArea0).then((res) => {
-
-          res.data.data.list.forEach((map) => {
-            this.$set(map, 'select', false)
-          });
-          this.storeData0 = res.data.data.list;
-          this.multipleSelection0 = []
+          }
         })
-
       },
       searchStore1() {
-        getApi.searchStore(this.areaId, this.inputArea).then((res) => {
-          res.data.data.forEach((map) => {
-            this.$set(map, 'select', false)
-          });
-          this.storeData1 = res.data.data;
-          this.multipleSelection = []
+        // 标签添加门店时搜索
+        let params = {
+          redirect: "x1.store.searchStore",
+          areaId: this.areaId,
+          storeName: this.inputArea,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            res.data.forEach((map) => {
+              this.$set(map, 'select', false)
+            });
+            this.storeData1 = res.data;
+            this.multipleSelection = []
 
+          }
         })
+
       },
       submitFrom0() {
         if (this.multipleSelection0.length === 0) {
@@ -473,8 +489,14 @@
 
        let store_id =  str.substr(0,str.lastIndexOf(","));
 
-        getApi.issuedInvoice(this.id, store_id).then((res) => {
-          if (res.data.errcode === 0) {
+        // 下发方案
+        let params = {
+          redirect: "x1.invoice.issuedInvoice",
+          id: this.id,
+          store_id: store_id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
             this.dialogFormVisible2 = false
           }
         })
@@ -488,11 +510,19 @@
           });
           return
         }
-        getApi.issuedInvoice(this.id, this.multipleSelection.join(',')).then((res) => {
-          if (res.data.errcode === 0) {
+
+        // 下发方案
+        let params = {
+          redirect: "x1.invoice.issuedInvoice",
+          id: this.id,
+          store_id: this.multipleSelection.join(','),
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
             this.dialogFormVisible2 = false
           }
         })
+
       },
       down(row) {
         this.id = row.id;
@@ -546,31 +576,75 @@
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             if (this.showName === "新增方案") {
-              let list = [];
+              let list = [],status ,auto_log;
               this.purchaserList.forEach((item) => {
                 if (item.select === true) {
                   list.push(item.id)
                 }
               });
-              getApi.add(this.clientForm, list.join(',')).then((res) => {
-                if (res.data.errcode === 0) {
+
+              if(this.clientForm.status === true){
+                status = 1
+              }else {
+                status = 0
+              }
+              if(this.clientForm.auto_log === true){
+                auto_log = 1
+              }else {
+                auto_log = 0
+              }
+
+              // 新增方案
+              let params = {
+                redirect: "x1.invoice.add",
+                name: this.clientForm.name,
+                third_code: window.JSON.stringify(this.clientForm.third_code),
+                status: status,
+                auto_log: auto_log,
+                purchasers: list.join(','),
+              };
+              oneTwoApi(params).then((res) => {
+                if(res.errcode === 0){
                   this.dialogFormVisible1 = false;
                   this.getProgrammeList(this.p = {page: 1, size: 20, total: 0})
                 }
               })
             } else {
-              let list = [];
+              let list = [],status ,auto_log;
               this.clientForm.purchasers.forEach((item) => {
                 if (item.select === true) {
                   list.push(item.id)
                 }
               });
-              getApi.update(this.clientForm, list.join(',')).then((res) => {
-                if (res.data.errcode === 0) {
+
+              if(this.clientForm.status === true){
+                status = 1
+              }else {
+                status = 0
+              }
+              if(this.clientForm.auto_log === true){
+                auto_log = 1
+              }else {
+                auto_log = 0
+              }
+
+              // 修改方案
+              let params = {
+                redirect: "x1.invoice.update",
+                id: this.clientForm.id,
+                name: this.clientForm.name,
+                third_code: window.JSON.stringify(this.clientForm.third_code),
+                status: status,
+                auto_log: auto_log,
+                purchasers: list.join(','),
+              };
+              oneTwoApi(params).then((res) => {
+                if(res.errcode === 0){
                   this.dialogFormVisible1 = false;
                   this.getProgrammeList(this.p)
                 }
               })
+
             }
           } else {
             console.log('error submit!!');
@@ -597,13 +671,16 @@
       },
       show(row) {
         this.dialogFormVisible = true;
-        getApi.getUseStoreList(row.id).then((res) => {
-          if (res.data.errcode === 0) {
-            this.storeData = res.data.data
+        // 查看正在使用门店列表
+        let params = {
+          redirect: "x1.invoice.getUseStoreList",
+          id: row.id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.storeData = res.data
           }
         })
-
-
       },
       search() {
         if (this.searchName === '') {
@@ -632,16 +709,21 @@
       add(name) {
         this.showName = name;
         this.dialogFormVisible1 = true;
-        getApi.getPurchaserList().then((res) => {
-          if (res.data.errcode === 0) {
-            res.data.data.forEach((item) => {
+
+        // 获取销售方列表
+        let params = {
+          redirect: "x1.invoice.getPurchaserList"
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            res.data.forEach((item) => {
               if (item.select === 0) {
                 item.select = false
               } else {
                 item.select = true
               }
             });
-            this.purchaserList = res.data.data
+            this.purchaserList = res.data
           }
         })
       },
@@ -649,29 +731,34 @@
       edit(name, row) {
         this.showName = name;
         this.dialogFormVisible1 = true;
-        getApi.getInvoiceInfo(row.id).then((res) => {
-          if (res.data.errcode === 0) {
-            if (res.data.data.status === 1) {
-              res.data.data.status = true
+
+        // 发票方案详情
+        let params = {
+          redirect: "x1.invoice.getInvoiceInfo",
+          id: row.id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            if (res.data.status === 1) {
+              res.data.status = true
             } else {
-              res.data.data.status = false
+              res.data.status = false
             }
-            if (res.data.data.auto_log === 1) {
-              res.data.data.auto_log = true
+            if (res.data.auto_log === 1) {
+              res.data.auto_log = true
             } else {
-              res.data.data.auto_log = false
+              res.data.auto_log = false
             }
-            res.data.data.purchasers.forEach((item) => {
+            res.data.purchasers.forEach((item) => {
               if (item.select === 1) {
                 item.select = true
               } else {
                 item.select = false
               }
             });
-            this.clientForm = res.data.data
+            this.clientForm = res.data
           }
         })
-
       },
       del(row) {
         console.log(row)
@@ -681,9 +768,14 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.del(row.id).then((res) => {
 
-              if (res.data.errcode === 0) {
+            // 删除方案
+            let params = {
+              redirect: "x1.invoice.del",
+              id: row.id,
+            };
+            oneTwoApi(params).then((res) => {
+              if(res.errcode === 0){
                 this.$message({
                   type: 'info',
                   message: '删除成功'
@@ -691,9 +783,7 @@
 
                 this.getProgrammeList(this.p);
               }
-
             })
-
           }).catch(() => {
             //
           });
@@ -708,18 +798,24 @@
       },
 
       getProgrammeList(p, name = "") {
-        getApi.getProgrammeList(p, name).then((res) => {
-          if (res.data.errcode === 0) {
-            res.data.data.list.forEach((data) => {
+        // 发票方案列表
+        let params = {
+          redirect: "x1.invoice.programmeList",
+          name: name,
+          page: p.page,
+          pagesize: p.size,
+
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            res.data.list.forEach((data) => {
               data.select = false;
             });
-            this.invoiceList = res.data.data.list;
-            this.p.total = res.data.data.count;
-
-          } else {
-
+            this.invoiceList = res.data.list;
+            this.p.total = res.data.count;
           }
         })
+
       },
 
 
