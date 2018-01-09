@@ -75,6 +75,7 @@ import addCategory from '@/components/dishesManagement/dishesCategory/addCategor
 
 import invoiceScheme from '@/components/invoice/invoiceScheme/Index.vue'
 import downRecord from '@/components/invoice/downRecord/Index.vue'
+import pageDesign from '@/components/invoice/pageDesign/Index.vue'
 
 Vue.use(Router);
 
@@ -420,6 +421,13 @@ export default new Router({
           meta: { auth: false },
           name: '下发记录',
           component: downRecord
+        },
+        //页面设计
+        {
+          path: '/invoice/pageDesign',
+          meta: { auth: false },
+          name: '页面设计',
+          component: pageDesign
         },
 
       ]

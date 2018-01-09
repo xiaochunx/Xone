@@ -1,24 +1,9 @@
 <style scoped>
-  .myButton{
-    border: 1px solid;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0;
-    padding: 10px 15px;
-    line-height: 1;
-    white-space: nowrap;
-  }
-  .myButton:active {
-    box-shadow: 1px 1px 20px #B6C5D8;
-    opacity: 0.8;
-  }
-  .myButton:focus {
-    outline: none;
-  }
+
 </style>
 
 <template>
-  <div @click="handleClick" class="myButton" style="margin-bottom: 10px" :style="{'margin-left':marginLeft,'color':!isBool?'black':'red','border-color':!isBool?'#C3C4C3':'red','background-color':backgroundColor}">
+  <div @click="handleClick" class="myButton" :style="{'margin-right':marginRight,'margin-bottom':marginBottom,'color':!isBool?'black':'red','border-color':!isBool?'#C3C4C3':'red','background-color':backgroundColor}">
     {{name}}
   </div>
 
@@ -27,7 +12,7 @@
 <script>
   export default {
     name:"xoButton",
-    props:["id","name","color","backgroundColor","marginLeft","isBool","showName"],
+    props:["id","name","color","backgroundColor","marginRight","marginBottom","isBool","showName"],
     data(){
       return{
 

@@ -1,7 +1,5 @@
 <style scoped>
-  .time {
-    margin-left: 100px;
-  }
+
   .bodyTop{
     padding-bottom: 10px;
   }

@@ -478,9 +478,8 @@
       },
       isSwitch() {
         this.storeStatusValue = false;
-
         if (this.multipleSelection.length === 0) {
-          this.$message('请勾选门店');
+          this.$message('请勾选用户组');
         } else {
           this.dialogVisible1 = true
         }
@@ -494,7 +493,6 @@
           status = 0
         }
         getApi.settingBatchUserGroup(this.multipleSelection.join(','),status).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             this.$message('操作成功');
             this.getGroupList(this.p,this.getPermissionLevelId());
@@ -551,7 +549,7 @@
               over = 1
             }
             getApi.updateXlsFile(this.formSubmit.group_id,this.fileurl,this.getPermissionLevelId()).then((res)=>{
-              console.log(res)
+
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
@@ -576,7 +574,6 @@
       editAccount(name,row) {
         this.groupName = name;
         getApi.infoByGroupId(row.id).then((res)=>{
-          console.log(res)
           this.formUserGroup = res.data.data[0];
         });
 
@@ -620,7 +617,6 @@
           type: 'warning'
         }).then(() => {
           getApi.deletGroup(row.id).then((res) => {
-            console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
@@ -752,37 +748,5 @@
     font-size: 30px;
   }
 
-  .m-storeList {
-    height: 50px;
-    line-height: 50px;
-  }
-
-  .m-newStore {
-    position: absolute;
-    right: 20px;
-    top: 50px;
-    width: 99px;
-  }
-
-  .m-t {
-    text-align: center;
-  }
-
-  .m-store {
-    padding: 20px 0;
-  }
-
-  .m-store table tr td {
-    padding: 10px 0;
-    border-bottom: 1px dashed #000;
-  }
-
-  .m-store table tr:nth-child(1) {
-    height: 50px;
-  }
-
-  .m-store table tr:nth-child(1) td {
-    border-bottom: 1px solid #000;
-  }
 
 </style>
