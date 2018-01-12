@@ -109,7 +109,7 @@
 
 
         <div v-for="(domain, index) in oneList.productcodes" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>

@@ -85,7 +85,7 @@
           <el-input v-model="formUser.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
         </el-form-item>
         <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -154,7 +154,7 @@
 
 
         <div v-for="(domain, index) in formUserEdit.billHuman" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -397,12 +397,16 @@
         storeDataOld: [],
         storeDataNew: [],
         storeDataSelected: [],
-
+// <input type="checkbox" checked={option.select} onClick={(that)=>{this.$parent.data.forEach((item)=>{if(item.id === option.id){item.select = that.target.checked}})}}/>
         renderFunc(h, option) {
+          //var that = this;
           return<div class="equal">
             <div class="row">
-
             <div class="two">{option.storename}</div>
+            <div >
+
+          </div>
+
             </div>
             </div>;
         },
@@ -450,7 +454,8 @@
         defaultProps: {
           value:'id',
           children: 'child',
-          label: 'levelname'
+          label: 'levelname',
+          // select:'select'
         },
         storeList:[],
         selectedOptions:[],
@@ -685,6 +690,7 @@
         this.uid = row.id;
         this.username = row.username;
         getApi.getUserStore(row.id).then((res)=>{
+          console.log(res)
           if(res.data.errcode === 0){
             let list = [];
             res.data.data.list.forEach((item)=>{
@@ -731,12 +737,22 @@
 
       },
       open2(){
+        // this.$nextTick(()=>{
+        //   let dom = document.querySelectorAll(".transfer div p.el-transfer-panel__header")
+        //   let span =  document.createElement('span');
+        //   span.classList.add("my-transfer");
+        //   span.textContent = "设置语音播报";
+        //   dom[1].appendChild(span);
+        // })
 
       },
       dialogClose2() {
         this.uid = '';
         this.username = '';
-        this.selectedOptions =[]
+        this.selectedOptions =[];
+        // let dom = document.querySelectorAll(".transfer div p.el-transfer-panel__header");
+        // dom[1].removeChild(dom[1].childNodes[1])
+
       },
       dialogOpen(){
         this.formUser = {

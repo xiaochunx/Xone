@@ -2,40 +2,40 @@
   <div>
 
     <el-tabs  v-model="activeName2"  @tab-click="handleClick">
-      <el-tab-pane label="加载页面" name="first">
-        <div class="flex_r" style="height: 500px">
-          <div class="flex_1">
-            <h2>内容设置</h2>
-            <h3>基本信息</h3>
-            <el-form ref="form1" :model="form1" label-width="100px">
+      <!--<el-tab-pane label="加载页面" name="first">-->
+        <!--<div class="flex_r" style="height: 500px">-->
+          <!--<div class="flex_1">-->
+            <!--<h2>内容设置</h2>-->
+            <!--<h3>基本信息</h3>-->
+            <!--<el-form ref="form1" :model="form1" label-width="100px">-->
 
-              <el-form-item label="加载图片："  prop="imageUrl" :rules="{required: true, message: '请选择图片', trigger: 'change'}">
-                <el-upload
-                  class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess1"
-                  :before-upload="beforeAvatarUpload">
-                  <img v-if="form1.imageUrl" :src="form1.imageUrl" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
-                <div>建议图片尺寸350*350px，格式为png,jpg,jprg,且小于500kb</div>
-              </el-form-item>
+              <!--<el-form-item label="加载图片："  prop="imageUrl" :rules="{required: true, message: '请选择图片', trigger: 'change'}">-->
+                <!--<el-upload-->
+                  <!--class="avatar-uploader"-->
+                  <!--:action="$updateUrl"-->
+                  <!--name='filename'-->
+                  <!--:show-file-list="false"-->
+                  <!--:on-success="handleAvatarSuccess1"-->
+                  <!--:before-upload="beforeAvatarUpload">-->
+                  <!--<img v-if="form1.imageUrl" :src="form1.imageUrl" class="avatar">-->
+                  <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+                <!--</el-upload>-->
+                <!--<div>建议图片尺寸350*350px，格式为png,jpg,jprg,且小于500kb</div>-->
+              <!--</el-form-item>-->
 
-            </el-form>
+            <!--</el-form>-->
 
-          </div>
+          <!--</div>-->
 
-          <div class="flex_1 margin_l_10">
-            <div class="margin_b_10">预览效果</div>
-            <img src="../../../assets/pageDesign/1.jpeg" alt="" style="height: 500px">
-          </div>
-        </div>
-        <el-button  @click="submit(1,'form1')" >提交</el-button>
-        <el-button  @click="" >重置</el-button>
-      </el-tab-pane>
+          <!--<div class="flex_1 margin_l_10">-->
+            <!--<div class="margin_b_10">预览效果</div>-->
+            <!--<img src="../../../assets/pageDesign/1.jpeg" alt="" style="height: 500px">-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<el-button  @click="submit(1,'form1')" >提交</el-button>-->
+        <!--<el-button  @click="" >重置</el-button>-->
+      <!--</el-tab-pane>-->
       <el-tab-pane label="发票信息" name="second">
-
         <div class="flex_r" style="height: 500px">
           <div class="flex_1">
             <h2>内容设置</h2>
@@ -45,7 +45,8 @@
               <el-form-item label="logo图片：" prop="imageUrl" :rules="{required: true, message: '请选择图片', trigger: 'change'}">
                 <el-upload
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :action="$updateUrl"
+                  name='filename'
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess2"
                   :before-upload="beforeAvatarUpload">
@@ -74,7 +75,7 @@
           </div>
 
           <div class="flex_1 margin_l_10">
-            <div class="margin_b_10">预览效果</div>
+            <h2 class="margin_b_10">预览效果</h2>
             <img src="../../../assets/pageDesign/2.jpeg" alt="" style="height: 500px">
           </div>
         </div>
@@ -122,7 +123,7 @@
           </div>
 
           <div class="flex_1 margin_l_10">
-            <div class="margin_b_10">预览效果</div>
+            <h2 class="margin_b_10">预览效果</h2>
             <img src="../../../assets/pageDesign/3.jpeg" alt="" style="height: 500px">
           </div>
         </div>
@@ -131,37 +132,7 @@
         <el-button  @click="" >重置</el-button>
 
       </el-tab-pane>
-      <el-tab-pane label="加载页面" name="fourth">
-        <div class="flex_r" style="height: 500px">
-          <div class="flex_1">
-            <h2>内容设置</h2>
-            <h3>基本信息</h3>
-            <el-form ref="form4" :model="form4" label-width="100px">
 
-              <el-form-item label="加载图片："  prop="imageUrl" :rules="{required: true, message: '请选择图片', trigger: 'change'}">
-                <el-upload
-                  class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess4"
-                  :before-upload="beforeAvatarUpload">
-                  <img v-if="form4.imageUrl" :src="form4.imageUrl" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
-                <div>建议图片尺寸350*350px，格式为png,jpg,jprg,且小于500kb</div>
-              </el-form-item>
-
-            </el-form>
-
-          </div>
-
-          <div class="flex_1">
-            预览效果
-          </div>
-        </div>
-        <el-button  @click="submit(4,'form4')" >提交</el-button>
-        <el-button  @click="" >重置</el-button>
-      </el-tab-pane>
     </el-tabs>
 
 
@@ -184,7 +155,7 @@
     components: {},
     data() {
       return {
-        activeName2: 'first',
+        activeName2: 'second',
         isBool:1,
         colorList:[
           {id:0,color:'#3F9CCF',selected:false},
@@ -208,16 +179,14 @@
           textArea:'',
           text:''
         },
-        form4:{
-          imageUrl:'',
-        },
+
       }
     },
     watch: {},
     methods: {
 
       handleClick(tab, event) {
-        console.log(tab, event);
+        //console.log(tab, event);
       },
 
       click3(id){
@@ -239,9 +208,7 @@
       handleAvatarSuccess2(res, file) {
         this.form2.imageUrl = URL.createObjectURL(file.raw);
       },
-      handleAvatarSuccess4(res, file) {
-        this.form4.imageUrl = URL.createObjectURL(file.raw);
-      },
+
       beforeAvatarUpload(file) {
         const isPNG = file.type === 'image/png';
         const isJPG = file.type === 'image/jpeg';
@@ -285,9 +252,7 @@
               console.log(this.form3.text)
             }
             break;
-          case 4:
-            console.log(4);
-            break;
+
         }
 
 

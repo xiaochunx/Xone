@@ -73,7 +73,7 @@
 
 
         <div v-for="(domain, index) in formEdit.thirdCode" class="flex_r">
-          <el-form-item label="第三方编码">
+          <el-form-item :label="index === 0?'第三方编码':''">
             <div>
               <el-row>
                 <el-col>

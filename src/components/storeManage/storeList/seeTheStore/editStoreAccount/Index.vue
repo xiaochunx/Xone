@@ -550,17 +550,17 @@
                     <!--</div>-->
 
 
-                    <div v-for="(domain, index) in storeData.thirdCode" class="flex_a padding_10">
+                    <div v-for="(domain, index) in storeData.thirdCode" class="flex_a margin_b_10">
                       <div style="width:150px">
                         <el-input v-model="domain.code1" style="width: 150px;"
-                                  placeholder="请输入内容"></el-input>
+                                  placeholder="请输入名称"></el-input>
                       </div>
                       <div class="m-rank">
                         <div class="m-rank-child"></div>
                       </div>
                       <div style="width:150px">
                         <el-input v-model="domain.code2" style="width: 150px;"
-                                  placeholder="请输入内容"></el-input>
+                                  placeholder="请输入编码"></el-input>
                       </div>
                       <div class="flex_sb" style="width:80px">
                         <div class="m-storeCode margin_l_10" @click="addDomainThird()">

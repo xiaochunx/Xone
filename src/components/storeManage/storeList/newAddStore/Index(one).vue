@@ -29,7 +29,7 @@
               </el-form-item>
 
               <div v-for="(domain, index) in form.thirdPartyCoding" class="flex_r">
-                <el-form-item label="第三方编码" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
+                <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key" :prop="'thirdPartyCoding.' + index + '.value'"
                   :rules="{required: true, message: '第三方编码不能为空', trigger: 'blur'}">
                   <div>
                     <el-row>

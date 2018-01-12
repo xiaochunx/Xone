@@ -130,7 +130,7 @@
 
 
     <!--选择门店-->
-    <el-dialog title="选择门店" :visible.sync="dialogFormVisible1">
+    <el-dialog title="选择门店" :visible.sync="dialogFormVisible1" @open="open">
       <div class="flex_ce">
         <div class="flex_a">
           <el-input size="small" placeholder="门店标签名称" class="margin_r_10"></el-input>
@@ -138,14 +138,19 @@
         </div>
       </div>
       <div class="margin_t_10">
-        <el-table :data="storeData1" border style="width: 100%;">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="storeData1" border style="width: 100%;" @select-all="handleSelectionChange" ref="multipleTable">
+
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.select" @change="handleChecked"></el-checkbox>
-              {{scope.$index + 1 }}
+              <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
+
+
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="门店标签名称">
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code" label="门店标签编码">
@@ -184,7 +189,7 @@
         </el-form-item>
 
         <div v-for="(domain, index) in formEdit.thirdPartyCoding" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -249,10 +254,10 @@
     <!--菜品-->
     <el-dialog title="编辑菜品" :visible.sync="dialogFormVisible3">
 
-      <div class="flex_a">
-        <div class="flex_1">
+      <div class="flex_sb">
+        <div class=" flex_a">
           <el-checkbox v-model="selectedAll" @change="handleCheckAll1">全选</el-checkbox>
-          <el-select v-model="bank" placeholder="请选择">
+          <el-select v-model="bank" placeholder="请选择" class="margin_l_10">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -261,7 +266,7 @@
             </el-option>
           </el-select>
 
-          <el-select v-model="bank" placeholder="请选择">
+          <el-select v-model="bank" placeholder="请选择" class="margin_l_10">
             <el-option
               v-for="item in options"
               :key="item.id"
@@ -270,7 +275,7 @@
             </el-option>
           </el-select>
         </div>
-        <div class="flex_1 flex_a">
+        <div class=" flex_a margin_l_10">
           <div class="margin_r_10" >
             <el-input placeholder="菜品名称"></el-input>
           </div>
@@ -338,7 +343,7 @@
           radio2: false,
           time:''
         },
-        storeData1:[{select:false,name:'1',code:'222'},{select:false,name:'111',code:'222222'},],
+        storeData1:[{select:false,id:1,name:'1',code:'222'},{select:false,id:2,name:'111',code:'222222'},],
         dishesList1:[
           {name:'1',code:'222'},{name:'122',code:'222'}
         ],
@@ -387,11 +392,16 @@
         }],
         selectedAll:false,
         showName:'',
-        show:true
+        show:true,
+        multipleSelection:[],
       }
     },
     watch: {},
     methods: {
+      open(){
+        // this.multipleSelection = []
+        // console.log(this.multipleSelection)
+      },
       handleCheckAll1(bool){
         if (bool.target.checked === true) {
           this.dishesData.forEach((data) => {
@@ -479,7 +489,25 @@
         this.dialogFormVisible2 = true
       },
       del() {
+        this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // getApi.delChannel(row.id).then((res) => {
+          //   if (res.data.errcode === 0) {
+          //     this.$message({
+          //       type: 'info',
+          //       message: '删除成功'
+          //     });
+          //     this.getChannelList(this.p = {page: 1, size: 20, total: 0});
+          //   }
+          //
+          // })
 
+        }).catch(() => {
+          //
+        });
       },
       append(store, data) {
         console.log(store)
@@ -519,17 +547,7 @@
       addDomain() {
         this.formEdit.thirdPartyCoding.push( {code1: '', code2: ''});
       },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.storeData1.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.storeData1.forEach((data) => {
-            data.select = false
-          })
-        }
-      },
+
       handleChecked(data) {
         let count = 0;
         this.storeData1.forEach((data) => {
@@ -537,55 +555,37 @@
             count += data.select * 1
           }
         });
-
+        let list =  this.storeData1.filter((item)=>{
+          return item.select === true
+        });
+        let list1 = [];
+        list.forEach((item)=>{
+          list1.push(item.id)
+        });
+        this.multipleSelection = list1;
         if (count === this.storeData1.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
-
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-
-                attrs: {id: "all"},
-                'class': {},
-                props: {
-                  selectedAll: this.selectedAll
-                },
-
-                domProps: {
-                  value: this.selectedAll
-                },
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-//                    this.selectedAll = event;
-//                    this.$emit('input', event)
-                  }
-
-                }
-              }, ['全选']
-            )
-          ]
-        );
-
+      handleSelectionChange(val) {
+        let list = [];
+        val.forEach((item)=>{
+          list.push(item.id)
+        });
+        this.multipleSelection = list;
+        if(val.length === this.storeData1.length){
+          this.storeData1.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.storeData1.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
+        }
       },
     },
     created() {
@@ -653,33 +653,6 @@
     font-size: 30px;
   }
 
-  .m-newStore {
-    position: absolute;
-    right: 20px;
-    top: 50px;
-    width: 99px;
-  }
-
-  .m-t {
-    text-align: center;
-  }
-
-  .m-store {
-    padding: 20px 0;
-  }
-
-  .m-store table tr td {
-    padding: 10px 0;
-    border-bottom: 1px dashed #000;
-  }
-
-  .m-store table tr:nth-child(1) {
-    height: 50px;
-  }
-
-  .m-store table tr:nth-child(1) td {
-    border-bottom: 1px solid #000;
-  }
 
 
 </style>

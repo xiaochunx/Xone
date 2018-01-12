@@ -86,7 +86,7 @@
         </el-form-item>
 
         <div v-for="(domain, index) in clientForm.third_code" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -274,26 +274,6 @@
           <el-form-item label="货物或应税劳务、服务名称" prop="input8" :rules="{required: true, message: '必填项', trigger: 'blur'}">
           <el-input v-model="clientForm_first2.input8" placeholder="必填"></el-input>
           </el-form-item>
-          <transition
-            v-on:before-enter="beforeEnter"
-            v-on:enter="enter"
-            v-on:after-enter="afterEnter"
-            v-on:enter-cancelled="enterCancelled"
-
-            v-on:before-leave="beforeLeave"
-            v-on:leave="leave"
-            v-on:after-leave="afterLeave"
-            v-on:leave-cancelled="leaveCancelled"
-          >
-          <div v-if="showOption" class="heightTran">
-            <el-form-item label="收款人">
-              <el-input v-model="clientForm_first2.input9" placeholder="必填"></el-input>
-            </el-form-item>
-            <el-form-item label="复核人">
-              <el-input v-model="clientForm_first2.input10" placeholder="必填"></el-input>
-            </el-form-item>
-          </div>
-          </transition>
           <div class="flex_sb margin_b_10" style="border-bottom: 1px solid #bfcbd9">
             <div>选填项</div>
             <div @click="showOption = !showOption" class="pointer">展开
@@ -301,7 +281,25 @@
               <i class="el-icon-arrow-up"  v-if="!showOption"></i>
             </div>
           </div>
-
+          <transition
+            v-on:before-enter="beforeEnter"
+            v-on:enter="enter"
+            v-on:after-enter="afterEnter"
+            v-on:enter-cancelled="enterCancelled"
+            v-on:before-leave="beforeLeave"
+            v-on:leave="leave"
+            v-on:after-leave="afterLeave"
+            v-on:leave-cancelled="leaveCancelled"
+          >
+            <div v-if="showOption" class="heightTran">
+              <el-form-item label="收款人">
+                <el-input v-model="clientForm_first2.input9" placeholder="必填"></el-input>
+              </el-form-item>
+              <el-form-item label="复核人">
+                <el-input v-model="clientForm_first2.input10" placeholder="必填"></el-input>
+              </el-form-item>
+            </div>
+          </transition>
           <el-form-item label-width="100px" label="">
             <div class="margin_b_10">购买方信息</div>
             <div class="flex_r f_f margin_b_10">

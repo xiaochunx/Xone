@@ -69,6 +69,9 @@ import dishesGroup from '@/components/dishesManagement/dishesGroup/Index.vue'
 import addDishesGroup from '@/components/dishesManagement/dishesGroup/addDishesGroup/Index.vue'
 import dishesCategory from '@/components/dishesManagement/dishesCategory/Index.vue'
 import addCategory from '@/components/dishesManagement/dishesCategory/addCategory/Index.vue'
+import dishesSpec from '@/components/dishesManagement/dishesSpec/Index.vue'
+import dishesAttr from '@/components/dishesManagement/dishesAttr/Index.vue'
+import boxSetting from '@/components/dishesManagement/boxSetting/Index.vue'
 
 /************************** 发票方案 ***************************/
 
@@ -405,7 +408,27 @@ export default new Router({
           name: '菜品管理/菜品组/新增菜品组',
           component: addDishesGroup
         },
-
+        //菜品规格
+        {
+          path: '/dishesManagement/dishesSpec',
+          meta: { auth: false },
+          name: '菜品管理/菜品规格',
+          component: dishesSpec
+        },
+        //菜品属性
+        {
+          path: '/dishesManagement/dishesAttr',
+          meta: { auth: false },
+          name: '菜品管理/菜品属性',
+          component: dishesAttr
+        },
+        //餐盒设置
+        {
+          path: '/dishesManagement/boxSetting',
+          meta: { auth: false },
+          name: '菜品管理/餐盒设置',
+          component: boxSetting
+        },
         /**********************发票***************************/
 
         //发票方案

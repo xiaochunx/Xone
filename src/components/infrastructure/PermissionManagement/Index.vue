@@ -75,7 +75,7 @@
         </el-form-item>
 
         <div v-for="(domain, index) in formUserGroup.third_code" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
@@ -151,7 +151,7 @@
           <el-input v-model="formUser.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
         </el-form-item>
         <div v-for="(domain, index) in formUser.billHuman" class="flex_r">
-          <el-form-item label="第三方编码" :key="domain.key">
+          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
