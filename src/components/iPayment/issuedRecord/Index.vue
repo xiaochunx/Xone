@@ -239,8 +239,6 @@
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
   import {oneTwoApi} from '@/api/api.js'
-  import Hub from '../../utility/commun'
-  import {getArr} from '../../utility/communApi'
   export default {
     data() {
       return {
@@ -367,12 +365,10 @@
 
 
       this.api();
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
+
     },
     destroyed(){
-      Hub.$off("arr")
+
     }
   }
 </script>

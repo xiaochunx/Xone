@@ -1,13 +1,13 @@
 <template>
   <div id="xoMenu" :style="{height:ListHeight+'px'}">
-    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark" :width="300">
+    <!--<el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark" :width="300">-->
 
-      <!--后期加上-->
-      <el-submenu v-for="(value,index1) in leftList" :index=index1.toString() :key="index1">
-        <template slot="title">{{value.name}}</template>
-        <router-link v-for="(item,index2) in value.children" :key="item.route" :to=item.route><el-menu-item :index=formatNum(index1,index2) :key="index2">{{item.name}}</el-menu-item></router-link>
-      </el-submenu>
-    </el-menu>
+      <!--&lt;!&ndash;后期加上&ndash;&gt;-->
+      <!--<el-submenu v-for="(value,index1) in leftList" :index=index1.toString() :key="index1">-->
+        <!--<template slot="title">{{value.name}}</template>-->
+        <!--<router-link v-for="(item,index2) in value.children" :key="item.route" :to=item.route><el-menu-item :index=formatNum(index1,index2) :key="index2">{{item.name}}</el-menu-item></router-link>-->
+      <!--</el-submenu>-->
+    <!--</el-menu>-->
 
       <tree :data='leftData' :count=0></tree>
 
@@ -17,6 +17,7 @@
   import tree from './utility/tree'
   import Hub from './utility/commun'
   import { mapActions,mapGetters } from 'vuex';
+  import {getArr} from './utility/communApi'
   export default {
     props: {
 
@@ -175,43 +176,53 @@
           //
           //   ]
           // },
+          // {
+          //   name: '菜品管理',
+          //   children: [
+          //     {
+          //       name: '菜品管理',
+          //       route: '/dishesManagement/storeDishesManage'
+          //     },
+          //     {
+          //       name: '菜品品类',
+          //       route: '/dishesManagement/dishesCategory'
+          //     },
+          //     {
+          //       name: '菜品组',
+          //       route: '/dishesManagement/dishesGroup'
+          //     },
+          //     {
+          //       name: '菜品规格',
+          //       route: '/dishesManagement/dishesSpec'
+          //     },
+          //     {
+          //       name: '菜品属性',
+          //       route: '/dishesManagement/dishesAttr'
+          //     },
+          //     {
+          //       name: '餐盒设置',
+          //       route: '/dishesManagement/boxSetting'
+          //     },
+          //     {
+          //       name: '套餐管理',
+          //       route: '/dishesManagement/mealManage'
+          //     },
+          //   ]
+          // }
           {
-            name: '菜品管理',
+            name: 'x2统计报表',
             children: [
               {
-                name: '菜品管理',
-                route: '/dishesManagement/storeDishesManage'
+                name: '订单列表',
+                route: '/report/orderList'
               },
               {
-                name: '菜品品类',
-                route: '/dishesManagement/dishesCategory'
+                name: '订单统计',
+                route: '/report/orderCount'
               },
-              {
-                name: '菜品组',
-                route: '/dishesManagement/dishesGroup'
-              },
-              {
-                name: '菜品规格',
-                route: '/dishesManagement/dishesSpec'
-              },
-              {
-                name: '菜品属性',
-                route: '/dishesManagement/dishesAttr'
-              },
-              {
-                name: '餐盒设置',
-                route: '/dishesManagement/boxSetting'
-              },
-              // {
-              //   name: '下发记录',
-              //   route: '/dishesManagement/downRecord'
-              // },
-              // {
-              //   name: '门店ERP菜品',
-              //   route: '/dishesManagement/storeErp'
-              // },
+
             ]
-          }
+          },
         ],
         ListHeight: 0,
         leftData:[]
@@ -225,7 +236,7 @@
           if (map.children) {
             this.$set(map, "show", true);
             if(map.router === path){
-              Hub.$emit('arr',map.arr);
+              this.setTreeArr({obj:getArr(map.arr)});
               this.$set(map, "selected", true);
             }else {
               this.$set(map, "selected", false);

@@ -26,11 +26,11 @@ let getRoleList = () => {
 
 
 //获取基础门店列表
-let getBsList = (levelid) => {
+let getBsList = (levelid,storename) => {
   return new Promise((resolve, reject) => {
     axios.get(`index.php?controller=stores&action=index&token=${get('token')}`,{ params: {
         levelid:levelid,
-        storename:'',
+        storename:storename,
         page:1,
         pagesize:1000
       },}).then((res)=>{

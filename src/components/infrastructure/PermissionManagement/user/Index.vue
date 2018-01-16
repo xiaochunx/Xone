@@ -255,43 +255,7 @@
 
     </el-dialog>
 
-    <!--关联门店-->
-    <el-dialog
-      title=""
-      @open="open2"
-      @close="dialogClose2"
-      :visible.sync="dialogVisible2"
-      width="50%">
-      <div class="flex_a margin_b_10">
-        <el-cascader
-          :props="defaultProps"
-          :options="dataLeft"
-          v-model="selectedOptions"
-          change-on-select
-          @change="handleChange">
-        </el-cascader>
-      </div>
 
-      <div class="flex_a">
-        <el-transfer
-          class="transfer"
-          v-model="storeDataNew"
-          :props="{
-            key: 'id',
-            label: 'storename'
-          }"
-          @change="handleChangeTran"
-          :render-content="renderFunc"
-          :titles="['全部门店', '已选门店']"
-          :data="storeDataOld">
-        </el-transfer>
-      </div>
-      <div class="margin_t_10">
-        <el-button @click="dialogVisible2 = false">取消</el-button>
-        <el-button type="primary" @click="submitFromStroe()" >确认</el-button>
-      </div>
-
-    </el-dialog>
 
     <!--开启/关闭-->
     <el-dialog
@@ -309,41 +273,10 @@
       </div>
     </el-dialog>
 
+    <!--关联门店-->
+    <xo-affiliated-store ref="affiliatedStore" :uid="uid" :username="username"></xo-affiliated-store>
     <!--修改密码-->
-    <el-dialog
-      title="修改密码"
-      :visible.sync="dialogVisible5"
-      @close="passClose"
-      @open="passOpen"
-      width="100%" size="tiny">
-      <div>
-
-        <el-form ref="formRules5" :model="formPassWord" label-width="100px">
-          <el-form-item label="原密码:" prop="oldPassWord" :rules="{required: true, message: '请输入原密码', trigger: 'blur'}">
-            <el-input type="password" v-model="formPassWord.oldPassWord" placeholder="请输入内容"></el-input>
-          </el-form-item>
-          <el-form-item label="新密码:" prop="newPassWord" :rules="{required: true, validator: validatePass, trigger: 'blur'}">
-            <el-input type="password" v-model="formPassWord.newPassWord" placeholder="请输入内容"></el-input>
-          </el-form-item>
-          <el-form-item label="确认新密码:" prop="confirmPassWord" :rules="{required: true, validator: validatePass2, trigger: 'blur'}">
-            <el-input type="password" v-model="formPassWord.confirmPassWord" placeholder="请输入内容"></el-input>
-          </el-form-item>
-          <el-form-item label="验证码:" prop="vCode" :rules="{required: true, message: '请确认验证码', trigger: 'blur'}">
-
-            <div class="flex_r">
-              <el-input v-model="formPassWord.vCode" placeholder="请输入内容"></el-input>
-              <!--<img src="../../../../assets/home/yunzang-logo.png" alt="">-->
-              <img class="margin_l_10 pointer" :src="authImg" alt="" @click="selectAuth()">
-            </div>
-
-          </el-form-item>
-        </el-form>
-
-        <el-button type="primary" @click="submit1('formRules5')">确定</el-button>
-        <el-button @click="dialogVisible5 = false">取消</el-button>
-
-      </div>
-    </el-dialog>
+    <xo-auth ref="auth" :id="uid"></xo-auth>
 
   </div>
 </template>
@@ -393,30 +326,16 @@
     },
     data() {
       return {
-        authImg:'',
-        storeDataOld: [],
-        storeDataNew: [],
-        storeDataSelected: [],
-// <input type="checkbox" checked={option.select} onClick={(that)=>{this.$parent.data.forEach((item)=>{if(item.id === option.id){item.select = that.target.checked}})}}/>
-        renderFunc(h, option) {
-          //var that = this;
-          return<div class="equal">
-            <div class="row">
-            <div class="two">{option.storename}</div>
-            <div >
+        levelId:'',//结构ID
+        searchName:'',
 
-          </div>
-
-            </div>
-            </div>;
-        },
         storeStatusValue: false,
         dialogVisible: false,
         dialogVisible1: false,
-        dialogVisible2: false,
+
         dialogVisible3:false,
         dialogVisible4:false,
-        dialogVisible5:false,
+
         tableHeight: 0,
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
         groupList:[],
@@ -450,74 +369,21 @@
         },
         userName: '',
         showDetail:true,
-        dataLeft:[],
-        defaultProps: {
-          value:'id',
-          children: 'child',
-          label: 'levelname',
-          // select:'select'
-        },
+
         storeList:[],
         selectedOptions:[],
         uid:'',
         username:'',
         multipleSelection:[],
-        formPassWord: {
-        },
+
       }
     },
     watch: {},
     methods: {
-      selectAuth(){
-        getApi.validateImg().then((res)=>{
-          this.authImg = `data:image/png;base64,${res.data.data}`
-        })
-      },
-      submit1(submit5){
-        this.$refs[submit5].validate((valid) => {
-          if (valid) {
-            getApi.updatePassword(this.uid,this.formPassWord).then((res)=>{
-              if(res.data.errcode === 0){
-                // this.$message('修改成功');
-                // this.dialogVisible5 = false
 
-                this.$localStorage.remove("token");
-                this.$localStorage.remove("user");
-
-                this.$alert('密码修改成功，请重新登录', '', {
-                  confirmButtonText: '确定',
-                  callback: action => {
-                    this.$router.push("/login")
-                  }
-                });
-
-              }
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      passOpen() {
-        this.formPassWord = {
-          oldPassWord: '',
-          newPassWord: '',
-          confirmPassWord: '',
-          vCode: ''
-        };
-        getApi.validateImg().then((res)=>{
-          this.authImg = `data:image/png;base64,${res.data.data}`
-        })
-      },
-      passClose() {
-        this.uid = '';
-        this.$refs["formRules5"].resetFields();
-
-      },
       passWord(row){
         this.uid = row.id;
-        this.dialogVisible5 = true
+        this.$refs.auth.openDialog();
       },
       checkPhone(rule, value, callback){
         let re = /^1[3|5|7|8]\d{9}$/;
@@ -607,23 +473,7 @@
           }
         })
       },
-      submitFromStroe(){
-        let data = [];
-        this.storeDataOld.forEach((item)=>{
-          this.storeDataNew.forEach((item1)=>{
-            if(item.id === item1){
-              data.push({uid:this.uid,username:this.username,store_id:item.id,storename:item.storename})
-            }
-          })
-        });
 
-        getApi.userStoreInfo(data).then((res)=>{
-          if(res.data.errcode === 0){
-            this.dialogVisible2 = false
-          }
-        })
-
-      },
       submitFromEdit(formRules){
         this.$refs[formRules].validate((valid) => {
           if (valid) {
@@ -657,55 +507,12 @@
           }
         });
       },
-      handleChange(value) {
-        getApi.getBsList(value[value.length -1]).then((res)=>{
-          // this.storeDataOld = res.data.data.list
-          let arr =  res.data.data.list.concat(this.storeDataSelected);
-          let list2 = [];
-          let listMap = {};
-          for (let i = 0, id, storename, key; i < arr.length; i++) {
-            id = arr[i].id;
-            storename = arr[i].storename;
-            key = id + '|' + storename;
-            if (!!listMap[key]) {
-              listMap[key]++;
-            } else {
-              listMap[key] = 1;
-            }
-          }
-          for (let item in listMap) {
-            list2.push({
-              id: item.split('|')[0] *1,
-              storename: item.split('|')[1],
-            })
-          }
-        this.storeDataOld = list2
-        })
-      },
-      handleChangeTran(value){
-        console.log(value);
-      },
 
       showStore(row) {
         this.uid = row.id;
         this.username = row.username;
-        getApi.getUserStore(row.id).then((res)=>{
-          console.log(res)
-          if(res.data.errcode === 0){
-            let list = [];
-            res.data.data.list.forEach((item)=>{
-              list.push(item.id)
-            });
-            this.storeDataOld = res.data.data.list;
-            this.storeDataSelected = res.data.data.list;
-            this.storeDataNew = list
-          }
-
-        });
-        this.dialogVisible2 = true
+        this.$refs.affiliatedStore.openDialog();
       },
-
-
 
       recurRole(list) {
         list.forEach((item) => {
@@ -736,24 +543,7 @@
         })
 
       },
-      open2(){
-        // this.$nextTick(()=>{
-        //   let dom = document.querySelectorAll(".transfer div p.el-transfer-panel__header")
-        //   let span =  document.createElement('span');
-        //   span.classList.add("my-transfer");
-        //   span.textContent = "设置语音播报";
-        //   dom[1].appendChild(span);
-        // })
 
-      },
-      dialogClose2() {
-        this.uid = '';
-        this.username = '';
-        this.selectedOptions =[];
-        // let dom = document.querySelectorAll(".transfer div p.el-transfer-panel__header");
-        // dom[1].removeChild(dom[1].childNodes[1])
-
-      },
       dialogOpen(){
         this.formUser = {
           nickname: '',
@@ -846,11 +636,11 @@
 
       getPage(page) {
         this.p.page = page;
-        //this.getBsList(this.p);
+        //this.getBsList();
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.getBsList(this.p);
+        //this.getBsList();
       },
 
       getUserFromGroup(){
@@ -868,35 +658,12 @@
           this.multipleSelection = []
         })
       },
-      validatePass(rule, value, callback){
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.formPassWord.confirmPassWord !== '') {
-            this.$refs.formRules5.validateField('confirmPassWord');
-          }
-          callback();
-        }
-      },
-      validatePass2(rule, value, callback){
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.formPassWord.newPassWord) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      }
+
     },
     created() {
 
-      getApi.getLevel().then((res) => {
-        if (res.data.errcode === 0) {
-          this.dataLeft = res.data.data
-        }
-      });
 
-        this.getUserFromGroup();
+      this.getUserFromGroup();
 
       getApi.getRoleList().then((res)=>{
         if(res.data.errcode === 0){
@@ -926,8 +693,6 @@
 </script>
 
 <style lang="less" scoped>
-
-
   .m-rank {
     width: 40px;
     .m-rank-child {
@@ -939,7 +704,5 @@
   .m-storeCode {
     font-size: 30px;
   }
-
-
 
 </style>

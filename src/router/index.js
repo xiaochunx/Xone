@@ -25,13 +25,16 @@ import EditStoreAccount from '../components/storeManage/storeList/seeTheStore/ed
 import addGroup from '../components/storeManage/storesGroup/optionGroup/Index.vue'
 
 
-/************************** 统计报表 ***************************/
+/************************** x1统计报表 ***************************/
 import TransactionList from '../components/report/transactionList/Index.vue'
 import TransactionCount from '../components/report/transactionCount/Index.vue'
 import SettlementRecord from '../components/report/settlementRecord/Index.vue'
 import BillQuery from '../components/report/billQuery/Index.vue'
 import Invoice from '../components/report/invoice/Index.vue'
 
+/************************** x2统计报表 ***************************/
+import orderList from '../components/report/orderList/Index.vue'
+import orderCount from '../components/report/orderCount/Index.vue'
 /************************** 基础设置 ***************************/
 import BusinessInfo from '@/components/infrastructure/BusinessInfo/Index.vue'
 import BackupAcc from '@/components/infrastructure/BackupAcc/Index.vue'
@@ -72,10 +75,9 @@ import addCategory from '@/components/dishesManagement/dishesCategory/addCategor
 import dishesSpec from '@/components/dishesManagement/dishesSpec/Index.vue'
 import dishesAttr from '@/components/dishesManagement/dishesAttr/Index.vue'
 import boxSetting from '@/components/dishesManagement/boxSetting/Index.vue'
+import mealManage from '@/components/dishesManagement/mealManage/Index.vue'
 
 /************************** 发票方案 ***************************/
-
-
 import invoiceScheme from '@/components/invoice/invoiceScheme/Index.vue'
 import downRecord from '@/components/invoice/downRecord/Index.vue'
 import pageDesign from '@/components/invoice/pageDesign/Index.vue'
@@ -181,7 +183,7 @@ export default new Router({
         },
 
 
-        /************************** 统计报表 ***************************/
+        /************************** x1统计报表 ***************************/
         {
           // 交易列表
           path: '/report/transactionList',
@@ -216,6 +218,22 @@ export default new Router({
           meta: { auth: true },
           name: '统计报表/发票',
           component: Invoice,
+        },
+
+        /************************** x2统计报表 ***************************/
+        {
+          // 订单列表
+          path: '/report/orderList',
+          meta: { auth: true },
+          name: '统计报表/订单列表',
+          component: orderList,
+        },
+        {
+          // 订单统计
+          path: '/report/orderCount',
+          meta: { auth: true },
+          name: '统计报表/订单统计',
+          component: orderCount,
         },
 
         /**********************基础设置***************************/
@@ -428,6 +446,13 @@ export default new Router({
           meta: { auth: false },
           name: '菜品管理/餐盒设置',
           component: boxSetting
+        },
+        //套餐管理
+        {
+          path: '/dishesManagement/mealManage',
+          meta: { auth: false },
+          name: '菜品管理/套餐管理',
+          component: mealManage
         },
         /**********************发票***************************/
 

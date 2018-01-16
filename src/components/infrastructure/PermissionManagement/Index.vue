@@ -281,7 +281,6 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import permissionTree from './permissionTree'
   import getApi from './permissionManagement.service'
-  import {getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
 
@@ -712,13 +711,10 @@
         this.getGroupList(this.p,e.levelid);
         this.recurSelected(this.data5, e.levelid)
       });
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
 
     },
     destroyed(){
-      Hub.$off("arr")
+
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;

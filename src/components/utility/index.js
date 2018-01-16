@@ -2,4 +2,6 @@ import xoPagination from './Pagination.vue'
 import xoDatePicker from './DatePicker.vue'
 import xoNavPath from './NavPath.vue'
 import xoButton from './Button.vue'
-export default {xoPagination,xoDatePicker,xoNavPath,xoButton}
+import xoAuth from './Auth.vue'
+import xoAffiliatedStore from './AffiliatedStore.vue'
+export default {xoPagination,xoDatePicker,xoNavPath,xoButton,xoAuth,xoAffiliatedStore}

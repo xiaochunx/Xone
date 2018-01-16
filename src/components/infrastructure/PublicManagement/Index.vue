@@ -89,7 +89,7 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import {getLeft,getArr,getArea} from '../../utility/communApi'
+  import {getLeft} from '../../utility/communApi'
   import getApi from './publicManagement.service'
   import publicTree from './publicTree'
   import Hub from '../../utility/commun'
@@ -204,13 +204,10 @@
         this.recurSelected(this.dataLeft, e.levelid)
       });
 
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
+
     },
     destroyed(){
       Hub.$off("showAddPub");
-      Hub.$off("arr")
     },
     updated() {
       //this.$refs.tree2.filter(5);

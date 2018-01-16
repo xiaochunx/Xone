@@ -46,7 +46,8 @@
 
 <script>
   import Hub from '../utility/commun'
-
+  import { mapActions,mapGetters } from 'vuex';
+  import {getArr} from '../utility/communApi'
   export default {
     name: 'trees',
     props: ['data', 'count'],
@@ -57,20 +58,18 @@
       }
     },
     methods: {
+      ...mapActions(['setTreeArr']),
       test(item) {
 
         if(item.router !== ''){
           this.$router.push(item.router);
-
-
           Hub.$emit('showLeftTree',{levelid:item.id,item:item,path:this.$route.path});
 
           this.$nextTick(()=>{
-            Hub.$emit('arr',item.arr);
+            this.setTreeArr({obj:getArr(item.arr)})
           })
+
         }
-
-
 
 //        item.show = !item.show
       },

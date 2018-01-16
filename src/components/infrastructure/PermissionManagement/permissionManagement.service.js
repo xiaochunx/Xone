@@ -138,6 +138,22 @@ let settingBatchUserGroup = (ids,status) => {
   })
 };
 
+//用户列表
+let userList = (p,nickname,phone,levelId,groupId) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("nickname", nickname);
+    formData.append("phone", phone);
+    formData.append("levelId", levelId);
+    formData.append("groupId", groupId);
+    formData.append("page", p.page);
+    formData.append("pagesize", p.size);
+    axios.post(`index.php?controller=power&action=userList&token=${get('token')}`, formData).then((res) => {
+      resolve(res)
+    })
+  })
+};
+
 export default {
   getLevel,
   newLyGroup,
@@ -148,7 +164,8 @@ export default {
   lookUser,
   newlyAddAccount,
   updateXlsFile,
-  settingBatchUserGroup
+  settingBatchUserGroup,
+  userList
 }
 
 

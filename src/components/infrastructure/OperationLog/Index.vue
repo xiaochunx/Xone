@@ -59,8 +59,6 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './operationLog.service';
-  import {getArr} from '../../utility/communApi'
-  import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
   export default {
     computed: {
@@ -155,13 +153,9 @@
     },
     mounted() {
       this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p);
-
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
     },
     destroyed(){
-      Hub.$off("arr")
+
     }
   }
 </script>

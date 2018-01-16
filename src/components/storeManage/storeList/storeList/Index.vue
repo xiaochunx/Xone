@@ -235,10 +235,9 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
-  import {getLeft,getArr,getArea} from '../../../utility/communApi'
+  import {getLeft} from '../../../utility/communApi'
   import ElCheckbox from "../../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
   import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
-  import Hub from '../../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
   export default {
     computed: {
@@ -580,12 +579,10 @@
 
     },
     mounted() {
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
+
     },
     destroyed(){
-      Hub.$off("arr")
+
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;

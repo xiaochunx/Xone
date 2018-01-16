@@ -70,8 +70,7 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {oneTwoApi} from '@/api/api.js';
-  import {getWayInfo,getChannelInfo,getStoreListAll,getArr} from '../../utility/communApi'
-  import Hub from '../../utility/commun'
+  import {getStoreListAll} from '../../utility/communApi'
   import { mapActions,mapGetters } from 'vuex';
   export default {
     computed: {
@@ -235,12 +234,9 @@
 
         this.storeData = res.data.data
       });
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
     },
     destroyed(){
-      Hub.$off("arr")
+
     },
     updated(){
       getScrollHeight().then((h)=>{

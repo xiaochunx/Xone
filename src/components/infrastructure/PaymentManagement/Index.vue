@@ -125,8 +125,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './paymentManagement.service'
   import ElButton from "element-ui/packages/button/src/button";
-  import {getArr} from '../../utility/communApi'
-  import Hub from '../../utility/commun'
+
   import { mapActions,mapGetters } from 'vuex';
   export default {
     computed: {
@@ -302,9 +301,7 @@
 
     },
     mounted() {
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
+
     },
     updated() {
       getScrollHeight().then((h) => {
@@ -312,7 +309,7 @@
       })
     },
     destroyed(){
-      Hub.$off("arr")
+
     }
   }
 </script>

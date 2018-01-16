@@ -504,8 +504,7 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {oneTwoApi} from '@/api/api.js'
-  import {getArr, getArea} from '../../utility/communApi'
-  import Hub from '../../utility/commun'
+  import {getArea} from '../../utility/communApi'
   import {mapActions, mapGetters} from 'vuex';
 
   export default {
@@ -1257,12 +1256,10 @@
 
     },
     mounted() {
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj: getArr(e)})
-      });
+
     },
     destroyed() {
-      Hub.$off("arr")
+
     },
     updated() {
       getScrollHeight().then((h) => {

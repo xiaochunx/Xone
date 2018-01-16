@@ -862,9 +862,7 @@
         this.getBsList(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '')
       })
 
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj:getArr(e)})
-      });
+
 
     },
     updated() {
@@ -877,7 +875,7 @@
       Hub.$off("treeEventEditDel");
       Hub.$off("showPermissionTree");
       Hub.$off("getBsList");
-      Hub.$off("arr")
+
     }
   }
 </script>
