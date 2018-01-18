@@ -165,7 +165,7 @@
         <el-form-item label="用户组:">
           <el-select v-model="formUserEdit.groupId" placeholder="请选择" >
             <el-option
-              v-for="item in groupList"
+              v-for="item in groupListEdit"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -237,6 +237,7 @@
         p: {page: 1, size: 20, total: 0},
         uid:'',
         groupList:[],
+        groupListEdit:[],
         groupId:'',
         defaultProps: {
           value:'id',
@@ -261,7 +262,15 @@
     methods: {
       ...mapActions(['setTreeArr']),
 
-
+      removeDomain3(item) {
+        let index = this.formUserEdit.billHuman.indexOf(item);
+        if (index !== -1) {
+          this.formUserEdit.billHuman.splice(index, 1)
+        }
+      },
+      addDomain3() {
+        this.formUserEdit.billHuman.push({code1: '', code2: ''});
+      },
       showStore(row) {
         this.uid = row.id;
         this.username = row.phone;
@@ -335,10 +344,16 @@
             }else {
               res.data.data[0].status = false
             }
-            res.data.data[0].groupId = res.data.data[0].group_id * 1;
+            res.data.data[0].groupId = (res.data.data[0].group_id ==='' || res.data.data[0].group_name ===null)? '' : res.data.data[0].group_id * 1;
             this.formUserEdit = res.data.data[0]
           }
         });
+        getApi1.getGroupList({page: 1, size: 1000, total: 0},'').then((res)=>{
+          if(res.data.errcode === 0){
+            this.groupListEdit = res.data.data.list
+          }
+        });
+
 
         this.dialogVisible = true
       },

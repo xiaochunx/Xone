@@ -14,14 +14,13 @@
             <!-- 账户 -->
             <el-col :span="24" v-for="(domain, index) in form.account" :key="index">
               <el-col :span="10">
-                <el-form-item label="账号"
-                              :key="domain.key"
-                              class="cell"
-                              :prop="'account.' + index + '.paymentMethod'"
+                <el-form-item label="账号" :key="domain.key" class="cell" :prop="'account.' + index + '.paymentMethod'"
                               :rules="{ required: true, message: '支付方式不能为空',type: 'number', trigger: 'blur'}"
                 >
 
-                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="getStore(index,0)">
+                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="(e)=>{
+                  return getStore(index,0,e)
+                  }">
                     <el-option
                       v-for="item in domain.options1"
                       :key="item.id"
@@ -36,10 +35,7 @@
               <el-col :span="1"></el-col>
 
               <el-col :span="6">
-                <el-form-item :key="domain.key"
-                              label-width="0"
-                              class="cell"
-                              :prop="'account.' + index + '.paymentChannel'"
+                <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'account.' + index + '.paymentChannel'"
                               :rules="{required: true, message: '支付通道不能为空', trigger: 'blur',type: 'number'}"
                 >
                   <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,0)">
@@ -57,10 +53,7 @@
               <el-col :span="1"></el-col>
 
               <el-col :span="6">
-                <el-form-item :key="domain.key"
-                              label-width="0"
-                              class="cell"
-                              :prop="'account.' + index + '.accountId'"
+                <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'account.' + index + '.accountId'"
                               :rules="{required: true, message: '账户名不能为空', trigger: 'change', type: 'number'}"
                 >
                   <el-select v-model="domain.accountId" placeholder="账户名">
@@ -91,13 +84,11 @@
 
 
               <el-col :span="10">
-                <el-form-item :label="'备用账户 ' + index + ':'"
-                              :key="domain.key"
-                              :prop="'reserveAcc.' + index + '.value'"
-                              class="cell"
-                >
+                <el-form-item :label="'备用账户 ' + index + ':'" :key="domain.key" :prop="'reserveAcc.' + index + '.paymentMethod'" class="cell">
 
-                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="getStore(index,1)">
+                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="(e)=>{
+                  return getStore(index,1,e)
+                  }">
                     <el-option
                       v-for="item in domain.options1"
                       :key="item.id"
@@ -112,17 +103,9 @@
 
 
               <el-col :span="6">
-                <el-form-item :key="domain.key"
-                              label-width="0"
-                              class="cell"
-                              :prop="'reserveAcc.' + index + '.value2'"
-                >
+                <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'reserveAcc.' + index + '.paymentChannel'">
                   <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,1)">
-                    <el-option
-                      v-for="item in domain.options2"
-                      :key="item.id"
-                      :label="item.memo"
-                      :value="item.id">
+                    <el-option v-for="item in domain.options2" :key="item.id" :label="item.memo" :value="item.id">
                     </el-option>
                   </el-select>
 
@@ -134,11 +117,7 @@
 
 
               <el-col :span="6">
-                <el-form-item :key="domain.key"
-                              label-width="0"
-                              class="cell"
-                              :prop="'reserveAcc.' + index + '.value3'"
-                >
+                <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'reserveAcc.' + index + '.accountId'">
                   <el-select v-model="domain.accountId" placeholder="账户名">
                     <el-option
                       v-for="item in domain.options3"
@@ -150,7 +129,6 @@
 
                 </el-form-item>
               </el-col>
-
 
               <div class="flex" style="height: 78px">
                 <div class="m-storeCode margin_l_10" @click="addDomain('reserveAcc')">
@@ -431,21 +409,21 @@
       addDomain(status) {
         if (status == 'reserveAcc') {
           this.form.reserveAcc.push({
-            value1: '',
-            value2: '',
-            value3: '',
+            paymentMethod: '',
+            paymentChannel: '',
+            accountId: '',
             options1: this.payOptions,
-            options2: this.paymentOptions,
+            options2: [],
             options3: [],
             key: Date.now()
           });
         } else {
           this.form.account.push({
-            value1: '',
-            value2: '',
-            value3: '',
+            paymentMethod: '',
+            paymentChannel: '',
+            accountId: '',
             options1: this.payOptions,
-            options2: this.paymentOptions,
+            options2: [],
             options3: [],
             key: Date.now()
           });
@@ -465,11 +443,39 @@
       handleNodeClick(data) {
         console.log(data);
       },
-      getStore(index, type) {
+      getStore(index, type,id) {
 
         var params = {};
 
         if (type == 0) {
+
+          if(id !== undefined){
+            let params1 = {
+              paymentId : id
+            };
+            this.form.account[index].paymentChannel = "";
+            this.form.account[index].accountId = "";
+            this.form.account[index].options3 = [];
+            // 支付通道初始化
+            payMent(params1).then((res) => {
+              if (res.errcode == 0) {
+                this.paymentOptions = res.data;
+                console.log(this.paymentOptions)
+                this.form.account[index].options2 = res.data;
+                // this.form.reserveAcc[index].options2 = res.data;
+              } else {
+                this.$confirm(res.errormsg, '提示', {
+                  confirmButtonText: '确定',
+                  showCancelButton: false,
+                  type: 'error'
+                })
+              }
+            }).catch((err) => {
+              console.log(err);
+            });
+          }
+
+
           params = {
             redirect: 'x1.accountmanage.getCanUseAccountList',
             paymentMethod: this.form.account[index].paymentMethod,
@@ -481,6 +487,7 @@
             oneTwoApi(params).then((res) => {
               console.log(res);
               if (res.errcode == 0) {
+                this.form.account[index].accountId = "";
                 // type 0 -> 账户 1 -> 备用账户
                 if (type == 0) {
                   this.form.account[index].options3 = res.data;
@@ -493,6 +500,32 @@
             });
           }
         } else {
+
+          if(id !== undefined){
+            let params1 = {
+              paymentId : id
+            };
+            this.form.reserveAcc[index].paymentChannel = "";
+            this.form.reserveAcc[index].accountId = "";
+            this.form.reserveAcc[index].options3 = [];
+            // 支付通道初始化
+            payMent(params1).then((res) => {
+              if (res.errcode == 0) {
+                this.paymentOptions = res.data;
+                 // this.form.account[index].options2 = res.data;
+                this.form.reserveAcc[index].options2 = res.data;
+              } else {
+                this.$confirm(res.errormsg, '提示', {
+                  confirmButtonText: '确定',
+                  showCancelButton: false,
+                  type: 'error'
+                })
+              }
+            }).catch((err) => {
+              console.log(err);
+            });
+          }
+
           params = {
             redirect: 'x1.accountmanage.getCanUseAccountList',
             paymentMethod: this.form.reserveAcc[index].paymentMethod,
@@ -505,6 +538,7 @@
             oneTwoApi(params).then((res) => {
               console.log(res);
               if (res.errcode == 0) {
+                this.form.reserveAcc[index].accountId = "";
                 // type 0 -> 账户 1 -> 备用账户
                 if (type == 0) {
                   this.form.account[index].options3 = res.data;
@@ -686,22 +720,7 @@
         console.log(err);
       });
 
-      // 支付通道初始化
-      payMent(params).then((res) => {
-        if (res.errcode == 0) {
-          this.paymentOptions = res.data;
-          this.form.account[0].options2 = res.data;
-          this.form.reserveAcc[0].options2 = res.data;
-        } else {
-          this.$confirm(res.errormsg, '提示', {
-            confirmButtonText: '确定',
-            showCancelButton: false,
-            type: 'error'
-          })
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
+
 
 
       var param = {

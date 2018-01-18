@@ -472,7 +472,7 @@ export default new Router({
         },
         //页面设计
         {
-          path: '/invoice/pageDesign',
+          path: '/invoice/pageDesign/:id',
           meta: { auth: false },
           name: '页面设计',
           component: pageDesign

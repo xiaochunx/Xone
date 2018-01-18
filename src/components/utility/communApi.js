@@ -36,9 +36,11 @@ let getWayInfo = () => {
 };
 
 //支付通道列表
-let getChannelInfo = () => {
+let getChannelInfo = (paymentId = "") => {
   return new Promise((resolve, reject) => {
-    axios.post(`index.php?controller=jichu&action=getChannelInfo&token=${get('token')}`).then((res)=>{
+    let formData = new FormData();
+    formData.append("paymentId", paymentId);
+    axios.post(`index.php?controller=jichu&action=getChannelInfo&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
   })

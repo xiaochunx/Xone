@@ -22,6 +22,9 @@
           <el-tab-pane label="已有账户(口碑)">
             <xo-already-live2></xo-already-live2>
           </el-tab-pane>
+          <el-tab-pane label="已有账户(微信)">
+            <xo-already-live3></xo-already-live3>
+          </el-tab-pane>
           <el-tab-pane label="开户申请" :disabled="true">
             <xo-new-account></xo-new-account>
           </el-tab-pane>
@@ -34,6 +37,7 @@
 <script>
   import xoAlreadyLive from './AlreadyLive.vue'
   import xoAlreadyLive2 from './AlreadyLive2.vue'
+  import xoAlreadyLive3 from './AlreadyLive3.vue'
   import xoNavPath from './NavPath.vue'
   import xoNewAccount from './NewAccount.vue'
   import {mapGetters, mapActions} from 'vuex'
@@ -47,6 +51,7 @@
     components: {
       xoAlreadyLive,
       xoAlreadyLive2,
+      xoAlreadyLive3,
       xoNavPath,
       xoNewAccount
     },

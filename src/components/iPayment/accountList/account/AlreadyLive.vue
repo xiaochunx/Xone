@@ -50,24 +50,25 @@
       <el-input v-model="ruleForm.accountName"></el-input>
     </el-form-item>
 
+    <!-- 支付通道 -->
+    <el-form-item label="支付通道:" prop="Payment">
+      <el-select v-model="ruleForm.Payment" placeholder="请选择" @change="change">
+        <el-option
+          v-for="item in ruleForm.paymentOptions"
+          :key="item.id"
+          :label="item.memo"
+          :disabled="item.disabled"
+          :value="item.id">
+        </el-option>
+      </el-select>
+    </el-form-item>
+
     <!-- 支付方式 -->
     <el-form-item label="支付方式:" prop="checkboxGroup">
       <el-checkbox-group v-model="ruleForm.checkboxGroup">
         <el-checkbox-button v-for="city in ruleForm.payOptions" :label="city.id" :key="city.id">{{city.memo}}
         </el-checkbox-button>
       </el-checkbox-group>
-    </el-form-item>
-
-    <!-- 支付通道 -->
-    <el-form-item label="支付通道:" prop="Payment">
-      <el-select v-model="ruleForm.Payment" placeholder="请选择">
-        <el-option
-          v-for="item in ruleForm.paymentOptions"
-          :key="item.id"
-          :label="item.memo"
-          :value="item.id">
-        </el-option>
-      </el-select>
     </el-form-item>
 
     <!-- 商户号 -->
@@ -127,6 +128,28 @@
       };
     },
     methods: {
+      change(e){
+
+        let  params = {
+          channelId:e
+        }
+        // 支付方式初始化
+        payMethods(params).then((res) => {
+          if (res.errcode == 0) {
+            this.ruleForm.payOptions = res.data;
+
+          } else {
+            this.$confirm(res.errormsg, '提示', {
+              confirmButtonText: '确定',
+              showCancelButton: false,
+              type: 'error'
+            })
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -192,25 +215,16 @@
 
       var params = {};
 
-      // 支付方式初始化
-      payMethods(params).then((res) => {
-        if (res.errcode == 0) {
-          this.ruleForm.payOptions = res.data;
-
-        } else {
-          this.$confirm(res.errormsg, '提示', {
-            confirmButtonText: '确定',
-            showCancelButton: false,
-            type: 'error'
-          })
-        }
-      }).catch((err) => {
-        console.log(err);
-      });
-
       // 支付通道初始化
       payMent(params).then((res) => {
         if (res.errcode == 0) {
+
+          res.data.forEach((item)=>{
+            if(item.memo !== "民生银行"){
+              item.disabled = true
+            }
+          });
+
           this.ruleForm.paymentOptions = res.data;
         } else {
           this.$confirm(res.errormsg, '提示', {

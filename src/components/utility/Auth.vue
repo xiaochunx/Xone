@@ -13,20 +13,19 @@
     <div>
       <el-form ref="formRules" :model="formPassWord" label-width="100px">
         <el-form-item label="原密码:" prop="oldPassWord" :rules="{required: true, message: '请输入原密码', trigger: 'blur'}">
-          <el-input type="password" v-model="formPassWord.oldPassWord" placeholder="请输入内容"></el-input>
+          <el-input type="password" v-model="formPassWord.oldPassWord" placeholder="请输入原密码"></el-input>
         </el-form-item>
-        <el-form-item label="原密码:" prop="newPassWord"
+        <el-form-item label="新密码:" prop="newPassWord"
                       :rules="{required: true, validator: validatePass, trigger: 'blur'}">
-          <el-input type="password" v-model="formPassWord.newPassWord" placeholder="请输入内容"></el-input>
+          <el-input type="password" v-model="formPassWord.newPassWord" placeholder="请输入新密码"></el-input>
         </el-form-item>
         <el-form-item label="确认新密码:" prop="confirmPassWord"
                       :rules="{required: true, validator: validatePass2, trigger: 'blur'}">
-          <el-input type="password" v-model="formPassWord.confirmPassWord" placeholder="请输入内容"></el-input>
+          <el-input type="password" v-model="formPassWord.confirmPassWord" placeholder="请确认新密码"></el-input>
         </el-form-item>
         <el-form-item label="验证码:" prop="vCode" :rules="{required: true, message: '请确认验证码', trigger: 'blur'}">
-
           <div class="flex_r">
-            <el-input v-model="formPassWord.vCode" placeholder="请输入内容"></el-input>
+            <el-input v-model="formPassWord.vCode" placeholder="请确认验证码"></el-input>
             <img class="margin_l_10 pointer" :src="authImg" alt="" @click="selectAuth()">
           </div>
 
@@ -74,7 +73,7 @@
       },
       validatePass(rule, value, callback){
         if (value === '') {
-          callback(new Error('请输入密码'));
+          callback(new Error('请输入新密码'));
         } else {
           if (this.formPassWord.confirmPassWord !== '') {
             this.$refs.formRules.validateField('confirmPassWord');
@@ -84,7 +83,7 @@
       },
       validatePass2(rule, value, callback){
         if (value === '') {
-          callback(new Error('请再次输入密码'));
+          callback(new Error('请再次输入新密码'));
         } else if (value !== this.formPassWord.newPassWord) {
           callback(new Error('两次输入密码不一致!'));
         } else {
@@ -113,7 +112,6 @@
 
               }
             });
-
           } else {
             console.log('error submit!!');
             return false;
