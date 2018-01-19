@@ -50,20 +50,18 @@
                   :on-success="handleAvatarSuccess2"
                   :before-upload="beforeAvatarUpload">
                   <img v-show="form2.log_img" :src="form2.log_img" style="display: block" ref="img">
-                  <i v-show="!form2.log_img" class="el-icon-plus avatar-uploader-icon"></i>
+                  <!--<i v-show="!form2.log_img" class="el-icon-plus avatar-uploader-icon"></i>-->
+                  <div v-show="!form2.log_img" class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
                 </el-upload>
                 <div>建议图片尺寸350*350px，格式为png,jpg,jprg,且小于500kb</div>
-                <el-input v-model="form2.log_img" hidden></el-input>
+
               </el-form-item>
 
               <el-form-item label="主题选择：">
 
                 <div class="margin_b_10" style="width: 178px;height: 30px"
                      :style="{'background-color':form2.theme_color}"></div>
-                <el-radio-group v-model="form2.theme_color" hidden>
-                  <el-radio :label="item.color" v-for="(item,index) in colorList" :key="item.color">{{item.color}}
-                  </el-radio>
-                </el-radio-group>
+
                 <div class="flex_r">
                   <div v-for="(item,index) in colorList" @click="colorHandle(index)" class="pointer flex"
                        style="width: 30px;height: 30px" :style="{'background-color':item.color}">
@@ -332,6 +330,11 @@
               item.selected = true
             }
           });
+          if(res.data.prompt_type === 1){
+            this.selectEdit = 1
+          }else {
+            this.selectEdit = 2
+          }
           this.form2.log_img = res.data.log_img;
           this.form2.theme_color = res.data.theme_color;
           this.form3.title = res.data.title;

@@ -124,14 +124,14 @@
             <div v-for="(domain, index) in scope.row.storecodes" class="flex_a padding_10">
               <div style="width:150px">
                 <el-input  v-model="domain.name"
-                          @change="myChange(domain,'name','valueClass')" placeholder="请输入内容"></el-input>
+                          @change="myChange(domain,'name','valueClass')" placeholder="请输入名称"></el-input>
               </div>
               <div class="m-rank">
                 <div class="m-rank-child"></div>
               </div>
               <div style="width:150px">
                 <el-input  v-model="domain.providerid"
-                          @change="myChange(domain,'providerid','value1Class')" placeholder="请输入内容"></el-input>
+                          @change="myChange(domain,'providerid','value1Class')" placeholder="请输入编码"></el-input>
               </div>
               <div class="flex_sb" style="width:80px">
                 <div class="m-storeCode margin_l_10" @click="addDomain(scope.row.storecodes)">

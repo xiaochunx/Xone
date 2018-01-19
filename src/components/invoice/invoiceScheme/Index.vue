@@ -124,6 +124,7 @@
 
         <el-form-item  label="状态">
           <el-switch
+            :disabled="showName === '查看'"
             v-model="clientForm.status"
             on-color="#13ce66"
             off-color="#ff4949" >
@@ -157,113 +158,26 @@
               <div>授权标识(百望电子提供针对不同税号企业的授权应用标识)</div>
               <el-input v-model="clientForm_first.token1" :disabled="showName === '查看'"></el-input>
             </el-form-item>
-
+          </el-form>
 
             <div class="flex">
               <el-button type="danger" @click="config2('clientForm','clientForm_first')" v-show="showName === '新增方案'">下一步</el-button>
             </div>
 
             <div v-show="showName !== '新增方案'">
-              <el-form ref="clientForm_first3" :model="clientForm_first3" label-width="200px">
 
-                <div class="margin_b_10">销售方信息</div>
-                <el-form-item label="销售方纳税人识别号" prop="code_number" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.code_number" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="销售方名称" prop="sale_name" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.sale_name" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="销售方地址" prop="address" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.address" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="销售方电话" prop="tel" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.tel" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="销售方银行账号" prop="account" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.account" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="开票人" prop="drawer" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.drawer" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="税率(比如6%：0.06)" prop="tax_rate" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.tax_rate" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <el-form-item label="货物或应税劳务、服务名称" prop="service_name" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-                  <el-input v-model="clientForm_first3.service_name" placeholder="必填" :disabled="showName === '查看'"></el-input>
-                </el-form-item>
-                <div class="flex_sb margin_b_10" style="border-bottom: 1px solid #bfcbd9">
-                  <div>选填项</div>
-                  <div @click="showOption = !showOption" class="pointer">展开
-                    <i class="el-icon-arrow-down"  v-if="showOption"></i>
-                    <i class="el-icon-arrow-up"  v-if="!showOption"></i>
-                  </div>
-                </div>
-                <transition
-                  v-on:before-enter="beforeEnter"
-                  v-on:enter="enter"
-                  v-on:after-enter="afterEnter"
-                  v-on:enter-cancelled="enterCancelled"
-                  v-on:before-leave="beforeLeave"
-                  v-on:leave="leave"
-                  v-on:after-leave="afterLeave"
-                  v-on:leave-cancelled="leaveCancelled"
-                >
-                  <div v-if="showOption" class="heightTran">
-                    <el-form-item label="收款人">
-                      <el-input v-model="clientForm_first3.payee" placeholder="收款人" :disabled="showName === '查看'"></el-input>
-                    </el-form-item>
-                    <el-form-item label="复核人">
-                      <el-input v-model="clientForm_first3.reviewer" placeholder="复核人" :disabled="showName === '查看'"></el-input>
-                    </el-form-item>
-                  </div>
-                </transition>
-                <el-form-item label-width="100px" label="">
-                  <h3 class="margin_b_10">购买方信息 <span style="color: #8c939d;font-size: 14px">(红色按钮为必填项，灰色按钮选填、可自行决定)</span></h3>
-                  <div class="flex_r f_f margin_b_10">
-                    <xo-button v-for="(item,index) in clientForm_first3.purchasers" :key="item.id" :id="item.id" :showName="showName"
-                               :name="item.name" marginRight="10px" marginBottom="10px" backgroundColor="#ffffff" :isBool="item.selectF"
-                               @click="buyInfo3"></xo-button>
-                  </div>
-                </el-form-item>
+              <xo-form :clientFormData="clientForm_first3" :showName="showName" :purchaserList="clientForm_first3.purchasers" ref="xoClientFormEdit" myRef="xoClientFormEdit"></xo-form>
 
-                <div class="margin_b_10" style="border-bottom: 1px solid #bfcbd9"></div>
-
-                <el-form-item label-width="110px" label="">
-                  <div class="flex_a">
-                    <el-switch
-                      v-model="clientForm_first3.auto_log"
-                      on-color="#13ce66"
-                      off-color="#ff4949" :disabled="showName === '查看'">
-                    </el-switch>
-
-                    <div class="margin_l_10 margin_r_10 t_a">
-                      自动记录开票方信息，再次开票免输入
-                    </div>
-                    <el-popover
-                      placement="right"
-                      width="200"
-                      trigger="hover"
-                      content="备注：客人开过一次发票后，系统将自动记录该开票信息，客人再次开票时，可免输入开票信息">
-                      <i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>
-                    </el-popover>
-                  </div>
-                </el-form-item>
-
-                <div class="flex margin_t_10" v-if="showName !== '查看'">
-                  <el-button  @click="showFrist = true" v-if="showName === '新增方案'">返回</el-button>
-                  <el-button type="primary" @click="pageDesignEdit(clientForm_first3.id)">保存并跳转页面设计</el-button>
-                  <el-button type="primary" @click="submitFrom('clientForm','clientForm_first3',2)">保存</el-button>
-                </div>
-              </el-form>
-
+              <div class="flex margin_t_10" v-if="showName !== '查看'">
+                <el-button  @click="showFrist = true" v-if="showName === '新增方案'">返回</el-button>
+                <el-button type="primary" @click="submitFrom('clientForm','xoClientFormEdit',0)">保存并跳转页面设计</el-button>
+                <el-button type="primary" @click="submitFrom('clientForm','xoClientFormEdit',2)">保存</el-button>
+              </div>
             </div>
-
-
-          </el-form>
 
         </el-tab-pane>
         <el-tab-pane label="纸质发票" name="second">
-          <el-form ref="clientForm_second" :model="clientForm_second" label-width="180px">
+          <el-form :model="clientForm_second" label-width="180px">
             <el-form-item label-width="50px" label="">
 
               <div class="flex_a">
@@ -306,148 +220,20 @@
             </el-form-item>
           </el-form>
           <div class="flex" v-if="showName !== '查看'">
-            <el-button type="primary" @click="submitFrom('clientForm','clientForm_second',2)">保存</el-button>
+            <el-button type="primary" @click="submitFrom('clientForm','',2)">保存</el-button>
             <el-button @click="dialogFormVisible1 = false">取消</el-button>
           </div>
         </el-tab-pane>
       </el-tabs>
     </div>
     <div v-show="!showFrist">
-        <el-form ref="clientForm_first2" :model="clientForm_first2" label-width="200px">
 
-          <div class="margin_b_10">销售方信息</div>
-          <el-form-item label="销售方纳税人识别号" prop="code_number" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.code_number" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="销售方名称" prop="sale_name" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.sale_name" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="销售方地址" prop="address" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.address" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="销售方电话" prop="tel" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.tel" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="销售方银行账号" prop="account" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.account" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="开票人" prop="drawer" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.drawer" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="税率(比如6%：0.06)" prop="tax_rate" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.tax_rate" placeholder="必填"></el-input>
-          </el-form-item>
-          <el-form-item label="货物或应税劳务、服务名称" prop="service_name" :rules="{required: true, message: '必填项', trigger: 'blur'}">
-          <el-input v-model="clientForm_first2.service_name" placeholder="必填"></el-input>
-          </el-form-item>
-          <div class="flex_sb margin_b_10" style="border-bottom: 1px solid #bfcbd9">
-            <div>选填项</div>
-            <div @click="showOption = !showOption" class="pointer">展开
-              <i class="el-icon-arrow-down"  v-if="showOption"></i>
-              <i class="el-icon-arrow-up"  v-if="!showOption"></i>
-            </div>
-          </div>
-          <transition
-            v-on:before-enter="beforeEnter"
-            v-on:enter="enter"
-            v-on:after-enter="afterEnter"
-            v-on:enter-cancelled="enterCancelled"
-            v-on:before-leave="beforeLeave"
-            v-on:leave="leave"
-            v-on:after-leave="afterLeave"
-            v-on:leave-cancelled="leaveCancelled"
-          >
-            <div v-if="showOption" class="heightTran">
-              <el-form-item label="收款人">
-                <el-input v-model="clientForm_first2.payee" placeholder="收款人"></el-input>
-              </el-form-item>
-              <el-form-item label="复核人">
-                <el-input v-model="clientForm_first2.reviewer" placeholder="复核人"></el-input>
-              </el-form-item>
-            </div>
-          </transition>
-          <el-form-item label-width="100px" label="">
-            <h3 class="margin_b_10">购买方信息 <span style="color: #8c939d;font-size: 14px">(红色按钮为必填项，灰色按钮选填、可自行决定)</span></h3>
-            <div class="flex_r f_f margin_b_10">
-              <xo-button v-for="(item,index) in purchaserList" :key="item.id" :id="item.id" :showName="showName"
-                         :name="item.name" marginRight="10px" marginBottom="10px" backgroundColor="#ffffff" :isBool="item.selectF"
-                         @click="buyInfo1"></xo-button>
-            </div>
-          </el-form-item>
-
-          <div class="margin_b_10" style="border-bottom: 1px solid #bfcbd9"></div>
-
-          <el-form-item label-width="110px" label="">
-            <div class="flex_a">
-              <el-switch
-                v-model="clientForm_first2.auto_log"
-                on-color="#13ce66"
-                off-color="#ff4949" :disabled="showName === '查看'">
-              </el-switch>
-
-              <div class="margin_l_10 margin_r_10 t_a">
-                自动记录开票方信息，再次开票免输入
-              </div>
-              <el-popover
-                placement="right"
-                width="200"
-                trigger="hover"
-                content="备注：客人开过一次发票后，系统将自动记录该开票信息，客人再次开票时，可免输入开票信息">
-                <i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>
-              </el-popover>
-            </div>
-          </el-form-item>
-
-
-
-          <!--<el-form-item label-width="110px" label="">-->
-            <!--<div class="flex_a">-->
-              <!--<el-switch-->
-                <!--v-model="clientForm_first2.radio3"-->
-                <!--on-color="#13ce66"-->
-                <!--off-color="#ff4949" :disabled="showName === '查看'">-->
-              <!--</el-switch>-->
-
-              <!--<div class="margin_l_10 margin_r_10 t_a">-->
-                <!--电子发票二维码打印在预结单小票-->
-              <!--</div>-->
-              <!--<el-popover-->
-                <!--placement="right"-->
-                <!--width="200"-->
-                <!--trigger="hover"-->
-                <!--content="备注：电子发票二维码与支付二维码均在预结单小票上打印（二码合一），客人第一次扫码完成支付，第二次扫进入自助开电子发票页面">-->
-                <!--<i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>-->
-              <!--</el-popover>-->
-            <!--</div>-->
-          <!--</el-form-item>-->
-
-          <!--<el-form-item label-width="110px" label="">-->
-            <!--<div class="flex_a">-->
-              <!--<el-switch-->
-                <!--v-model="clientForm_first2.radio4"-->
-                <!--on-color="#13ce66"-->
-                <!--off-color="#ff4949" :disabled="showName === '查看'">-->
-              <!--</el-switch>-->
-
-              <!--<div class="margin_l_10 margin_r_10 t_a">-->
-                <!--电子发票二维码打印在结账单小票-->
-              <!--</div>-->
-              <!--<el-popover-->
-                <!--placement="right"-->
-                <!--width="200"-->
-                <!--trigger="hover"-->
-                <!--content="备注：客人完成支付后，向服务员索取发票，服务员打印结账单及电子发票二维码并拿给客人，客人扫码进入自助开电子发票页面">-->
-                <!--<i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>-->
-              <!--</el-popover>-->
-            <!--</div>-->
-          <!--</el-form-item>-->
-
-        </el-form>
+      <xo-form :clientFormData="clientForm_first2" :showName="showName" :purchaserList="purchaserList" ref="xoClientFormAdd" myRef="xoClientFormAdd"></xo-form>
 
         <div class="flex margin_t_10" v-if="showName !== '查看'">
           <el-button  @click="showFrist = true">返回</el-button>
-          <el-button type="primary" @click="submitFrom('clientForm','clientForm_first2',1)">保存并跳转页面设计</el-button>
-          <el-button type="primary" @click="submitFrom('clientForm','clientForm_first2',2)">保存</el-button>
+          <el-button type="primary" @click="submitFrom('clientForm','xoClientFormAdd',1)">保存并跳转页面设计</el-button>
+          <el-button type="primary" @click="submitFrom('clientForm','xoClientFormAdd',2)">保存</el-button>
         </div>
 
       </div>
@@ -553,6 +339,7 @@
   import {oneTwoApi} from '@/api/api.js'
   import {getArea} from '../../utility/communApi'
   import {mapActions, mapGetters} from 'vuex';
+  import xoForm from './Form'
 
   export default {
     computed: {
@@ -560,7 +347,9 @@
         'getTreeArr'
       ]),
     },
-    components: {},
+    components: {
+      xoForm
+    },
     data() {
       return {
         serviceList:[],
@@ -655,20 +444,7 @@
         })
 
       },
-      pageDesignEdit(id){
-        this.$router.push({path: `/invoice/pageDesign/${id}`})
-      },
 
-      submitFrom2(clientForm_first2){
-        this.$refs[clientForm_first2].validate((valid) => {
-          if (valid) {
-
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
       async config2(clientForm,clientForm_first){
 
         let a, b;
@@ -971,13 +747,14 @@
       close1(){
         this.$refs['clientForm'].resetFields();
         this.$refs['clientForm_first'].resetFields();
-        this.$refs['clientForm_first2'].resetFields();
-        this.$refs['clientForm_first3'].resetFields();
+        this.$refs.xoClientFormAdd.$refs['xoClientFormAdd'].resetFields();
+        this.$refs.xoClientFormEdit.$refs['xoClientFormEdit'].resetFields();
       },
       open1() {
         this.showFrist = true;
 
         if (this.showName === "新增方案") {
+          this.activeName = 'first';
           this.clientForm = {
             name: '',
             third_code: [
@@ -1013,6 +790,7 @@
 
       },
      async submitFrom(formRules,formRules2,Int) {
+
         let a, b;
         await this.$refs[formRules].validate((valid) => {
           if (valid) {
@@ -1023,14 +801,32 @@
           }
         });
 
-        await  this.$refs[formRules2].validate((valid) => {
-          if (valid) {
-            b = true
-          } else {
-            console.log('error submit!!');
-            b = false
-          }
-        });
+       if(formRules2 === 'xoClientFormEdit'){
+         await  this.$refs.xoClientFormEdit.$refs["xoClientFormEdit"].validate((valid) => {
+           if (valid) {
+             b = true
+           } else {
+             console.log('error submit!!');
+             b = false
+           }
+         });
+       }
+
+        if(formRules2 === 'xoClientFormAdd'){
+          await  this.$refs.xoClientFormAdd.$refs["xoClientFormAdd"].validate((valid) => {
+            if (valid) {
+              b = true
+            } else {
+              console.log('error submit!!');
+              b = false
+            }
+          });
+        }
+
+       if(formRules2 === ''){
+         b = true
+       }
+
 
         if (a === true && b === true) {
 
@@ -1092,7 +888,8 @@
               if(res.errcode === 0){
                 if(Int === 1){
                   this.$router.push({path: `/invoice/pageDesign/${res.data.id}`})
-                } else {
+                }
+                if(Int === 2){
                   this.dialogFormVisible1 = false;
                   this.getProgrammeList(this.p = {page: 1, size: 20, total: 0})
                 }
@@ -1131,7 +928,6 @@
               }
             }
 
-
             // 修改方案
             let params = {
               redirect: "x1.invoice.update",
@@ -1155,10 +951,16 @@
               payee:this.clientForm_first3.payee,
               reviewer:this.clientForm_first3.reviewer,
             };
+
             oneTwoApi(params).then((res) => {
               if(res.errcode === 0){
-                this.dialogFormVisible1 = false;
-                this.getProgrammeList(this.p)
+                if(Int === 0){
+                  this.$router.push({path: `/invoice/pageDesign/${this.clientForm.id}`})
+                }
+                if(Int === 2){
+                  this.dialogFormVisible1 = false;
+                  this.getProgrammeList(this.p)
+                }
               }
             })
 
@@ -1180,33 +982,10 @@
               item.select = bool
             }
           })
-          console.log(this.clientForm_second.purchasers)
         }
 
       },
-      buyInfo1(id, bool) {
-        if (this.showName === "新增方案") {
-          this.purchaserList.forEach((item) => {
-            if (item.id === id) {
-              item.selectF = bool
-            }
-          })
-        } else {
-          // this.clientForm_second.purchasers.forEach((item) => {
-          //   if (item.id === id) {
-          //     item.select = bool
-          //   }
-          // })
-        }
 
-      },
-      buyInfo3(id, bool){
-        this.clientForm_first3.purchasers.forEach((item) => {
-          if (item.id === id) {
-            item.selectF = bool
-          }
-        })
-      },
       show(row) {
         this.dialogFormVisible = true;
         // 查看正在使用门店列表
@@ -1304,9 +1083,11 @@
             this.clientForm.status = res.data.status;
             if(res.data.type === 1){
               this.activeName = 'first';
+              this.clientForm.type = 1;
               this.clientForm_first3.auto_log = res.data.auto_log;
             }else {
               this.activeName = 'second';
+              this.clientForm.type = 2;
               this.clientForm_second.auto_log = res.data.auto_log;
             }
             this.clientForm_first.token1 = res.data.token1;
@@ -1481,3 +1262,46 @@
     transition: all .3s
   }
 </style>
+
+<!--<el-form-item label-width="110px" label="">-->
+<!--<div class="flex_a">-->
+<!--<el-switch-->
+<!--v-model="clientForm_first2.radio3"-->
+<!--on-color="#13ce66"-->
+<!--off-color="#ff4949" :disabled="showName === '查看'">-->
+<!--</el-switch>-->
+
+<!--<div class="margin_l_10 margin_r_10 t_a">-->
+<!--电子发票二维码打印在预结单小票-->
+<!--</div>-->
+<!--<el-popover-->
+<!--placement="right"-->
+<!--width="200"-->
+<!--trigger="hover"-->
+<!--content="备注：电子发票二维码与支付二维码均在预结单小票上打印（二码合一），客人第一次扫码完成支付，第二次扫进入自助开电子发票页面">-->
+<!--<i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>-->
+<!--</el-popover>-->
+<!--</div>-->
+<!--</el-form-item>-->
+
+<!--<el-form-item label-width="110px" label="">-->
+<!--<div class="flex_a">-->
+<!--<el-switch-->
+<!--v-model="clientForm_first2.radio4"-->
+<!--on-color="#13ce66"-->
+<!--off-color="#ff4949" :disabled="showName === '查看'">-->
+<!--</el-switch>-->
+
+<!--<div class="margin_l_10 margin_r_10 t_a">-->
+<!--电子发票二维码打印在结账单小票-->
+<!--</div>-->
+<!--<el-popover-->
+<!--placement="right"-->
+<!--width="200"-->
+<!--trigger="hover"-->
+<!--content="备注：客人完成支付后，向服务员索取发票，服务员打印结账单及电子发票二维码并拿给客人，客人扫码进入自助开电子发票页面">-->
+<!--<i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>-->
+<!--</el-popover>-->
+<!--</div>-->
+<!--</el-form-item>-->
+

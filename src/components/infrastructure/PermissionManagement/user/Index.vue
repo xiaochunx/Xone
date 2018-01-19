@@ -90,7 +90,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code1"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -104,7 +104,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -149,7 +149,7 @@
           <el-input v-model="formUserEdit.nickname" placeholder="请输入内容" :disabled="showDetail"></el-input>
         </el-form-item>
         <el-form-item label="手机号:" prop="phone" :rules="{validator: checkPhone,required: true, trigger: 'blur'}">
-          <el-input v-model="formUserEdit.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
+          <el-input v-model="formUserEdit.phone" :maxlength="11"  placeholder="请输入手机号" :disabled="showDetail"></el-input>
         </el-form-item>
 
 
@@ -159,7 +159,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code1" :disabled="showDetail"></el-input>
+                    <el-input v-model="domain.code1" :disabled="showDetail" placeholder="请输入名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -173,7 +173,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" :disabled="showDetail"></el-input>
+                    <el-input v-model="domain.code2" :disabled="showDetail" placeholder="请输入编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
