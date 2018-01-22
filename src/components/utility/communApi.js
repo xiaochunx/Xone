@@ -3,13 +3,20 @@ let get= function(key) {
   return window.JSON.parse(window.localStorage.getItem(key));
 };
 
-//左侧组织架构
-
+//左侧组织架构x1
 let getLeft = () => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.store.storeLeft");
     axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+//获取组织架构 基础
+let getLevel = () => {
+  return new Promise((resolve, reject) => {
+    axios.get(`index.php?controller=level&action=index&token=${get('token')}`).then((res) => {
       resolve(res)
     })
   })
@@ -93,4 +100,4 @@ let getArr = (arr) => {
   }
 };
 
-export {getLeft,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios}
+export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios}

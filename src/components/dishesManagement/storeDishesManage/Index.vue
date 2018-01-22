@@ -27,7 +27,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <public-tree :data='dataLeft' :count=0></public-tree>
+        <public-tree :data='dataLeft' :count=0 style="width: max-content;"></public-tree>
       </div>
 
       <div class="padding_l_10 " :style="{width:tableWidth + 'px'}">

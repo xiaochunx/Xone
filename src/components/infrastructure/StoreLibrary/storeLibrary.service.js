@@ -1,14 +1,5 @@
 import {axios,get} from '../../utility/communApi'
 
-//获取组织架构
-let getLevel = () => {
-  return new Promise((resolve, reject) => {
-    axios.get(`index.php?controller=level&action=index&token=${get('token')}`).then((res)=>{
-      resolve(res)
-    })
-  })
-};
-
 //新建组织架构
 let addLevel = (data) => {
   return new Promise((resolve, reject) => {
@@ -169,7 +160,7 @@ let updateXlsFile = (brandid,fileurl,over) => {
   })
 };
 
-export default {getLevel,addLevel,updateLevel,delLevel,getOneLevel,getBsList,getBsOne,updateBsOne,delBsOne,log,updateXlsFile,storesStatus}
+export default {addLevel,updateLevel,delLevel,getOneLevel,getBsList,getBsOne,updateBsOne,delBsOne,log,updateXlsFile,storesStatus}
 
 
 

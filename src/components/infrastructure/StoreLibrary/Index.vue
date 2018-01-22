@@ -362,7 +362,7 @@
   import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
 
   import Hub from '../../utility/commun'
-  import {getLeft,getArr,getArea} from '../../utility/communApi'
+  import {getLeft,getLevel,getArea} from '../../utility/communApi'
   import tree from './tree.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './storeLibrary.service'
@@ -825,7 +825,7 @@
         return img && isLt5M;
       },
       showLevel() {
-        getApi.getLevel().then((res) => {
+        getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.setShowStoreTree({obj:{levelid: res.data.data[0].id, type: '', showAdd: false}});
             this.setStoreTreeList({list:res.data.data});

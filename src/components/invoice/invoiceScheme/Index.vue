@@ -1166,7 +1166,6 @@
 
       },
 
-
       myChange(id, name) {
         if (name === "provider") {
           this.cityId = "";
@@ -1184,38 +1183,7 @@
           })
         }
       },
-      beforeEnter: function (el) {
-        el.style.height = '0';
-      },
-      enter: function (el) {
-        if (el.scrollHeight !== 0) {
-          el.style.height = el.scrollHeight + 'px';
-        } else {
-          el.style.height = '';
-        }
-      },
-      afterEnter: function (el) {
-        el.style.height = '';
-      },
-      enterCancelled: function (el) {
 
-      },
-      beforeLeave: function (el) {
-        el.style.height = el.scrollHeight + 'px';
-      },
-
-      leave: function (el) {
-        if (el.scrollHeight !== 0) {
-          el.style.height = 0;
-        }
-      },
-      afterLeave: function (el) {
-        el.style.height = '';
-      },
-
-      leaveCancelled: function (el) {
-
-      },
     },
     created() {
 
@@ -1257,10 +1225,7 @@
     font-size: 30px;
   }
 
-  .heightTran {
-    overflow: hidden;
-    transition: all .3s
-  }
+
 </style>
 
 <!--<el-form-item label-width="110px" label="">-->

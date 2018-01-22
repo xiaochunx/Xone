@@ -16,6 +16,9 @@ export default {
   setPermissionLevelId({commit},obj){
     commit(types.PERMISSIONLEVELID,obj);
   },
+  setX2StoreLevelId({commit},obj){
+    commit(types.X2STORELEVELID,obj);
+  },
   setStoreTreeList({commit},obj){
     commit(types.STORETREELIST,obj);
   },

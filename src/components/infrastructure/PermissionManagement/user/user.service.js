@@ -1,14 +1,5 @@
 import {axios,get} from '../../../utility/communApi'
 
-//获取组织架构
-let getLevel = () => {
-  return new Promise((resolve, reject) => {
-    axios.get(`index.php?controller=level&action=index&token=${get('token')}`).then((res)=>{
-      resolve(res)
-    })
-  })
-};
-
 //角色列表
 let getRoleList = () => {
   return new Promise((resolve, reject) => {
@@ -205,7 +196,7 @@ let updatePassword = (id,form) => {
   })
 };
 
-export default {getLevel,getRoleList,getUserFromGroup,getBsList,delBatch,lookUser,editor,newlyAddAccount,userInfoById,getUserStore,userStoreInfo,rolePower,settingBatch,validateImg,updatePassword}
+export default {getRoleList,getUserFromGroup,getBsList,delBatch,lookUser,editor,newlyAddAccount,userInfoById,getUserStore,userStoreInfo,rolePower,settingBatch,validateImg,updatePassword}
 
 
 

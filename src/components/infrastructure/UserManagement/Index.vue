@@ -205,7 +205,7 @@
 <script>
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
-
+  import {getLevel} from '../../utility/communApi'
   import getApi1 from '../PermissionManagement/permissionManagement.service'
   import getApi2 from '../PermissionManagement/user/user.service'
   import {mapActions, mapGetters} from 'vuex';
@@ -427,7 +427,7 @@
         }
       });
 
-      getApi2.getLevel().then((res) => {
+      getLevel().then((res) => {
         if (res.data.errcode === 0) {
           this.dataLevel = res.data.data;
         }

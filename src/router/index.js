@@ -82,6 +82,11 @@ import invoiceScheme from '@/components/invoice/invoiceScheme/Index.vue'
 import downRecord from '@/components/invoice/downRecord/Index.vue'
 import pageDesign from '@/components/invoice/pageDesign/Index.vue'
 
+
+
+import storeManagement from '@/components/x2OperationScheme/storeManagement/Index.vue'
+
+
 Vue.use(Router);
 
 export default new Router({
@@ -476,6 +481,15 @@ export default new Router({
           meta: { auth: false },
           name: '页面设计',
           component: pageDesign
+        },
+
+        /**********************x2运营方案***************************/
+        //门店管理
+        {
+          path: '/x2OperationScheme/storeManagement',
+          meta: { auth: false },
+          name: 'x2门店管理',
+          component: storeManagement
         },
 
       ]

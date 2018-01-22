@@ -22,6 +22,9 @@ export default{
   getPermissionLevelId(state){
     return state.permissionLevelId;
   },
+  getX2StoreLevelId(state){
+    return state.x2storeLevelId;
+  },
   getStoreTreeList(state){
     return state.storeTreeList;
   },

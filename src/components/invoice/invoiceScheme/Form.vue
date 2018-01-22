@@ -59,9 +59,6 @@
         <xo-button v-for="(item,index) in purchaserList" :key="item.id" :id="item.id" :showName="showName"
                    :name="item.name" marginRight="10px" marginBottom="10px" backgroundColor="#ffffff" :isBool="item.selectF"
                    @click="buyInfo1"></xo-button>
-
-
-
       </div>
     </el-form-item>
 
@@ -111,7 +108,7 @@
           if(re.test(value)){
             callback()
           }else {
-            callback(new Error('请输入正确税率，如0.06'));
+            callback(new Error('请输入正确税率，如6%或者0.06'));
           }
         }
       },
@@ -171,7 +168,8 @@
 
 
 <style scoped lang="less">
-
-
-
+  .heightTran {
+    overflow: hidden;
+    transition: all .3s
+  }
 </style>

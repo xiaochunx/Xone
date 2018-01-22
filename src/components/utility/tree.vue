@@ -1,18 +1,4 @@
-<style lang="less" scoped>
-
-
-  .heightTran {
-    overflow: hidden;
-    transition: all .3s
-  }
-
-  .tree-node:hover {
-    background: #48576a;
-  }
-
-
-</style>
-
+//最左侧树
 <template>
   <div>
     <div v-for='(item,index) in data' style="line-height: 36px;">
@@ -114,3 +100,18 @@
     }
   }
 </script>
+
+<style lang="less" scoped>
+
+
+  .heightTran {
+    overflow: hidden;
+    transition: all .3s
+  }
+
+  .tree-node:hover {
+    background: #48576a;
+  }
+
+
+</style>

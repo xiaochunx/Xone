@@ -283,7 +283,6 @@
 
 <script>
   import {getScrollHeight} from '../../../utility/getScrollHeight'
-  import {getStoreListAll} from '../../../utility/communApi'
   import getApi from './user.service'
   import getApi1 from '../permissionManagement.service'
   import { mapActions,mapGetters } from 'vuex';

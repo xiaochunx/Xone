@@ -27,7 +27,7 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
 
-        <permission-tree :data='data5' :count=0 style="width: max-content"></permission-tree>
+        <xo-pub-tree :data='data5' :count=0 style="width: max-content"></xo-pub-tree>
 
       </div>
 
@@ -279,8 +279,9 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import permissionTree from './permissionTree'
+
   import getApi from './permissionManagement.service'
+  import {getLevel} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
 
@@ -291,7 +292,7 @@
       ]),
     },
     components: {
-      permissionTree,
+
     },
     data() {
 
@@ -344,7 +345,7 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setPermissionLevelId','setTreeArr']),
+      ...mapActions(['setPermissionLevelId']),
       ...mapGetters(['getPermissionLevelId']),
       search(){
         if(this.storeName === ''){
@@ -642,7 +643,7 @@
         })
       },
       showLevel() {
-        getApi.getLevel().then((res) => {
+        getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
             if(this.getPermissionLevelId() === ''){

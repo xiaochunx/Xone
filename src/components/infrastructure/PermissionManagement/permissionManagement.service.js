@@ -1,14 +1,5 @@
 import {axios, get} from '../../utility/communApi'
 
-//获取组织架构
-let getLevel = () => {
-  return new Promise((resolve, reject) => {
-    axios.get(`index.php?controller=level&action=index&token=${get('token')}`).then((res) => {
-      resolve(res)
-    })
-  })
-};
-
 //添加用户组
 let newLyGroup = (formGroup, level_id) => {
   return new Promise((resolve, reject) => {
@@ -155,7 +146,6 @@ let userList = (p,nickname,phone,levelId,groupId) => {
 };
 
 export default {
-  getLevel,
   newLyGroup,
   deletGroup,
   editorGroup,

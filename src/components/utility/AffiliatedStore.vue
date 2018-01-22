@@ -60,7 +60,7 @@
 
 <script>
   import getApi from '../infrastructure/PermissionManagement/user/user.service'
-
+  import {getLevel} from './communApi'
   export default {
     name: 'auth',
     props: ['uid','username'],
@@ -164,7 +164,7 @@
           }
 
         });
-        getApi.getLevel().then((res) => {
+        getLevel().then((res) => {
           if (res.data.errcode === 0) {
             this.dataLeft = res.data.data
           }

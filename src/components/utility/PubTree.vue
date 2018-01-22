@@ -1,18 +1,5 @@
-<style lang="less" scoped>
-
-
-  .heightTran {
-    overflow: hidden;
-    transition: all .3s
-  }
-
-  .tree-node:hover {
-    background: #e4e8f1;
-  }
-
-
-</style>
-
+//x2门店管理
+//用户组管理
 <template>
   <div>
 
@@ -47,8 +34,8 @@
 
 <script>
 
-  import Hub from '../../utility/commun'
-   import getApi from './permissionManagement.service'
+  import Hub from './commun'
+
 
   export default {
     name: 'trees',
@@ -70,9 +57,9 @@
         //console.log(item)
         this.levelname = item.levelname;
 
-       // Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
+        // Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
 
-          Hub.$emit('showAdd',{levelid:item.id,type:item.type,levelName:item.levelname});
+        Hub.$emit('showAdd',{levelid:item.id,type:item.type,levelName:item.levelname});
 
 //        item.show = !item.show
       },
@@ -121,3 +108,17 @@
     }
   }
 </script>
+<style lang="less" scoped>
+
+
+  .heightTran {
+    overflow: hidden;
+    transition: all .3s
+  }
+
+  .tree-node:hover {
+    background: #e4e8f1;
+  }
+
+
+</style>
