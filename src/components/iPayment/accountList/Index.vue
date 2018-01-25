@@ -54,13 +54,13 @@
             style="width: 100%">
 
 
-            <el-table-column
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
               type="index"
               label="序号"
-              width="65">
+              width="70">
             </el-table-column>
 
-            <el-table-column
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
               label="账户编码"
             >
               <template slot-scope="scope">
@@ -68,7 +68,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
               label="账户名称"
               width="180"
             >
@@ -82,7 +82,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
               label="支付方式">
               <template slot-scope="scope">
                 <div v-for="item in scope.row.paymentName">{{ item }}</div>
@@ -90,20 +90,20 @@
             </el-table-column>
 
 
-            <el-table-column
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
               label="支付通道">
               <template slot-scope="scope">
                 <div>{{ scope.row.paymentChannel }}</div>
               </template>
             </el-table-column>
-            <el-table-column
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
               label="状态">
               <template slot-scope="scope">
                 <span>{{ scope.row.status }}</span>
               </template>
             </el-table-column>
-            <el-table-column
-              label="查看">
+            <el-table-column label-class-name="table_head" header-align="center" align="center"
+              label="查看" width="70">
               <template slot-scope="scope">
                 <el-popover trigger="click" placement="top" width="200">
                   <p v-if="checkoutData.acountCode">账号编号: {{ checkoutData.acountCode }}</p>
@@ -122,7 +122,7 @@
                 </el-popover>
               </template>
             </el-table-column>
-            <el-table-column label="删除">
+            <el-table-column label-class-name="table_head" header-align="center" align="center" label="删除" width="80">
               <template slot-scope="scope">
                 <el-button
                   size="small"

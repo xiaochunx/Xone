@@ -57,22 +57,18 @@
           // },
 
          // {
-         //   name: '统计报表',
-         //   children: [
-         //     {
-         //       name: '结算记录',
-         //       route: '/report/settlementRecord'
-         //     },
-         //     {
-         //       name: '差异账单查询',
-         //       route: '/report/billQuery'
-         //     },
-         //     {
-         //       name: '发票',
-         //       route: '/report/invoice'
-         //     }
-         //   ]
-         // },
+          //   name: '统计报表',
+          //   children: [
+          //     // {
+          //     //   name: '结算记录',
+          //     //   route: '/report/settlementRecord'
+          //     // },
+          //     // {
+          //     //   name: '差异账单查询',
+          //     //   route: '/report/billQuery'
+          //     // }
+          //   ]
+          // },
          //  {
          //    name: '基础设置',
          //    children: [
@@ -96,39 +92,39 @@
          //    ]
          //  },
          //
-          {
-            name: '菜品管理',
-            children: [
-              {
-                name: '菜品管理',
-                route: '/dishesManagement/storeDishesManage'
-              },
-              {
-                name: '菜品品类',
-                route: '/dishesManagement/dishesCategory'
-              },
-              {
-                name: '菜品组',
-                route: '/dishesManagement/dishesGroup'
-              },
-              {
-                name: '菜品规格',
-                route: '/dishesManagement/dishesSpec'
-              },
-              {
-                name: '菜品属性',
-                route: '/dishesManagement/dishesAttr'
-              },
-              {
-                name: '餐盒设置',
-                route: '/dishesManagement/boxSetting'
-              },
-              {
-                name: '套餐管理',
-                route: '/dishesManagement/mealManage'
-              },
-            ]
-          },
+         //  {
+         //    name: '菜品管理',
+         //    children: [
+         //      {
+         //        name: '菜品管理',
+         //        route: '/dishesManagement/storeDishesManage'
+         //      },
+         //      {
+         //        name: '菜品品类',
+         //        route: '/dishesManagement/dishesCategory'
+         //      },
+         //      {
+         //        name: '菜品组',
+         //        route: '/dishesManagement/dishesGroup'
+         //      },
+         //      {
+         //        name: '菜品规格',
+         //        route: '/dishesManagement/dishesSpec'
+         //      },
+         //      {
+         //        name: '菜品属性',
+         //        route: '/dishesManagement/dishesAttr'
+         //      },
+         //      {
+         //        name: '餐盒设置',
+         //        route: '/dishesManagement/boxSetting'
+         //      },
+         //      {
+         //        name: '套餐管理',
+         //        route: '/dishesManagement/mealManage'
+         //      },
+         //    ]
+         //  },
          //  {
          //    name: 'x2统计报表',
          //    children: [
@@ -149,6 +145,19 @@
               {
                 name: '门店管理',
                 route: '/x2OperationScheme/storeManagement'
+              },
+              {
+                name: '打印机配置',
+                route: '/x2OperationScheme/printerConfig'
+              },
+            ]
+          },
+          {
+            name: '商户资料核实',
+            children: [
+              {
+                name: '商户列表',
+                route: '/businessInformation/businessList'
               },
             ]
           },
@@ -188,7 +197,6 @@
         })
       },
 
-
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -206,6 +214,7 @@
       this.$http.get(`index.php?controller=user&action=getMenu&token=${token}`).then((res) => {
         if (res.data.errcode === 0) {
           this.leftData = res.data.data;
+          this.$localStorage.set('leftData',res.data.data);
           this.recur(this.leftData,this.$route.path)
         }
       });
@@ -215,6 +224,7 @@
       this.ListHeight = window.innerHeight - this.getTopHeight;
       Hub.$on('showLeftTree', (e) => {
         this.recurSelected(this.leftData, e.levelid)
+
       });
 
     },

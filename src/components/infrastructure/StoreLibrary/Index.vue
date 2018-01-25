@@ -500,7 +500,7 @@
 
       },
       importXls(){
-        getLeft().then((res) => {
+        getLeft('x1').then((res) => {
           if(res.data.errcode === 0){
             this.dataLeft = res.data.data;
             this.dialogVisible4 = true

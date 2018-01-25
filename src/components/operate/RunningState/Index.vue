@@ -21,16 +21,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <el-tree
-          :data="dataLeft"
-          :props="defaultProps"
-          @node-click="nodeClick"
-          node-key="id"
-          default-expand-all
-          :highlight-current="true"
-          :expand-on-click-node="false"
-        >
-        </el-tree>
+        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10 width_100"  >
@@ -67,11 +58,11 @@
               <el-button type="text" @click="posStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
-          <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">-->
-          <!--<template scope="scope">-->
-          <!--<el-button type="text" @click="operation(scope.row)">操作</el-button>-->
-          <!--</template>-->
-          <!--</el-table-column>-->
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">
+          <template slot-scope="scope">
+          <el-button type="text" @click="operation(scope.row)">操作</el-button>
+          </template>
+          </el-table-column>
         </el-table>
         <footer>
           <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
@@ -185,13 +176,21 @@
         <el-table-column label-class-name="table_head" :render-header="headerOpen" header-align="center" align="center"
                          width="100">
           <template slot-scope="scope">
-            <el-button type="text" @click="open()">开启</el-button>
+            <el-switch
+              v-model="value2"
+              on-color="#13ce66"
+              off-color="#ff4949">
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerClose" header-align="center" align="center"
                          width="100">
           <template slot-scope="scope">
-            <el-button type="text" @click="close()">关闭</el-button>
+            <el-switch
+              v-model="value2"
+              on-color="#13ce66"
+              off-color="#ff4949">
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerUpdate" header-align="center"
@@ -209,8 +208,8 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './runningState.service'
-  import {getLeft} from '../../utility/communApi'
-
+  import {getLevel} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
   export default {
     components: {},
@@ -221,29 +220,15 @@
     },
     data() {
       return {
+        value2:false,
         printList: [
-//          {
-//            id: 12321321,
-//            ip: '192.168',
-//            type: '爱普生',
-//            status: '在线',
-//          }
+
         ],
         clientList: [
-//          {
-//            ver: 12321321,
-//            time: '2017-11-11',
-//            posion: 'POS3',
-//            status: '正常',
-//          }
+
         ],
         POSList: [
-//          {
-//            id: 12321321,
-//            ip: '192.168',
-//            posion: 'POS3',
-//            status: '在线',
-//          }
+
         ],
         setList: [
           {
@@ -260,11 +245,10 @@
         tableWidth: 0,
         navList: [{name: "运营状态", url: ''}],
 
-        levelId: '',//左边树ID
         searchName: '',
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-        dataLeft: [],
+        data5: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
@@ -276,13 +260,14 @@
     },
 
     methods: {
-      ...mapActions(['setTreeArr']),
+      ...mapActions(['setRunningStateLevelId']),
+      ...mapGetters(['getRunningStateLevelId']),
       search() {
 
         if (this.searchName === '') {
-          this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId)
+          this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getRunningStateLevelId())
         } else {
-           this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.searchName)
+           this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getRunningStateLevelId(),this.searchName)
           // this.p = {page: 1, size: 20, total: 0}
           // getApi.getService({page: 1, size: 20, total: 0},this.levelId, this.searchName).then((res) => {
 
@@ -304,19 +289,14 @@
         }
       },
 
-      nodeClick(item, data1, data2) {
 
-        this.levelId = item.id
-
-        this.showResouce(this.p, item.id)
-      },
       getPage(page) {
         this.p.page = page;
-        this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.getRunningStateLevelId(),this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.getRunningStateLevelId(),this.searchName);
       },
       headerUpdate(h) {
         return h(
@@ -347,7 +327,7 @@
                 'class': {},
                 on: {
                   click: () => {
-
+                    console.log(this)
                   },
 
                 }
@@ -366,7 +346,7 @@
                 'class': {},
                 on: {
                   click: () => {
-
+                    console.log(this)
                   },
 
                 }
@@ -385,7 +365,7 @@
                 'class': {},
                 on: {
                   click: () => {
-
+                    console.log(this)
                   },
 
                 }
@@ -397,12 +377,7 @@
       print() {
 
       },
-      open() {
 
-      },
-      close() {
-
-      },
       update() {
 
       },
@@ -432,6 +407,28 @@
       del() {
 
       },
+      recur(data) {
+        data.forEach((map) => {
+
+          if (map.child) {
+            this.$set(map, "show", true);
+            this.$set(map, "selected", false);
+            this.recur(map.child)
+          }
+        })
+      },
+      recurSelected(data, levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          } else {
+            this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.recurSelected(map.child, levelId)
+          }
+        })
+      },
       showResouce(p,id,storename = '') {
         getApi.getService(p,id,storename).then((res) => {
           this.storeData = res.data.data.list
@@ -441,16 +438,25 @@
     },
     created() {
 
-      getLeft().then((res) => {
+      getLevel().then((res) => {
         if (res.data.errcode === 0) {
-          this.dataLeft = res.data.data;
-          this.levelId = res.data.data[0].id;
-          this.showResouce(this.p, res.data.data[0].id)
+          this.data5 = res.data.data;
+
+          if(this.getRunningStateLevelId() === ''){
+            this.setRunningStateLevelId({levelId:res.data.data[0].id});
+          }
+          this.showResouce(this.p, this.getRunningStateLevelId());
+          this.recur(this.data5);
+          this.recurSelected(this.data5, this.getRunningStateLevelId())
         }
       });
     },
     mounted() {
-
+      Hub.$on('showAdd', (e) => {
+        this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid);
+        this.setRunningStateLevelId({levelId:e.levelid});
+        this.recurSelected(this.data5, e.levelid)
+      });
     },
     updated() {
       getScrollHeight().then((h) => {
@@ -458,64 +464,11 @@
       })
     },
     destroyed(){
-
+      Hub.$off("showAdd");
     }
   }
 </script>
 
 <style lang="less" scoped>
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
 
-  .m-storeCode {
-    font-size: 30px;
-  }
-
-  .m-storeList {
-    height: 50px;
-    line-height: 50px;
-  }
-
-  .m-newStore {
-    position: absolute;
-    right: 20px;
-    top: 50px;
-    width: 99px;
-  }
-
-  .m-t {
-    text-align: center;
-  }
-
-  .m-store {
-    padding: 20px 0;
-  }
-
-  .m-store table tr td {
-    padding: 10px 0;
-    border-bottom: 1px dashed #000;
-  }
-
-  .m-store table tr:nth-child(1) {
-    height: 50px;
-  }
-
-  .m-store table tr:nth-child(1) td {
-    border-bottom: 1px solid #000;
-  }
-
-  .myStore {
-    position: absolute;
-    top: 40%;
-    right: 0;
-    background: white;
-    z-index: 100;
-    border-radius: 10px;
-    border: 1px solid #E5EBF4
-  }
 </style>

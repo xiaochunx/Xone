@@ -83,8 +83,14 @@ import downRecord from '@/components/invoice/downRecord/Index.vue'
 import pageDesign from '@/components/invoice/pageDesign/Index.vue'
 
 
-
+/************************** x2运营方案 ***************************/
 import storeManagement from '@/components/x2OperationScheme/storeManagement/Index.vue'
+import printerConfig from '@/components/x2OperationScheme/printerConfig/Index.vue'
+
+
+/************************** 商户资料核实 ***************************/
+
+import businessList from '@/components/businessInformation/businessList/Index.vue'
 
 
 Vue.use(Router);
@@ -490,6 +496,22 @@ export default new Router({
           meta: { auth: false },
           name: 'x2门店管理',
           component: storeManagement
+        },
+        //打印机配置
+        {
+          path: '/x2OperationScheme/printerConfig',
+          meta: { auth: false },
+          name: '打印机配置',
+          component: printerConfig
+        },
+
+        /**********************商户资料核实***************************/
+        //商户列表
+        {
+          path: '/businessInformation/businessList',
+          meta: { auth: false },
+          name: '商户列表',
+          component: businessList
         },
 
       ]

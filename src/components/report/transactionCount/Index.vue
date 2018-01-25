@@ -45,7 +45,7 @@
           </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="time" label="日期" width="200"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="store_name" label="门店" ></el-table-column>
+        <el-table-column header-align="center" align="center" prop="store_name" label="门店" width="200"></el-table-column>
         <el-table-column header-align="center" align="center" prop="total_money" label="总支付金额" width="120"></el-table-column>
         <el-table-column header-align="center" align="center" prop="total_num" label="总支付笔数" width="120"></el-table-column>
         <el-table-column header-align="center" align="center" prop="ali_money" label="支付宝" width="100"></el-table-column>

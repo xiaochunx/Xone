@@ -1,56 +1,37 @@
-<style scoped>
-  .time {
-    margin-left: 100px;
-  }
-
-  .bodyTop {
-    padding-bottom: 10px;
-  }
-  .invoice_top{
-    height: 36px;
-    display: flex;
-    align-items: center;
-    border:1px solid #bfcbd9;
-    padding: 10px;
-    border-radius:5px;
-  }
-
-  .pop_cell{
-    height: 36px;
-  }
-</style>
-
 <template>
   <div class="scroll_of">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-      <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
-
-      <div class="flex_es padding_t_10">
-        <div class="flex_a">
-          <div class="invoice_top margin_r_10">开票张数总计：5</div>
-          <div class="invoice_top">
-            开票金额总计：¥670
-          </div>
-
-        </div>
-
+      <div class="flex_es ">
+        <xo-datePicker @getRadioDate="getRadioDate"></xo-datePicker>
         <div class="flex_ec">
           <div class="margin_r_10">
             <span>门店</span>
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="store_id" filterable clearable placeholder="请选择">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                v-for="item in storeData"
+                :key="item.id"
+                :label="item.storeName"
+                :value="item.id">
               </el-option>
             </el-select>
           </div>
-          <el-button type="primary">导出</el-button>
+          <el-button class="margin_l_10" @click="search()">查询</el-button>
+          <el-button type="primary" @click="out()">导出</el-button>
         </div>
+      </div>
+
+      <div class="flex_es padding_t_10">
+        <div class="flex_a">
+          <div class="invoice_top margin_r_10">开票张数总计：{{total_num}}</div>
+          <div class="invoice_top">开票金额总计：¥{{total_price}}</div>
+        </div>
+        <div class="flex_r">
+
+        </div>
+
       </div>
 
     </div>
@@ -62,12 +43,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="invoiceNumber" label="发票号码"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="shop" label="开票门店"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="name" label="购买方名称"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="tel" label="电话"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="money" label="开票金额"></el-table-column>
-        <el-table-column header-align="center" align="center" prop="time" label="开票时间"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="invoice_number" label="发票号码"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="store_name" label="开票门店"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="title" label="购买方名称"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="phone" label="电话"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="price" label="开票金额"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="add_time" label="开票时间"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作">
           <template slot-scope="scope">
             <el-popover
@@ -75,54 +56,54 @@
               placement="right"
               width="300"
               trigger="click" @show="()=>{
-                return showPop(scope.row)
+                return showPop(scope.row.id)
               }">
              <div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">购买方名称</div>
-                 <div class="flex_2">广州九毛九有限公司</div>
+                 <div class="flex_2">{{invoiceInfo.name}}</div>
                </div>
 
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">购买方税号</div>
-                 <div class="flex_2">6392193048202C</div>
+                 <div class="flex_2">{{invoiceInfo.number}}</div>
                </div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">购买方地址</div>
-                 <div class="flex_2">广州市荔枝湾沙面大街11111111111111111111</div>
+                 <div class="flex_2">{{invoiceInfo.address}}</div>
                </div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">购买电话</div>
-                 <div class="flex_2">020-34211356</div>
+                 <div class="flex_2">{{invoiceInfo.tel}}</div>
                </div>
 
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">金额</div>
-                 <div class="flex_2">¥47.43</div>
+                 <div class="flex_2">¥{{invoiceInfo.price}}</div>
                </div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">税额</div>
-                 <div class="flex_2">0¥5.57</div>
+                 <div class="flex_2">¥{{invoiceInfo.tax_price}}</div>
                </div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">价税合计</div>
-                 <div class="flex_2">¥53.00</div>
+                 <div class="flex_2">¥{{invoiceInfo.count_price}}</div>
                </div>
-               <div style="border-bottom: 1px dashed #bfcbd9;width: 100%">
+               <div style="border-bottom: 1px solid #bfcbd9;width: 100%">
 
                </div>
 
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">发票代码</div>
-                 <div class="flex_2">19837481724</div>
+                 <div class="flex_2 pop_cell_color">{{invoiceInfo.invoice_code}}</div>
                </div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">发票号码</div>
-                 <div class="flex_2">12348023</div>
+                 <div class="flex_2 pop_cell_color">{{invoiceInfo.invoice_number}}</div>
                </div>
-               <div class="flex_r pop_cell">
+               <div class="flex_a pop_cell">
                  <div class="flex_1">开票日期</div>
-                 <div class="flex_2"> 2017-09-09</div>
+                 <div class="flex_2"> {{invoiceInfo.add_time}}</div>
                </div>
 
              </div>
@@ -134,9 +115,8 @@
 
       </el-table>
 
-    <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
-      <xo-pagination></xo-pagination>
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
 
   </div>
@@ -144,70 +124,105 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-
+  import {getStoreListAll} from '../../utility/communApi'
+  import getApi from './invoice.service';
   export default {
     components: {
 
     },
     data() {
       return {
+        store_id:'',
+        storeData:[],
         width: 0,
         tableHeight: 0,
-        navList: [{name: "统计报表", url: ''}, {name: "差异账单查询", url: ''}],
+        navList: [{name: "统计报表", url: ''}, {name: "发票", url: ''}],
 
-        input1: '',
-        input2: '',
-        options: [{
-          value: '选项1',
-          label: '11'
-        }, {
-          value: '选项2',
-          label: '22'
-        }],
-        value: '',
-        tableData: [{
-          invoiceNumber: '111111',
-          shop: 'shop',
-          name: 'name',
-          tel:'130000000',
-          money:'123',
-          time:'2017'
-        },
-          {
-            invoiceNumber: '111111',
-            shop: 'shop',
-            name: 'name',
-            tel:'130000000',
-            money:'123',
-            time:'2017'
-          }]
+        tableData: [],
+        p: {page: 1, size: 20, total: 0},
+        dateSelected:[],
+        total_price:'',
+        total_num:'',
+        invoiceInfo:{}
       }
     },
     computed: {
-      pageState() {
-        return {page: 1}
-      }
+
     },
     methods: {
-      showPop(data){
-console.log(data)
+      out(){
+        this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],1)
       },
-      getPage() {
+      showPop(id){
+        getApi.invoiceInfo(id).then((res)=>{
+          if(res.data.errcode === 0){
+            this.invoiceInfo = res.data.data
+          }
+        })
       },
-      getPageSize() {
+      search(){
+        if (this.dateSelected[0] === '' && this.dateSelected[1] ==='') {
+          this.$message({
+            message: '请选择时间',
+            type: 'warning'
+          });
+        } else {
+          if (this.dateSelected[0] === '') {
+            this.$message({
+              message: '开始时间不能为空',
+              type: 'warning'
+            });
+          } else if (this.dateSelected[1] === '') {
+            this.$message({
+              message: '结束时间不能为空',
+              type: 'warning'
+            });
+          } else if (this.dateSelected[0] > this.dateSelected[1]) {
+            this.$message({
+              message: '开始时间不能大于结束时间',
+              type: 'warning'
+            });
+          } else {
+            //ok
+
+            this.getInvoiceList(this.p = {page: 1, size: 20, total: 0},this.store_id,this.dateSelected[0] ,this.dateSelected[1],'');
+          }
+        }
+      },
+      getPage(page) {
+        this.p.page = page;
+        this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],'');
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],'');
       },
       getRadioDate(d) {
-        console.log(d)
+        this.dateSelected = [(d[0] + "").substr(0,10),(d[1] + "").substr(0,10)]
       },
-      getStartTime(d) {
-        console.log(d)
-      },
-      getEndTime(d) {
-        console.log(d)
+      getInvoiceList(p,store_id,create_time,end_time,myExport){
+        getApi.invoiceStatistics(p,store_id,create_time,end_time,myExport).then((res)=>{
+          if(res.data.errcode === 0){
+            if(myExport === ""){
+              this.tableData = res.data.data.list;
+              this.total_num = res.data.data.total_num;
+              this.total_price = res.data.data.total_price;
+              this.p.total = res.data.data.count
+            }else {
+              window.location.href = res.data.data
+            }
+          }
+        })
       },
     },
     created() {
 
+    },
+    mounted(){
+      getStoreListAll().then((res)=>{
+        this.storeData = res.data.data
+      });
+      this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],'');
     },
     updated() {
       getScrollHeight().then((h) => {
@@ -217,3 +232,26 @@ console.log(data)
 
   }
 </script>
+
+<style scoped>
+
+  .bodyTop {
+    padding-bottom: 10px;
+  }
+  .invoice_top{
+    height: 36px;
+    display: flex;
+    align-items: center;
+    border:1px solid #bfcbd9;
+    padding: 0 10px;
+    border-radius:5px;
+  }
+
+  .pop_cell{
+    height: 36px;
+  }
+  .pop_cell_color{
+    color: #C5996E;
+    font-size: 13px;
+  }
+</style>

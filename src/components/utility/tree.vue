@@ -46,7 +46,6 @@
     methods: {
       ...mapActions(['setTreeArr']),
       test(item) {
-
         if(item.router !== ''){
           this.$router.push(item.router);
           Hub.$emit('showLeftTree',{levelid:item.id,item:item,path:this.$route.path});

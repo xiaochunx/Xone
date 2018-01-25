@@ -39,15 +39,14 @@
           v-loading.body="loading"
           border
           style="width: 100%">
-          <el-table-column
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
             type="index"
             label="序号"
             width="65">
           </el-table-column>
 
-          <el-table-column
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
             label="支付方式 - 支付通道 - 账户"
-            width="265"
           >
             <template slot-scope="scope">
               <div style="margin-left: 10px" v-for="item in scope.row.account">
@@ -74,21 +73,20 @@
             </template>
           </el-table-column>-->
 
-          <el-table-column
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
             prop="time"
-            label="时间"
-            width="170">
+            label="时间" width="200">
           </el-table-column>
 
-          <el-table-column
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
             prop="operator"
-            label="操作员">
+            label="操作员" width="160">
           </el-table-column>
 
 
-          <el-table-column
+          <el-table-column label-class-name="table_head" header-align="center" align="center"
             label="状态"
-            width="220"
+            width="120"
           >
             <template slot-scope="scope">
 
@@ -102,7 +100,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column
+          <el-table-column label-class-name="table_head" header-align="center" align="center" width="80"
             label="操作">
             <template slot-scope="scope">
               <el-button size="small" @click="examine(scope)">查看</el-button>

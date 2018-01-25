@@ -377,7 +377,7 @@
         return isLt5M;
       },
       importXls() {
-        getLeft().then((res) => {
+        getLeft('x1').then((res) => {
           console.log(res)
           if (res.data.errcode === 0) {
             this.dataLeft = res.data.data;

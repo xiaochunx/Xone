@@ -73,7 +73,7 @@
 
     <!-- 商户号 -->
     <el-form-item label="商户号:" prop="Merchants">
-      <el-input v-model="ruleForm.Merchants"></el-input>
+      <el-input v-model="ruleForm.Merchants" placeholder="商户号为关键信息且唯一，请谨慎填写"></el-input>
     </el-form-item>
 
     <el-form-item>

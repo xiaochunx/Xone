@@ -28,7 +28,7 @@
 
       <div class="padding_l_10 width_100" v-show="getTreeArr['列表']">
         <el-table :data="storeData" border>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号" width="70">
             <template slot-scope="scope">
               <div>{{scope.$index + 1 }}</div>
             </template>
@@ -44,7 +44,7 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="op_manage"
                            label="操作人">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作" width="70">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="edit(scope.row)">修改</el-button>
 
@@ -185,7 +185,7 @@
 
     },
     created() {
-      getLeft().then((res) => {
+      getLeft('x1').then((res) => {
         if(res.data.errcode === 0){
           this.showResouce(this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id);
           this.dataLeft = res.data.data;

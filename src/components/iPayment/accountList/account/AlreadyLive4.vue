@@ -76,6 +76,16 @@
       <el-input v-model="ruleForm.Merchants" placeholder="商户号为关键信息且唯一，请谨慎填写"></el-input>
     </el-form-item>
 
+    <!-- APPID -->
+    <el-form-item label="商户号:" prop="APPID">
+      <el-input v-model="ruleForm.APPID" placeholder="在您通联后台-设置-对接配置中获取"></el-input>
+    </el-form-item>
+
+    <!-- 交易秘钥 -->
+    <el-form-item label="交易秘钥:" prop="token">
+      <el-input v-model="ruleForm.token" placeholder="在您通联后台-设置-对接配置中获取"></el-input>
+    </el-form-item>
+
     <el-form-item>
       <router-link to="/iPayment/accountList">
         <el-button> 取消 </el-button>
@@ -101,7 +111,10 @@
           domains: [{  // 第三方编码
             code1: '',
             code2: ''
-          }]
+          }],
+          APPID:'',
+          token:'',
+
         },
         loading: false,       // 加载状态
         rules: {
@@ -124,12 +137,17 @@
           checkboxGroup: [
             { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
           ],
+          APPID: [
+            {required: true, message: '请输入APPID', trigger: 'change'}
+          ],
+          token: [
+            {required: true, message: '请输入交易秘钥', trigger: 'change'}
+          ],
         },
       };
     },
     methods: {
       change(e){
-
         let  params = {
           channelId:e
         }
@@ -148,7 +166,6 @@
         }).catch((err) => {
           console.log(err);
         });
-
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
@@ -215,12 +232,13 @@
 
       var params = {};
 
+
       // 支付通道初始化
       payMent(params).then((res) => {
         if (res.errcode == 0) {
 
           res.data.forEach((item)=>{
-            if(item.memo !== "民生银行"){
+            if(item.memo !== "通联支付"){
               item.disabled = true
             }
           });

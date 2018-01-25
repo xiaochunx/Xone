@@ -25,17 +25,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-
-        <el-tree
-          :data="dataLeft"
-          :props="defaultProps"
-          @node-click="nodeClick"
-          node-key="id"
-          default-expand-all
-          :highlight-current="true"
-          :expand-on-click-node="false"
-        >
-        </el-tree>
+        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}" v-show="getTreeArr['门店列表']">
@@ -235,10 +225,10 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
-  import {getLeft} from '../../../utility/communApi'
-  import ElCheckbox from "../../../../../node_modules/element-ui/packages/checkbox/src/checkbox.vue";
-  import ElButton from "../../../../../node_modules/element-ui/packages/button/src/button.vue";
+  import {getLeft,recurLeft} from '../../../utility/communApi'
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../../utility/commun'
+
   export default {
     computed: {
       ...mapGetters([
@@ -246,8 +236,7 @@
       ]),
     },
     components: {
-      ElButton,
-      ElCheckbox},
+    },
     data() {
       return {
         storeStatusValue: false,
@@ -260,7 +249,7 @@
 
         storeName: '',
         storeData: [],
-        dataLeft: [],
+        data5: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
@@ -285,14 +274,13 @@
         }],
         p: {page: 1, size: 20, total: 0},
         baseStore: {},//点击新增时的门店
-        levelId:'',//左边树ID
         multipleSelection:[]
       }
     },
     watch: {},
     methods: {
-      ...mapActions(['setTreeArr']),
-
+      ...mapActions(['setX1StoreLevelId']),
+      ...mapGetters(['getX1StoreLevelId']),
       handleChecked(data) {
         let count = 0;
         this.storeData.forEach((data) => {
@@ -343,7 +331,7 @@
         }
       },
       search(){
-        this.showResouce(this.p = {page: 1, size: 20, total: 0},this.levelId,this.storeName);
+        this.showResouce(this.p = {page: 1, size: 20, total: 0},this.getX1StoreLevelId(),this.storeName);
       },
       //设置url
       setOneUrl(row){
@@ -370,17 +358,17 @@
           getApi.addStore(list.join(',')).then((res)=>{
 
             this.dialogVisible2 = false
-            this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.levelId,this.storeName = '');
+            this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getX1StoreLevelId(),this.storeName = '');
           })
         }
 
       },
       addStore() {
-        if(this.levelId === ""){
+        if(this.getX1StoreLevelId() === ""){
           this.$message('请选择门店所属部门');
         }else {
           this.dialogVisible2 = true;
-          getApi.getBaseStore(this.levelId).then((res)=>{
+          getApi.getBaseStore(this.getX1StoreLevelId()).then((res)=>{
             if(res.data.errcode === 0){
               for(let map in res.data.data){
                 res.data.data[map].forEach((item)=>{
@@ -421,7 +409,7 @@
 
           if(res.data.errcode === 0){
             this.$message('操作成功');
-            this.showResouce(this.p, this.levelId);
+            this.showResouce(this.p, this.getX1StoreLevelId());
           }
 
         })
@@ -439,29 +427,20 @@
 
             if(res.data.errcode === 0){
               this.$message('操作成功');
-              this.showResouce(this.p, this.levelId);
+              this.showResouce(this.p, this.getX1StoreLevelId());
               this.dialogVisible1 = false
             }
           })
       },
       getPage(page) {
         this.p.page = page;
-        this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.getX1StoreLevelId(),this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.getX1StoreLevelId(),this.searchName);
       },
 
-      nodeClick(data, data1, data2) {
-
-        this.levelId = data.id;
-        this.showResouce(this.p = {page: 1, size: 20, total: 0}, data.id,this.searchName = '')
-
-      },
-      setChecked(data, checked, deep) {
-
-      },
       delSelected() {
 
         if(this.multipleSelection.length === 0){
@@ -478,7 +457,7 @@
                 type: 'info',
                 message: '删除成功'
               });
-              this.showResouce(this.p, this.levelId);
+              this.showResouce(this.p, this.getX1StoreLevelId());
             })
 
 
@@ -537,7 +516,7 @@
               type: 'info',
               message: '删除成功'
             });
-            this.showResouce(this.p, this.levelId)
+            this.showResouce(this.p, this.getX1StoreLevelId())
 
           })
 
@@ -567,22 +546,56 @@
 
           }
         })
-      }
+      },
+
+
+      recur(data) {
+        data.forEach((map) => {
+
+          if (map.child) {
+            this.$set(map, "show", true);
+            this.$set(map, "selected", false);
+            this.recur(map.child)
+          }
+        })
+      },
+      recurSelected(data, levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          } else {
+            this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.recurSelected(map.child, levelId)
+          }
+        })
+      },
     },
     created() {
-      getLeft().then((res) => {
-        this.dataLeft = res.data.data;
-        this.levelId = res.data.data[0].id;
-        this.showResouce(this.p, this.levelId);
+      getLeft('x1').then((res) => {
+        this.data5 = res.data.data;
 
+        if(this.getX1StoreLevelId() === ''){
+          this.setX1StoreLevelId({levelId:res.data.data[0].id});
+        }
+        this.showResouce(this.p, this.getX1StoreLevelId());
+        this.recur(this.data5);
+        this.recurSelected(this.data5, this.getX1StoreLevelId())
       });
 
     },
     mounted() {
+      recurLeft(this.$localStorage.get('leftData'),this.$route.path);
+      Hub.$on('showAdd', (e) => {
+        this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '');
 
+        this.setX1StoreLevelId({levelId:e.levelid});
+        this.recurSelected(this.data5, e.levelid)
+      });
     },
     destroyed(){
-
+      Hub.$off("showAdd");
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -607,46 +620,5 @@
     font-size: 30px;
   }
 
-  .m-storeList {
-    height: 50px;
-    line-height: 50px;
-  }
 
-  .m-newStore {
-    position: absolute;
-    right: 20px;
-    top: 50px;
-    width: 99px;
-  }
-
-  .m-t {
-    text-align: center;
-  }
-
-  .m-store {
-    padding: 20px 0;
-  }
-
-  .m-store table tr td {
-    padding: 10px 0;
-    border-bottom: 1px dashed #000;
-  }
-
-  .m-store table tr:nth-child(1) {
-    height: 50px;
-  }
-
-  .m-store table tr:nth-child(1) td {
-    border-bottom: 1px solid #000;
-  }
-
-  .myStore {
-    position: absolute;
-    top: 40%;
-    right: 0;
-    background: white;
-    z-index: 100;
-    border-radius: 10px;
-    border: 1px solid #E5EBF4
-  }
 </style>

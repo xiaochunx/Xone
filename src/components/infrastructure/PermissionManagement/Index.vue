@@ -281,7 +281,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
 
   import getApi from './permissionManagement.service'
-  import {getLevel} from '../../utility/communApi'
+  import {getLevel,getArr,recurLeft} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
 
@@ -699,12 +699,14 @@
         this.p.size = size;
         this.getGroupList(this.p,this.getPermissionLevelId())
       },
+
     },
     created() {
       this.showLevel()
     },
 
     mounted() {
+      recurLeft(this.$localStorage.get('leftData'),this.$route.path);
       Hub.$on('showAdd', (e) => {
         this.levelName = e.levelName;
         this.setPermissionLevelId({levelId:e.levelid});
@@ -712,10 +714,6 @@
         this.getGroupList(this.p,e.levelid);
         this.recurSelected(this.data5, e.levelid)
       });
-
-    },
-    destroyed(){
-
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -727,7 +725,6 @@
     destroyed() {
 
       Hub.$off("showAdd");
-
     }
   }
 </script>

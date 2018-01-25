@@ -103,6 +103,7 @@
     <el-dialog
       title="编辑用户"
       :visible.sync="dialogVisible"
+      @close="close"
       width="50%">
       <el-form ref="formRules" :model="formUserEdit" label-width="100px">
         <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
@@ -111,7 +112,6 @@
         <el-form-item label="手机号:" prop="phone" :rules="{validator: checkPhone,required: true, trigger: 'blur'}">
           <el-input v-model="formUserEdit.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
         </el-form-item>
-
 
         <div v-for="(domain, index) in formUserEdit.billHuman" class="flex_r">
           <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
@@ -151,7 +151,7 @@
         </div>
 
         <el-form-item label="角色:">
-          <el-select v-model="formUserEdit.role_id" multiple placeholder="请选择" >
+          <el-select v-model="formUserEdit.role_id" multiple placeholder="请选择">
             <el-option
               v-for="item in roleList"
               :key="item.id"
@@ -161,9 +161,8 @@
           </el-select>
         </el-form-item>
 
-
-        <el-form-item label="用户组:">
-          <el-select v-model="formUserEdit.groupId" placeholder="请选择" >
+        <el-form-item label="用户组:" prop="groupId" :rules="{type:'number',required: true, message: '请选择用户组', trigger: 'change'}">
+          <el-select v-model="formUserEdit.groupId" placeholder="请选择">
             <el-option
               v-for="item in groupListEdit"
               :key="item.id"
@@ -261,7 +260,9 @@
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
-
+      close(){
+        this.$refs['formRules'].resetFields();
+      },
       removeDomain3(item) {
         let index = this.formUserEdit.billHuman.indexOf(item);
         if (index !== -1) {
@@ -345,6 +346,13 @@
               res.data.data[0].status = false
             }
             res.data.data[0].groupId = (res.data.data[0].group_id ==='' || res.data.data[0].group_name ===null)? '' : res.data.data[0].group_id * 1;
+
+            if(res.data.data[0].role_id === ""){
+              res.data.data[0].role_id = []
+            }
+            if(res.data.data[0].billHuman === null){
+              res.data.data[0].billHuman = [{code1: '', code2: ''}]
+            }
             this.formUserEdit = res.data.data[0]
           }
         });

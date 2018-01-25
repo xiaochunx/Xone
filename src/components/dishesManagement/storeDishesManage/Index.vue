@@ -334,7 +334,7 @@
       },
     },
     created() {
-      getLeft().then((res) => {
+      getLeft('x1').then((res) => {
         if (res.data.errcode === 0) {
           //this.showResouce(this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id);
           this.dataLeft = res.data.data;

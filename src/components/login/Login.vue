@@ -56,7 +56,7 @@
         this.$refs.ruleForm2.resetFields();
       },
       handleSubmit2(ev) {
-        var _this = this;
+
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
 
@@ -74,7 +74,7 @@
             }).then((res) => {
               if (res.data.errcode === 0) {
                 this.$localStorage.set("token", res.data.data.token);
-                this.$localStorage.set("user", res.data.data.username);
+                this.$localStorage.set("user", res.data.data.nickname);
                 this.$router.push('/home');
 
                 if(this.checked === true){

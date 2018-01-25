@@ -22,7 +22,6 @@
       </div>
     </div>
 
-
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
         <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
@@ -90,7 +89,6 @@
           <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
       </div>
-
 
     </div>
 
@@ -299,7 +297,7 @@
 </template>
 
 <script>
-  import {getLevel} from '../../utility/communApi'
+  import {getLeft} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {mapActions, mapGetters} from 'vuex';
@@ -334,7 +332,7 @@
         dialogVisible1:false,
         dialogVisible3:false,
         dialogVisible4:false,
-        navList: [{name: "菜品管理", url: ''}],
+        navList: [{name: "x2运营方案", url: '门店管理'}],
         data5: [],
         storeName: '',
         dishesList: [
@@ -499,9 +497,7 @@
 
       recur(data) {
         data.forEach((map) => {
-          if(map.id === this.getX2StoreLevelId()){
-            this.levelName = map.levelname
-          }
+
           if (map.child) {
             this.$set(map, "show", true);
             this.$set(map, "selected", false);
@@ -522,7 +518,7 @@
         })
       },
       showLevel() {
-        getLevel().then((res) => {
+        getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
             if(this.getX2StoreLevelId() === ''){
@@ -536,6 +532,7 @@
 
           }
         })
+
       },
     },
     created() {
@@ -550,14 +547,9 @@
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        console.log(e)
-        this.levelName = e.levelName;
         this.setX2StoreLevelId({levelId:e.levelid});
-
         this.recurSelected(this.data5, e.levelid)
-
       });
-
 
     },
     updated() {

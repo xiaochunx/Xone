@@ -1,13 +1,15 @@
 import axios from 'axios'
+import store from '../../store'
+
 let get= function(key) {
   return window.JSON.parse(window.localStorage.getItem(key));
 };
 
 //左侧组织架构x1
-let getLeft = () => {
+let getLeft = (x) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append("redirect", "x1.store.storeLeft");
+    formData.append("redirect", `${x}.store.storeLeft`);
     axios.post(`index.php?controller=admin&action=api&token=${get('token')}`,formData).then((res)=>{
       resolve(res)
     })
@@ -100,4 +102,17 @@ let getArr = (arr) => {
   }
 };
 
-export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios}
+//后退时刷新页面权限
+let recurLeft = (data,path) =>{
+  data.forEach((map) => {
+    if (map.children) {
+      if(map.router === path){
+        store.commit('TREEARR', {obj: getArr(map.arr)})
+      }
+
+      this.j(map.children,path)
+    }
+  })
+};
+
+export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios,recurLeft}

@@ -13,7 +13,9 @@ const state = {
   showStoreTree: {levelid: '', type: '', showAdd: false},//门店库树状态
   publicLevelId:'',//公众号levelid(没有使用,用了localStorage)
   permissionLevelId:'',//权限levelid
-  x2storeLevelId:''//x2门店管理levelid
+  x1storeLevelId:'',//x1门店列表levelid
+  x2storeLevelId:'',//x2门店管理levelid
+  runningStateLevelId:''//终端状态levelid
 };
 
 const mutations = {
@@ -32,8 +34,14 @@ const mutations = {
   [types.PERMISSIONLEVELID](state, obj){
     state.permissionLevelId = obj.levelId
   },
+  [types.X1STORELEVELID](state, obj){
+    state.x1storeLevelId = obj.levelId
+  },
   [types.X2STORELEVELID](state, obj){
     state.x2storeLevelId = obj.levelId
+  },
+  [types.RUNNINGSTATELEVELID](state, obj){
+    state.runningStateLevelId = obj.levelId
   },
   [types.STORETREELIST](state, obj){
     state.storeTreeList = obj.list
