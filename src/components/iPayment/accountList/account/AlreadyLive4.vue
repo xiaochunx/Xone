@@ -76,14 +76,14 @@
       <el-input v-model="ruleForm.Merchants" placeholder="商户号为关键信息且唯一，请谨慎填写"></el-input>
     </el-form-item>
 
-    <!-- APPID -->
-    <el-form-item label="商户号:" prop="APPID">
-      <el-input v-model="ruleForm.APPID" placeholder="在您通联后台-设置-对接配置中获取"></el-input>
+    <!-- appid -->
+    <el-form-item label="APPID:" prop="appid">
+      <el-input v-model="ruleForm.appid" placeholder="在您通联后台-设置-对接配置中获取"></el-input>
     </el-form-item>
 
     <!-- 交易秘钥 -->
-    <el-form-item label="交易秘钥:" prop="token">
-      <el-input v-model="ruleForm.token" placeholder="在您通联后台-设置-对接配置中获取"></el-input>
+    <el-form-item label="交易秘钥:" prop="key">
+      <el-input v-model="ruleForm.key" placeholder="在您通联后台-设置-对接配置中获取"></el-input>
     </el-form-item>
 
     <el-form-item>
@@ -112,8 +112,8 @@
             code1: '',
             code2: ''
           }],
-          APPID:'',
-          token:'',
+          appid:'',
+          key:'',
 
         },
         loading: false,       // 加载状态
@@ -137,10 +137,10 @@
           checkboxGroup: [
             { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
           ],
-          APPID: [
+          appid: [
             {required: true, message: '请输入APPID', trigger: 'change'}
           ],
-          token: [
+          key: [
             {required: true, message: '请输入交易秘钥', trigger: 'change'}
           ],
         },
@@ -188,6 +188,8 @@
                 paymentChannel: this.ruleForm.Payment,      // 支付通道
                 paymentMethod: paymentMethod,               // 支付方式
                 merchants: this.ruleForm.Merchants,         // 商户号
+                appid:this.ruleForm.appid,
+                key:this.ruleForm.key,
               };
 
               oneTwoApi(params).then((res) => {

@@ -125,20 +125,20 @@
          //      },
          //    ]
          //  },
-         //  {
-         //    name: 'x2统计报表',
-         //    children: [
-         //      {
-         //        name: '订单列表',
-         //        route: '/report/orderList'
-         //      },
-         //      {
-         //        name: '订单统计',
-         //        route: '/report/orderCount'
-         //      },
-         //
-         //    ]
-         //  },
+          {
+            name: 'x2统计报表',
+            children: [
+              {
+                name: '订单列表',
+                route: '/report/orderList'
+              },
+              // {
+              //   name: '订单统计',
+              //   route: '/report/orderCount'
+              // },
+
+            ]
+          },
           {
             name: 'x2运营方案',
             children: [

@@ -52,15 +52,15 @@
               <el-button type="text" @click="clientStatus(scope.row)">查看</el-button>
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="POS端状态"
-                           width="120">
-            <template slot-scope="scope">
-              <el-button type="text" @click="posStatus(scope.row)">查看</el-button>
-            </template>
-          </el-table-column>
+          <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="POS端状态"-->
+                           <!--width="120">-->
+            <!--<template slot-scope="scope">-->
+              <!--<el-button type="text" @click="posStatus(scope.row)">查看</el-button>-->
+            <!--</template>-->
+          <!--</el-table-column>-->
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="设置" width="100">
           <template slot-scope="scope">
-          <el-button type="text" @click="operation(scope.row)">操作</el-button>
+          <el-button type="text" @click="operation(scope.row.id)">操作</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -159,44 +159,48 @@
             {{scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" width="120"
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printerid" width="120"
                          label="打印机ID">
         </el-table-column>
         <el-table-column label-class-name="table_head" :render-header="headerPrint" header-align="center" align="center"
                          width="100">
           <template slot-scope="scope">
-            <el-button type="text" @click="print()">打印</el-button>
+            <el-button type="text" @click="submit(scope.row.storeid,scope.row.appid,scope.row.printerid,'testPrinter')">打印</el-button>
           </template>
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="client" label="客户端">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="installlocation" label="客户端">
         </el-table-column>
-        <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service" width="100"
-                         label="款易服务">
-        </el-table-column>
-        <el-table-column label-class-name="table_head" :render-header="headerOpen" header-align="center" align="center"
-                         width="100">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="value2"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column label-class-name="table_head" :render-header="headerClose" header-align="center" align="center"
-                         width="100">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="value2"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-          </template>
-        </el-table-column>
+        <!--<el-table-column label-class-name="table_head" header-align="center" align="center" prop="service" width="200"-->
+                         <!--label="款易服务" class-name="myRunningStateCell">-->
+          <!--<template slot-scope="scope" >-->
+            <!--<div class="flex width_100">-->
+              <!--<div class="flex_1" style="border-right: 1px solid #DFE6EC;padding: 4px;">-->
+                <!--<div>X1</div>-->
+                <!--<el-switch-->
+                  <!--v-model="value2"-->
+                  <!--on-color="#13ce66"-->
+                  <!--off-color="#ff4949">-->
+                <!--</el-switch>-->
+              <!--</div>-->
+              <!--<div class="flex_1">-->
+                <!--<div>X2</div>-->
+                <!--<el-switch-->
+                  <!--v-model="value2"-->
+                  <!--on-color="#13ce66"-->
+                  <!--off-color="#ff4949">-->
+                <!--</el-switch>-->
+              <!--</div>-->
+            <!--</div>-->
+
+          <!--</template>-->
+
+        <!--</el-table-column>-->
+
+
         <el-table-column label-class-name="table_head" :render-header="headerUpdate" header-align="center"
                          align="center" width="100">
           <template slot-scope="scope">
-            <el-button type="text" @click="update()">更新</el-button>
+            <el-button type="text" @click="submit(scope.row.storeid,scope.row.appid,scope.row.printerid,'refreshService')">更新</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -231,11 +235,7 @@
 
         ],
         setList: [
-          {
-            id: 12321321,
-            client: 'POS3',
-            service: 'X2',
-          }
+
         ],
         dialogVisible: false,
         dialogVisible2: false,
@@ -308,7 +308,17 @@
                 'class': {},
                 on: {
                   click: () => {
-
+                    let storeid = this.setList[0].storeid;
+                    let paramsList = [];
+                    this.setList.forEach((item)=>{
+                      paramsList.push({"printerid":item.printerid,"appid":item.appid})
+                    });
+                    let data = {"action":"refreshService","params":paramsList};
+                    getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
+                      if(res.data.errcode === 0){
+                        this.$message(res.data.data);
+                      }
+                    })
                   },
 
                 }
@@ -317,44 +327,8 @@
           ]
         );
       },
-      headerClose(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-button', {
-                attrs: {size: "mini"},
-                'class': {},
-                on: {
-                  click: () => {
-                    console.log(this)
-                  },
 
-                }
-              }, ['关闭']
-            )
-          ]
-        );
-      },
-      headerOpen(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-button', {
-                attrs: {size: "mini"},
-                'class': {},
-                on: {
-                  click: () => {
-                    console.log(this)
-                  },
 
-                }
-              }, ['开启']
-            )
-          ]
-        );
-      },
       headerPrint(h) {
         return h(
           'div',
@@ -365,7 +339,17 @@
                 'class': {},
                 on: {
                   click: () => {
-                    console.log(this)
+                    let storeid = this.setList[0].storeid;
+                    let paramsList = [];
+                    this.setList.forEach((item)=>{
+                      paramsList.push({"printerid":item.printerid,"appid":item.appid})
+                    });
+                    let data = {"action":"testPrinter","params":paramsList};
+                    getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
+                      if(res.data.errcode === 0){
+                        this.$message(res.data.data);
+                      }
+                    })
                   },
 
                 }
@@ -374,29 +358,38 @@
           ]
         );
       },
-      print() {
+      submit(storeid,appid,printerid,name) {
+        let data = {"action":name,"params":[{"printerid":printerid,"appid":appid}]};
+        getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
+          if(res.data.errcode === 0){
+            this.$message(res.data.data);
+          }
+
+        })
 
       },
 
-      update() {
-
-      },
       printStatus(row) {
-        this.printList = row.storeprinters;
+        this.printList = row.storeprinters !== "" ? row.storeprinters: [];
         this.dialogVisible = true
       },
       clientStatus(row) {
-
-        this.clientList = row.storeclients
+        this.clientList = row.storeclients !== "" ? row.storeclients: [];
         this.dialogVisible2 = true
       },
       posStatus(row) {
-
-        this.POSList = row.storeposs
+        this.POSList = row.storeposs !== "" ? row.storeposs: [];
         this.dialogVisible3 = true
       },
-      operation(row) {
-        this.dialogVisible4 = true
+      operation(id) {
+        getApi.opration(id).then((res)=>{
+          if(res.data.errcode === 0){
+            this.setList = res.data.data;
+            this.dialogVisible4 = true
+          }
+        })
+
+
 
       },
 

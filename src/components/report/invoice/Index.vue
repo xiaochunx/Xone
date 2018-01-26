@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll_of">
+  <div class="scroll_of" v-show="getTreeArr['列表']">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -107,7 +107,7 @@
                </div>
 
              </div>
-              <el-button size="small" type="primary"  slot="reference">查看详情</el-button>
+              <el-button size="small" type="primary"  slot="reference" v-show="getTreeArr['详情']">查看详情</el-button>
             </el-popover>
 
           </template>
@@ -126,6 +126,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {getStoreListAll} from '../../utility/communApi'
   import getApi from './invoice.service';
+  import { mapActions,mapGetters } from 'vuex';
   export default {
     components: {
 
@@ -147,7 +148,9 @@
       }
     },
     computed: {
-
+      ...mapGetters([
+        'getTreeArr'
+      ]),
     },
     methods: {
       out(){

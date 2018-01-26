@@ -7,7 +7,7 @@
 
       <div class="flex_es">
         <div>
-          <el-button size="small" @click="add()">批量新增</el-button>
+          <el-button size="small" @click="addStore()">批量新增</el-button>
 
           <el-button size="small" @click="isSwitch()">批量开启/关闭</el-button>
 
@@ -293,6 +293,26 @@
       </el-tabs>
     </el-dialog>
 
+
+    <!--新增门店-->
+    <el-dialog
+      title="新增门店"
+      :visible.sync="dialogVisible2"
+      @close="close2"
+      width="50%" size="tiny">
+      <div class="margin_b_10" v-for="(item,index) in baseStore">
+        <div>
+          {{index}}
+          <div class="padding_l_10" v-for="(item1,index1) in item">
+            <el-checkbox v-model="item1.OK">{{item1.storename}}</el-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="margin_t_10">
+        <el-button @click="dialogVisible2 = false">取消</el-button>
+        <el-button type="primary" @click="add()">确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -301,13 +321,15 @@
   import Hub from '../../utility/commun'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {mapActions, mapGetters} from 'vuex';
-
+  import getApi from './storeManagement.service';
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     components: {
 
     },
     data() {
       return {
+        dialogVisible2:false,
         storeStatusValue: false,
         baiduDialog: {
           input1: '',
@@ -339,31 +361,97 @@
           {code: '123', name: '炳胜（马场店）'},
           {code: '456', name: '炳胜（马场店）'}
         ],
-        storeData:[{
-          storeCode: '83789',
-          storeName: '炳胜（马场店）',
-          thirdPartyCoding: [
-            {value: '美团', value1: '123'},
-            {value: '饿了么', value1: '456'}
-          ],
-          status: [{id: 1, value: true}, {id: 2, value: false}]
-        }, {
-          storeCode: '837892',
-          storeName: '炳胜（马场店）',
-          thirdPartyCoding: [
-            {value: '美团', value1: '123'},
-            {value: '饿了么', value1: '456'}
-          ],
-          status: [{id: 1, value: true}, {id: 2, value: false}]
-        }],
+        storeData:[
+        //   {
+        //   storeCode: '83789',
+        //   storeName: '炳胜（马场店）',
+        //   thirdPartyCoding: [
+        //     {value: '美团', value1: '123'},
+        //     {value: '饿了么', value1: '456'}
+        //   ],
+        //   status: [{id: 1, value: true}, {id: 2, value: false}]
+        // }, {
+        //   storeCode: '837892',
+        //   storeName: '炳胜（马场店）',
+        //   thirdPartyCoding: [
+        //     {value: '美团', value1: '123'},
+        //     {value: '饿了么', value1: '456'}
+        //   ],
+        //   status: [{id: 1, value: true}, {id: 2, value: false}]
+        // }
+        ],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection:[]
+        multipleSelection:[],
+        baseStore: {},//点击新增时的门店
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setX2StoreLevelId']),
       ...mapGetters(['getX2StoreLevelId']),
+      add(){
+        let list = [];
+        for(let map in this.baseStore){
+          this.baseStore[map].forEach((item)=>{
+            if(item.OK){
+              list.push(item.id)
+            }
+          })
+        }
+        if(list.length === 0){
+          this.$message('请选择门店');
+        }else {
+
+
+          let params = {
+            redirect: "x2.store.addStore",
+            storeIds: list.join(','),
+
+          };
+          oneTwoApi(params).then((res) => {
+            if(res.errcode === 0){
+              this.dialogVisible2 = false;
+              this.$message(res.errmsg);
+              this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getX2StoreLevelId(),this.storeName = '');
+            }
+          });
+
+        }
+
+      },
+      close2(){
+        for(let map in this.baseStore){
+          this.baseStore[map].forEach((item)=>{
+            item.OK = false
+          })
+        }
+      },
+      addStore() {
+        if(this.getX2StoreLevelId() === ""){
+          this.$message('请选择门店所属部门');
+        }else {
+          this.dialogVisible2 = true;
+
+
+          //添加门店时候，读取基础库
+          let params = {
+            redirect: "x2.store.getBaseStore",
+            levelId: this.getX2StoreLevelId(),
+
+          };
+          oneTwoApi(params).then((res) => {
+            if(res.errcode === 0){
+              for(let map in res.data){
+                res.data[map].forEach((item)=>{
+                  item.OK = false
+                })
+              }
+              this.baseStore = res.data
+            }
+          });
+
+        }
+      },
       handleClick(tab, event) {
         console.log(tab, event);
       },
@@ -376,11 +464,11 @@
       },
       getPage(page) {
         this.p.page = page;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.levelId,this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.levelId,this.searchName);
       },
       printEdit(){
 
@@ -393,18 +481,21 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // getApi.del(id).then((res) => {
-          //
-          //   if (res) {
-          //
-          //   }
-          //   this.$message({
-          //     type: 'info',
-          //     message: '删除成功'
-          //   });
-          //   this.showResouce(this.p, this.levelId)
-          //
-          // })
+          //删除门店接口
+          let params = {
+            redirect: "x2.store.delStore",
+            storeId: id,
+
+          };
+          oneTwoApi(params).then((res) => {
+            if(res.errcode === 0){
+                this.$message({
+                  type: 'info',
+                  message: '删除成功'
+                });
+                this.showResouce(this.p, this.getX2StoreLevelId())
+            }
+          })
 
         }).catch(() => {
           //
@@ -414,9 +505,7 @@
       search() {
 
       },
-      add() {
 
-      },
       //批量状态设置
       changeStoresStatus() {
         let storeStatusValue;
@@ -524,8 +613,8 @@
             if(this.getX2StoreLevelId() === ''){
               this.setX2StoreLevelId({levelId:res.data.data[0].id});
             }
-            // this.getGroupList(this.p,this.getX2StoreLevelId());
 
+            this.showResouce(this.p, this.getX2StoreLevelId());
             this.recur(this.data5);
             this.recurSelected(this.data5, this.getX2StoreLevelId())
           } else {
@@ -533,6 +622,45 @@
           }
         })
 
+      },
+      showResouce(p,levelId,storeName = "") {
+        //获取门店列表
+        let params = {
+          redirect: "x2.store.index",
+          levelId: levelId,
+          storeName: storeName,
+          page: p.page,
+          pagesize: p.size,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+             this.storeData = res.data.list;
+             // this.p.total = res.data.count;
+             // this.multipleSelection = []
+          }
+        })
+
+
+        // getApi.getList(p,levelId, storeName).then((res) => {
+        //   if (res.data.errcode === 0) {
+        //     res.data.data.list.forEach((data) => {
+        //       data.inputChecked = true
+        //       data.select = false
+        //
+        //       if(data.status === 1){
+        //         data.status = true
+        //       }else {
+        //         data.status = false
+        //
+        //       }
+        //     });
+        //     this.storeData = res.data.data.list;
+        //     this.p.total = res.data.data.count;
+        //     this.multipleSelection = []
+        //   } else {
+        //
+        //   }
+        // })
       },
     },
     created() {
