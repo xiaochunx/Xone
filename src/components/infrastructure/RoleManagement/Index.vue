@@ -158,6 +158,7 @@
   import getApi from './roleManagement.service'
   import ElButton from "element-ui/packages/button/src/button";
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -534,7 +535,7 @@
       })
     },
     mounted() {
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       getScrollHeight().then((h) => {

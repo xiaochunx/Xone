@@ -127,6 +127,7 @@
   import {getStoreListAll} from '../../utility/communApi'
   import getApi from './invoice.service';
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../utility/commun'
   export default {
     components: {
 
@@ -226,6 +227,7 @@
         this.storeData = res.data.data
       });
       this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],'');
+      Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       getScrollHeight().then((h) => {

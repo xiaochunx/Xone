@@ -450,6 +450,7 @@
         this.setRunningStateLevelId({levelId:e.levelid});
         this.recurSelected(this.data5, e.levelid)
       });
+      Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       getScrollHeight().then((h) => {

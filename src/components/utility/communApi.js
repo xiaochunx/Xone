@@ -1,5 +1,4 @@
 import axios from 'axios'
-import store from '../../store'
 
 let get= function(key) {
   return window.JSON.parse(window.localStorage.getItem(key));
@@ -97,22 +96,9 @@ let getArr = (arr) => {
         listMap[key] = name;
       }
     }
-
     return listMap;
   }
 };
 
-//后退时刷新页面权限
-let recurLeft = (data,path) =>{
-  data.forEach((map) => {
-    if (map.children) {
-      if(map.router === path){
-        store.commit('TREEARR', {obj: getArr(map.arr)})
-      }
 
-      this.j(map.children,path)
-    }
-  })
-};
-
-export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios,recurLeft}
+export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios}

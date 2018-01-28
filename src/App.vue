@@ -24,7 +24,7 @@ export default {
 
     var loadinginstace;
     Axios.interceptors.request.use(config => {
-      console.log('拦截开始');
+      //console.log('拦截开始');
       loadinginstace = Loading.service({ fullscreen: true })
       return config
     }, error => {

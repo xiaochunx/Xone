@@ -208,7 +208,7 @@
   import getApi1 from '../PermissionManagement/permissionManagement.service'
   import getApi2 from '../PermissionManagement/user/user.service'
   import {mapActions, mapGetters} from 'vuex';
-
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -443,7 +443,7 @@
 
     },
     mounted() {
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       getScrollHeight().then((h) => {

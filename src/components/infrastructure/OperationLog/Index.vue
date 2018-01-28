@@ -60,6 +60,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './operationLog.service';
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -153,6 +154,7 @@
     },
     mounted() {
       this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p);
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed(){
 

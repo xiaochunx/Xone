@@ -225,7 +225,7 @@
 
   import {getScrollHeight} from '../../../utility/getScrollHeight'
   import getApi from './storeList.service';
-  import {getLeft,recurLeft} from '../../../utility/communApi'
+  import {getLeft} from '../../../utility/communApi'
   import { mapActions,mapGetters } from 'vuex';
   import Hub from '../../../utility/commun'
 
@@ -586,13 +586,14 @@
 
     },
     mounted() {
-      recurLeft(this.$localStorage.get('leftData'),this.$route.path);
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '');
 
         this.setX1StoreLevelId({levelId:e.levelid});
         this.recurSelected(this.data5, e.levelid)
       });
+
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed(){
       Hub.$off("showAdd");

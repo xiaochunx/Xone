@@ -340,7 +340,7 @@
   import {getArea} from '../../utility/communApi'
   import {mapActions, mapGetters} from 'vuex';
   import xoForm from './Form'
-
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -1199,7 +1199,7 @@
 
     },
     mounted() {
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed() {
 

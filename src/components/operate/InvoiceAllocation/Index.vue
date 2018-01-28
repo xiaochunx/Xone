@@ -70,7 +70,7 @@
     data() {
       return {
         tableHeight:0,
-        navList:[{name:"发票配置",url:''}],
+        navList:[{idname:"发票配置",url:''}],
         input:'',
 
         value:'',

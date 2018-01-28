@@ -184,19 +184,6 @@
         })
       },
 
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.children) {
-            this.recurSelected(map.children, levelId)
-          }
-        })
-      },
-
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -214,7 +201,6 @@
       this.$http.get(`index.php?controller=user&action=getMenu&token=${token}`).then((res) => {
         if (res.data.errcode === 0) {
           this.leftData = res.data.data;
-          this.$localStorage.set('leftData',res.data.data);
           this.recur(this.leftData,this.$route.path)
         }
       });
@@ -222,9 +208,9 @@
     },
     mounted(){
       this.ListHeight = window.innerHeight - this.getTopHeight;
-      Hub.$on('showLeftTree', (e) => {
-        this.recurSelected(this.leftData, e.levelid)
-
+      Hub.$on('mountedOk', (e) => {
+        console.log(e)
+        this.recur(this.leftData,this.$route.path)
       });
 
     },
@@ -233,7 +219,7 @@
     },
 
     destroyed(){
-
+      Hub.$off("mountedOk");
     },
     computed: {
       ...mapGetters([

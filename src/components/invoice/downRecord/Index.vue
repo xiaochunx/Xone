@@ -102,7 +102,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {oneTwoApi} from '@/api/api.js'
   import {mapActions, mapGetters} from 'vuex';
-
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -191,7 +191,7 @@
 
     },
     mounted() {
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed(){
 

@@ -154,6 +154,7 @@
   import getApi from './transactionList.service';
   import {getStoreListAll} from '../../utility/communApi'
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -306,7 +307,7 @@
 
         this.storeData = res.data.data
       });
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed(){
 

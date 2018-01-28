@@ -80,7 +80,7 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './paymentWay.service'
   import ElButton from "element-ui/packages/button/src/button";
-
+  import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
 
   export default {
@@ -244,7 +244,7 @@
 
     },
     mounted() {
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed(){
 

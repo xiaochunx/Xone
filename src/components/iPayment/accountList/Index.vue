@@ -145,6 +145,7 @@
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
   import {oneTwoApi, payMethods, payMent} from '@/api/api.js'
+  import Hub from '../../utility/commun'
   export default{
     data(){
       return {
@@ -325,7 +326,7 @@
       });
 
       this.api();
-
+      Hub.$emit('mountedOk','mountedOk');
 
     },
     destroyed(){

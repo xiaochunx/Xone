@@ -60,7 +60,6 @@
           if(res.data.errcode === 0){
             this.$localStorage.remove("token");
             this.$localStorage.remove("user");
-            this.$localStorage.remove("leftData");
             this.setStoreTreeList({list:[]});
             this.setShowStoreTree({obj:{levelid:'', type: '', showAdd: false}});
             this.setPermissionLevelId({levelId:''});

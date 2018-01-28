@@ -72,6 +72,7 @@
   import {oneTwoApi} from '@/api/api.js';
   import {getStoreListAll} from '../../utility/communApi'
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -234,6 +235,7 @@
 
         this.storeData = res.data.data
       });
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed(){
 

@@ -203,7 +203,7 @@
         this.showResouce(e.levelid);
         this.recurSelected(this.dataLeft, e.levelid)
       });
-
+      Hub.$emit('mountedOk','mountedOk');
 
     },
     destroyed(){
