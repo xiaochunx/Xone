@@ -106,6 +106,8 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column header-align="center" align="center" prop="additional_data" label="桌号"
+                         width="100"></el-table-column>
         <el-table-column header-align="center" align="center" prop="order_no" label="支付单号（款易）"
                          width="150"></el-table-column>
         <el-table-column header-align="center" align="center" prop="out_order_no" label="商家单号（pos）"
@@ -114,6 +116,7 @@
                          width="270"></el-table-column>
         <el-table-column header-align="center" align="center" prop="iway" label="支付方式"
                          width="100"></el-table-column>
+
         <el-table-column header-align="center" align="center" prop="ichannel" label="支付通道"
                          width="100"></el-table-column>
         <!--<el-table-column header-align="center" align="center" prop="account" label="帐户" width="70"></el-table-column>-->
@@ -132,19 +135,43 @@
         <el-table-column header-align="center" align="center" prop="refund_time" label="退款时间"
                          width="200"></el-table-column>
         <el-table-column header-align="center" align="center" prop="refund_user" label="退款人" width="100"></el-table-column>
-        <!--<el-table-column header-align="center" align="center" label="操作" fixed="right" width="70">-->
-          <!--<template slot-scope="scope">-->
-            <!--<div class="flex">-->
-              <!--<el-button size="small">退款</el-button>-->
-            <!--</div>-->
-          <!--</template>-->
-        <!--</el-table-column>-->
+        <el-table-column header-align="center" align="center" label="操作" fixed="right" width="70">
+          <template slot-scope="scope">
+            <div class="flex" v-if="scope.row.is_refund != 1">
+              <el-button size="small" @click="refund(scope.row)">退款</el-button>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
 
 
     <footer>
       <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
+
+
+
+    <el-dialog
+      title="确认退款?"
+      :visible.sync="dialogVisible"
+      width="30%">
+
+      <el-input
+        v-model="refund_money"
+        style="margin-bottom: 20px;"
+        placeholder="请输入退款金额"></el-input>
+      <el-input
+        type="textarea"
+        :rows="2"
+        placeholder="请输入备注内容"
+        v-model="remark">
+      </el-input>
+
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="makeSureRefund">确 定</el-button>
+  </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -155,6 +182,8 @@
   import {getStoreListAll} from '../../utility/communApi'
   import { mapActions,mapGetters } from 'vuex';
   import Hub from '../../utility/commun'
+
+  import { oneTwoApi } from '../../../api/api'
   export default {
     computed: {
       ...mapGetters([
@@ -186,7 +215,13 @@
         accountList:[],
         account:'',
         p: {page: 1, size: 20, total: 0},
-        store_id_list:[]
+        store_id_list:[],
+
+        dialogVisible: false,
+        refund_money: '',
+        remark: '',
+        refundOrderNo: '',
+        actualRefundMoney: ''
       }
     },
 
@@ -269,7 +304,46 @@
             this.p.total = res.data.data.count
           }
         })
-      }
+      },
+
+      // 退款
+      refund(value){
+        console.log(value);
+        this.dialogVisible = true;
+        this.refundOrderNo = value.order_no;
+        this.actualRefundMoney = value.pay_money;
+      },
+      makeSureRefund(){
+        if (this.refund_money > this.actualRefundMoney){
+          this.$message({
+            message: '退款金额不能大于实际金额',
+            type: 'warning'
+          });
+        }else {
+          var params = {
+            redirect: 'x1.order.refund',
+            order_no: this.refundOrderNo,
+            money: this.refund_money,
+            memo: this.remark,
+            operate: localStorage.getItem('user')
+          };
+
+          oneTwoApi(params).then((res) => {
+
+            // 清除金额,关闭弹窗
+            this.dialogVisible = false;
+            this.refund_money = '';
+            this.remark = '';
+
+            if (res.errcode == 0){
+              this.$message({
+                message: res.errmsg,
+                type: 'success'
+              });
+            }
+          })
+        }
+      },
 
     },
     created() {
