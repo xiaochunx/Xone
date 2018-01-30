@@ -320,12 +320,13 @@
             type: 'warning'
           });
         }else {
+
           var params = {
             redirect: 'x1.order.refund',
             order_no: this.refundOrderNo,
             money: this.refund_money,
             memo: this.remark,
-            operate: localStorage.getItem('user')
+            operate: JSON.parse(localStorage.getItem('user'))
           };
 
           oneTwoApi(params).then((res) => {
