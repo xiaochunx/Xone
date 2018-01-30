@@ -85,6 +85,7 @@ import pageDesign from '@/components/invoice/pageDesign/Index.vue'
 
 /************************** x2运营方案 ***************************/
 import storeManagement from '@/components/x2OperationScheme/storeManagement/Index.vue'
+import storeManagementTakeOut from '@/components/x2OperationScheme/storeManagement/takeOut/Index.vue'
 import printerConfig from '@/components/x2OperationScheme/printerConfig/Index.vue'
 
 
@@ -497,6 +498,14 @@ export default new Router({
           name: 'x2门店管理',
           component: storeManagement
         },
+        //外卖平台映射
+        {
+          path: '/x2OperationScheme/storeManagement/takeOut/:id',
+          meta: { auth: false },
+          name: 'x2门店管理/外卖平台映射',
+          component: storeManagementTakeOut
+        },
+
         //打印机配置
         {
           path: '/x2OperationScheme/printerConfig',

@@ -52,19 +52,11 @@
       }
     },
     methods: {
-
       test(item) {
-        //console.log(item)
         this.levelname = item.levelname;
-
-        // Hub.$emit('getBsList',{levelid:item.id,storename:item.levelname});
-
         Hub.$emit('showAdd',{levelid:item.id,type:item.type,levelName:item.levelname});
-
 //        item.show = !item.show
       },
-
-
 
       beforeEnter: function (el) {
         el.style.height = '0';

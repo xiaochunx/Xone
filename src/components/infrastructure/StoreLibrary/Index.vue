@@ -362,7 +362,7 @@
   import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
 
   import Hub from '../../utility/commun'
-  import {getLeft,getLevel,getArea} from '../../utility/communApi'
+  import {getLevel,getArea} from '../../utility/communApi'
   import tree from './tree.vue'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './storeLibrary.service'
@@ -500,13 +500,12 @@
 
       },
       importXls(){
-        getLeft('x1').then((res) => {
+        getLevel().then((res)=>{
           if(res.data.errcode === 0){
             this.dataLeft = res.data.data;
             this.dialogVisible4 = true
           }
-
-        });
+        })
       },
       search(){
         if(this.searchName === ''){

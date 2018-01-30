@@ -39,9 +39,8 @@
                            width="100"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
                            label="门店"></el-table-column>
-
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service"
-                           label="款易服务"></el-table-column>
+                           width="120" label="款易服务"></el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="打印机状态" width="120">
             <template slot-scope="scope">
               <el-button type="text" @click="printStatus(scope.row)">查看</el-button>
@@ -243,7 +242,7 @@
         dialogVisible4: false,
         tableHeight: 0,
         tableWidth: 0,
-        navList: [{name: "运营状态", url: ''}],
+        navList: [{name: "终端状态", url: ''}],
 
         searchName: '',
         storeData: [],

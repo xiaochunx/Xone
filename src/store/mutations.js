@@ -15,6 +15,7 @@ const state = {
   permissionLevelId:'',//权限levelid
   x1storeLevelId:'',//x1门店列表levelid
   x2storeLevelId:'',//x2门店管理levelid
+  printConfLevelId:'',//打印机配置levelid
   runningStateLevelId:''//终端状态levelid
 };
 
@@ -39,6 +40,9 @@ const mutations = {
   },
   [types.X2STORELEVELID](state, obj){
     state.x2storeLevelId = obj.levelId
+  },
+  [types.PRINTCONFLEVELID](state, obj){
+    state.printConfLevelId = obj.levelId
   },
   [types.RUNNINGSTATELEVELID](state, obj){
     state.runningStateLevelId = obj.levelId

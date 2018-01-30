@@ -7,84 +7,89 @@
       </div>
     </div>
 
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="待激活" name="first">
 
-        <el-table :data="storeData" border class="flex_1">
+    <div >
+      <el-tabs v-model="activeName" @tab-click="handleClick" >
+        <el-tab-pane label="待激活" name="first">
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
-                           label="序号"
-                           width="80">
-            <template slot-scope="scope">
-              <div>{{scope.$index + 1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
-                           label="商户名称"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="注册账号"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code" width="100"
-                           label="证件资料">
-            <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="show()">查看</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="提交时间"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="状态"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="操作" width="160">
-            <template slot-scope="scope">
-              <div>
-                <el-button size="small" type="primary" @click="activate()">激活</el-button>
-                <el-button size="small" @click="reject()">驳回</el-button>
-              </div>
+          <el-table :data="storeData" border >
 
-              <div>
-                <el-button size="small" type="primary" @click="activate()">重新激活</el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
+                             label="序号"
+                             width="80">
+              <template slot-scope="scope">
+                <div>{{scope.$index + 1}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
+                             label="商户名称"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="注册账号"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code" width="100"
+                             label="证件资料">
+              <template slot-scope="scope">
+                <el-button size="small" type="primary" @click="show()">查看</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="提交时间"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="状态"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="操作" width="160">
+              <template slot-scope="scope">
+                <div>
+                  <el-button size="small" type="primary" @click="activate()">激活</el-button>
+                  <el-button size="small" @click="reject()">驳回</el-button>
+                </div>
+
+                <div>
+                  <el-button size="small" type="primary" @click="activate()">重新激活</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
 
 
-      </el-tab-pane>
+        </el-tab-pane>
 
-      <el-tab-pane label="已激活" name="second">
+        <el-tab-pane label="已激活" name="second">
 
-        <el-table :data="storeData" border class="flex_1">
+          <el-table :data="storeData" border class="flex_1">
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
-                           label="序号"
-                           width="80">
-            <template slot-scope="scope">
-              <div>{{scope.$index + 1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
-                           label="商户名称"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="注册账号"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code" width="100"
-                           label="证件资料">
-            <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="">查看</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="提交时间"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="状态"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                           label="操作" width="160">
-            <template slot-scope="scope">
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
+                             label="序号"
+                             width="80">
+              <template slot-scope="scope">
+                <div>{{scope.$index + 1}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
+                             label="商户名称"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="注册账号"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code" width="100"
+                             label="证件资料">
+              <template slot-scope="scope">
+                <el-button size="small" type="primary" @click="">查看</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="提交时间"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="状态"></el-table-column>
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                             label="操作" width="160">
+              <template slot-scope="scope">
 
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
-    </el-tabs>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+
+
 
     <footer>
       <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
@@ -228,10 +233,16 @@
     created() {
 
     },
-    updated() {
+    mounted(){
 
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
+    },
+    updated() {
+      this.$nextTick(() => {
+        console.log(55)
+        getScrollHeight().then((h) => {
+          console.log(h)
+          this.tableHeight = h;
+        })
       })
     },
   }
