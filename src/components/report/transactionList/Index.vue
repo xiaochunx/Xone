@@ -137,7 +137,7 @@
         <el-table-column header-align="center" align="center" prop="refund_user" label="退款人" width="100"></el-table-column>
         <el-table-column header-align="center" align="center" label="操作" fixed="right" width="70">
           <template slot-scope="scope">
-            <div class="flex" v-if="scope.row.is_refund != 1">
+            <div class="flex" v-if="scope.row.is_refund == 0 && scope.row.pay_status == '支付完成'">
               <el-button size="small" @click="refund(scope.row)">退款</el-button>
             </div>
           </template>
@@ -148,7 +148,6 @@
     <footer>
       <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
-
 
 
     <el-dialog
