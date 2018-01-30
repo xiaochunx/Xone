@@ -1,9 +1,3 @@
-<style scoped>
-
-  .bodyTop {
-    padding-bottom: 10px;
-  }
-</style>
 
 <template>
   <div class="scroll_of">
@@ -39,9 +33,9 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>订单状态</span>
-            <el-select v-model="account" clearable placeholder="请选择订单状态" size="small">
+            <el-select v-model="status" clearable placeholder="请选择订单状态" size="small" @change="handleStatus">
               <el-option
-                v-for="item in accountList"
+                v-for="item in statusList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
@@ -51,7 +45,7 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>选择门店</span>
-            <el-select v-model="store_id" clearable placeholder="请选择" size="small">
+            <el-select v-model="storeId" clearable placeholder="请选择" size="small" @change="handleStoreId">
               <el-option
                 v-for="item in storeData"
                 :key="item.id"
@@ -63,9 +57,9 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>选择来源</span>
-            <el-select v-model="souces_id" clearable placeholder="请选择订单状态" size="small">
+            <el-select v-model="source" clearable placeholder="请选择订单状态" size="small" @change="handleSource">
               <el-option
-                v-for="item in souces"
+                v-for="item in soucesList"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
@@ -77,11 +71,11 @@
 
       </div>
 
-      <div class="margin_t_10">
-        <el-button @click="search()">查询</el-button>
+      <!--<div class="margin_t_10">-->
+        <!--<el-button @click="search()">查询</el-button>-->
         <!--<el-button type="primary" @click="out()">导出</el-button>-->
         <!--<el-button type="primary" @click="">切换到原始数据</el-button>-->
-      </div>
+      <!--</div>-->
     </div>
 
     <el-table :data="tableData" border :height="tableHeight">
@@ -92,27 +86,27 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="center" prop="order_no" label="来源"
+      <el-table-column header-align="center" align="center" prop="order_source" label="来源"
                        width="100"></el-table-column>
-      <el-table-column header-align="center" align="center" prop="out_order_no" label="平台单号"
+      <el-table-column header-align="center" align="center" prop="order_no" label="平台单号"
                        width="150"></el-table-column>
       <el-table-column header-align="center" align="center" prop="store_name" label="门店"
                        width="150"></el-table-column>
-      <el-table-column header-align="center" align="center" prop="ichannel" label="订单状态"
+      <el-table-column header-align="center" align="center" prop="order_status" label="订单状态"
                        width="100"></el-table-column>
-      <el-table-column header-align="center" align="center" prop="receive_money" label="实收金额"
+      <el-table-column header-align="center" align="center" prop="shop_money" label="实收金额"
                        width="100"></el-table-column>
-      <el-table-column header-align="center" align="center" prop="down_time" label="下单时间"
+      <el-table-column header-align="center" align="center" prop="add_time" label="下单时间"
                        ></el-table-column>
-      <el-table-column header-align="center" align="center" prop="finish_time" label="完成时间"
+      <el-table-column header-align="center" align="center" prop="op_time" label="完成时间"
                        ></el-table-column>
 
-      <el-table-column header-align="center" align="center" prop="pay_status" label="用户"
+      <el-table-column header-align="center" align="center" prop="wm_name" label="用户"
                        ></el-table-column>
       <el-table-column header-align="center" align="center" prop="pay_status" label="操作"
                        width="80">
         <template slot-scope="scope">
-          <el-button size="small" @click="info()">详情</el-button>
+          <el-button size="small" @click="info(scope.row.id)">详情</el-button>
         </template>
       </el-table-column>
 
@@ -125,7 +119,159 @@
     <el-dialog
       title=""
       :visible.sync="dialogVisible"
-      width="50%" size="tiny">
+      width="50%">
+
+      <h3 class="border_b">菜品信息</h3>
+      <div class="flex_f flex" v-for="(item,index) in detail.productList">
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            菜品名称：{{item.name}}
+          </div>
+          <div class="flex_1">
+          </div>
+        </div>
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            菜品单价：{{item.price}}
+          </div>
+          <div class="flex_1">
+            菜品份数：{{item.count}}
+          </div>
+        </div>
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            规格属性：{{item.attr}}
+          </div>
+          <div class="flex_1">
+
+          </div>
+        </div>
+      </div>
+
+      <h3 class="border_b margin_t_10">顾客信息</h3>
+      <div class="flex_f flex">
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            客户：{{detail.userInfo?detail.userInfo.wm_name:""}}
+          </div>
+          <div class="flex_1">
+            操作人：{{detail.userInfo?detail.userInfo.deliver_name:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            用餐时间：{{detail.userInfo?detail.userInfo.deliver_time:""}}
+          </div>
+          <div class="flex_1">
+            门店：{{detail.userInfo?detail.userInfo.store:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+
+          </div>
+          <div class="flex_1">
+            总份数：{{detail.userInfo?detail.userInfo.product_num:""}}
+          </div>
+        </div>
+
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            配送费：{{detail.userInfo?detail.userInfo.deliver_Fee:""}}
+          </div>
+          <div class="flex_1">
+            客户备注：{{detail.userInfo?detail.userInfo.order_tip:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            商家备注：{{detail.userInfo?detail.userInfo.store_tip:""}}
+          </div>
+          <div class="flex_1">
+            收货地址：{{detail.userInfo?detail.userInfo.wm_addr:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            收货电话：{{detail.userInfo?detail.userInfo.wm_tel:""}}
+          </div>
+          <div class="flex_1">
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="border_b margin_t_10">订单信息</h3>
+      <div class="flex_f flex">
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            订单来源：{{detail.orderInfo?detail.orderInfo.order_source:""}}
+          </div>
+          <div class="flex_1">
+            订单编号：{{detail.orderInfo?detail.orderInfo.order_no:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            订单状态：{{detail.orderInfo?detail.orderInfo.order_status:""}}
+          </div>
+          <div class="flex_1">
+            下单时间：{{detail.orderInfo?detail.orderInfo.order_time:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            订单金额：{{detail.orderInfo?detail.orderInfo.order_price:""}}
+          </div>
+          <div class="flex_1">
+            支付类型：{{detail.orderInfo?detail.orderInfo.pay_type:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            支付时间：{{detail.orderInfo?detail.orderInfo.pay_time:""}}
+          </div>
+          <div class="flex_1">
+            支付金额：{{detail.orderInfo?detail.orderInfo.pay_money:""}}
+          </div>
+        </div>
+
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            实收金额：{{detail.orderInfo?detail.orderInfo.shop_money:""}}
+          </div>
+          <div class="flex_1">
+          </div>
+        </div>
+
+      </div>
+      <h3 class="border_b margin_t_10">订单信息</h3>
+      <div class="flex_f flex">
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            平台补贴：{{detail.tackoutInfo?detail.tackoutInfo.plat_fee:""}}
+          </div>
+          <div class="flex_1">
+            商家补贴：{{detail.tackoutInfo?detail.tackoutInfo.store_fee:""}}
+          </div>
+        </div>
+        <div class="flex_sc info_width" >
+          <div class="flex_1">
+            餐盒费：{{detail.tackoutInfo?detail.tackoutInfo.package_fee:""}}
+          </div>
+          <div class="flex_1">
+          </div>
+        </div>
+      </div>
+
 
     </el-dialog>
 
@@ -138,7 +284,7 @@
   import {getStoreListAll, getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {mapActions, mapGetters} from 'vuex';
-
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     computed: {
       ...mapGetters([
@@ -157,16 +303,18 @@
         start_stamp: '',
         end_stamp: '',
         pay_status: '',
-        tableData: [{}],
+        tableData: [],
         dateSelected: [],
         storeData: [],
-        store_id: '',
-        accountList: [{id:1,name:'全部'},{id:2,name:'待接单'},{id:3,name:'已接单'},{id:4,name:'取消/退款'},{id:5,name:'已完成'}],
-        souces:[{id:1,name:'全部'},{id:2,name:'饿了么'},{id:3,name:'美团外卖'},{id:4,name:'百度外卖'}],
-        souces_id:'',
-        account: '',
+        storeId:'',
+        statusList: [{id:1,name:'待受理'},{id:2,name:'已受理-烹饪中'},{id:3,name:'已受理-正在配送'},{id:4,name:'已拒单'},{id:5,name:'已经完成'},{id:6,name:'已退单'},{id:7,name:'删除'}],
+        status: '',
+        soucesList:[{id:'el',name:'饿了么'},{id:'mt',name:'美团外卖'},{id:'bd',name:'百度外卖'}],
+        source:'',
+
         p: {page: 1, size: 20, total: 0},
-        store_id_list: []
+
+        detail:{}
       }
     },
 
@@ -176,65 +324,87 @@
         if (d === undefined) {
           this.start_stamp = ""
         } else {
-          this.start_stamp = new Date(this.time_start) * 1;
+          this.start_stamp = (new Date(this.time_start) * 1 +'').substr(0,10);
         }
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
       },
       timeEnd(d) {
         if (d === undefined) {
           this.end_stamp = ""
         } else {
-          this.end_stamp = new Date(this.time_end) * 1;
+          this.end_stamp = (new Date(this.time_end) * 1 + '').substr(0,10);
         }
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
+      },
+      info(id) {
+        this.dialogVisible =true;
+        let params = {
+          redirect: "x2.order.detail",
+          id: id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.detail = res.data
+          }
+        })
 
       },
-      info() {
-        this.dialogVisible =true
+      handleStatus(){
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
+      },
+      handleStoreId(){
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
+      },
+      handleSource(){
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
       },
       search() {
-
-        if (this.start_stamp > this.end_stamp) {
-          this.$message({
-            message: '开始时间不能大于结束时间',
-            type: 'warning'
-          });
-        } else {
-          //ok
-          console.log(this.start_stamp, this.end_stamp)
-
-        }
-
-
+        // if (this.start_stamp * 1> this.end_stamp * 1) {
+        //   this.$message({
+        //     message: '开始时间不能大于结束时间',
+        //     type: 'warning'
+        //   });
+        // } else {
+        //   //ok
+        //
+        // }
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
       },
       getPage(page) {
         this.p.page = page;
-
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
 
       },
       getPageSize(size) {
         this.p.size = size;
-
-
+        this.orderList(this.start_stamp,this.end_stamp,this.p)
       },
 
-      getRadioDate(d) {
-        this.dateSelected = d
-      },
-
+      orderList(begDate,endDate,p){
+        let params = {
+          redirect: "x2.order.index",
+          begTime: begDate,
+          endTime:endDate,
+          status:this.status,
+          storeId:this.storeId,
+          source:this.source,
+          page:p.page,
+          pagesize:p.size,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.tableData = res.data.list;
+            this.p.total = res.data.count;
+          }
+        })
+      }
 
     },
     created() {
-
+      this.orderList('','',this.p);
     },
     mounted() {
       getStoreListAll().then((res)=>{
-        // let list = [];
-        // res.data.data.forEach((item)=>{
-        //   list.push(item.id)
-        // });
-        // this.store_id_list = list;
-
-        // this.orderCount(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.store_name,this.p);
-
         this.storeData = res.data.data
       });
     },
@@ -249,3 +419,17 @@
 
   }
 </script>
+<style scoped>
+
+  .bodyTop {
+    padding-bottom: 10px;
+  }
+  .border_b {
+    border-bottom: 1px solid #8c939d;
+
+  }
+  .info_width {
+    width: 500px;
+    margin-top: 6px;
+  }
+</style>

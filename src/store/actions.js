@@ -22,6 +22,9 @@ export default {
   setX2StoreLevelId({commit},obj){
     commit(types.X2STORELEVELID,obj);
   },
+  setPrintConfLevelId({commit},obj){
+    commit(types.PRINTCONFLEVELID,obj);
+  },
   setRunningStateLevelId({commit},obj){
     commit(types.RUNNINGSTATELEVELID,obj);
   },

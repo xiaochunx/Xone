@@ -28,7 +28,8 @@
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
-        <el-table :data="storeData" border :height="tableHeight" @select-all="handleSelectionChange" ref="multipleTable">
+        <el-table :data="storeData" border :height="tableHeight" @select-all="handleSelectionChange"
+                  ref="multipleTable">
           <el-table-column header-align="center" align="center"
                            type="selection"
                            label-class-name="mySelect"
@@ -38,16 +39,16 @@
             </template>
           </el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="base_store_id"
                            label="门店编码"
                            width="100"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeName"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
                            width="160" label="门店名称"></el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" width="160" label="第三方编码">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码">
             <template slot-scope="scope">
-              <div v-for="(item,index) in scope.row.thirdPartyCoding">
-                {{item.value}} {{item.value1}}
+              <div v-for="(item,index) in scope.row.wmData">
+                {{index}} -- {{item.wm_store_id}}
               </div>
             </template>
 
@@ -55,32 +56,32 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="营业状态"
                            width="120">
             <template slot-scope="scope">
-              <div v-for="(item,index) in scope.row.status">
+
+              <div v-for="(item,index) in scope.row.wmData">
                 <el-switch
-                  v-model="item.value"
+                  @change="(e)=>{
+                    return handleStatus(e,item.base_store_id,item.wm_store_source)
+                  }"
+                  v-model="item.poi_status"
                   on-color="#13ce66"
                   off-color="#ff4949">
                 </el-switch>
               </div>
+
             </template>
           </el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="在售菜品"
-                           width="120">
+          <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="在售菜品"-->
+          <!--width="120">-->
+          <!--<template slot-scope="scope">-->
+          <!--<el-button size="small" type="text" @click="showDishes()">点击查看</el-button>-->
+          <!--</template>-->
+          <!--</el-table-column>-->
+
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="200">
             <template slot-scope="scope">
-              <div v-for="(item,index) in scope.row.status">
-                <el-button size="small" type="text" @click="showDishes()">点击查看</el-button>
-              </div>
-            </template>
-          </el-table-column>
-
-
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="300">
-            <template slot-scope="scope">
-              <el-button size="small" type="primary" @click="getOne()">外卖平台映射</el-button>
-              <el-button size="small" @click="printEdit()">打印机配置</el-button>
-
-              <el-button size="small" type="danger" @click.stop="del(scope.row.id)">删除</el-button>
+              <el-button size="small" type="primary" @click="getOne(scope.row.base_store_id)">外卖平台映射</el-button>
+              <el-button size="small" type="danger" @click.stop="del(scope.row.base_store_id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -97,7 +98,7 @@
       title="在买菜品"
       :visible.sync="dialogVisible3"
       width="50%" size="tiny">
-      <el-table :data="dishesList" border  style="width: 100%;">
+      <el-table :data="dishesList" border style="width: 100%;">
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                          width="100">
           <template slot-scope="scope">
@@ -131,169 +132,6 @@
       </div>
     </el-dialog>
 
-    <!--外卖平台映射-->
-    <el-dialog
-      title="外卖平台映射"
-      :visible.sync="dialogVisible4"
-      width="30%" size="tiny">
-
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="百度" name="first">
-
-          <div class="margin_b_10">绑定映射</div>
-
-          <el-form label-position="right" ref="form" :model="baiduDialog">
-            <el-form-item label-width="100px" label="百度门店ID" class="margin_b_10">
-              <el-input v-model="baiduDialog.input1"></el-input>
-            </el-form-item>
-            <el-form-item label-width="100px" label="百度门店名称" class="margin_b_10">
-              <el-input v-model="baiduDialog.input2"></el-input>
-            </el-form-item>
-            <el-form-item label-width="100px" label="合作方账号" class="margin_b_10">
-              <el-input v-model="baiduDialog.input3"></el-input>
-            </el-form-item>
-            <el-form-item label-width="100px" label="合作方密钥" class="margin_b_10">
-              <el-input v-model="baiduDialog.input4"></el-input>
-            </el-form-item>
-            <el-button type="primary" size="small">点击绑定百度外卖</el-button>
-
-            <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
-              <el-switch v-model="baiduDialog.switch1"></el-switch>
-            </el-form-item>
-            <el-form-item label-width="200px" label="自动接单" class="margin_b_10">
-              <el-switch v-model="baiduDialog.switch2"></el-switch>
-            </el-form-item>
-
-            <div class="flex">
-              <el-button type="primary">保存</el-button>
-            </div>
-
-          </el-form>
-
-          <el-form label-position="right" ref="form" :model="baiduDialog">
-            <el-form-item label-width="100px" label="百度门店ID" class="margin_b_10">
-              <div>123</div>
-            </el-form-item>
-            <el-form-item label-width="100px" label="百度门店名称" class="margin_b_10">
-              <div>123</div>
-            </el-form-item>
-
-            <el-button type="primary" size="small">解除绑定</el-button>
-
-            <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
-              <el-switch v-model="baiduDialog.switch1"></el-switch>
-            </el-form-item>
-            <el-form-item label-width="200px" label="自动接单" class="margin_b_10">
-              <el-switch v-model="baiduDialog.switch2"></el-switch>
-            </el-form-item>
-
-            <div class="flex">
-              <el-button type="primary">保存</el-button>
-            </div>
-
-          </el-form>
-
-
-        </el-tab-pane>
-        <el-tab-pane label="饿了么" name="second">
-
-          <el-form label-position="right" ref="form" :model="eleDialog">
-            <el-form-item label-width="100px" label="授权门店ID" class="margin_b_10">
-              <el-input v-model="eleDialog.input1"></el-input>
-            </el-form-item>
-
-            <el-button type="primary" size="small">点击授权饿了么外卖</el-button>
-
-            <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch1"></el-switch>
-            </el-form-item>
-            <el-form-item label-width="200px" label="自动接单" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch2"></el-switch>
-            </el-form-item>
-
-            <div class="flex">
-              <el-button type="primary">保存</el-button>
-            </div>
-
-          </el-form>
-
-          <el-form label-position="right" ref="form" :model="eleDialog">
-            <el-form-item label-width="100px" label="授权门店ID" class="margin_b_10">
-              <div>asd</div>
-            </el-form-item>
-
-            <el-button type="primary" size="small">解除绑定</el-button>
-
-            <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch1"></el-switch>
-            </el-form-item>
-            <el-form-item label-width="200px" label="自动接单" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch2"></el-switch>
-            </el-form-item>
-
-            <div class="flex">
-              <el-button type="primary">保存</el-button>
-            </div>
-
-          </el-form>
-
-        </el-tab-pane>
-        <el-tab-pane label="美团" name="third">
-          <div class="flex_r margin_t_10">
-
-            <div>绑定映射</div>
-            <div>
-              <!--<img class="margin_l_10 margin_r_10" src="static/img/WX20171103-105446.png" alt="">-->
-            </div>
-            <div>
-              <el-button type="text">复制绑定链接</el-button>
-            </div>
-          </div>
-          <div>
-            <el-button type="primary" size="small">点击去绑定美团外卖</el-button>
-          </div>
-
-          <el-form label-position="right" ref="form" :model="meiTuanDialog">
-
-            <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch1"></el-switch>
-            </el-form-item>
-            <el-form-item label-width="200px" label="自动接单" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch2"></el-switch>
-            </el-form-item>
-
-            <div class="flex">
-              <el-button type="primary">保存</el-button>
-            </div>
-
-          </el-form>
-
-          <el-form label-position="right" ref="form" :model="meiTuanDialog">
-            <el-form-item label-width="100px" label="授权门店ID" class="margin_b_10">
-              <div>asd</div>
-            </el-form-item>
-
-            <el-button type="primary" size="small">解除绑定</el-button>
-
-            <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch1"></el-switch>
-            </el-form-item>
-            <el-form-item label-width="200px" label="自动接单" class="margin_b_10">
-              <el-switch v-model="eleDialog.switch2"></el-switch>
-            </el-form-item>
-
-            <div class="flex">
-              <el-button type="primary">保存</el-button>
-            </div>
-
-          </el-form>
-
-        </el-tab-pane>
-
-      </el-tabs>
-    </el-dialog>
-
-
     <!--新增门店-->
     <el-dialog
       title="新增门店"
@@ -321,39 +159,20 @@
   import Hub from '../../utility/commun'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {mapActions, mapGetters} from 'vuex';
-  import getApi from './storeManagement.service';
   import {oneTwoApi} from '@/api/api.js';
-  export default {
-    components: {
 
-    },
+  export default {
+    components: {},
     data() {
       return {
-        dialogVisible2:false,
+        dialogVisible2: false,
         storeStatusValue: false,
-        baiduDialog: {
-          input1: '',
-          input2: '',
-          input3: '',
-          input4: '',
-          switch1: false,
-          switch2: true
-        },
-        eleDialog: {
-          input1: '',
-          switch1: false,
-          switch2: true
-        },
-        meiTuanDialog:{
-          switch1: false,
-          switch2: true
-        },
-        activeName: 'first',
+
         tableWidth: 0,
         tableHeight: 0,
-        dialogVisible1:false,
-        dialogVisible3:false,
-        dialogVisible4:false,
+        dialogVisible1: false,
+        dialogVisible3: false,
+
         navList: [{name: "x2运营方案", url: '门店管理'}],
         data5: [],
         storeName: '',
@@ -361,27 +180,9 @@
           {code: '123', name: '炳胜（马场店）'},
           {code: '456', name: '炳胜（马场店）'}
         ],
-        storeData:[
-        //   {
-        //   storeCode: '83789',
-        //   storeName: '炳胜（马场店）',
-        //   thirdPartyCoding: [
-        //     {value: '美团', value1: '123'},
-        //     {value: '饿了么', value1: '456'}
-        //   ],
-        //   status: [{id: 1, value: true}, {id: 2, value: false}]
-        // }, {
-        //   storeCode: '837892',
-        //   storeName: '炳胜（马场店）',
-        //   thirdPartyCoding: [
-        //     {value: '美团', value1: '123'},
-        //     {value: '饿了么', value1: '456'}
-        //   ],
-        //   status: [{id: 1, value: true}, {id: 2, value: false}]
-        // }
-        ],
+        storeData: [],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection:[],
+        multipleSelection: [],
         baseStore: {},//点击新增时的门店
       }
     },
@@ -389,18 +190,38 @@
     methods: {
       ...mapActions(['setX2StoreLevelId']),
       ...mapGetters(['getX2StoreLevelId']),
-      add(){
+      handleStatus(e,storeId,type){
+        let is_open;
+        if(e === false){
+          is_open = 0
+        } else {
+          is_open = 1
+        }
+        let params = {
+          redirect: "x2.store.changeStoreStatus",
+          storeId: storeId,
+          type:type,
+          is_open:is_open
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            this.$message(res.errmsg);
+            this.showResouce(this.p, this.getX2StoreLevelId(), this.storeName = '');
+          }
+        });
+      },
+      add() {
         let list = [];
-        for(let map in this.baseStore){
-          this.baseStore[map].forEach((item)=>{
-            if(item.OK){
+        for (let map in this.baseStore) {
+          this.baseStore[map].forEach((item) => {
+            if (item.OK) {
               list.push(item.id)
             }
           })
         }
-        if(list.length === 0){
+        if (list.length === 0) {
           this.$message('请选择门店');
-        }else {
+        } else {
 
 
           let params = {
@@ -409,27 +230,27 @@
 
           };
           oneTwoApi(params).then((res) => {
-            if(res.errcode === 0){
+            if (res.errcode === 0) {
               this.dialogVisible2 = false;
               this.$message(res.errmsg);
-              this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getX2StoreLevelId(),this.storeName = '');
+              this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getX2StoreLevelId(), this.storeName = '');
             }
           });
 
         }
 
       },
-      close2(){
-        for(let map in this.baseStore){
-          this.baseStore[map].forEach((item)=>{
+      close2() {
+        for (let map in this.baseStore) {
+          this.baseStore[map].forEach((item) => {
             item.OK = false
           })
         }
       },
       addStore() {
-        if(this.getX2StoreLevelId() === ""){
+        if (this.getX2StoreLevelId() === "") {
           this.$message('请选择门店所属部门');
-        }else {
+        } else {
           this.dialogVisible2 = true;
 
 
@@ -440,9 +261,9 @@
 
           };
           oneTwoApi(params).then((res) => {
-            if(res.errcode === 0){
-              for(let map in res.data){
-                res.data[map].forEach((item)=>{
+            if (res.errcode === 0) {
+              for (let map in res.data) {
+                res.data[map].forEach((item) => {
                   item.OK = false
                 })
               }
@@ -455,8 +276,8 @@
       handleClick(tab, event) {
         console.log(tab, event);
       },
-      getOne() {
-        this.dialogVisible4 = true
+      getOne(id) {
+        this.$router.push({path: `/x2OperationScheme/storeManagement/takeOut/${id}`})
 
       },
       showDishes() {
@@ -464,36 +285,32 @@
       },
       getPage(page) {
         this.p.page = page;
-        this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p, this.levelId, this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce(this.p, this.levelId,this.searchName);
-      },
-      printEdit(){
-
+        this.showResouce(this.p, this.levelId, this.searchName);
       },
 
-      del(id) {
+      del(base_store_id) {
         this.$confirm(
           '删除后对应的外卖平台门店也将关闭、客人无法下单。确认删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
           //删除门店接口
           let params = {
             redirect: "x2.store.delStore",
-            storeId: id,
-
+            storeId: base_store_id,
           };
           oneTwoApi(params).then((res) => {
-            if(res.errcode === 0){
-                this.$message({
-                  type: 'info',
-                  message: '删除成功'
-                });
-                this.showResouce(this.p, this.getX2StoreLevelId())
+            if (res.errcode === 0) {
+              this.$message({
+                type: 'info',
+                message: '删除成功'
+              });
+              this.showResouce(this.p, this.getX2StoreLevelId())
             }
           })
 
@@ -514,25 +331,32 @@
         } else {
           storeStatusValue = 0
         }
+        //批量修改状态
 
-        // getApi.storesStatus(this.multipleSelection.join(','), storeStatusValue).then((res) => {
-        //
-        //   if(res.data.errcode === 0){
-        //     this.$message('操作成功');
-        //     this.showResouce(this.p, this.levelId);
-        //     this.dialogVisible1 = false
-        //   }
-        // })
+
+        let params = {
+          redirect: "x2.store.batchChange",
+          storeIds: this.multipleSelection.join(','),
+          is_open: storeStatusValue,
+
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            this.$message('操作成功');
+            this.showResouce(this.p, this.getX2StoreLevelId());
+            this.dialogVisible1 = false
+          }
+        })
       },
       isSwitch() {
         let list = [];
 
-        this.storeData.forEach((item)=>{
-          if(item.select){
+        this.storeData.forEach((item) => {
+          if (item.select) {
             list.push(item.id)
           }
         });
-        if(list.length === 0){
+        if (list.length === 0) {
           this.$message('请勾选门店');
         } else {
           this.dialogVisible1 = true
@@ -548,16 +372,16 @@
             count += data.select * 1
           }
         });
-        let list =  this.storeData.filter((item)=>{
+        let list = this.storeData.filter((item) => {
           return item.select === true
         });
         let list1 = [];
-        list.forEach((item)=>{
+        list.forEach((item) => {
           list1.push(item.id)
         });
         this.multipleSelection = list1;
         if (count === this.storeData.length) {
-          list.forEach((item)=>{
+          list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
           })
 
@@ -569,15 +393,15 @@
       },
       handleSelectionChange(val) {
         let list = [];
-        val.forEach((item)=>{
+        val.forEach((item) => {
           list.push(item.id)
         });
         this.multipleSelection = list;
-        if(val.length === this.storeData.length){
+        if (val.length === this.storeData.length) {
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
           });
-        }else {
+        } else {
           this.storeData.forEach((map) => {
             this.$set(map, 'select', false)
           });
@@ -610,8 +434,8 @@
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
-            if(this.getX2StoreLevelId() === ''){
-              this.setX2StoreLevelId({levelId:res.data.data[0].id});
+            if (this.getX2StoreLevelId() === '') {
+              this.setX2StoreLevelId({levelId: res.data.data[0].id});
             }
 
             this.showResouce(this.p, this.getX2StoreLevelId());
@@ -623,7 +447,7 @@
         })
 
       },
-      showResouce(p,levelId,storeName = "") {
+      showResouce(p, levelId, storeName = "") {
         //获取门店列表
         let params = {
           redirect: "x2.store.index",
@@ -633,10 +457,22 @@
           pagesize: p.size,
         };
         oneTwoApi(params).then((res) => {
-          if(res.errcode === 0){
-             this.storeData = res.data.list;
-             // this.p.total = res.data.count;
-             // this.multipleSelection = []
+          if (res.errcode === 0) {
+            if(res.data.list.length !== 0){
+              res.data.list.forEach((item)=>{
+                for (let i in item.wmData) {
+                 if(item.wmData[i].poi_status === 0) {
+                   item.wmData[i].poi_status = false
+                 }else {
+                   item.wmData[i].poi_status = true
+                 }
+                }
+              })
+            }
+
+            this.storeData = res.data.list;
+             this.p.total = res.data.count;
+            this.multipleSelection = []
           }
         })
 
@@ -667,15 +503,15 @@
       this.showLevel();
 
 
-      this.dishesList.forEach((map) => {
-        this.$set(map, 'select', false)
-      })
+
 
     },
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.setX2StoreLevelId({levelId:e.levelid});
+
+        this.showResouce(this.p, e.levelid);
+        this.setX2StoreLevelId({levelId: e.levelid});
         this.recurSelected(this.data5, e.levelid)
       });
 
@@ -691,7 +527,7 @@
       })
 
     },
-    destroyed(){
+    destroyed() {
       Hub.$off("showAdd");
     }
   }

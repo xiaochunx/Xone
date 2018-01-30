@@ -28,6 +28,9 @@ export default{
   getX2StoreLevelId(state){
     return state.x2storeLevelId;
   },
+  getPrintConfLevelId(state){
+    return state.printConfLevelId;
+  },
   getRunningStateLevelId(state){
     return state.runningStateLevelId;
   },

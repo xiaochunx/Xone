@@ -13,33 +13,46 @@
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
 
-        <div :style="{height:tableHeight + 'px'}">
+        <div>
+          <span class="margin_r_10">{{levelName}}</span>
+          <el-select clearable v-model="storeData_id" placeholder="请选择" @change="handleStore">
+            <el-option
+              v-for="item in storeData"
+              :key="item.base_store_id"
+              :label="item.storename"
+              :value="item.base_store_id">
+            </el-option>
+          </el-select>
+
+        </div>
+
+        <div :style="{height:(tableHeight - 36) + 'px'}">
 
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="打印机列表" name="first">
               <el-button class="margin_b_10" type="primary" @click="addPrint('新增打印机',1)">新增打印机</el-button>
 
-              <el-table :data="storeData" border :height="tableHeight - 103">
+              <el-table :data="printData" border :height="tableHeight - 139">
 
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印机名称" width="160">
+                                 label="打印机名称" >
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印机类型" width="160">
+                                 label="打印机类型" >
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                  width="160" :render-header="header">
+                                   :render-header="header">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印机模板" width="160">
+                                 label="打印机模板" >
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="上次联网时间" width="160">
+                                 label="上次联网时间" >
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
                                  label="操作" width="320">
                   <template slot-scope="scope">
-                    <el-button size="small" type="primary" @click="edit('修改打印机',1)">修改打印机</el-button>
+                    <el-button size="small" type="primary" @click="edit('修改打印机',1,scope.row.id)">修改打印机</el-button>
                     <el-button size="small" type="danger" @click="del(scope.row.id)">删除打印机</el-button>
                     <el-button size="small" @click="conf()">打印模板配置</el-button>
                   </template>
@@ -48,34 +61,34 @@
 
 
             </el-tab-pane>
-            <el-tab-pane label="打印模板列表" name="second">
+            <el-tab-pane label="打印模板列表" name="second" disabled>
 
               <el-button class="margin_b_10" type="primary" @click="addPrint('新增打印模板',2)">新增打印模板</el-button>
 
-              <el-table :data="storeData" border :height="tableHeight - 103">
+              <el-table :data="printData" border :height="tableHeight - 139">
 
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="模板名称" width="160">
+                                 label="模板名称">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="模板下打印机" width="160">
+                                 label="模板下打印机">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 width="160" label="打印机小票类型">
+                                 label="打印机小票类型">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印时机" width="160">
+                                 label="打印时机">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="最后编辑时间" width="160">
+                                 label="最后编辑时间">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="编辑人" width="160">
+                                 label="编辑人">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="操作" width="160">
+                                 label="操作">
                   <template slot-scope="scope">
-                    <el-button size="small" type="primary" @click="edit('修改',2)">修改</el-button>
+                    <el-button size="small" type="primary" @click="edit('修改',2,scope.row.id)">修改</el-button>
                     <el-button size="small" type="danger" @click="del(scope.row.id)">删除</el-button>
 
                   </template>
@@ -93,6 +106,7 @@
       </div>
     </div>
 
+    <!--新增、修改-->
     <el-dialog
       :title="name"
       :visible.sync="dialogVisible1"
@@ -101,11 +115,11 @@
       width="50%">
       <el-form ref="formRules" :model="formPrint" label-width="100px">
         <el-form-item label="打印机编码:" v-if="name === '修改打印机'">
-        <el-input v-model="formPrint.code" placeholder="请输入内容" disabled></el-input>
+        <el-input v-model="formPrint.id" placeholder="请输入内容" disabled></el-input>
         </el-form-item>
 
-        <el-form-item label="打印机类型:">
-          <el-select v-model="formPrint.typeId" placeholder="请选择">
+        <el-form-item label="打印机类型:" prop="type" :rules="{type:'number',required: true, message: '请输入编号', trigger: 'change'}">
+          <el-select v-model="formPrint.type" placeholder="请选择">
             <el-option
               v-for="item in printType"
               :key="item.id"
@@ -115,23 +129,29 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="打印机名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formPrint.name" placeholder="请输入名称"></el-input>
+        <el-form-item label="打印机名称:" prop="printername" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
+          <el-input v-model="formPrint.printername" placeholder="请输入名称"></el-input>
         </el-form-item>
 
-        <el-form-item label="打印机编号:" >
-          <el-input v-model="formPrint.code" placeholder="请输入编号"></el-input>
+        <el-form-item label="打印机编号:" prop="sn" :rules="{required: true, message: '请输入编号', trigger: 'blur'}">
+          <el-input v-model="formPrint.sn" placeholder="请输入编号"></el-input>
         </el-form-item>
 
 
 
-        <div v-for="(domain, index) in formPrint.thirdCode" class="flex_r">
-          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
+        <div v-for="(domain, index) in formPrint.morecodes" class="flex_r">
+          <el-form-item label="" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
-                  <div style="width:150px">
+                  <div style="width:150px;position: relative">
                     <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
+                    <div class="third"  v-if="index === 0">
+                      第三方编码
+                      <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334" placement="top">
+                        <i class="fa fa-question-circle-o"></i>
+                      </el-tooltip>
+                    </div>
                   </div>
                 </el-col>
               </el-row>
@@ -155,7 +175,7 @@
             <div class="m-storeCode margin_l_10" @click="addDomain()">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(formPrint.thirdCode.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formPrint.morecodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(domain)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
@@ -163,7 +183,7 @@
         </div>
 
         <el-form-item label="配置模板:">
-          <el-select multiple v-model="formPrint.template" placeholder="请选择">
+          <el-select multiple v-model="formPrint.templates" placeholder="请选择">
             <el-option
               v-for="item in templateList"
               :key="item.id"
@@ -230,12 +250,18 @@
         </el-form-item>
 
         <div v-for="(domain, index) in formPrintTemp.thirdCode" class="flex_r">
-          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
+          <el-form-item label="" :key="domain.key">
             <div>
               <el-row>
                 <el-col>
-                  <div style="width:150px">
+                  <div style="width:150px;position: relative">
                     <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
+                    <div class="third" v-if="index === 0">
+                      第三方编码
+                      <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334" placement="top">
+                        <i class="fa fa-question-circle-o"></i>
+                      </el-tooltip>
+                    </div>
                   </div>
                 </el-col>
               </el-row>
@@ -544,13 +570,14 @@
   import Hub from '../../utility/commun'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {mapActions, mapGetters} from 'vuex';
-
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     components: {
 
     },
     data() {
       return {
+        levelName:'',
         name:'',
         activeName: 'first',
         tableWidth: 0,
@@ -559,18 +586,20 @@
         dialogVisible2:false,
         dialogVisible3:false,
         dialogVisible4:false,
-        navList: [{name: "x2运营方案", url: '打印机配置'}],
+        navList: [{name: "打印机配置", url: ''}],
         data5: [],
-        storeData:[{}],
+        printData:[{}],
+        storeData:[],
+        storeData_id:'',
         p: {page: 1, size: 20, total: 0},
         formPrint: {
-          typeId: '',
-          name: '',
-          code:'',
-          thirdCode: [
+          type: '',
+          printername: '',
+          sn:'',
+          morecodes: [
             {code1: '', code2: ''}
           ],
-          template:[],
+          templates:[],
           status: true,
         },
         formPrintTemp: {
@@ -637,22 +666,22 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setX2StoreLevelId']),
-      ...mapGetters(['getX2StoreLevelId']),
+      ...mapActions(['setPrintConfLevelId']),
+      ...mapGetters(['getPrintConfLevelId']),
 
-      handleClick(tab, event) {
-        console.log(tab, event);
+      handleClick(event) {
+
       },
       open1(){
         if(this.name === "新增打印机"){
           this.formPrint =  {
-            typeId: '',
-            name: '',
-            code:'',
-            thirdCode: [
+            type: '',
+            printername: '',
+            sn:'',
+            morecodes: [
               {code1: '', code2: ''}
             ],
-            template:[],
+            templates:[],
             status: true,
           }
         }
@@ -661,6 +690,55 @@
         this.$refs[formRules].validate((valid) => {
           if (valid) {
 
+            if(this.name === "新增打印机"){
+              //新增打印机
+              let status;
+              if(this.formPrint.status === false){
+                status = 0
+              } else {
+                status = 1
+              }
+              let params = {
+                redirect: "x2.store.create",
+                storeid: this.storeData_id,
+                type: this.formPrint.type,
+                printername: this.formPrint.printername,
+                sn:this.formPrint.sn,
+                morecodes: window.JSON.stringify(this.formPrint.morecodes),
+                templates:this.formPrint.templates.join(','),
+                status: status,
+              };
+              oneTwoApi(params).then((res) => {
+                if (res.errcode === 0) {
+
+                }
+              })
+            } else {
+
+              let status;
+              if(this.formPrint.status === false){
+                status = 0
+              } else {
+                status = 1
+              }
+              let params = {
+                redirect: "x2.store.update",
+                id:this.formPrint.id,
+                storeid: this.storeData_id,
+                type: this.formPrint.type,
+                printername: this.formPrint.printername,
+                sn:this.formPrint.sn,
+                morecodes: window.JSON.stringify(this.formPrint.morecodes),
+                templates:this.formPrint.templates.join(','),
+                status: status,
+              };
+              oneTwoApi(params).then((res) => {
+                if (res.errcode === 0) {
+
+                }
+              })
+
+            }
 
           } else {
             console.log('error submit!!');
@@ -681,6 +759,9 @@
 
       },
       handleChecked(e){
+        let length = e.length;
+
+        this.checkedAll = length === this.templateName.length;
 
         console.log(this.checked)
       },
@@ -693,10 +774,19 @@
       close3(){
 
       },
-      edit(name,Int){
+      edit(name,Int,id){
         this.name = name;
         if(Int === 1){
           this.dialogVisible1 = true
+          let params = {
+            redirect: "x2.printer.view",
+            id: id,
+          };
+          oneTwoApi(params).then((res) => {
+            if (res.errcode === 0) {
+
+            }
+          })
         }else {
           this.dialogVisible3 = true
         }
@@ -778,13 +868,13 @@
       },
 
       removeDomain(item) {
-        var index = this.formPrint.thirdCode.indexOf(item)
+        var index = this.formPrint.morecodes.indexOf(item)
         if (index !== -1) {
-          this.formPrint.thirdCode.splice(index, 1)
+          this.formPrint.morecodes.splice(index, 1)
         }
       },
       addDomain() {
-        this.formPrint.thirdCode.push({code1: '', code2: ''});
+        this.formPrint.morecodes.push({code1: '', code2: ''});
       },
 
       removeDomain1(item) {
@@ -823,31 +913,74 @@
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
-            if(this.getX2StoreLevelId() === ''){
-              this.setX2StoreLevelId({levelId:res.data.data[0].id});
+            if(this.getPrintConfLevelId() === ''){
+              this.setPrintConfLevelId({levelId:res.data.data[0].id});
             }
-            // this.getGroupList(this.p,this.getX2StoreLevelId());
-
+            this.levelName = res.data.data[0].levelname;
+            this.showResouce(res.data.data[0].id);
             this.recur(this.data5);
-            this.recurSelected(this.data5, this.getX2StoreLevelId())
+            this.recurSelected(this.data5, this.getPrintConfLevelId())
           } else {
 
           }
         })
 
       },
+      showResouce(levelId) {
+        //获取门店列表
+        let params = {
+          redirect: "x2.store.index",
+          levelId: levelId,
+          storeName: '',
+          page: 1,
+          pagesize: 1000,
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            if(res.data.list.length !== 0){
+              this.storeData_id = res.data.list[0].base_store_id;
+            }
+            this.storeData = res.data.list;
+
+          }
+        })
+
+      },
+      handleStore(){
+        console.log(this.storeData_id)
+        this.getPrintData(this.p)
+      },
+      getPrintData(p){
+        //获取打印机列表
+        let params = {
+          redirect: "x2.printer.index",
+          storeid: this.storeData_id,
+          page:p.page,
+          pagesize:p.size
+
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            this.printData = res.data.list;
+            this.p.total = res.data.count;
+
+          }
+        })
+      }
+
+
     },
     created() {
       this.showLevel();
-
-
-
 
     },
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.setX2StoreLevelId({levelId:e.levelid});
+        this.setPrintConfLevelId({levelId:e.levelid});
+        this.levelName = e.levelName;
+        this.showResouce(e.levelid);
+        this.storeData_id = "";
         this.recurSelected(this.data5, e.levelid)
       });
 
@@ -855,13 +988,12 @@
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
       this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
-      this.$nextTick(() => {
-        getScrollHeight().then((h) => {
-          this.tableHeight = h;
+        this.$nextTick(() => {
+          getScrollHeight().then((h) => {
+            this.tableHeight = h;
+          })
+
         })
-
-      })
-
     },
     destroyed(){
       Hub.$off("showAdd");
@@ -882,6 +1014,8 @@
     font-size: 30px;
   }
 
-
+  .third{
+    position: absolute;top: 0;left: -100px;
+  }
 
 </style>
