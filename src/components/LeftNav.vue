@@ -125,42 +125,35 @@
          //      },
          //    ]
          //  },
-          {
-            name: 'x2统计报表',
-            children: [
-              {
-                name: '订单列表',
-                route: '/report/orderList'
-              },
-              // {
-              //   name: '订单统计',
-              //   route: '/report/orderCount'
-              // },
-
-            ]
-          },
-          {
-            name: 'x2运营方案',
-            children: [
-              {
-                name: '门店管理',
-                route: '/x2OperationScheme/storeManagement'
-              },
-              {
-                name: '打印机配置',
-                route: '/x2OperationScheme/printerConfig'
-              },
-            ]
-          },
-          {
-            name: '商户资料核实',
-            children: [
-              {
-                name: '商户列表',
-                route: '/businessInformation/businessList'
-              },
-            ]
-          },
+         //  {
+         //    name: 'x2统计报表',
+         //    children: [
+         //
+         //      // {
+         //      //   name: '订单统计',
+         //      //   route: '/report/orderCount'
+         //      // },
+         //
+         //    ]
+         //  },
+         //  {
+         //    name: 'x2运营方案',
+         //    children: [
+         //      {
+         //        name: '推送状态',
+         //        route: '/x2OperationScheme/pushState'
+         //      },
+         //    ]
+         //  },
+         //  {
+         //    name: '商户资料核实',
+         //    children: [
+         //      {
+         //        name: '商户列表',
+         //        route: '/businessInformation/businessList'
+         //      },
+         //    ]
+         //  },
         ],
         ListHeight: 0,
         leftData:[]

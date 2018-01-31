@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['打印机列表']">
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -30,31 +30,43 @@
 
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="打印机列表" name="first">
-              <el-button class="margin_b_10" type="primary" @click="addPrint('新增打印机',1)">新增打印机</el-button>
+              <el-button class="margin_b_10" type="primary" @click="addPrint('新增打印机',1)" v-show="getTreeArr['打印机新增']">
+                新增打印机
+              </el-button>
 
               <el-table :data="printData" border :height="tableHeight - 139">
 
-                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印机名称" >
+                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="printername"
+                                 label="打印机名称">
+                </el-table-column>
+                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="typelabel"
+                                 label="打印机类型">
+                </el-table-column>
+                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="sn"
+                                 :render-header="header">
                 </el-table-column>
                 <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印机类型" >
+                                 label="打印机模板">
+                  <template slot-scope="scope">
+                    <div v-for="(item,index) in scope.row.templates">
+                      {{item.templatename}}
+                    </div>
+                  </template>
                 </el-table-column>
-                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                   :render-header="header">
+                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="linktime"
+                                 label="上次联网时间">
                 </el-table-column>
-                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="打印机模板" >
-                </el-table-column>
-                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
-                                 label="上次联网时间" >
-                </el-table-column>
-                <el-table-column label-class-name="table_head" header-align="center" align="center" prop="code"
+                <el-table-column label-class-name="table_head" header-align="center" align="center"
                                  label="操作" width="320">
                   <template slot-scope="scope">
-                    <el-button size="small" type="primary" @click="edit('修改打印机',1,scope.row.id)">修改打印机</el-button>
-                    <el-button size="small" type="danger" @click="del(scope.row.id)">删除打印机</el-button>
-                    <el-button size="small" @click="conf()">打印模板配置</el-button>
+                    <el-button size="small" type="primary" @click="edit('修改打印机',1,scope.row.id)"
+                               v-show="getTreeArr['打印机修改']">修改打印机
+                    </el-button>
+                    <el-button size="small" type="danger" @click="del(scope.row.id)" v-show="getTreeArr['打印机删除']">
+                      删除打印机
+                    </el-button>
+                    <el-button size="small" @click="conf(scope.row.id)" v-show="getTreeArr['打印机模板选择']">打印模板配置
+                    </el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -115,15 +127,16 @@
       width="50%">
       <el-form ref="formRules" :model="formPrint" label-width="100px">
         <el-form-item label="打印机编码:" v-if="name === '修改打印机'">
-        <el-input v-model="formPrint.id" placeholder="请输入内容" disabled></el-input>
+          <el-input v-model="formPrint.id" placeholder="请输入内容" disabled></el-input>
         </el-form-item>
 
-        <el-form-item label="打印机类型:" prop="type" :rules="{type:'number',required: true, message: '请输入编号', trigger: 'change'}">
+        <el-form-item label="打印机类型:" prop="type"
+                      :rules="{type:'number',required: true, message: '请选择编号', trigger: 'change'}">
           <el-select v-model="formPrint.type" placeholder="请选择">
             <el-option
               v-for="item in printType"
               :key="item.id"
-              :label="item.name"
+              :label="item.type"
               :value="item.id">
             </el-option>
           </el-select>
@@ -134,9 +147,8 @@
         </el-form-item>
 
         <el-form-item label="打印机编号:" prop="sn" :rules="{required: true, message: '请输入编号', trigger: 'blur'}">
-          <el-input v-model="formPrint.sn" placeholder="请输入编号"></el-input>
+          <el-input v-model="formPrint.sn" placeholder="请输入编号" :disabled="name === '修改打印机'"></el-input>
         </el-form-item>
-
 
 
         <div v-for="(domain, index) in formPrint.morecodes" class="flex_r">
@@ -146,9 +158,10 @@
                 <el-col>
                   <div style="width:150px;position: relative">
                     <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
-                    <div class="third"  v-if="index === 0">
+                    <div class="third" v-if="index === 0">
                       第三方编码
-                      <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334" placement="top">
+                      <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334"
+                                  placement="top">
                         <i class="fa fa-question-circle-o"></i>
                       </el-tooltip>
                     </div>
@@ -182,12 +195,13 @@
           </div>
         </div>
 
-        <el-form-item label="配置模板:">
-          <el-select multiple v-model="formPrint.templates" placeholder="请选择">
+        <el-form-item label="配置模板:" prop="templateid"
+                      :rules="{type:'array',required: true, message: '请选择模板', trigger: 'change'}">
+          <el-select multiple v-model="formPrint.templateid" placeholder="请选择">
             <el-option
-              v-for="item in templateList"
+              v-for="item in confTemplateList"
               :key="item.id"
-              :label="item.name"
+              :label="item.templatename"
               :value="item.id">
             </el-option>
           </el-select>
@@ -220,7 +234,9 @@
         <div class="flex_1">
           <el-checkbox-group v-model="checked" @change="handleChecked">
             <div class="flex_d_c myPrintConfig">
-              <el-checkbox v-for="(item,index) in templateName" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
+              <el-checkbox v-for="(item,index) in confTemplateList" :label="item.id" :key="item.id">
+                {{item.templatename}}
+              </el-checkbox>
             </div>
           </el-checkbox-group>
 
@@ -235,6 +251,10 @@
 
         </div>
       </div>
+      <div class="flex">
+        <el-button size="small" type="primary" @click="saveConf()">保存</el-button>
+      </div>
+
     </el-dialog>
 
     <el-dialog
@@ -258,7 +278,8 @@
                     <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
                     <div class="third" v-if="index === 0">
                       第三方编码
-                      <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334" placement="top">
+                      <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334"
+                                  placement="top">
                         <i class="fa fa-question-circle-o"></i>
                       </el-tooltip>
                     </div>
@@ -325,171 +346,179 @@
           </el-select>
         </el-form-item>
 
-      <div class="flex_r">
-        <div class="flex_1">
-          <h3>模板内容</h3>
-          <div class="margin_b_10" style="border-bottom: 1px solid #DFE6EC">必选</div>
-          <el-form-item label="订单来源">
-            <el-switch
-              v-model="formPrintTemp.switch1"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize1" clearable placeholder="字号选择" style="width: 130px;">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
+        <div class="flex_r">
+          <div class="flex_1">
+            <h3>模板内容</h3>
+            <div class="margin_b_10" style="border-bottom: 1px solid #DFE6EC">必选</div>
+            <el-form-item label="订单来源">
+              <el-switch
+                v-model="formPrintTemp.switch1"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize1" clearable placeholder="字号选择" style="width: 130px;">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
 
-          <div class="margin_b_10" style="border-bottom: 1px solid #DFE6EC">选填</div>
-          <el-form-item label="店铺地址">
-            <el-switch
-              v-model="formPrintTemp.switch11"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize11" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch11">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="店铺电话">
-            <el-switch
-              v-model="formPrintTemp.switch12"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize12" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch12">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="下单时间">
-            <el-switch
-              v-model="formPrintTemp.switch13"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize13" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch13">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="支付方式">
-            <el-switch
-              v-model="formPrintTemp.switch14"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize14" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch14">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="折前金额">
-            <el-switch
-              v-model="formPrintTemp.switch15"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize15" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch15">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="折扣金额">
-            <el-switch
-              v-model="formPrintTemp.switch16"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize16" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch16">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="期望送达时间">
-            <el-switch
-              v-model="formPrintTemp.switch17"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize17" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch17">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="客人备注">
-            <el-switch
-              v-model="formPrintTemp.switch18"
-              on-color="#13ce66"
-              off-color="#ff4949">
-            </el-switch>
-            <el-select v-model="formPrintTemp.fontSize18" clearable placeholder="字号选择" style="width: 130px;" v-if="formPrintTemp.switch18">
-              <el-option
-                v-for="item in fontSize"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                :disabled="item.disabled"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
+            <div class="margin_b_10" style="border-bottom: 1px solid #DFE6EC">选填</div>
+            <el-form-item label="店铺地址">
+              <el-switch
+                v-model="formPrintTemp.switch11"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize11" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch11">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="店铺电话">
+              <el-switch
+                v-model="formPrintTemp.switch12"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize12" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch12">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="下单时间">
+              <el-switch
+                v-model="formPrintTemp.switch13"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize13" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch13">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="支付方式">
+              <el-switch
+                v-model="formPrintTemp.switch14"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize14" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch14">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="折前金额">
+              <el-switch
+                v-model="formPrintTemp.switch15"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize15" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch15">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="折扣金额">
+              <el-switch
+                v-model="formPrintTemp.switch16"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize16" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch16">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="期望送达时间">
+              <el-switch
+                v-model="formPrintTemp.switch17"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize17" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch17">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="客人备注">
+              <el-switch
+                v-model="formPrintTemp.switch18"
+                on-color="#13ce66"
+                off-color="#ff4949">
+              </el-switch>
+              <el-select v-model="formPrintTemp.fontSize18" clearable placeholder="字号选择" style="width: 130px;"
+                         v-if="formPrintTemp.switch18">
+                <el-option
+                  v-for="item in fontSize"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.disabled"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </div>
 
-        <div class="flex_1">
-          <img class="margin_l_10" src="../../../assets/printConfig.png" alt="" style="width: 320px">
+          <div class="flex_1">
+            <img class="margin_l_10" src="../../../assets/printConfig.png" alt="" style="width: 320px">
+          </div>
         </div>
-      </div>
 
         <el-form-item label="选择打印方式">
           <el-select v-model="formPrintTemp.printType2_id" clearable placeholder="请选择">
@@ -571,35 +600,39 @@
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {mapActions, mapGetters} from 'vuex';
   import {oneTwoApi} from '@/api/api.js';
-  export default {
-    components: {
 
+  export default {
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
     },
+    components: {},
     data() {
       return {
-        levelName:'',
-        name:'',
+        levelName: '',
+        name: '',
         activeName: 'first',
         tableWidth: 0,
         tableHeight: 0,
-        dialogVisible1:false,
-        dialogVisible2:false,
-        dialogVisible3:false,
-        dialogVisible4:false,
+        dialogVisible1: false,
+        dialogVisible2: false,
+        dialogVisible3: false,
+        dialogVisible4: false,
         navList: [{name: "打印机配置", url: ''}],
         data5: [],
-        printData:[{}],
-        storeData:[],
-        storeData_id:'',
+        printData: [{}],
+        storeData: [],
+        storeData_id: '',
         p: {page: 1, size: 20, total: 0},
         formPrint: {
           type: '',
           printername: '',
-          sn:'',
+          sn: '',
           morecodes: [
             {code1: '', code2: ''}
           ],
-          templates:[],
+          templateid: [],
           status: true,
         },
         formPrintTemp: {
@@ -607,61 +640,73 @@
           thirdCode: [
             {code1: '', code2: ''}
           ],
-          printTime_id:'',
-          printTicketType_id:'',
-          printTicketType_id2:'',
-          fontSize1:'',
-          fontSize2:'',
-          fontSize3:'',
-          fontSize4:'',
-          fontSize5:'',
-          fontSize6:'',
-          fontSize7:'',
-          fontSize8:'',
-          fontSize9:'',
-          fontSize10:'',
-          fontSize11:'',
-          fontSize12:'',
-          fontSize13:'',
-          fontSize14:'',
-          fontSize15:'',
-          fontSize16:'',
-          fontSize17:'',
-          fontSize18:'',
-          switch1:true,
-          switch2:true,
-          switch3:true,
-          switch4:true,
-          switch5:true,
-          switch6:true,
-          switch7:true,
-          switch8:true,
-          switch9:true,
-          switch10:true,
-          switch11:false,
-          switch12:false,
-          switch13:false,
-          switch14:false,
-          switch15:false,
-          switch16:false,
-          switch17:false,
-          switch18:false,
-          printType2_id:'',
-          printType3_id:'',
-          conf_id:''
+          printTime_id: '',
+          printTicketType_id: '',
+          printTicketType_id2: '',
+          fontSize1: '',
+          fontSize2: '',
+          fontSize3: '',
+          fontSize4: '',
+          fontSize5: '',
+          fontSize6: '',
+          fontSize7: '',
+          fontSize8: '',
+          fontSize9: '',
+          fontSize10: '',
+          fontSize11: '',
+          fontSize12: '',
+          fontSize13: '',
+          fontSize14: '',
+          fontSize15: '',
+          fontSize16: '',
+          fontSize17: '',
+          fontSize18: '',
+          switch1: true,
+          switch2: true,
+          switch3: true,
+          switch4: true,
+          switch5: true,
+          switch6: true,
+          switch7: true,
+          switch8: true,
+          switch9: true,
+          switch10: true,
+          switch11: false,
+          switch12: false,
+          switch13: false,
+          switch14: false,
+          switch15: false,
+          switch16: false,
+          switch17: false,
+          switch18: false,
+          printType2_id: '',
+          printType3_id: '',
+          conf_id: ''
         },
-        printType:[{id:1,name:'款易打印机'}],
-        templateList:[{id:1,name:'外卖 - 客联'},{id:2,name:'存根 - 堂食'},{id:3,name:'后厨 - 外卖'}],
-        checkedAll:false,
-        checked:[],
-        templateName:[{id:1,name:'西餐A'},{id:2,name:'外卖-客联'},{id:3,name:'外卖-存根'}],
-        printTime:[{id:1,name:'外部外卖已受理'},{id:2,name:'外部外卖未受理'},{id:3,name:'退款单'},{id:4,name:'外卖平台营业报表'}],
-        printTicketType:[{id:1,name:'易联云-小票宽度80mm'},{id:2,name:'易联云-小票宽度58mm'},{id:3,name:'易联云-小票宽度80mm'}],
-        printTicketType2:[{id:1,name:'模板一 - 适用于存根 - 外卖'},{id:2,name:'模板二 - 适用于客联 - 外卖'},{id:3,name:'模板三 - 适用于后厨 - 外卖'}],
-        fontSize:[{id:0,name:'不选择的话默认2',disabled: true},{id:1,name:'2'},{id:2,name:'4'},{id:3,name:'6'}],
-        printType2:[{id:1,name:'分品类打印'},{id:2,name:'分厨房打印'}],
-        printType3:[{id:1,name:'不分单'},{id:2,name:'分单打印，数量不合并'},{id:3,name:'分单打印，数量合并'}],
-        dishesConf:[{id:1,name:'不分组'},{id:2,name:'分单标签 - 篮子'},{id:3,name:'分单标签 - 口袋'},{id:4,name:'分单标签 - 加菜'},{id:5,name:'分单标签 - 分组'}],
+        printType: [],
+        confTemplateList: [],
+        checkedAll: false,
+        checked: [],
+
+        printTime: [{id: 1, name: '外部外卖已受理'}, {id: 2, name: '外部外卖未受理'}, {id: 3, name: '退款单'}, {
+          id: 4,
+          name: '外卖平台营业报表'
+        }],
+        printTicketType: [{id: 1, name: '易联云-小票宽度80mm'}, {id: 2, name: '易联云-小票宽度58mm'}, {id: 3, name: '易联云-小票宽度80mm'}],
+        printTicketType2: [{id: 1, name: '模板一 - 适用于存根 - 外卖'}, {id: 2, name: '模板二 - 适用于客联 - 外卖'}, {
+          id: 3,
+          name: '模板三 - 适用于后厨 - 外卖'
+        }],
+        fontSize: [{id: 0, name: '不选择的话默认2', disabled: true}, {id: 1, name: '2'}, {id: 2, name: '4'}, {
+          id: 3,
+          name: '6'
+        }],
+        printType2: [{id: 1, name: '分品类打印'}, {id: 2, name: '分厨房打印'}],
+        printType3: [{id: 1, name: '不分单'}, {id: 2, name: '分单打印，数量不合并'}, {id: 3, name: '分单打印，数量合并'}],
+        dishesConf: [{id: 1, name: '不分组'}, {id: 2, name: '分单标签 - 篮子'}, {id: 3, name: '分单标签 - 口袋'}, {
+          id: 4,
+          name: '分单标签 - 加菜'
+        }, {id: 5, name: '分单标签 - 分组'}],
       }
     },
     watch: {},
@@ -672,72 +717,64 @@
       handleClick(event) {
 
       },
-      open1(){
-        if(this.name === "新增打印机"){
-          this.formPrint =  {
+      getStoreTemplate() {
+        //可选择打印机的模板
+        let params1 = {
+          redirect: "x2a.printer.storetemplate",
+          storeid: this.storeData_id,
+        };
+        oneTwoApi(params1).then((res) => {
+          if (res.errcode === 0) {
+
+            this.confTemplateList = res.data
+          }
+        })
+      },
+      open1() {
+        if (this.name === "新增打印机") {
+          this.formPrint = {
             type: '',
             printername: '',
-            sn:'',
+            sn: '',
             morecodes: [
               {code1: '', code2: ''}
             ],
-            templates:[],
+            templateid: [],
             status: true,
           }
         }
+        this.getStoreTemplate()
       },
       submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
 
-            if(this.name === "新增打印机"){
+            if (this.name === "新增打印机") {
               //新增打印机
               let status;
-              if(this.formPrint.status === false){
+              if (this.formPrint.status === false) {
                 status = 0
               } else {
                 status = 1
               }
               let params = {
-                redirect: "x2.store.create",
+                redirect: "x2a.printer.create",
                 storeid: this.storeData_id,
                 type: this.formPrint.type,
                 printername: this.formPrint.printername,
-                sn:this.formPrint.sn,
+                sn: this.formPrint.sn,
                 morecodes: window.JSON.stringify(this.formPrint.morecodes),
-                templates:this.formPrint.templates.join(','),
+                templateid: this.formPrint.templateid.join(','),
                 status: status,
               };
               oneTwoApi(params).then((res) => {
                 if (res.errcode === 0) {
-
+                  this.dialogVisible1 = false;
+                  this.getPrintData(this.p = {page: 1, size: 20, total: 0})
                 }
               })
             } else {
-
-              let status;
-              if(this.formPrint.status === false){
-                status = 0
-              } else {
-                status = 1
-              }
-              let params = {
-                redirect: "x2.store.update",
-                id:this.formPrint.id,
-                storeid: this.storeData_id,
-                type: this.formPrint.type,
-                printername: this.formPrint.printername,
-                sn:this.formPrint.sn,
-                morecodes: window.JSON.stringify(this.formPrint.morecodes),
-                templates:this.formPrint.templates.join(','),
-                status: status,
-              };
-              oneTwoApi(params).then((res) => {
-                if (res.errcode === 0) {
-
-                }
-              })
-
+              this.updatePrint('修改打印机');
             }
 
           } else {
@@ -748,91 +785,147 @@
       },
       handleCheckAllChange(e) {
         let list = [];
-        if(e.target.checked === true){
-          this.templateName.forEach((item)=>{
+        if (e.target.checked === true) {
+          this.confTemplateList.forEach((item) => {
             list.push(item.id)
           });
           this.checked = list
-        }else {
+        } else {
           this.checked = []
         }
 
       },
-      handleChecked(e){
+      handleChecked(e) {
         let length = e.length;
-
-        this.checkedAll = length === this.templateName.length;
-
-        console.log(this.checked)
+        this.checkedAll = length === this.confTemplateList.length;
       },
-      close1(){
+
+      updatePrint(Str){
+        let status;
+        if (this.formPrint.status === false) {
+          status = 0
+        } else {
+          status = 1
+        }
+        let params = {
+          redirect: "x2a.printer.update",
+          id: this.formPrint.id,
+          storeid: this.storeData_id,
+          type: this.formPrint.type,
+          printername: this.formPrint.printername,
+          sn: this.formPrint.sn,
+          morecodes: window.JSON.stringify(this.formPrint.morecodes),
+          templateid: Str === '打印模板配置'? this.checked.join(','):this.formPrint.templateid.join(','),
+          status: status
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            Str === '打印模板配置'?this.dialogVisible2 = false:this.dialogVisible1 = false;
+            this.getPrintData(this.p = {page: 1, size: 20, total: 0})
+          }
+        })
+      },
+
+      saveConf() {
+
+        if(this.checked.length === 0){
+          this.$message('必须选择打印模板')
+        }else {
+          this.updatePrint('打印模板配置');
+        }
+      },
+      close1() {
         this.$refs['formRules'].resetFields();
       },
-      open3(){
+      open3() {
 
       },
-      close3(){
+      close3() {
 
       },
-      edit(name,Int,id){
+      viewPrint(id) {
+        let params = {
+          redirect: "x2a.printer.view",
+          id: id,
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            res.data.forEach((item) => {
+              item.sn = item.sn + "";
+              if (item.status === 0) {
+                item.status = false
+              } else {
+                item.status = true
+              }
+              let list = [];
+              item.templates.forEach((item1) => {
+                list.push(item1.id)
+              });
+              item.templateid = list;
+              this.checked = list;
+
+              this.checkedAll = list.length === this.confTemplateList.length;
+            });
+
+            this.formPrint = res.data[0]
+          }
+        })
+      },
+      edit(name, Int, id) {
         this.name = name;
-        if(Int === 1){
-          this.dialogVisible1 = true
-          let params = {
-            redirect: "x2.printer.view",
-            id: id,
-          };
-          oneTwoApi(params).then((res) => {
-            if (res.errcode === 0) {
+        if (Int === 1) {
+          this.dialogVisible1 = true;
 
-            }
-          })
-        }else {
+          this.viewPrint(id)
+
+
+        } else {
           this.dialogVisible3 = true
         }
 
       },
-      addPrint(name,Int) {
+      addPrint(name, Int) {
         this.name = name;
-        if(Int === 1){
+        if (Int === 1) {
           this.dialogVisible1 = true
         } else {
           this.dialogVisible3 = true
         }
       },
-      conf(){
-        this.dialogVisible2 = true
-
+      async conf(id) {
+        this.dialogVisible2 = true;
+        await this.viewPrint(id);
+        await this.getStoreTemplate()
       },
       showDishes() {
         this.dialogVisible3 = true
       },
       getPage(page) {
         this.p.page = page;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        this.getPrintData(this.p);
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        this.getPrintData(this.p);
       },
 
       header(h) {
         return h(
           'div',
           {},
-          [
+          ['打印机编号',
             h('el-tooltip', {
-                attrs: {content: "打印机底部的编号，例如716800234",placement:"top"},
+                attrs: {content: "打印机底部的编号，例如716800234", placement: "top"},
               }, [
-                  h('div', {
-                      attrs: {type:"text"},
-                    }, ['打印机编号',h(
-                      'i',{
-                      attrs: {class: "fa fa-question-circle-o"}
-                    }
-                    )]
-                  )
-                ]
+                h('div', {
+                    attrs: {type: "text"},
+                  }, [ h(
+                  'i', {
+                    attrs: {class: "fa fa-question-circle-o"}
+                  }
+                  )]
+                )
+              ]
             )
           ]
         );
@@ -840,22 +933,19 @@
       del(id) {
         this.$confirm(
           '确认删除？', '删除打印机', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          // getApi.del(id).then((res) => {
-          //
-          //   if (res) {
-          //
-          //   }
-          //   this.$message({
-          //     type: 'info',
-          //     message: '删除成功'
-          //   });
-          //   this.showResouce(this.p, this.levelId)
-          //
-          // })
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+          let params = {
+            redirect: "x2a.printer.delete",
+            id: id
+          };
+          oneTwoApi(params).then((res) => {
+            if (res.errcode === 0) {
+              this.getPrintData(this.p)
+            }
+          })
 
         }).catch(() => {
           //
@@ -913,8 +1003,8 @@
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
             this.data5 = res.data.data;
-            if(this.getPrintConfLevelId() === ''){
-              this.setPrintConfLevelId({levelId:res.data.data[0].id});
+            if (this.getPrintConfLevelId() === '') {
+              this.setPrintConfLevelId({levelId: res.data.data[0].id});
             }
             this.levelName = res.data.data[0].levelname;
             this.showResouce(res.data.data[0].id);
@@ -937,7 +1027,7 @@
         };
         oneTwoApi(params).then((res) => {
           if (res.errcode === 0) {
-            if(res.data.list.length !== 0){
+            if (res.data.list.length !== 0) {
               this.storeData_id = res.data.list[0].base_store_id;
             }
             this.storeData = res.data.list;
@@ -946,17 +1036,17 @@
         })
 
       },
-      handleStore(){
+      handleStore() {
         console.log(this.storeData_id)
         this.getPrintData(this.p)
       },
-      getPrintData(p){
+      getPrintData(p) {
         //获取打印机列表
         let params = {
-          redirect: "x2.printer.index",
+          redirect: "x2a.printer.index",
           storeid: this.storeData_id,
-          page:p.page,
-          pagesize:p.size
+          page: p.page,
+          pagesize: p.size
 
         };
         oneTwoApi(params).then((res) => {
@@ -973,29 +1063,40 @@
     created() {
       this.showLevel();
 
+      //获取打印机类型
+      let params = {
+        redirect: "x2a.printer.printtype",
+      };
+      oneTwoApi(params).then((res) => {
+        if (res.errcode === 0) {
+          this.printType = res.data
+        }
+      });
+
+
     },
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.setPrintConfLevelId({levelId:e.levelid});
+        this.setPrintConfLevelId({levelId: e.levelid});
         this.levelName = e.levelName;
         this.showResouce(e.levelid);
         this.storeData_id = "";
         this.recurSelected(this.data5, e.levelid)
       });
-
+      Hub.$emit('mountedOk', 'mountedOk');
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
       this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
-        this.$nextTick(() => {
-          getScrollHeight().then((h) => {
-            this.tableHeight = h;
-          })
-
+      this.$nextTick(() => {
+        getScrollHeight().then((h) => {
+          this.tableHeight = h;
         })
+
+      })
     },
-    destroyed(){
+    destroyed() {
       Hub.$off("showAdd");
     }
   }
@@ -1014,8 +1115,10 @@
     font-size: 30px;
   }
 
-  .third{
-    position: absolute;top: 0;left: -100px;
+  .third {
+    position: absolute;
+    top: 0;
+    left: -100px;
   }
 
 </style>

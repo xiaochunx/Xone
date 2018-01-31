@@ -16,7 +16,8 @@ const state = {
   x1storeLevelId:'',//x1门店列表levelid
   x2storeLevelId:'',//x2门店管理levelid
   printConfLevelId:'',//打印机配置levelid
-  runningStateLevelId:''//终端状态levelid
+  runningStateLevelId:'',//终端状态levelid
+  pushStateLevelId:'',//推送状态levelid
 };
 
 const mutations = {
@@ -46,6 +47,9 @@ const mutations = {
   },
   [types.RUNNINGSTATELEVELID](state, obj){
     state.runningStateLevelId = obj.levelId
+  },
+  [types.PUSHSTATELEVELID](state, obj){
+    state.pushStateLevelId = obj.levelId
   },
   [types.STORETREELIST](state, obj){
     state.storeTreeList = obj.list

@@ -28,6 +28,9 @@ export default {
   setRunningStateLevelId({commit},obj){
     commit(types.RUNNINGSTATELEVELID,obj);
   },
+  setPushStateLevelId({commit},obj){
+    commit(types.PUSHSTATELEVELID,obj);
+  },
   setStoreTreeList({commit},obj){
     commit(types.STORETREELIST,obj);
   },

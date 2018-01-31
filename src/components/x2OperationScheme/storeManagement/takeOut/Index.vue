@@ -26,9 +26,9 @@
 
             <div v-show="showMt === false">
 
-            <el-form-item label-width="200px" label="授权门店ID" class="margin_b_10">
-              <el-input v-model="meiTuanDialog.store_name" class="input_width"></el-input>
-            </el-form-item>
+            <!--<el-form-item label-width="200px" label="授权门店ID" class="margin_b_10">-->
+              <!--<el-input v-model="meiTuanDialog.store_name" class="input_width"></el-input>-->
+            <!--</el-form-item>-->
             <el-form-item label-width="200px" label="" class="margin_b_10">
             <el-button type="primary" size="small" @click="bindData('mt')">点击去绑定美团外卖</el-button>
             </el-form-item>
@@ -69,9 +69,9 @@
           <el-form label-position="right" ref="form" :model="eleDialog">
 
             <div v-show="showEl === false">
-              <el-form-item label-width="200px" label="授权门店ID" class="margin_b_10">
-                <el-input v-model="eleDialog.wm_store_id" class="input_width"></el-input>
-              </el-form-item>
+              <!--<el-form-item label-width="200px" label="授权门店ID" class="margin_b_10">-->
+                <!--<el-input v-model="eleDialog.wm_store_id" class="input_width"></el-input>-->
+              <!--</el-form-item>-->
 
               <el-form-item label-width="200px" label="" class="margin_b_10">
                 <el-button type="primary" size="small" @click="bindData('el')">点击授权饿了么外卖</el-button>
@@ -111,18 +111,18 @@
 
           <div class="margin_b_10">绑定映射</div>
 
-          <el-form label-position="right" ref="form" :model="baiduDialog">
+          <el-form label-position="right" ref="baiduDialog" :model="baiduDialog">
             <div v-show="showBd === false">
-              <el-form-item label-width="200px" label="百度门店ID" class="margin_b_10">
+              <el-form-item label-width="200px" label="百度门店ID"  prop="wm_store_id" :rules="{required: true, message: '请输入百度门店ID', trigger: 'blur'}">
                 <el-input v-model="baiduDialog.wm_store_id" class="input_width"></el-input>
               </el-form-item>
               <!--<el-form-item label-width="200px" label="百度门店名称" class="margin_b_10">-->
               <!--<el-input v-model="baiduDialog.input2" class="input_width"></el-input>-->
               <!--</el-form-item>-->
-              <el-form-item label-width="200px" label="合作方账号" class="margin_b_10">
+              <el-form-item label-width="200px" label="合作方账号"  prop="source" :rules="{required: true, message: '请输入合作方账号', trigger: 'blur'}">
                 <el-input v-model="baiduDialog.source" class="input_width"></el-input>
               </el-form-item>
-              <el-form-item label-width="200px" label="合作方密钥" class="margin_b_10">
+              <el-form-item label-width="200px" label="合作方密钥"  prop="key" :rules="{required: true, message: '请输入合作方密钥', trigger: 'blur'}">
                 <el-input v-model="baiduDialog.key" class="input_width"></el-input>
               </el-form-item>
 
@@ -267,10 +267,12 @@
               type:"mt",
                store_name:this.meiTuanDialog.store_name,
             };
+            let tempWindow1 = window.open();
             oneTwoApi(params).then((res) => {
               if (res.errcode === 0) {
-                this.$message(res.errmsg);
-                this.getWmData('mt');
+                //this.$message(res.errmsg);
+                //this.getWmData('mt');
+                tempWindow1.location = res.data;
               }
             });
             break;
@@ -280,32 +282,46 @@
               redirect: "x2.store.bindStore",
               store_id: this.$route.params.id,
               type:"el",
-              store_name:this.eleDialog.wm_store_id,
+              wm_store_id:this.eleDialog.wm_store_id,
             };
+            let tempWindow2 = window.open();
             oneTwoApi(params).then((res) => {
               if (res.errcode === 0) {
-                this.$message(res.errmsg);
-                this.getWmData('el');
+                //this.getWmData('el');
+                //this.$message(res.errmsg);
+                tempWindow2.location = res.data;
               }
             });
 
             break;
 
           case "bd":
-             params = {
-              redirect: "x2.store.bindStore",
-              store_id: this.$route.params.id,
-              type:"bd",
-              wm_store_id:this.baiduDialog.wm_store_id,
-              source:this.baiduDialog.source,
-              key:this.baiduDialog.key,
-            };
-            oneTwoApi(params).then((res) => {
-              if (res.errcode === 0) {
-                this.$message(res.errmsg);
-                this.getWmData('bd');
+            this.$refs['baiduDialog'].validate((valid) => {
+              if (valid) {
+                params = {
+                  redirect: "x2.store.bindStore",
+                  store_id: this.$route.params.id,
+                  type:"bd",
+                  wm_store_id:this.baiduDialog.wm_store_id,
+                  source:this.baiduDialog.source,
+                  key:this.baiduDialog.key,
+                };
+                let tempWindow3 = window.open();
+                oneTwoApi(params).then((res) => {
+                  if (res.errcode === 0) {
+                    //this.$message(res.errmsg);
+                    //this.getWmData('bd');
+                    tempWindow3.location = res.data;
+                  }
+                });
+
+
+              } else {
+                console.log('error submit!!');
+                return false;
               }
             });
+
             break;
         }
 

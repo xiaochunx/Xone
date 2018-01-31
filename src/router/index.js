@@ -87,6 +87,7 @@ import pageDesign from '@/components/invoice/pageDesign/Index.vue'
 import storeManagement from '@/components/x2OperationScheme/storeManagement/Index.vue'
 import storeManagementTakeOut from '@/components/x2OperationScheme/storeManagement/takeOut/Index.vue'
 import printerConfig from '@/components/x2OperationScheme/printerConfig/Index.vue'
+import pushState from '@/components/x2OperationScheme/pushState/Index.vue'
 
 
 /************************** 商户资料核实 ***************************/
@@ -512,6 +513,13 @@ export default new Router({
           meta: { auth: false },
           name: '打印机配置',
           component: printerConfig
+        },
+        //推送状态
+        {
+          path: '/x2OperationScheme/pushState',
+          meta: { auth: false },
+          name: '推送状态',
+          component: pushState
         },
 
         /**********************商户资料核实***************************/

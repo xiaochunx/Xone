@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['门店列表']">
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -45,7 +45,7 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storename"
                            width="160" label="门店名称"></el-table-column>
 
-          <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <div v-for="(item,index) in scope.row.wmData">
                 {{index}} -- {{item.wm_store_id}}
@@ -163,6 +163,11 @@
 
   export default {
     components: {},
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     data() {
       return {
         dialogVisible2: false,
@@ -173,7 +178,7 @@
         dialogVisible1: false,
         dialogVisible3: false,
 
-        navList: [{name: "x2运营方案", url: '门店管理'}],
+        navList: [{name: "门店管理", url: ''}],
         data5: [],
         storeName: '',
         dishesList: [
@@ -320,6 +325,7 @@
 
       },
       search() {
+        this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.getX2StoreLevelId(),this.storeName)
 
       },
 
@@ -503,18 +509,15 @@
       this.showLevel();
 
 
-
-
     },
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-
         this.showResouce(this.p, e.levelid);
         this.setX2StoreLevelId({levelId: e.levelid});
         this.recurSelected(this.data5, e.levelid)
       });
-
+      Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;

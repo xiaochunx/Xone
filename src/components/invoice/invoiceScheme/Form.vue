@@ -85,6 +85,82 @@
       </div>
     </el-form-item>
 
+    <div class="flex_sb margin_b_10" style="border-bottom: 1px solid #bfcbd9">
+      <div style="color: red">增值服务（付费使用）</div>
+      <div @click="showIncrement = !showIncrement" class="pointer">展开
+        <i class="el-icon-arrow-down"  v-if="showIncrement"></i>
+        <i class="el-icon-arrow-up"  v-if="!showIncrement"></i>
+      </div>
+    </div>
+    <transition
+      v-on:before-enter="beforeEnter"
+      v-on:enter="enter"
+      v-on:after-enter="afterEnter"
+      v-on:enter-cancelled="enterCancelled"
+      v-on:before-leave="beforeLeave"
+      v-on:leave="leave"
+      v-on:after-leave="afterLeave"
+      v-on:leave-cancelled="leaveCancelled"
+    >
+      <div v-if="showIncrement" class="heightTran">
+        <el-form-item label-width="110px" label="">
+          <div class="flex_a">
+            <el-switch
+              v-model="clientFormData.auto_log"
+              on-color="#13ce66"
+              off-color="#ff4949" :disabled="showName === '查看'">
+            </el-switch>
+
+            <div class="margin_l_10 margin_r_10 t_a">
+              允许电子发票以卡券形式存入卡包
+            </div>
+            <el-popover
+              placement="right"
+              width="200"
+              trigger="hover"
+              content="备注：除了发送邮箱和下载pdf这两种形式外，电子发票可以变成微信卡券的形式，并保存在客人的微信卡包中，随时查看或操作">
+              <i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>
+            </el-popover>
+          </div>
+        </el-form-item>
+
+        <el-form-item label-width="110px" label="">
+          <div class="flex_a">
+            <el-switch
+              v-model="clientFormData.auto_log"
+              on-color="#13ce66"
+              off-color="#ff4949" :disabled="showName === '查看'">
+            </el-switch>
+
+            <div class="margin_l_10 margin_r_10 t_a">
+              允许支付宝扫码开电子发票
+            </div>
+          </div>
+        </el-form-item>
+
+        <el-form-item label-width="110px" label="">
+          <div class="flex_a">
+            <el-switch
+              v-model="clientFormData.auto_log"
+              on-color="#13ce66"
+              off-color="#ff4949" :disabled="showName === '查看'">
+            </el-switch>
+
+            <div class="margin_l_10 margin_r_10 t_a">
+              允许客人现金及刷卡支付也可自助开电子发票
+            </div>
+            <el-popover
+              placement="right"
+              width="200"
+              trigger="hover"
+              content="备注：无论客人选择哪种支付方式，均可打印结账单及电子发票二维码，由客人自助完成开具电子发票">
+              <i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>
+            </el-popover>
+          </div>
+        </el-form-item>
+      </div>
+    </transition>
+
   </el-form>
 </template>
 <script>
@@ -96,7 +172,7 @@
     data() {
       return {
         showOption:false,
-
+        showIncrement:false
       };
     },
     methods: {

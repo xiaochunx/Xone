@@ -1,6 +1,6 @@
 
 <template>
-  <div class="scroll_of">
+  <div class="scroll_of" v-show="getTreeArr['订单列表']">
     <div class="bodyTop">
       <div class="">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -106,7 +106,7 @@
       <el-table-column header-align="center" align="center" prop="pay_status" label="操作"
                        width="80">
         <template slot-scope="scope">
-          <el-button size="small" @click="info(scope.row.id)">详情</el-button>
+          <el-button size="small" @click="info(scope.row.id)" v-show="getTreeArr['订单详情']">详情</el-button>
         </template>
       </el-table-column>
 
@@ -407,6 +407,7 @@
       getStoreListAll().then((res)=>{
         this.storeData = res.data.data
       });
+      Hub.$emit('mountedOk','mountedOk');
     },
     destroyed() {
 

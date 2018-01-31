@@ -34,6 +34,9 @@ export default{
   getRunningStateLevelId(state){
     return state.runningStateLevelId;
   },
+  getPushStateLevelId(state){
+    return state.pushStateLevelId;
+  },
   getStoreTreeList(state){
     return state.storeTreeList;
   },
