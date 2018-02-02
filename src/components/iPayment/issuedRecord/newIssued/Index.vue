@@ -18,7 +18,7 @@
                               :rules="{ required: true, message: '支付方式不能为空',type: 'number', trigger: 'blur'}"
                 >
 
-                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="(e)=>{
+                  <el-select v-model="domain.paymentMethod" filterable placeholder="支付方式" @change="(e)=>{
                   return getStore(index,0,e)
                   }">
                     <el-option
@@ -38,7 +38,7 @@
                 <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'account.' + index + '.paymentChannel'"
                               :rules="{required: true, message: '支付通道不能为空', trigger: 'blur',type: 'number'}"
                 >
-                  <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,0)">
+                  <el-select v-model="domain.paymentChannel" filterable placeholder="支付通道" @change="getStore(index,0)">
                     <el-option
                       v-for="item in domain.options2"
                       :key="item.id"
@@ -56,7 +56,7 @@
                 <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'account.' + index + '.accountId'"
                               :rules="{required: true, message: '账户名不能为空', trigger: 'change', type: 'number'}"
                 >
-                  <el-select v-model="domain.accountId" placeholder="账户名">
+                  <el-select v-model="domain.accountId" filterable placeholder="账户名">
                     <el-option
                       v-for="item in domain.options3"
                       :key="item.id"
@@ -86,7 +86,7 @@
               <el-col :span="10">
                 <el-form-item :label="'备用账户 ' + index + ':'" :key="domain.key" :prop="'reserveAcc.' + index + '.paymentMethod'" class="cell">
 
-                  <el-select v-model="domain.paymentMethod" placeholder="支付方式" @change="(e)=>{
+                  <el-select v-model="domain.paymentMethod" filterable placeholder="支付方式" @change="(e)=>{
                   return getStore(index,1,e)
                   }">
                     <el-option
@@ -104,7 +104,7 @@
 
               <el-col :span="6">
                 <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'reserveAcc.' + index + '.paymentChannel'">
-                  <el-select v-model="domain.paymentChannel" placeholder="支付通道" @change="getStore(index,1)">
+                  <el-select v-model="domain.paymentChannel" filterable placeholder="支付通道" @change="getStore(index,1)">
                     <el-option v-for="item in domain.options2" :key="item.id" :label="item.memo" :value="item.id">
                     </el-option>
                   </el-select>
@@ -118,7 +118,7 @@
 
               <el-col :span="6">
                 <el-form-item :key="domain.key" label-width="0" class="cell" :prop="'reserveAcc.' + index + '.accountId'">
-                  <el-select v-model="domain.accountId" placeholder="账户名">
+                  <el-select v-model="domain.accountId" filterable placeholder="账户名">
                     <el-option
                       v-for="item in domain.options3"
                       :key="item.id"

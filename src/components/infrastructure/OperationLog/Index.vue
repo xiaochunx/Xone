@@ -22,7 +22,7 @@
 
             <div >
               <div>操作类型</div>
-              <el-select v-model="power_attr" clearable placeholder="请选择">
+              <el-select v-model="power_attr" clearable filterable placeholder="请选择">
                 <el-option
                   v-for="item in logType"
                   :key="item.id"

@@ -37,6 +37,9 @@ export default{
   getPushStateLevelId(state){
     return state.pushStateLevelId;
   },
+  getBusinessConfLevelId(state){
+    return state.businessConfLevelId;
+  },
   getStoreTreeList(state){
     return state.storeTreeList;
   },

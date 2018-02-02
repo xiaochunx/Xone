@@ -39,7 +39,7 @@
             <div>
               用户组
             </div>
-            <el-select v-model="groupId" clearable placeholder="请选择" @visible-change="vc">
+            <el-select v-model="groupId" clearable filterable placeholder="请选择" @visible-change="vc">
               <el-option
                 v-for="item in groupList"
                 :key="item.id"

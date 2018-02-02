@@ -9,7 +9,7 @@
           <el-form :inline="true" :model="ruleForm" class="demo-form-inline" :label-position="'top'">
 
             <el-form-item label="支付方式">
-              <el-select v-model="ruleForm.payMethod" placeholder="全部" clearable>
+              <el-select v-model="ruleForm.payMethod" placeholder="全部" clearable filterable>
                 <el-option
                   v-for="item in ruleForm.payOptions"
                   :key="item.id"
@@ -20,7 +20,7 @@
             </el-form-item>
 
             <el-form-item label="支付通道">
-              <el-select v-model="ruleForm.Payment" placeholder="全部" clearable>
+              <el-select v-model="ruleForm.Payment" placeholder="全部" clearable filterable>
                 <el-option
                   v-for="item in ruleForm.paymentOptions"
                   :key="item.id"

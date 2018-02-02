@@ -33,7 +33,7 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>订单状态</span>
-            <el-select v-model="status" clearable placeholder="请选择订单状态" size="small" @change="handleStatus">
+            <el-select v-model="status" clearable filterable placeholder="请选择订单状态" size="small" @change="handleStatus">
               <el-option
                 v-for="item in statusList"
                 :key="item.id"
@@ -45,7 +45,7 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>选择门店</span>
-            <el-select v-model="storeId" clearable placeholder="请选择" size="small" @change="handleStoreId">
+            <el-select v-model="storeId" clearable filterable placeholder="请选择" size="small" @change="handleStoreId">
               <el-option
                 v-for="item in storeData"
                 :key="item.id"
@@ -57,7 +57,7 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>选择来源</span>
-            <el-select v-model="source" clearable placeholder="请选择订单状态" size="small" @change="handleSource">
+            <el-select v-model="source" clearable filterable placeholder="请选择订单状态" size="small" @change="handleSource">
               <el-option
                 v-for="item in soucesList"
                 :key="item.id"

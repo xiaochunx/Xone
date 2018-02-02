@@ -17,7 +17,7 @@
           <div class="flex_a">
             <div class=" margin_r_10">
               <div>门店</div>
-              <el-select v-model="store_id" clearable placeholder="请选择" @change="selectStore">
+              <el-select v-model="store_id" clearable filterable placeholder="请选择" @change="selectStore">
                 <el-option
                   v-for="item in storeData"
                   :key="item.id"

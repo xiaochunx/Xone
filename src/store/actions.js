@@ -31,6 +31,9 @@ export default {
   setPushStateLevelId({commit},obj){
     commit(types.PUSHSTATELEVELID,obj);
   },
+  setBusinessConfLevelId({commit},obj){
+    commit(types.BUSINESSCONFLEVELID,obj);
+  },
   setStoreTreeList({commit},obj){
     commit(types.STORETREELIST,obj);
   },

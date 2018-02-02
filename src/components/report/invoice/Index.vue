@@ -125,9 +125,9 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {getStoreListAll} from '../../utility/communApi'
-  import getApi from './invoice.service';
   import { mapActions,mapGetters } from 'vuex';
   import Hub from '../../utility/commun'
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     components: {
 
@@ -158,11 +158,16 @@
         this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],1)
       },
       showPop(id){
-        getApi.invoiceInfo(id).then((res)=>{
-          if(res.data.errcode === 0){
-            this.invoiceInfo = res.data.data
+        let params = {
+          redirect: "x1.invoice.invoiceInfo",
+          id: id,
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            this.invoiceInfo = res.data
           }
-        })
+        });
+
       },
       search(){
         if (this.dateSelected[0] === '' && this.dateSelected[1] ==='') {
@@ -205,18 +210,29 @@
         this.dateSelected = [(d[0] + "").substr(0,10),(d[1] + "").substr(0,10)]
       },
       getInvoiceList(p,store_id,create_time,end_time,myExport){
-        getApi.invoiceStatistics(p,store_id,create_time,end_time,myExport).then((res)=>{
-          if(res.data.errcode === 0){
+
+        let params = {
+          redirect: "x1.invoice.invoiceStatistics",
+          store_id: store_id,
+          create_time: create_time,
+          end_time: end_time,
+          export: myExport,
+          page: p.page,
+          pagesize: p.size
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
             if(myExport === ""){
-              this.tableData = res.data.data.list;
-              this.total_num = res.data.data.total_num;
-              this.total_price = res.data.data.total_price;
-              this.p.total = res.data.data.count
+              this.tableData = res.data.list;
+              this.total_num = res.data.total_num;
+              this.total_price = res.data.total_price;
+              this.p.total = res.data.count
             }else {
-              window.location.href = res.data.data
+              window.location.href = res.data
             }
           }
-        })
+        });
+
       },
     },
     created() {

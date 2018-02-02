@@ -36,7 +36,8 @@ import Invoice from '../components/report/invoice/Index.vue'
 import orderList from '../components/report/orderList/Index.vue'
 import orderCount from '../components/report/orderCount/Index.vue'
 /************************** 基础设置 ***************************/
-import BusinessInfo from '@/components/infrastructure/BusinessInfo/Index.vue'
+
+import BusinessConf from '@/components/infrastructure/BusinessConf/Index.vue'
 import BackupAcc from '@/components/infrastructure/BackupAcc/Index.vue'
 import VolumeSet from '@/components/infrastructure/VolumeSet/Index.vue'
 import NewAdd from '@/components/infrastructure/VolumeSet/NewAdd/Index.vue'
@@ -55,7 +56,6 @@ import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
 
 /************************** 运营 ***************************/
 import RunningState from '../components/operate/RunningState/Index.vue'
-import InvoiceAllocation from '../components/operate/InvoiceAllocation/Index.vue'
 import SchemeDown from '../components/operate/SchemeDown/Index.vue'
 import OperationPlan from '../components/operate/OperationPlan/Index.vue'
 
@@ -250,12 +250,12 @@ export default new Router({
         },
 
         /**********************基础设置***************************/
-        // 基础设置/商家信息
+        // 基础设置/商户配置
         {
-          path: '/infrastructure/BusinessInfo',
+          path: '/infrastructure/BusinessConf',
           meta: { auth: true },
           name: '基础设置/商家信息',
-          component: BusinessInfo
+          component: BusinessConf
         },
         // 基础设置/备用账户切换
         {
@@ -373,13 +373,7 @@ export default new Router({
           name: '运行状态',
           component: RunningState
         },
-        //发票配置
-        {
-          path: '/operate/invoiceAllocation',
-          meta: { auth: true },
-          name: '发票配置',
-          component: InvoiceAllocation
-        },
+
         //方案下发
         {
           path: '/operate/schemeDown',

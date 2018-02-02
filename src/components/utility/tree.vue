@@ -54,7 +54,7 @@
 
         }
 
-//        item.show = !item.show
+        item.show = !item.show
       },
       beforeEnter: function (el) {
         el.style.height = '0';

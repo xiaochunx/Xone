@@ -15,7 +15,7 @@
 
         <div>
           <span class="margin_r_10">{{levelName}}</span>
-          <el-select clearable v-model="storeData_id" placeholder="请选择" @change="handleStore">
+          <el-select clearable filterable v-model="storeData_id" placeholder="请选择" @change="handleStore">
             <el-option
               v-for="item in storeData"
               :key="item.base_store_id"
@@ -131,8 +131,8 @@
         </el-form-item>
 
         <el-form-item label="打印机类型:" prop="type"
-                      :rules="{type:'number',required: true, message: '请选择编号', trigger: 'change'}">
-          <el-select v-model="formPrint.type" placeholder="请选择">
+                      :rules="{type:'number',required: true, message: '请选择打印机类型', trigger: 'change'}">
+          <el-select v-model="formPrint.type" filterable placeholder="请选择">
             <el-option
               v-for="item in printType"
               :key="item.id"
@@ -142,12 +142,12 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="打印机名称:" prop="printername" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formPrint.printername" placeholder="请输入名称"></el-input>
+        <el-form-item label="打印机名称:" prop="printername" :rules="{required: true, message: '请输入打印机名称', trigger: 'blur'}">
+          <el-input v-model="formPrint.printername" placeholder="请输入打印机名称"></el-input>
         </el-form-item>
 
-        <el-form-item label="打印机编号:" prop="sn" :rules="{required: true, message: '请输入编号', trigger: 'blur'}">
-          <el-input v-model="formPrint.sn" placeholder="请输入编号" :disabled="name === '修改打印机'"></el-input>
+        <el-form-item label="打印机编号:" prop="sn" :rules="{required: true, message: '请输入打印机编号', trigger: 'blur'}">
+          <el-input v-model="formPrint.sn" placeholder="请输入打印机编号" :disabled="name === '修改打印机'"></el-input>
         </el-form-item>
 
 
@@ -195,9 +195,8 @@
           </div>
         </div>
 
-        <el-form-item label="配置模板:" prop="templateid"
-                      :rules="{type:'array',required: true, message: '请选择模板', trigger: 'change'}">
-          <el-select multiple v-model="formPrint.templateid" placeholder="请选择">
+        <el-form-item label="配置模板:" prop="templateid" :rules="{type:'array',required: true, message: '请选择模板', trigger: 'change'}">
+          <el-select multiple filterable v-model="formPrint.templateid" placeholder="请选择">
             <el-option
               v-for="item in confTemplateList"
               :key="item.id"
@@ -730,7 +729,8 @@
           }
         })
       },
-      open1() {
+      close1() {
+        this.$refs['formRules'].resetFields();
         if (this.name === "新增打印机") {
           this.formPrint = {
             type: '',
@@ -743,6 +743,9 @@
             status: true,
           }
         }
+      },
+      open1() {
+
         this.getStoreTemplate()
       },
       submitFrom(formRules) {
@@ -834,9 +837,7 @@
           this.updatePrint('打印模板配置');
         }
       },
-      close1() {
-        this.$refs['formRules'].resetFields();
-      },
+
       open3() {
 
       },
@@ -1022,8 +1023,7 @@
           redirect: "x2.store.index",
           levelId: levelId,
           storeName: '',
-          page: 1,
-          pagesize: 1000,
+          noPage:1
         };
         oneTwoApi(params).then((res) => {
           if (res.errcode === 0) {

@@ -17,7 +17,7 @@
           <div class="flex_a">
             <div class=" margin_r_10">
               <div>门店</div>
-              <el-select v-model="store_id" clearable placeholder="请选择">
+              <el-select v-model="store_id" clearable filterable placeholder="请选择">
                 <el-option
                   v-for="item in storeData"
                   :key="item.id"
@@ -29,7 +29,7 @@
 
             <div class=" margin_r_10">
               <div>支付方式</div>
-              <el-select v-model="iway" clearable placeholder="请选择支付方式">
+              <el-select v-model="iway" clearable filterable placeholder="请选择支付方式">
                 <el-option
                   v-for="item in getWayInfo"
                   :key="item.id"
@@ -42,7 +42,7 @@
 
             <div class=" margin_r_10">
               <div>支付通道</div>
-              <el-select v-model="ichannel" clearable placeholder="请选择通道列表">
+              <el-select v-model="ichannel" clearable filterable placeholder="请选择通道列表">
                 <el-option
                   v-for="item in getChannelInfo"
                   :key="item.id"
@@ -68,7 +68,7 @@
             <div class=" margin_r_10">
               <div>交易状态
               </div>
-              <el-select v-model="pay_status" clearable placeholder="请选择">
+              <el-select v-model="pay_status" clearable filterable placeholder="请选择">
                 <el-option
                   v-for="item in transactionStatus"
                   :key="item.id"
@@ -84,6 +84,32 @@
               <el-input v-model="order_no" placeholder="请输入内容"></el-input>
 
             </div>
+
+            <!--<div class=" margin_r_10">-->
+              <!--<div>扫码支付形式</div>-->
+              <!--<el-select v-model="scavengingForm" clearable filterable placeholder="请选择支付形式">-->
+                <!--<el-option-->
+                  <!--v-for="item in payInfo"-->
+                  <!--:key="item.scanId"-->
+                  <!--:label="item.scavengingFormName"-->
+                  <!--:value="item.scanId">-->
+                <!--</el-option>-->
+              <!--</el-select>-->
+
+            <!--</div>-->
+
+            <!--<div class=" margin_r_10">-->
+              <!--<div>收款终端</div>-->
+              <!--<el-select v-model="receive_terminal" clearable filterable placeholder="请选择收款终端">-->
+                <!--<el-option-->
+                  <!--v-for="item in terminalInfo"-->
+                  <!--:key="item.receiveId"-->
+                  <!--:label="item.receiveTerminalName"-->
+                  <!--:value="item.receiveId">-->
+                <!--</el-option>-->
+              <!--</el-select>-->
+
+            <!--</div>-->
 
             <div class=" margin_r_10">
               <div>商家单号</div>
@@ -116,6 +142,11 @@
                          width="270"></el-table-column>
         <el-table-column header-align="center" align="center" prop="iway" label="支付方式"
                          width="100"></el-table-column>
+
+        <!--<el-table-column header-align="center" align="center" prop="scavengingForm" label="扫码支付形式"-->
+                         <!--width="130"></el-table-column>-->
+        <!--<el-table-column header-align="center" align="center" prop="receive_terminal" label="收款终端"-->
+                         <!--width="100"></el-table-column>-->
 
         <el-table-column header-align="center" align="center" prop="ichannel" label="支付通道"
                          width="100"></el-table-column>
@@ -153,18 +184,30 @@
     <el-dialog
       title="确认退款?"
       :visible.sync="dialogVisible"
+      @close="close"
       width="30%">
 
-      <el-input
-        v-model="refund_money"
-        style="margin-bottom: 20px;"
-        placeholder="请输入退款金额"></el-input>
-      <el-input
-        type="textarea"
-        :rows="2"
-        placeholder="请输入备注内容"
-        v-model="remark">
-      </el-input>
+      <el-form label-position="right" ref="refundForm" :model="refundForm">
+        <el-form-item label=""  prop="refund_money" :rules="{validator: checkRefund,required: true, trigger: 'blur'}">
+          <el-input
+            type="number"
+            min="0"
+            v-model="refundForm.refund_money"
+            placeholder="请输入退款金额"></el-input>
+        </el-form-item>
+
+        <el-form-item label=""  prop="remark" :rules="{required: true, message: '请输入备注内容', trigger: 'blur'}">
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入备注内容"
+            v-model="refundForm.remark">
+          </el-input>
+        </el-form-item>
+      </el-form>
+
+
+
 
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
@@ -202,7 +245,10 @@
 
         pay_status: '',
         transactionStatus: [],
-
+        payInfo:[],
+        scavengingForm:"",
+        terminalInfo:[],
+        receive_terminal:"",
         tableData: [],
         dateSelected: [],
         getWayInfo:[],
@@ -217,8 +263,10 @@
         store_id_list:[],
 
         dialogVisible: false,
-        refund_money: '',
-        remark: '',
+        refundForm:{
+          refund_money: '',
+          remark: '',
+        },
         refundOrderNo: '',
         actualRefundMoney: ''
       }
@@ -226,6 +274,21 @@
 
     methods: {
       ...mapActions(['setTreeArr']),
+      checkRefund(rule, value, callback){
+
+        if (value === '') {
+          callback(new Error('请输入退款金额'));
+        }else {
+          if ((value *1) <= 0) {
+            callback(new Error('退款金额不可少于或等于0'));
+          }else {
+            callback()
+          }
+        }
+      },
+      close(){
+        this.$refs['refundForm'].resetFields();
+      },
       store(){
         let store;
         if(this.store_id === ''){
@@ -237,7 +300,7 @@
       },
       out(){
        let store = this.store();
-        getApi.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p,1).then((res)=>{
+        getApi.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p,1).then((res)=>{
           if(res.data.errcode === 0){
             window.location.href = res.data.data
           }
@@ -269,7 +332,7 @@
               //ok
               console.log(this.dateSelected[0] ,this.dateSelected[1])
               let store = this.store();
-              this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p)
+              this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
             }
         }
 
@@ -277,21 +340,21 @@
       getPage(page) {
         this.p.page = page;
         let store = this.store();
-        this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p)
+        this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
 
       },
       getPageSize(size) {
         this.p.size = size;
         let store = this.store();
-        this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p)
+        this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
 
       },
 
       getRadioDate(d) {
         this.dateSelected = d
       },
-      orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1 = ''){
-        getApi.orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1).then((res)=>{
+      orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,scavengingForm,receive_terminal,p,export1 = ''){
+        getApi.orderList(start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,scavengingForm,receive_terminal,p,export1).then((res)=>{
           if(res.data.errcode === 0){
             res.data.data.list.forEach((item)=>{
               item.add_time = new Date((item.add_time + '000') * 1).format("yyyy-MM-dd hh:mm:ss");
@@ -320,28 +383,34 @@
           });
         }else {
 
-          var params = {
-            redirect: 'x1.order.refund',
-            order_no: this.refundOrderNo,
-            money: this.refund_money,
-            memo: this.remark,
-            operate: JSON.parse(localStorage.getItem('user'))
-          };
+          this.$refs['refundForm'].validate((valid) => {
+            if (valid) {
 
-          oneTwoApi(params).then((res) => {
+              let params = {
+                redirect: 'x1.order.refund',
+                order_no: this.refundOrderNo,
+                money: this.refundForm.refund_money,
+                memo: this.refundForm.remark,
+                operate: JSON.parse(localStorage.getItem('user'))
+              };
+              oneTwoApi(params).then((res) => {
+                this.dialogVisible = false;
+                if (res.errcode === "0" || res.errcode === 0){
+                  this.$message({
+                    message: "操作成功",
+                    type: 'success'
+                  });
+                  let store = this.store();
+                  this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
+                }
+              })
 
-            // 清除金额,关闭弹窗
-            this.dialogVisible = false;
-            this.refund_money = '';
-            this.remark = '';
-
-            if (res.errcode == 0){
-              this.$message({
-                message: res.errmsg,
-                type: 'success'
-              });
+            } else {
+              console.log('error submit!!');
+              return false;
             }
-          })
+          });
+
         }
       },
 
@@ -367,6 +436,25 @@
       });
 
 
+      let params = {
+        redirect: 'x1.order.getReceiveTerminal',
+      };
+      oneTwoApi(params).then((res) => {
+        if(res.errcode === 0){
+          this.terminalInfo = res.data
+        }
+      });
+
+      let params1 = {
+        redirect: 'x1.order.getScavengingForm',
+      };
+      oneTwoApi(params1).then((res) => {
+        if(res.errcode === 0){
+          this.payInfo = res.data
+        }
+      });
+
+
     },
     mounted() {
       getStoreListAll().then((res)=>{
@@ -377,7 +465,7 @@
         });
         this.store_id_list = list;
 
-        this.orderList(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.p)
+        this.orderList(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
 
         this.storeData = res.data.data
       });

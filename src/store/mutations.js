@@ -18,6 +18,7 @@ const state = {
   printConfLevelId:'',//打印机配置levelid
   runningStateLevelId:'',//终端状态levelid
   pushStateLevelId:'',//推送状态levelid
+  businessConfLevelId:'',//商户配置levelid
 };
 
 const mutations = {
@@ -50,6 +51,9 @@ const mutations = {
   },
   [types.PUSHSTATELEVELID](state, obj){
     state.pushStateLevelId = obj.levelId
+  },
+  [types.BUSINESSCONFLEVELID](state, obj){
+    state.businessConfLevelId = obj.levelId
   },
   [types.STORETREELIST](state, obj){
     state.storeTreeList = obj.list

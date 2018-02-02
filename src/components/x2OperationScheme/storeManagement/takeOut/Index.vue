@@ -66,12 +66,12 @@
         </el-tab-pane>
         <el-tab-pane label="饿了么" name="el">
 
-          <el-form label-position="right" ref="form" :model="eleDialog">
+          <el-form label-position="right" ref="eleDialog" :model="eleDialog">
 
             <div v-show="showEl === false">
-              <!--<el-form-item label-width="200px" label="授权门店ID" class="margin_b_10">-->
-                <!--<el-input v-model="eleDialog.wm_store_id" class="input_width"></el-input>-->
-              <!--</el-form-item>-->
+              <el-form-item label-width="200px" label="授权门店ID"  prop="wm_store_id" :rules="{required: true, message: '请输入授权门店ID', trigger: 'blur'}">
+                <el-input v-model="eleDialog.wm_store_id" class="input_width"></el-input>
+              </el-form-item>
 
               <el-form-item label-width="200px" label="" class="margin_b_10">
                 <el-button type="primary" size="small" @click="bindData('el')">点击授权饿了么外卖</el-button>
@@ -171,6 +171,8 @@
   import {mapActions, mapGetters} from 'vuex';
   import {oneTwoApi} from '@/api/api.js';
   import xoBindPage from './BindPage'
+  import $ from 'jquery';
+  import qs from 'qs'
   export default {
     components: {
       xoBindPage
@@ -197,7 +199,7 @@
         showBd:false,
         navList: [{name: "门店管理", url: '/x2OperationScheme/storeManagement'},{name: "外卖平台映射", url: ''}],
 
-
+        test:""
       }
     },
     watch: {},
@@ -230,30 +232,49 @@
         })
       },
       unBindData(type){
-        this.$confirm('此操作将解除绑定, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          //解除绑定
-          let  params = {
-            redirect: "x2.store.unbindStore",
-            store_id: this.$route.params.id,
-            type:type,
-          };
-          oneTwoApi(params).then((res) => {
-            if (res.errcode === 0) {
-              this.$message(res.errmsg);
-              this.getWmData(type);
+        // this.$confirm('此操作将解除绑定, 是否继续?', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   type: 'warning'
+        // }).then(() => {
+        //
+        // }).catch(() => {
+        //
+        // });
+
+        //解除绑定
+        let  params = {
+          redirect: "x2.store.unbindStore",
+          storeId: this.$route.params.id,
+          type:type,
+        };
+
+        this.ajax(params)
+
+      },
+
+      ajax(params){
+        $.ajax({
+          url:`${this.$jqUrl}/index.php?controller=admin&action=api&token=${this.$localStorage.get('token')}`,
+          type:'POST',
+          async:false,
+          data:qs.stringify(params),
+          timeout:5000,
+          dataType:'json',
+          success:(data)=>{
+            if(data.errcode === 0){
+              window.open(data.data,"_blank")
+            } else {
+              this.$message({
+                message: data.errmsg,
+                type: 'warning'
+              });
             }
-          });
-        }).catch(() => {
 
-        });
-
-
-
-
+          },
+          error:function(xhr,textStatus){
+          }
+        })
       },
 
       bindData(name){
@@ -278,18 +299,20 @@
             break;
 
           case "el":
-            params = {
-              redirect: "x2.store.bindStore",
-              store_id: this.$route.params.id,
-              type:"el",
-              wm_store_id:this.eleDialog.wm_store_id,
-            };
-            let tempWindow2 = window.open();
-            oneTwoApi(params).then((res) => {
-              if (res.errcode === 0) {
-                //this.getWmData('el');
-                //this.$message(res.errmsg);
-                tempWindow2.location = res.data;
+          this.$refs['eleDialog'].validate((valid) => {
+              if (valid) {
+                params = {
+                  redirect: "x2.store.bindStore",
+                  store_id: this.$route.params.id,
+                  type:"el",
+                  wm_store_id:this.eleDialog.wm_store_id,
+                };
+
+                this.ajax(params)
+
+              } else {
+                console.log('error submit!!');
+                return false;
               }
             });
 
@@ -306,15 +329,8 @@
                   source:this.baiduDialog.source,
                   key:this.baiduDialog.key,
                 };
-                let tempWindow3 = window.open();
-                oneTwoApi(params).then((res) => {
-                  if (res.errcode === 0) {
-                    //this.$message(res.errmsg);
-                    //this.getWmData('bd');
-                    tempWindow3.location = res.data;
-                  }
-                });
 
+                this.ajax(params)
 
               } else {
                 console.log('error submit!!');

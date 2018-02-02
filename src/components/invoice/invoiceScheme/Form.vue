@@ -64,7 +64,7 @@
 
     <div class="margin_b_10" style="border-bottom: 1px solid #bfcbd9"></div>
 
-    <el-form-item label-width="110px" label="">
+    <el-form-item label-width="140px" label="">
       <div class="flex_a">
         <el-switch
           v-model="clientFormData.auto_log"
@@ -103,12 +103,12 @@
       v-on:leave-cancelled="leaveCancelled"
     >
       <div v-if="showIncrement" class="heightTran">
-        <el-form-item label-width="110px" label="">
+        <el-form-item label-width="140px" label="">
           <div class="flex_a">
             <el-switch
-              v-model="clientFormData.auto_log"
+              v-model="clientFormData.card_package_allow"
               on-color="#13ce66"
-              off-color="#ff4949" :disabled="showName === '查看'">
+              off-color="#ff4949" :disabled="showName === '查看' || getAddInvoicePower === false">
             </el-switch>
 
             <div class="margin_l_10 margin_r_10 t_a">
@@ -124,12 +124,52 @@
           </div>
         </el-form-item>
 
-        <el-form-item label-width="110px" label="">
+        <transition
+          v-on:before-enter="beforeEnter"
+          v-on:enter="enter"
+          v-on:after-enter="afterEnter"
+          v-on:enter-cancelled="enterCancelled"
+          v-on:before-leave="beforeLeave"
+          v-on:leave="leave"
+          v-on:after-leave="afterLeave"
+          v-on:leave-cancelled="leaveCancelled"
+        >
+          <div v-if="clientFormData.card_package_allow" class="heightTran">
+            <el-form-item label-width="140px" label="请填写商户简称：" prop="merchant_abbreviation" :rules="{required: true, message: '请填写商户简称', trigger: 'blur'}">
+              <el-input v-model="clientFormData.merchant_abbreviation" placeholder="请输入商户简称" :disabled="showName === '查看' || getAddInvoicePower === false"></el-input>
+            </el-form-item>
+            <el-form-item label-width="140px" label="请上传商户logo：">
+
+              <el-upload
+                class="upload-demo"
+                :action="$updateUrl"
+                name='filename'
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+              >
+                <el-button size="small" type="primary" :disabled="showName === '查看' || getAddInvoicePower === false">点击上传</el-button>
+
+              </el-upload>
+            </el-form-item>
+
+            <el-form-item label-width="140px" label="上传后的图片：">
+              <div v-if="clientFormData.logo_url" class="avatar" style="position: relative">
+                <img  :src="clientFormData.logo_url" class="avatar">
+                <!--<i class="el-icon-circle-cross pointer" style="position: absolute;top: 3px;right: 3px" @click="delLogo()"></i>-->
+              </div>
+            </el-form-item>
+
+          </div>
+
+        </transition>
+
+        <el-form-item label-width="140px" label="">
           <div class="flex_a">
             <el-switch
-              v-model="clientFormData.auto_log"
+              v-model="clientFormData.alipay_allow"
               on-color="#13ce66"
-              off-color="#ff4949" :disabled="showName === '查看'">
+              off-color="#ff4949" :disabled="showName === '查看' || getAddInvoicePower === false">
             </el-switch>
 
             <div class="margin_l_10 margin_r_10 t_a">
@@ -138,12 +178,12 @@
           </div>
         </el-form-item>
 
-        <el-form-item label-width="110px" label="">
+        <el-form-item label-width="140px" label="">
           <div class="flex_a">
             <el-switch
-              v-model="clientFormData.auto_log"
+              v-model="clientFormData.other_pay_allow"
               on-color="#13ce66"
-              off-color="#ff4949" :disabled="showName === '查看'">
+              off-color="#ff4949" :disabled="showName === '查看' || getAddInvoicePower === false">
             </el-switch>
 
             <div class="margin_l_10 margin_r_10 t_a">
@@ -168,7 +208,7 @@
 
   export default {
     name:"xoForm",
-    props:["clientFormData","purchaserList","showName","myRef"],
+    props:["clientFormData","purchaserList","showName","myRef","getAddInvoicePower"],
     data() {
       return {
         showOption:false,
@@ -176,6 +216,13 @@
       };
     },
     methods: {
+
+      delLogo(){
+        this.clientFormData.logo_url = ""
+      },
+      handleAvatarSuccess(res, file){
+        this.clientFormData.logo_url = res.data.file_url?res.data.file_url:""
+      },
       checkTax(rule, value, callback){
         let re = /^0.0[\d{9}]$|^[\d{9}]%$/;
         if (value === '') {
@@ -195,7 +242,23 @@
           }
         })
       },
+      beforeAvatarUpload(file) {
+        const isPNG = file.type === 'image/png';
+        const isJPG = file.type === 'image/jpeg';
+        const isLt5M = file.size / 1024 / 1024 < 1;
+        let img
 
+        if(isJPG || isPNG){
+          img = true
+        }else {
+          img = false;
+          this.$message.error('上传头像图片只能是 JPG,PNG 格式!');
+        }
+        if (!isLt5M) {
+          this.$message.error('上传头像图片大小不能超过 1MB!');
+        }
+        return img && isLt5M;
+      },
       beforeEnter: function (el) {
         el.style.height = '0';
       },

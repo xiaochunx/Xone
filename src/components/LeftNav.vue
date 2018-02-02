@@ -32,27 +32,9 @@
           //   name:'运营',
           //   children: [
           //    {
-          //      name: '发票配置',
-          //      route: '/operate/invoiceAllocation',
-          //    },
-          //    {
           //      name: '方案下发',
           //      route: '/operate/schemeDown',
           //    },
-          //   ]
-          // },
-
-          // {
-          //   name: '支付管理',
-          //   children: [
-          //     {
-          //       name: '账户列表',
-          //       route: '/iPayment/accountList',
-          //     },
-          //     {
-          //       name: '下发记录',
-          //       route: '/iPayment/issuedRecord',
-          //     }
           //   ]
           // },
 
@@ -69,28 +51,25 @@
           //     // }
           //   ]
           // },
-         //  {
-         //    name: '基础设置',
-         //    children: [
-         //     {
-         //       name: '商家信息',
-         //       route: '/infrastructure/BusinessInfo'
-         //     },
-         //     {
-         //       name: '备用账户切换配置',
-         //       route: '/infrastructure/BackupAcc'
-         //     },
-         //     {
-         //       name: '客户端批量设置',
-         //       route: '/infrastructure/VolumeSet'
-         //     },
-         //
-         //     {
-         //       name: '菜品库',
-         //       route: '/infrastructure/DishesLibrary'
-         //     },
-         //    ]
-         //  },
+          // {
+          //   name: '基础设置',
+          //   children: [
+          //
+          //    // {
+          //    //   name: '备用账户切换配置',
+          //    //   route: '/infrastructure/BackupAcc'
+          //    // },
+          //    // {
+          //    //   name: '客户端批量设置',
+          //    //   route: '/infrastructure/VolumeSet'
+          //    // },
+          //    //
+          //    // {
+          //    //   name: '菜品库',
+          //    //   route: '/infrastructure/DishesLibrary'
+          //    // },
+          //   ]
+          // },
          //
          //  {
          //    name: '菜品管理',
@@ -165,7 +144,7 @@
       recur(data,path) {
         data.forEach((map) => {
           if (map.children) {
-            this.$set(map, "show", true);
+            // this.$set(map, "show", false);
             if(map.router === path){
               this.setTreeArr({obj:getArr(map.arr)});
               this.$set(map, "selected", true);
@@ -173,6 +152,15 @@
               this.$set(map, "selected", false);
             }
             this.recur(map.children,path)
+          }
+        })
+      },
+
+      recurFirst(data) {
+        data.forEach((map) => {
+          if (map.children) {
+            this.$set(map, "show", false);
+            this.recurFirst(map.children)
           }
         })
       },
@@ -194,6 +182,7 @@
       this.$http.get(`index.php?controller=user&action=getMenu&token=${token}`).then((res) => {
         if (res.data.errcode === 0) {
           this.leftData = res.data.data;
+          this.recurFirst(res.data.data);
           this.recur(this.leftData,this.$route.path)
         }
       });
@@ -202,7 +191,6 @@
     mounted(){
       this.ListHeight = window.innerHeight - this.getTopHeight;
       Hub.$on('mountedOk', (e) => {
-        console.log(e)
         this.recur(this.leftData,this.$route.path)
       });
 

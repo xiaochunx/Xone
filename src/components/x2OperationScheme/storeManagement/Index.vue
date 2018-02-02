@@ -290,11 +290,11 @@
       },
       getPage(page) {
         this.p.page = page;
-        this.showResouce(this.p, this.levelId, this.searchName);
+        this.showResouce(this.p, this.getX2StoreLevelId(), this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showResouce(this.p, this.levelId, this.searchName);
+        this.showResouce(this.p, this.getX2StoreLevelId(), this.searchName);
       },
 
       del(base_store_id) {
@@ -383,7 +383,7 @@
         });
         let list1 = [];
         list.forEach((item) => {
-          list1.push(item.id)
+          list1.push(item.base_store_id)
         });
         this.multipleSelection = list1;
         if (count === this.storeData.length) {
@@ -400,7 +400,7 @@
       handleSelectionChange(val) {
         let list = [];
         val.forEach((item) => {
-          list.push(item.id)
+          list.push(item.base_store_id)
         });
         this.multipleSelection = list;
         if (val.length === this.storeData.length) {
@@ -466,6 +466,7 @@
           if (res.errcode === 0) {
             if(res.data.list.length !== 0){
               res.data.list.forEach((item)=>{
+                item.select = false;
                 for (let i in item.wmData) {
                  if(item.wmData[i].poi_status === 0) {
                    item.wmData[i].poi_status = false
@@ -475,34 +476,11 @@
                 }
               })
             }
-
             this.storeData = res.data.list;
              this.p.total = res.data.count;
             this.multipleSelection = []
           }
         })
-
-
-        // getApi.getList(p,levelId, storeName).then((res) => {
-        //   if (res.data.errcode === 0) {
-        //     res.data.data.list.forEach((data) => {
-        //       data.inputChecked = true
-        //       data.select = false
-        //
-        //       if(data.status === 1){
-        //         data.status = true
-        //       }else {
-        //         data.status = false
-        //
-        //       }
-        //     });
-        //     this.storeData = res.data.data.list;
-        //     this.p.total = res.data.data.count;
-        //     this.multipleSelection = []
-        //   } else {
-        //
-        //   }
-        // })
       },
     },
     created() {

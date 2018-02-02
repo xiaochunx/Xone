@@ -108,7 +108,7 @@
         loading: false,       // 加载状态
         rules: {
           accountName: [  // 账号名称
-            {required: true, message: '请选择账号名称', trigger: 'change'}
+            {required: true, message: '请输入账号名称', trigger: 'change'}
           ],
           name: [   // 活动名称
             {required: true, message: '请输入活动名称', trigger: 'blur'},
@@ -121,10 +121,10 @@
             {required: true, message: '请选择商户支付秘钥', trigger: 'change'}
           ],
           Payment: [
-            { type: "number", required: true, message: '请选择活动区域', trigger: 'blur' }
+            { type: "number", required: true, message: '请选择支付通道', trigger: 'blur' }
           ],
           checkboxGroup: [
-            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+            { type: 'array', required: true, message: '请至少选择一个支付方式', trigger: 'change' }
           ],
         }
       };

@@ -19,7 +19,7 @@
       <div>
         <el-form :inline="true" :model="form" :label-position="'top'">
           <el-form-item label="状态">
-            <el-select v-model="form.status" placeholder="请选择状态" clearable>
+            <el-select v-model="form.status" placeholder="请选择状态" clearable filterable>
               <el-option
                 v-for="item in form.options"
                 :key="item.id"

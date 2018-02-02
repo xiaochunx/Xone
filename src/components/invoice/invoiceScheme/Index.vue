@@ -166,7 +166,7 @@
 
             <div v-show="showName !== '新增方案'">
 
-              <xo-form :clientFormData="clientForm_first3" :showName="showName" :purchaserList="clientForm_first3.purchasers" ref="xoClientFormEdit" myRef="xoClientFormEdit"></xo-form>
+              <xo-form :clientFormData="clientForm_first3" :showName="showName" :purchaserList="clientForm_first3.purchasers" ref="xoClientFormEdit" myRef="xoClientFormEdit" :getAddInvoicePower="getAddInvoicePower"></xo-form>
 
               <div class="flex margin_t_10" v-if="showName !== '查看'">
                 <el-button  @click="showFrist = true" v-if="showName === '新增方案'">返回</el-button>
@@ -228,7 +228,7 @@
     </div>
     <div v-show="!showFrist">
 
-      <xo-form :clientFormData="clientForm_first2" :showName="showName" :purchaserList="purchaserList" ref="xoClientFormAdd" myRef="xoClientFormAdd"></xo-form>
+      <xo-form :clientFormData="clientForm_first2" :showName="showName" :purchaserList="purchaserList" ref="xoClientFormAdd" myRef="xoClientFormAdd" :getAddInvoicePower="getAddInvoicePower"></xo-form>
 
         <div class="flex margin_t_10" v-if="showName !== '查看'">
           <el-button  @click="showFrist = true">返回</el-button>
@@ -255,19 +255,19 @@
 
       <div class="flex_a margin_t_10" v-if="storeRadio === 2">
         <div class="margin_l_10">
-          <el-select v-model="providerId" placeholder="请选择省" @change="myChange(providerId,'provider')">
+          <el-select v-model="providerId" filterable placeholder="请选择省" @change="myChange(providerId,'provider')">
             <el-option v-for="item in providerList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
 
         <div class="margin_l_10">
-          <el-select v-model="cityId" placeholder="请选择市" @change="myChange(cityId,'city')">
+          <el-select v-model="cityId" filterable placeholder="请选择市" @change="myChange(cityId,'city')">
             <el-option v-for="item in cityList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
 
         <div class="margin_l_10">
-          <el-select v-model="areaId" placeholder="请选择区">
+          <el-select v-model="areaId" filterable placeholder="请选择区">
             <el-option v-for="item in areaList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
@@ -353,7 +353,6 @@
     data() {
       return {
         serviceList:[],
-
         showOption:false,
         showFrist:true,
         storeRadio: 1,
@@ -371,6 +370,7 @@
         clientForm_first:{
           token1:'',
         },
+        //新增
         clientForm_first2:{
           auto_log: true,
           purchasers: [],
@@ -384,7 +384,13 @@
           service_name:'',
           payee:'',
           reviewer:'',
+          card_package_allow:false,
+          alipay_allow:false,
+          other_pay_allow:false,
+          merchant_abbreviation:"",
+          logo_url:""
         },
+        //修改
         clientForm_first3:{
           auto_log: true,
           purchasers: [],
@@ -398,6 +404,11 @@
           service_name:'',
           payee:'',
           reviewer:'',
+          card_package_allow:false,
+          alipay_allow:false,
+          other_pay_allow:false,
+          merchant_abbreviation:"",
+          logo_url:""
         },
         clientForm_second:{
           auto_log: true,
@@ -428,6 +439,7 @@
         areaList: [],
         inputArea0: '',
         inputArea: '',
+        getAddInvoicePower:false//获取是否有增值服务权限
       }
     },
     watch: {},
@@ -784,6 +796,11 @@
             service_name:'',
             payee:'',
             reviewer:'',
+            card_package_allow:false,
+            alipay_allow:false,
+            other_pay_allow:false,
+            merchant_abbreviation:"",
+            logo_url:""
           };
           this.serviceList = [{id:1,name:'百望',select:false},{id:2,name:'航天',select:false}];
         }
@@ -827,16 +844,10 @@
          b = true
        }
 
-
         if (a === true && b === true) {
-
+          let list = [],status ,auto_log,card_package_allow,alipay_allow,other_pay_allow;
+          (this.clientForm.status === true)? status = 1: status = 0;
           if (this.showName === "新增方案") {
-            let list = [],status ,auto_log;
-            if(this.clientForm.status === true){
-              status = 1
-            }else {
-              status = 0
-            }
 
             if(this.clientForm.type === 1){
               this.purchaserList.forEach((item) => {
@@ -844,23 +855,18 @@
                   list.push(item.id)
                 }
               });
-              if(this.clientForm_first2.auto_log === true){
-                auto_log = 1
-              }else {
-                auto_log = 0
-              }
-
+              (this.clientForm_first2.auto_log === true)? auto_log = 1: auto_log = 0;
+              (this.clientForm_first2.card_package_allow === true)? card_package_allow = 1: card_package_allow = 0;
+              (this.clientForm_first2.alipay_allow === true)? alipay_allow = 1: alipay_allow = 0;
+              (this.clientForm_first2.other_pay_allow === true)? other_pay_allow = 1: other_pay_allow = 0;
             }else {
               this.purchaserList.forEach((item) => {
                 if (item.select === true) {
                   list.push(item.id)
                 }
               });
-              if(this.clientForm_second.auto_log === true){
-                auto_log = 1
-              }else {
-                auto_log = 0
-              }
+              (this.clientForm_second.auto_log === true)? auto_log = 1: auto_log = 0
+
             }
             // 新增方案
             let params = {
@@ -883,6 +889,11 @@
               service_name:this.clientForm_first2.service_name,
               payee:this.clientForm_first2.payee,
               reviewer:this.clientForm_first2.reviewer,
+              card_package_allow:card_package_allow,
+              alipay_allow:alipay_allow,
+              other_pay_allow:other_pay_allow,
+              merchant_abbreviation:this.clientForm_first2.merchant_abbreviation,
+              logo_url:this.clientForm_first2.logo_url,
             };
             oneTwoApi(params).then((res) => {
               if(res.errcode === 0){
@@ -896,12 +907,6 @@
               }
             })
           } else {
-            let list = [],status ,auto_log;
-            if(this.clientForm.status === true){
-              status = 1
-            }else {
-              status = 0
-            }
 
             if(this.clientForm.type === 1){
               this.clientForm_first3.purchasers.forEach((item) => {
@@ -910,22 +915,19 @@
                 }
               });
 
-              if(this.clientForm_first3.auto_log === true){
-                auto_log = 1
-              }else {
-                auto_log = 0
-              }
+              (this.clientForm_first3.auto_log === true)? auto_log = 1: auto_log = 0;
+              (this.clientForm_first3.card_package_allow === true)? card_package_allow = 1: card_package_allow = 0;
+              (this.clientForm_first3.alipay_allow === true)? alipay_allow = 1: alipay_allow = 0;
+              (this.clientForm_first3.other_pay_allow === true)? other_pay_allow = 1: other_pay_allow = 0;
+
             }else {
               this.clientForm_second.purchasers.forEach((item) => {
                 if (item.select === true) {
                   list.push(item.id)
                 }
               });
-              if(this.clientForm_second.auto_log === true){
-                auto_log = 1
-              }else {
-                auto_log = 0
-              }
+              (this.clientForm_second.auto_log === true)? auto_log = 1: auto_log = 0;
+
             }
 
             // 修改方案
@@ -950,6 +952,11 @@
               service_name:this.clientForm_first3.service_name,
               payee:this.clientForm_first3.payee,
               reviewer:this.clientForm_first3.reviewer,
+              card_package_allow:card_package_allow,
+              alipay_allow:alipay_allow,
+              other_pay_allow:other_pay_allow,
+              merchant_abbreviation:this.clientForm_first3.merchant_abbreviation,
+              logo_url:this.clientForm_first3.logo_url,
             };
 
             oneTwoApi(params).then((res) => {
@@ -1058,16 +1065,13 @@
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
-            if (res.data.status === 1) {
-              res.data.status = true
-            } else {
-              res.data.status = false
-            }
-            if (res.data.auto_log === 1) {
-              res.data.auto_log = true
-            } else {
-              res.data.auto_log = false
-            }
+            (res.data.status === 1) ? res.data.status = true: res.data.status = false;
+
+           (res.data.auto_log === 1) ? res.data.auto_log = true: res.data.auto_log = false;
+
+            (res.data.card_package_allow === 1) ? res.data.card_package_allow = true: res.data.card_package_allow = false;
+            (res.data.other_pay_allow === 1) ? res.data.other_pay_allow = true: res.data.other_pay_allow = false;
+            (res.data.alipay_allow === 1) ? res.data.alipay_allow = true: res.data.alipay_allow = false;
             res.data.purchasers.forEach((item) => {
               if (item.select === 1) {
                 item.selectF = true;
@@ -1085,6 +1089,9 @@
               this.activeName = 'first';
               this.clientForm.type = 1;
               this.clientForm_first3.auto_log = res.data.auto_log;
+              this.clientForm_first3.card_package_allow = res.data.card_package_allow;
+              this.clientForm_first3.other_pay_allow = res.data.other_pay_allow;
+              this.clientForm_first3.alipay_allow = res.data.alipay_allow;
             }else {
               this.activeName = 'second';
               this.clientForm.type = 2;
@@ -1104,7 +1111,10 @@
             this.clientForm_first3.reviewer = res.data.sale.reviewer?res.data.sale.reviewer:'';
 
             this.clientForm_first3.purchasers = res.data.purchasers;
-            this.clientForm_second.purchasers = res.data.purchasers
+            this.clientForm_second.purchasers = res.data.purchasers;
+
+            this.clientForm_first3.merchant_abbreviation = res.data.merchant_abbreviation;
+            this.clientForm_first3.logo_url = res.data.logo_url
           }
         })
       },
@@ -1197,6 +1207,17 @@
         }
       })
 
+      //获取是否有增值服务权限
+      let params1 = {
+        redirect: "x1.invoice.getAddInvoicePower",
+
+      };
+      oneTwoApi(params1).then((res) => {
+        (res.errcode === 0)? this.getAddInvoicePower = true: this.getAddInvoicePower = false;
+
+      })
+
+
     },
     mounted() {
       Hub.$emit('mountedOk','mountedOk');
@@ -1227,46 +1248,4 @@
 
 
 </style>
-
-<!--<el-form-item label-width="110px" label="">-->
-<!--<div class="flex_a">-->
-<!--<el-switch-->
-<!--v-model="clientForm_first2.radio3"-->
-<!--on-color="#13ce66"-->
-<!--off-color="#ff4949" :disabled="showName === '查看'">-->
-<!--</el-switch>-->
-
-<!--<div class="margin_l_10 margin_r_10 t_a">-->
-<!--电子发票二维码打印在预结单小票-->
-<!--</div>-->
-<!--<el-popover-->
-<!--placement="right"-->
-<!--width="200"-->
-<!--trigger="hover"-->
-<!--content="备注：电子发票二维码与支付二维码均在预结单小票上打印（二码合一），客人第一次扫码完成支付，第二次扫进入自助开电子发票页面">-->
-<!--<i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>-->
-<!--</el-popover>-->
-<!--</div>-->
-<!--</el-form-item>-->
-
-<!--<el-form-item label-width="110px" label="">-->
-<!--<div class="flex_a">-->
-<!--<el-switch-->
-<!--v-model="clientForm_first2.radio4"-->
-<!--on-color="#13ce66"-->
-<!--off-color="#ff4949" :disabled="showName === '查看'">-->
-<!--</el-switch>-->
-
-<!--<div class="margin_l_10 margin_r_10 t_a">-->
-<!--电子发票二维码打印在结账单小票-->
-<!--</div>-->
-<!--<el-popover-->
-<!--placement="right"-->
-<!--width="200"-->
-<!--trigger="hover"-->
-<!--content="备注：客人完成支付后，向服务员索取发票，服务员打印结账单及电子发票二维码并拿给客人，客人扫码进入自助开电子发票页面">-->
-<!--<i class="fa fa-info-circle" aria-hidden="true" slot="reference" style="font-size: 15px;"></i>-->
-<!--</el-popover>-->
-<!--</div>-->
-<!--</el-form-item>-->
 

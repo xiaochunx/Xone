@@ -23,6 +23,8 @@ Vue.prototype.$http = Axios;
 // let url = 'http://x.kuan1.cn';      // 正式环境
 // let url = 'http://bs.com';          // 本地环境
 
+Vue.prototype.$jqUrl = `${url}/kybase/`;
+
 // let url = "http://x1test.kuan1.cn";
 
 Axios.defaults.baseURL = `${url}/kybase/`;

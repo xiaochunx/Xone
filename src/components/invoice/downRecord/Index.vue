@@ -9,7 +9,7 @@
       <div class="flex_sb">
         <div class="flex_a">
           <div class="margin_r_10">状态</div>
-          <el-select v-model="status" clearable placeholder="请选择" size="small">
+          <el-select v-model="status" clearable filterable placeholder="请选择" size="small">
             <el-option
               v-for="item in options"
               :key="item.id"

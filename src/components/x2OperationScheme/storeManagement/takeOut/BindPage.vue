@@ -48,6 +48,7 @@
           oneTwoApi(params).then((res) => {
             if (res.errcode === 0) {
               this.$message(res.errmsg);
+              this.$router.go(-1)
             }
           })
         }

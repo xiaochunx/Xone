@@ -47,7 +47,7 @@ let putOrderStatus = () => {
   })
 };
 
-let orderList = (start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,p,export1) => {
+let orderList = (start_time,end_time,store_id,iway,ichannel,account,pay_status,order_no,out_order_no,scavengingForm,receive_terminal,p,export1) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
     formData.append("redirect", "x1.order.orderList");
@@ -60,6 +60,10 @@ let orderList = (start_time,end_time,store_id,iway,ichannel,account,pay_status,o
     formData.append("pay_status", pay_status);
     formData.append("order_no", order_no);
     formData.append("out_order_no", out_order_no);
+
+    formData.append("scanId", scavengingForm);
+    formData.append("receiveId", receive_terminal);
+
     formData.append("pageCount", p.size);
     formData.append("pageNumber", p.page);
     formData.append("export", export1);

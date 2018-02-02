@@ -17,7 +17,7 @@
   <div>
 
     <div v-for='(item,index) in data' style="line-height: 36px;">
-      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}" v-if="item.type < 5">
+      <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}" v-if="item.type < type">
 
         <span :style="{display:(item.child && item.child.length !== 0)?'none':'inline-block'}"
               style="vertical-align: middle;width: 25px"></span>
@@ -39,7 +39,7 @@
         v-on:after-leave="afterLeave"
         v-on:leave-cancelled="leaveCancelled"
       >
-        <trees :data='item.child' v-if="item.show" :count='count +1' class="heightTran" ></trees>
+        <trees :data='item.child' v-if="item.show" :count='count +1' :type=type class="heightTran" ></trees>
       </transition>
     </div>
   </div>
@@ -52,7 +52,7 @@
 
   export default {
     name: 'trees',
-    props: ['data', 'count'],
+    props: ['data', 'count','type'],
     watch: {
 
     },

@@ -65,7 +65,7 @@
 
                   </el-form-item>
                   <el-form-item label="所属门店标签:">
-                    <el-select v-model="storeData.storeLabelId" multiple placeholder="请选择">
+                    <el-select v-model="storeData.storeLabelId" multiple filterable placeholder="请选择">
                       <el-option
                         v-for="(item,index) in storeGroup"
                         :key="item.id"
@@ -172,7 +172,7 @@
                     <el-form-item label="" :prop="'account.' + index + '.paymentId'"
                                   :rules="{ type:'number', required: true, message: '请选择支付方式', trigger: 'change' }">
                       <div class="margin_r_10 ">
-                        <el-select @change="changePayment(item,1)" class="select_w" v-model="item.paymentId"
+                        <el-select @change="changePayment(item,1)" class="select_w" v-model="item.paymentId" filterable
                                    placeholder="请选择支付方式">
                           <el-option
                             v-for="item in getWayInfo"
@@ -187,7 +187,7 @@
                                   :rules="{type:'number',  required: true, message: '请选择通道', trigger: 'change' }">
 
                       <div class="margin_r_10 ">
-                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
+                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId" filterable
                                    placeholder="请选择通道列表">
                           <el-option
                             v-for="item1 in item.getChannelList"
@@ -202,7 +202,7 @@
                     <el-form-item label="" :prop="'account.' + index + '.accountId'"
                                   :rules="{type:'number',  required: true, message: '请选择账户', trigger: 'change' }">
                       <div class="margin_r_10 ">
-                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表">
+                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表" filterable>
                           <el-option
                             v-for="item1 in item.getCanUseAccountList"
                             :key="item1.id"
@@ -232,7 +232,7 @@
 
                     <el-form-item label="">
                       <div class="margin_r_10 ">
-                        <el-select @change="changePayment(item,1)" class="select_w" v-model="item.paymentId"
+                        <el-select @change="changePayment(item,1)" class="select_w" v-model="item.paymentId" filterable
                                    placeholder="请选择支付方式">
                           <el-option
                             v-for="item in getWayInfo"
@@ -245,7 +245,7 @@
                     </el-form-item>
                     <el-form-item label="">
                       <div class="margin_r_10 ">
-                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId"
+                        <el-select @change="changePayment(item)" class="select_w" v-model="item.paymentChannelId" filterable
                                    placeholder="请选择通道列表">
                           <el-option
                             v-for="item1 in item.getChannelList"
@@ -259,7 +259,7 @@
 
                     <el-form-item label="">
                       <div class="margin_r_10 ">
-                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表">
+                        <el-select class="select_w" v-model="item.accountId" placeholder="请选择账户列表" filterable>
                           <el-option
                             v-for="item1 in item.getCanUseAccountList"
                             :key="item1.id"
