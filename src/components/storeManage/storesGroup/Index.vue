@@ -110,9 +110,12 @@
         </div>
 
         <el-form-item label="包含门店:">
-          <el-table :data="formEdit.store" border>
-            <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center"
-                             align="center" width="100">
+          <el-table :data="formEdit.store" border @select-all="handleSelectionChange" ref="multipleTable">
+            <el-table-column
+              header-align="center" align="center"
+              type="selection"
+              label-class-name="mySelect"
+              width="100">
               <template slot-scope="scope">
                 <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
               </template>
@@ -202,63 +205,33 @@
           }
         });
       },
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.formEdit.store.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.formEdit.store.forEach((data) => {
-            data.select = false
-          })
+
+      handleSelectionChange(val) {
+        if(val.length === this.formEdit.store.length){
+          this.formEdit.store.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.formEdit.store.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
         }
       },
       handleChecked() {
-        let count = 0;
-        this.formEdit.store.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
+        let list =  this.formEdit.store.filter((item)=>{
+          return item.select === true
         });
-
-        if (count === this.formEdit.store.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
-          })
-        } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
-        }
-
+        this.$nextTick(()=>{
+          if (list.length === this.formEdit.store.length) {
+            list.forEach((item)=>{
+              this.$refs.multipleTable.toggleRowSelection(item)
+            })
+          }else {
+            this.$refs.multipleTable.clearSelection();
+          }
+        })
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-                  }
-                }
-              }, ['序号']
-            )
-          ]
-        );
 
-      },
       removeDomain(item) {
         var index = this.formEdit.thirdCode.indexOf(item)
         if (index !== -1) {

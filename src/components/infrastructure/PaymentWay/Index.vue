@@ -198,21 +198,15 @@
       },
 
       handleChecked(data) {
-        let count = 0;
-        this.payWayList.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
+        let list1 = [];
         let list =  this.payWayList.filter((item)=>{
+          if(item.select === true){
+            list1.push(item.id)
+          }
           return item.select === true
         });
-        let list1 = [];
-        list.forEach((item)=>{
-          list1.push(item.id)
-        });
         this.multipleSelection = list1;
-        if (count === this.payWayList.length) {
+        if (list.length === this.payWayList.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
           })

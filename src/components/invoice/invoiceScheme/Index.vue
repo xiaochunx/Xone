@@ -508,21 +508,15 @@
         this.getStoreData()
       },
       handleChecked0(data) {
-        let count = 0;
-        this.storeData0.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
+        let list1 = [];
         let list = this.storeData0.filter((item) => {
+          if(item.select === true){
+            list1.push(item.id)
+          }
           return item.select === true
         });
-        let list1 = [];
-        list.forEach((item) => {
-          list1.push(item.id)
-        });
         this.multipleSelection0 = list1;
-        if (count === this.storeData0.length) {
+        if (list.length === this.storeData0.length) {
           list.forEach((item) => {
             this.$refs.multipleTable0.toggleRowSelection(item)
           })
@@ -547,21 +541,15 @@
         }
       },
       handleChecked(data) {
-        let count = 0;
-        this.storeData1.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
+        let list1 = [];
         let list = this.storeData1.filter((item) => {
+          if(item.select === true){
+            list1.push(item.id)
+          }
           return item.select === true
         });
-        let list1 = [];
-        list.forEach((item) => {
-          list1.push(item.id)
-        });
         this.multipleSelection = list1;
-        if (count === this.storeData1.length) {
+        if (list.length === this.storeData1.length) {
           list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
           })
