@@ -54,17 +54,43 @@
       }
     },
     methods: {
-      ...mapActions(['setStoreTreeList','setShowStoreTree','setPermissionLevelId']),
+      ...mapActions(['setStoreTreeList', 'setShowStoreTree', 'setPermissionLevelId', 'setPermissionTree',
+        'setBusinessConfTree', 'setBusinessConfLevelId', 'setPushStateTree', 'setPushStateLevelId', 'setRunningStateTree',
+      'setRunningStateLevelId','setPrintConfTree','setPrintConfLevelId','setX2storeTree','setX2StoreLevelId','setX1storeTree',
+        'setX1StoreLevelId','setPublicTree','setPublicLevelId']),
       loginOut: function () {
         this.$http.get(`?controller=user&action=logout&token=${this.$localStorage.get("token")}`).then((res) => {
-          if(res.data.errcode === 0){
+          if (res.data.errcode === 0) {
             this.$localStorage.remove("token");
             this.$localStorage.remove("user");
-            this.setStoreTreeList({list:[]});
-            this.setShowStoreTree({obj:{levelid:'', type: '', showAdd: false}});
-            this.setPermissionLevelId({levelId:''});
+            this.setStoreTreeList({list: []});
+            this.setShowStoreTree({obj: {levelid: '', type: '', showAdd: false}});
+
+            this.setPermissionTree({list: []});
+            this.setPermissionLevelId({levelId: ''});
+
+            this.setBusinessConfTree({list: []});
+            this.setBusinessConfLevelId({levelId: ''});
+
+            this.setPushStateTree({list: []});
+            this.setPushStateLevelId({levelId: ''});
+
+            this.setRunningStateTree({list: []});
+            this.setRunningStateLevelId({levelId: ''});
+
+            this.setPrintConfTree({list: []});
+            this.setPrintConfLevelId({levelId: ''});
+
+            this.setX2storeTree({list: []});
+            this.setX2StoreLevelId({levelId: ''});
+
+            this.setX1storeTree({list: []});
+            this.setX1StoreLevelId({levelId: ''});
+
+            this.setPublicTree({list: []});
+            this.setPublicLevelId({levelId: ''});
             this.$router.push("/login")
-          }else {
+          } else {
             this.$message(res.data.errmsg)
           }
         });

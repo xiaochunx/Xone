@@ -1222,17 +1222,6 @@
 </script>
 
 <style scoped lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
-
-  .m-storeCode {
-    font-size: 30px;
-  }
 
 
 </style>

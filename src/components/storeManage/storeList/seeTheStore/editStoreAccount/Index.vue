@@ -33,13 +33,8 @@
 
                   <el-form-item label="">
 
+                    <div v-for="(domain, index) in storeData.thirdCode" class="flex_r margin_b_10">
 
-                    <!--<div v-for="(item,index) in storeData.thirdCode">-->
-                    <!--<span>{{item.code1}} &#45;&#45; {{item.code2}}</span>-->
-                    <!--</div>-->
-
-
-                    <div v-for="(domain, index) in storeData.thirdCode" class="flex_a margin_b_10">
                       <div style="width:150px">
                         <el-input v-model="domain.code1" style="width: 150px;"
                                   placeholder="请输入名称"></el-input>
@@ -351,10 +346,6 @@
     watch: {},
     methods: {
       changePayment(item,Int) {
-
-        console.log(item)
-
-
         if(Int === 1){
           item.paymentChannelId = "";
           item.accountId = "";
@@ -366,7 +357,6 @@
 
         if (item.paymentId !== "" && item.paymentChannelId !== "") {
           getApi.getCanUseAccountList(item.paymentId, item.paymentChannelId).then((res) => {
-            console.log(res)
             item.accountId = '';
             item.getCanUseAccountList = res.data.data
           })
@@ -375,7 +365,6 @@
 
       editStoreBase() {
         getApi.editStore(this.storeData).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             this.$alert('添加成功', '', {
               confirmButtonText: '确定',
@@ -398,24 +387,20 @@
         })
 
         for(let item of this.formAccount.account){
-         delete item.accountName
-          delete item.paymentChannel
+         delete item.accountName;
+          delete item.paymentChannel;
           delete item.paymentName
 
         }
         for(let item of this.formAccount.reserveAcc){
-          delete item.accountName
-          delete item.paymentChannel
+          delete item.accountName;
+          delete item.paymentChannel;
           delete item.paymentName
-
         }
-
-        console.log(this.formAccount)
 
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             getApi.editStoreAccount(this.$route.params.id, this.formAccount).then((res) => {
-              console.log(res)
               if (res.data.errcode === 0) {
                 this.$alert('添加成功', '', {
                   confirmButtonText: '确定',
@@ -467,7 +452,6 @@
             }
           });
 
-console.log(list)
           if(list.account.length !== 0){
             for (let item of list.account) {
               if(item.paymentId !== ''){
@@ -542,11 +526,9 @@ console.log(list)
       this.getFirst();
       getApi.getList().then((res) => {
         this.storeGroup = res.data.data.list;
-        console.log(res.data.data)
-      })
+      });
 
       getWayInfo().then((res) => {
-        console.log(res)
         this.getWayInfo = res.data.data
       })
 
@@ -555,89 +537,16 @@ console.log(list)
 </script>
 
 <style scope lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      border-bottom: 1px solid #000;
-    }
-  }
+
 
   .select_w {
     width: 150px;
   }
 
-  .myInput {
-    width: 300px;
-  }
-
-  .m-tr {
-    text-align: right;
-  }
-
-  .m-tl {
-    text-align: left;
-  }
-
-  .m-padding-left {
-    padding-left: 20px;
-  }
-
-  .m-seeAddStore-account {
-    .m-seeAddStore-account-now {
-      padding: 10px 0px;
-      list-style-type: disc;
-      font-weight: bold;
-      box-sizing: border-box;
-    }
-    .m-seeAddStore-account-list {
-      padding: 10px 0;
-      padding-left: 70px;
-      height: 50px;
-      line-height: 30px;
-      box-sizing: border-box;
-      position: relative;
-      .m-seeAddStore-account-list-img {
-        position: absolute;
-        left: 10px;
-        top: 5px;
-        width: 40px;
-        height: 40px;
-        background: #000;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-    }
-    .m-seeAddStore-account-prepare {
-      list-style-type: disc;
-      font-weight: bold;
-    }
-  }
-
-  .partLine {
-    border-bottom: 1px solid #787978
-  }
 
   .cell_title {
     font-size: 18px;
   }
 
-  .box-card {
-    margin: 10px;
-    width: 400px;
-  }
-
-  .box-card-notice {
-    height: 400px;
-  }
-
-  .m-storeCode {
-    font-size: 30px;
-  }
-
-  .t_a {
-    text-align: end
-  }
 
 </style>

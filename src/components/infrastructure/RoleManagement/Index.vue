@@ -462,8 +462,9 @@
             }else {
               res.data.data.status = false
             }
-
-
+            if(res.data.data.thirdCode.length === 0){
+              res.data.data.thirdCode = [{code1: '', code2: ''}]
+            }
             this.form = res.data.data
           }
         });
@@ -543,17 +544,6 @@
 </script>
 
 <style scoped lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
-
-  .m-storeCode {
-    font-size: 30px;
-  }
 
 
 

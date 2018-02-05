@@ -740,27 +740,7 @@
           })
         })
       },
-      recur(data) {
-        data.forEach((map) => {
-          if (map.child) {
-            this.$set(map, "show", true);
-            this.$set(map, "selected", false);
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data,levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          }else {
-            this.$set(map, "selected", false);
-          }
-          if(map.child ){
-            this.recurSelected(map.child,levelId)
-          }
-        })
-      },
+
 
       getBsList(p, levelId,storeName = ''){
         getApi.getBsList(p,levelId, storeName).then((res) => {
@@ -816,6 +796,27 @@
           this.$message.error('上传头像图片大小不能超过 5MB!');
         }
         return img && isLt5M;
+      },
+      recur(data) {
+        data.forEach((map) => {
+          if (map.child) {
+            this.$set(map, "show", false);
+            this.$set(map, "selected", false);
+            this.recur(map.child)
+          }
+        })
+      },
+      recurSelected(data,levelId) {
+        data.forEach((map) => {
+          if (map.id === levelId) {
+            this.$set(map, "selected", true);
+          }else {
+            this.$set(map, "selected", false);
+          }
+          if(map.child ){
+            this.recurSelected(map.child,levelId)
+          }
+        })
       },
       showLevel() {
         getLevel().then((res) => {
@@ -874,50 +875,8 @@
 </script>
 
 <style lang="less" scoped>
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
 
-  .m-storeCode {
-    font-size: 30px;
-  }
 
-  .m-storeList {
-    height: 50px;
-    line-height: 50px;
-  }
-
-  .m-newStore {
-    position: absolute;
-    right: 20px;
-    top: 50px;
-    width: 99px;
-  }
-
-  .m-t {
-    text-align: center;
-  }
-
-  .m-store {
-    padding: 20px 0;
-  }
-
-  .m-store table tr td {
-    padding: 10px 0;
-    border-bottom: 1px dashed #000;
-  }
-
-  .m-store table tr:nth-child(1) {
-    height: 50px;
-  }
-
-  .m-store table tr:nth-child(1) td {
-    border-bottom: 1px solid #000;
-  }
 
   .myStore {
     position: absolute;

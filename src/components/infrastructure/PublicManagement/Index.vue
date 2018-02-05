@@ -23,7 +23,7 @@
         <!--</el-tree>-->
 
 
-        <public-tree :data='dataLeft' :count=0 :type=5 style="width: max-content;"></public-tree>
+        <public-tree :data='getPublicTree()' :count=0 :type=5 style="width: max-content;"></public-tree>
       </div>
 
       <div class="padding_l_10 width_100" v-show="getTreeArr['列表']">
@@ -89,7 +89,7 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import {getLeft} from '../../utility/communApi'
+  import {getLevel} from '../../utility/communApi'
   import getApi from './publicManagement.service'
   import publicTree from './publicTree'
   import Hub from '../../utility/commun'
@@ -113,7 +113,6 @@
         name: '',
         storeName: '',
         storeData: [],
-        dataLeft: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
@@ -128,8 +127,8 @@
 
     },
     methods: {
-      ...mapActions(['setPublicLevelId','setTreeArr']),
-      ...mapGetters(['getPublicLevelId']),
+      ...mapActions(['setPublicLevelId','setPublicTree']),
+      ...mapGetters(['getPublicLevelId','getPublicTree']),
       filterNode(value, data) {
 
         // if (!value) return true;
@@ -137,7 +136,7 @@
       },
 
       auth(){
-        getApi.threeAuthorize(this.$localStorage.get_s('publicLevelId')).then((res)=>{
+        getApi.threeAuthorize(this.getPublicLevelId()).then((res)=>{
           window.location.href = res.data.data
         })
       },
@@ -153,12 +152,15 @@
       },
       recur(data) {
         data.forEach((map) => {
-          if(map.id === this.$localStorage.get_s('publicLevelId')){
-            this.type = map.type
+          if(map.id === this.getPublicLevelId()){
+            this.type = map.type;
+            this.$set(map, "selected", true);
+          }else {
+            this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", true);
-            this.$set(map, "selected", false);
+            this.$set(map, "show", false);
+
             this.recur(map.child)
           }
         })
@@ -166,6 +168,7 @@
       recurSelected(data, levelId) {
         data.forEach((map) => {
           if (map.id === levelId) {
+            this.type = map.type;
             this.$set(map, "selected", true);
           } else {
             this.$set(map, "selected", false);
@@ -181,27 +184,41 @@
             this.storeData = res.data.data
           }
         })
+      },
+
+      showLevel(){
+        getLevel().then((res) => {
+          if(res.data.errcode === 0){
+
+            if (this.getPublicLevelId() === '') {
+              this.setPublicLevelId({levelId: res.data.data[0].id});
+            }
+
+            this.setPublicTree({list:res.data.data});
+            this.recur(res.data.data);
+
+          }
+        });
       }
 
     },
     created() {
-      getLeft('x1').then((res) => {
-        if(res.data.errcode === 0){
-          this.showResouce(this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id);
-          this.dataLeft = res.data.data;
-          this.recur(this.dataLeft);
-          this.recurSelected(this.dataLeft, this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id)
-        }
-      });
+
+      if(this.getPublicTree().length === 0){
+        this.showLevel();
+      }else {
+        this.showResouce(this.getPublicLevelId());
+        this.recurSelected(this.getPublicTree(), this.getPublicLevelId())
+      }
 
     },
     mounted() {
       Hub.$on('showAddPub', (e) => {
         this.levelName = e.levelName;
         this.type = e.type;
-        this.$localStorage.set_s('publicLevelId',e.levelid);
+        this.setPublicLevelId({levelId: e.levelid});
         this.showResouce(e.levelid);
-        this.recurSelected(this.dataLeft, e.levelid)
+        this.recurSelected(this.getPublicTree(), e.levelid)
       });
       Hub.$emit('mountedOk','mountedOk');
 
@@ -210,7 +227,6 @@
       Hub.$off("showAddPub");
     },
     updated() {
-      //this.$refs.tree2.filter(5);
 
       getScrollHeight().then((h) => {
         this.tableHeight = h;

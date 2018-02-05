@@ -143,8 +143,8 @@
         <el-form label-width="120px" class="myBusiness">
           <el-form-item label="营业执照" class="">
             <div class="flex_r" style="align-items: flex-end">
-              <img class="avatar-uploader-icon">
-              <a class="margin_l_10 pointer" href="" download="">下载图片</a>
+              <img class="avatar-uploader-icon" src="../../../assets/login-ky-login-small.png">
+              <a class="margin_l_10 pointer" href="https://www.baidu.com/img/superlogo_c4d7df0a003d3db9b65e9ef0fe6da1ec.png" download="https://www.baidu.com/img/superlogo_c4d7df0a003d3db9b65e9ef0fe6da1ec.png">下载图片</a>
             </div>
           </el-form-item>
 

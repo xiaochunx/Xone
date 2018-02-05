@@ -8,7 +8,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
-        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
+        <xo-pub-tree :data='getPrintConfTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
@@ -619,7 +619,6 @@
         dialogVisible3: false,
         dialogVisible4: false,
         navList: [{name: "打印机配置", url: ''}],
-        data5: [],
         printData: [{}],
         storeData: [],
         storeData_id: '',
@@ -710,8 +709,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setPrintConfLevelId']),
-      ...mapGetters(['getPrintConfLevelId']),
+      ...mapActions(['setPrintConfLevelId','setPrintConfTree']),
+      ...mapGetters(['getPrintConfLevelId','getPrintConfTree']),
 
       handleClick(event) {
 
@@ -980,10 +979,15 @@
 
       recur(data) {
         data.forEach((map) => {
-
-          if (map.child) {
-            this.$set(map, "show", true);
+          if (map.id === this.getPrintConfLevelId()) {
+            this.levelName = map.levelname;
+            this.$set(map, "selected", true);
+          } else {
             this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.$set(map, "show", false);
+
             this.recur(map.child)
           }
         })
@@ -1003,14 +1007,14 @@
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
+            this.setPrintConfTree({list:res.data.data});
             if (this.getPrintConfLevelId() === '') {
               this.setPrintConfLevelId({levelId: res.data.data[0].id});
             }
             this.levelName = res.data.data[0].levelname;
             this.showResouce(res.data.data[0].id);
-            this.recur(this.data5);
-            this.recurSelected(this.data5, this.getPrintConfLevelId())
+            this.recur(res.data.data);
+
           } else {
 
           }
@@ -1061,7 +1065,11 @@
 
     },
     created() {
-      this.showLevel();
+      if(this.getPrintConfTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.getPrintConfLevelId());
+      }
 
       //获取打印机类型
       let params = {
@@ -1082,13 +1090,14 @@
         this.levelName = e.levelName;
         this.showResouce(e.levelid);
         this.storeData_id = "";
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getPrintConfTree(), e.levelid)
       });
       Hub.$emit('mountedOk', 'mountedOk');
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+      let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
+      this.tableWidth = bodyWidth - clientWidth;
       this.$nextTick(() => {
         getScrollHeight().then((h) => {
           this.tableHeight = h;
@@ -1103,17 +1112,6 @@
 </script>
 
 <style scoped lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
-
-  .m-storeCode {
-    font-size: 30px;
-  }
 
   .third {
     position: absolute;

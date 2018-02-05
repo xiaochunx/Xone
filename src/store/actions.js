@@ -43,4 +43,30 @@ export default {
   setTreeArr({commit},obj){
     commit(types.TREEARR,obj);
   },
+
+
+  setPermissionTree({commit},obj){
+    commit(types.PERMISSIONTREE,obj);
+  },
+  setBusinessConfTree({commit},obj){
+    commit(types.BUSINESSCONFTREE,obj);
+  },
+  setPushStateTree({commit},obj){
+    commit(types.PUSHSTATETREE,obj);
+  },
+  setRunningStateTree({commit},obj){
+    commit(types.RUNNINGSTATETREE,obj);
+  },
+  setPrintConfTree({commit},obj){
+    commit(types.PRINTCONFTREE,obj);
+  },
+  setX2storeTree({commit},obj){
+    commit(types.X2STORETREE,obj);
+  },
+  setX1storeTree({commit},obj){
+    commit(types.X1STORETREE,obj);
+  },
+  setPublicTree({commit},obj){
+    commit(types.PUBLICTREE,obj);
+  },
 }

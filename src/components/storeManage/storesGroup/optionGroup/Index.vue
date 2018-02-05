@@ -260,21 +260,15 @@
       },
 
       handleChecked(data) {
-        let count = 0;
-        this.storeData.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
+        let list1 = [];
         let list = this.storeData.filter((item) => {
+          if(item.select === true){
+            list1.push(item.id)
+          }
           return item.select === true
         });
-        let list1 = [];
-        list.forEach((item) => {
-          list1.push(item.id)
-        });
         this.multipleSelection = list1;
-        if (count === this.storeData.length) {
+        if (list.length === this.storeData.length) {
           list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
           })
@@ -353,17 +347,7 @@
   }
 </script>
 <style scoped lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
 
-  .m-storeCode {
-    font-size: 30px;
-  }
 
   .contentMsg {
     padding: 0 0 25px 0;

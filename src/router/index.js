@@ -38,9 +38,6 @@ import orderCount from '../components/report/orderCount/Index.vue'
 /************************** 基础设置 ***************************/
 
 import BusinessConf from '@/components/infrastructure/BusinessConf/Index.vue'
-import BackupAcc from '@/components/infrastructure/BackupAcc/Index.vue'
-import VolumeSet from '@/components/infrastructure/VolumeSet/Index.vue'
-import NewAdd from '@/components/infrastructure/VolumeSet/NewAdd/Index.vue'
 import PaymentManagement from '@/components/infrastructure/PaymentManagement/Index.vue'
 import PaymentWay from '@/components/infrastructure/PaymentWay/Index.vue'
 import PayChannels from '@/components/infrastructure/PayChannels/Index.vue'
@@ -56,7 +53,6 @@ import OperationLog from '@/components/infrastructure/OperationLog/Index.vue'
 
 /************************** 运营 ***************************/
 import RunningState from '../components/operate/RunningState/Index.vue'
-import SchemeDown from '../components/operate/SchemeDown/Index.vue'
 import OperationPlan from '../components/operate/OperationPlan/Index.vue'
 
 /************************** 公众号管理 ***************************/
@@ -257,27 +253,6 @@ export default new Router({
           name: '基础设置/商家信息',
           component: BusinessConf
         },
-        // 基础设置/备用账户切换
-        {
-          path: '/infrastructure/BackupAcc',
-          meta: { auth: true },
-          name: '基础设置/备用账户切换',
-          component: BackupAcc
-        },
-        // 基础设置/客户端批量设置
-        {
-          path: '/infrastructure/VolumeSet',
-          meta: { auth: true },
-          name: '基础设置/客户端批量设置',
-          component: VolumeSet
-        },
-        // 基础设置/客户端批量设置/新增门店
-        {
-          path: '/infrastructure/VolumeSet/newAdd',
-          meta: { auth: true },
-          name: '基础设置/客户端批量设置/新增门店',
-          component: NewAdd
-        },
         // 基础设置/支付管理
         {
           path: '/infrastructure/PaymentManagement',
@@ -372,14 +347,6 @@ export default new Router({
           meta: { auth: true },
           name: '运行状态',
           component: RunningState
-        },
-
-        //方案下发
-        {
-          path: '/operate/schemeDown',
-          meta: { auth: true },
-          name: '方案下发',
-          component: SchemeDown
         },
         //运营方案
         {

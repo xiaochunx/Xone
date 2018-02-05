@@ -25,7 +25,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
+        <xo-pub-tree :data='getX1storeTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}" v-show="getTreeArr['门店列表']">
@@ -249,7 +249,6 @@
 
         storeName: '',
         storeData: [],
-        data5: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
@@ -279,8 +278,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setX1StoreLevelId']),
-      ...mapGetters(['getX1StoreLevelId']),
+      ...mapActions(['setX1StoreLevelId','setX1storeTree']),
+      ...mapGetters(['getX1StoreLevelId','getX1storeTree']),
       handleChecked(data) {
         let list1 = [];
         let list =  this.storeData.filter((item)=>{
@@ -545,10 +544,13 @@
 
       recur(data) {
         data.forEach((map) => {
-
-          if (map.child) {
-            this.$set(map, "show", true);
+          if (map.id === this.getX1StoreLevelId()) {
+            this.$set(map, "selected", true);
+          } else {
             this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.$set(map, "show", false);
             this.recur(map.child)
           }
         })
@@ -565,26 +567,33 @@
           }
         })
       },
+      showLevel() {
+        getLeft('x1').then((res) => {
+
+          this.setX1storeTree({list:res.data.data});
+
+          if(this.getX1StoreLevelId() === ''){
+            this.setX1StoreLevelId({levelId:res.data.data[0].id});
+          }
+          this.showResouce(this.p, this.getX1StoreLevelId());
+          this.recur(res.data.data);
+
+        });
+      }
     },
     created() {
-      getLeft('x1').then((res) => {
-        this.data5 = res.data.data;
-
-        if(this.getX1StoreLevelId() === ''){
-          this.setX1StoreLevelId({levelId:res.data.data[0].id});
-        }
-        this.showResouce(this.p, this.getX1StoreLevelId());
-        this.recur(this.data5);
-        this.recurSelected(this.data5, this.getX1StoreLevelId())
-      });
-
+      if(this.getX1storeTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.p,this.getX1StoreLevelId());
+      }
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '');
 
         this.setX1StoreLevelId({levelId:e.levelid});
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getX1storeTree(), e.levelid)
       });
 
       Hub.$emit('mountedOk','mountedOk');
@@ -594,7 +603,8 @@
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+      let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
+      this.tableWidth = bodyWidth - clientWidth;
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })

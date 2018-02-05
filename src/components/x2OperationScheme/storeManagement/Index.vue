@@ -24,7 +24,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
-        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
+        <xo-pub-tree :data='getX2storeTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
@@ -179,7 +179,6 @@
         dialogVisible3: false,
 
         navList: [{name: "门店管理", url: ''}],
-        data5: [],
         storeName: '',
         dishesList: [
           {code: '123', name: '炳胜（马场店）'},
@@ -193,8 +192,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setX2StoreLevelId']),
-      ...mapGetters(['getX2StoreLevelId']),
+      ...mapActions(['setX2StoreLevelId','setX2storeTree']),
+      ...mapGetters(['getX2StoreLevelId','getX2storeTree']),
       handleStatus(e,storeId,type){
         let is_open;
         if(e === false){
@@ -410,10 +409,13 @@
 
       recur(data) {
         data.forEach((map) => {
-
-          if (map.child) {
-            this.$set(map, "show", true);
+          if (map.id === this.getX2StoreLevelId()) {
+            this.$set(map, "selected", true);
+          } else {
             this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.$set(map, "show", false);
             this.recur(map.child)
           }
         })
@@ -433,14 +435,12 @@
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
+            this.setX2storeTree({list:res.data.data});
             if (this.getX2StoreLevelId() === '') {
               this.setX2StoreLevelId({levelId: res.data.data[0].id});
             }
-
             this.showResouce(this.p, this.getX2StoreLevelId());
-            this.recur(this.data5);
-            this.recurSelected(this.data5, this.getX2StoreLevelId())
+            this.recur(res.data.data);
           } else {
 
           }
@@ -478,22 +478,25 @@
       },
     },
     created() {
-      this.showLevel();
-
-
+      if(this.getX2storeTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.p,this.getX2StoreLevelId());
+      }
     },
 
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p, e.levelid);
         this.setX2StoreLevelId({levelId: e.levelid});
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getX2storeTree(), e.levelid)
       });
       Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+      let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
+      this.tableWidth = bodyWidth - clientWidth;
       this.$nextTick(() => {
         getScrollHeight().then((h) => {
           this.tableHeight = h;

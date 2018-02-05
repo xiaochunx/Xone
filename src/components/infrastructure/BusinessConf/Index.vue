@@ -11,7 +11,7 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
 
-        <public-tree :data='data5' :count=0 :type=4 style="width: max-content;"></public-tree>
+        <public-tree :data='getBusinessConfTree()' :count=0 :type=4 style="width: max-content;"></public-tree>
       </div>
 
       <div>
@@ -93,9 +93,7 @@
         tableHeight: 0,
         levelId:'',
         navList: [{name: "商户配置", url: ''}],
-        data5: [],
         storeName: '',
-
         storeData: [],
         p: {page: 1, size: 20, total: 0},
 
@@ -103,8 +101,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setBusinessConfLevelId']),
-      ...mapGetters(['getBusinessConfLevelId']),
+      ...mapActions(['setBusinessConfLevelId','setBusinessConfTree']),
+      ...mapGetters(['getBusinessConfLevelId','getBusinessConfTree']),
       handleSwitch(id,is_pay_invoice){
         if(is_pay_invoice === true){
           this.$confirm('确定要关闭该品牌的发票pro 版吗？', '提示', {
@@ -156,9 +154,13 @@
 
       recur(data) {
         data.forEach((map) => {
-          if (map.child) {
-            this.$set(map, "show", true);
+          if(map.id === this.getBusinessConfLevelId()){
+            this.$set(map, "selected", true);
+          }else {
             this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.$set(map, "show", false);
             this.recur(map.child)
           }
         })
@@ -178,15 +180,15 @@
       showLevel() {
         getLevel().then((res) => {
           if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
+            this.setBusinessConfTree({list:res.data.data});
+
             if (this.getBusinessConfLevelId() === '') {
               this.setBusinessConfLevelId({levelId: res.data.data[0].id});
             }
             this.levelId = res.data.data[0].id;
             this.name = res.data.data[0].levelname;
             this.showResouce(res.data.data[0].id);
-            this.recur(this.data5);
-            this.recurSelected(this.data5, this.getBusinessConfLevelId())
+            this.recur(res.data.data);
           } else {
 
           }
@@ -194,7 +196,6 @@
 
       },
       showResouce(id) {
-
         this.$http.get(`index.php?controller=level&action=brand&token=${this.$localStorage.get('token')}&id=${id}`).then((res)=>{
           res.data.data.forEach((item)=>{
             if(item.is_pay_invoice === 0){
@@ -209,9 +210,11 @@
       },
     },
     created() {
-      this.showLevel();
-
-
+      if(this.getBusinessConfTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.getBusinessConfLevelId());
+      }
     },
 
     mounted() {
@@ -220,13 +223,14 @@
         this.levelId = e.levelid;
         this.showResouce(e.levelid);
         this.setBusinessConfLevelId({levelId: e.levelid});
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getBusinessConfTree(), e.levelid)
       });
       Hub.$emit('mountedOk', 'mountedOk');
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+      let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
+      this.tableWidth = bodyWidth - clientWidth;
       this.$nextTick(() => {
         getScrollHeight().then((h) => {
           this.tableHeight = h;

@@ -21,7 +21,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
+        <xo-pub-tree :data='getRunningStateTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10 width_100"  >
@@ -247,7 +247,6 @@
         searchName: '',
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-        data5: [],
         defaultProps: {
           children: 'child',
           label: 'levelname'
@@ -259,8 +258,8 @@
     },
 
     methods: {
-      ...mapActions(['setRunningStateLevelId']),
-      ...mapGetters(['getRunningStateLevelId']),
+      ...mapActions(['setRunningStateLevelId','setRunningStateTree']),
+      ...mapGetters(['getRunningStateLevelId','getRunningStateTree']),
       search() {
 
         if (this.searchName === '') {
@@ -307,17 +306,19 @@
                 'class': {},
                 on: {
                   click: () => {
-                    let storeid = this.setList[0].storeid;
-                    let paramsList = [];
-                    this.setList.forEach((item)=>{
-                      paramsList.push({"printerid":item.printerid,"appid":item.appid})
-                    });
-                    let data = {"action":"refreshService","params":paramsList};
-                    getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
-                      if(res.data.errcode === 0){
-                        this.$message(res.data.data);
-                      }
-                    })
+                    if(this.setList.length !== 0){
+                      let storeid = this.setList[0].storeid;
+                      let paramsList = [];
+                      this.setList.forEach((item)=>{
+                        paramsList.push({"printerid":item.printerid,"appid":item.appid})
+                      });
+                      let data = {"action":"refreshService","params":paramsList};
+                      getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
+                        if(res.data.errcode === 0){
+                          this.$message(res.data.data);
+                        }
+                      })
+                    }
                   },
 
                 }
@@ -338,17 +339,19 @@
                 'class': {},
                 on: {
                   click: () => {
-                    let storeid = this.setList[0].storeid;
-                    let paramsList = [];
-                    this.setList.forEach((item)=>{
-                      paramsList.push({"printerid":item.printerid,"appid":item.appid})
-                    });
-                    let data = {"action":"testPrinter","params":paramsList};
-                    getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
-                      if(res.data.errcode === 0){
-                        this.$message(res.data.data);
-                      }
-                    })
+                    if(this.setList.length !== 0){
+                      let storeid = this.setList[0].storeid;
+                      let paramsList = [];
+                      this.setList.forEach((item)=>{
+                        paramsList.push({"printerid":item.printerid,"appid":item.appid})
+                      });
+                      let data = {"action":"testPrinter","params":paramsList};
+                      getApi.sendcmd(storeid,window.JSON.stringify(data)).then((res)=>{
+                        if(res.data.errcode === 0){
+                          this.$message(res.data.data);
+                        }
+                      })
+                    }
                   },
 
                 }
@@ -401,10 +404,14 @@
       },
       recur(data) {
         data.forEach((map) => {
-
-          if (map.child) {
-            this.$set(map, "show", true);
+          if (map.id === this.getRunningStateLevelId()) {
+            this.$set(map, "selected", true);
+          } else {
             this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.$set(map, "show", false);
+
             this.recur(map.child)
           }
         })
@@ -423,31 +430,39 @@
       },
       showResouce(p,id,storename = '') {
         getApi.getService(p,id,storename).then((res) => {
-          this.storeData = res.data.data.list
+          this.storeData = res.data.data.list;
           this.p.total = res.data.data.count
         })
-      }
-    },
-    created() {
-
-      getLevel().then((res) => {
-        if (res.data.errcode === 0) {
-          this.data5 = res.data.data;
-
-          if(this.getRunningStateLevelId() === ''){
-            this.setRunningStateLevelId({levelId:res.data.data[0].id});
+      },
+      showLevel(){
+        getLevel().then((res) => {
+          if (res.data.errcode === 0) {
+            this.setRunningStateTree({list:res.data.data});
+            if(this.getRunningStateLevelId() === ''){
+              this.setRunningStateLevelId({levelId:res.data.data[0].id});
+            }
+            this.showResouce(this.p, this.getRunningStateLevelId());
+            this.recur(res.data.data);
           }
-          this.showResouce(this.p, this.getRunningStateLevelId());
-          this.recur(this.data5);
-          this.recurSelected(this.data5, this.getRunningStateLevelId())
-        }
-      });
+        });
+      },
+    },
+
+
+    created() {
+      if(this.getRunningStateTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.p,this.getRunningStateLevelId());
+      }
+
+
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid);
         this.setRunningStateLevelId({levelId:e.levelid});
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getRunningStateTree(), e.levelid)
       });
       Hub.$emit('mountedOk','mountedOk');
     },

@@ -28,15 +28,6 @@
     data() {
       return {
         leftList: [
-          // {
-          //   name:'运营',
-          //   children: [
-          //    {
-          //      name: '方案下发',
-          //      route: '/operate/schemeDown',
-          //    },
-          //   ]
-          // },
 
          // {
           //   name: '统计报表',
@@ -54,16 +45,7 @@
           // {
           //   name: '基础设置',
           //   children: [
-          //
-          //    // {
-          //    //   name: '备用账户切换配置',
-          //    //   route: '/infrastructure/BackupAcc'
-          //    // },
-          //    // {
-          //    //   name: '客户端批量设置',
-          //    //   route: '/infrastructure/VolumeSet'
-          //    // },
-          //    //
+
           //    // {
           //    //   name: '菜品库',
           //    //   route: '/infrastructure/DishesLibrary'
@@ -128,7 +110,7 @@
          //    name: '商户资料核实',
          //    children: [
          //      {
-         //        name: '商户列表',
+         //        name: '商户审核',
          //        route: '/businessInformation/businessList'
          //      },
          //    ]

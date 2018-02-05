@@ -27,7 +27,7 @@
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
 
-        <xo-pub-tree :data='data5' :count=0 style="width: max-content"></xo-pub-tree>
+        <xo-pub-tree :data='getPermissionTree()' :count=0 style="width: max-content"></xo-pub-tree>
 
       </div>
 
@@ -308,7 +308,7 @@
         tableWidth: 0,
         navList: [{name: "基础设置", url: ''}, {name: "权限管理", url: ''}],
         storeStatusValue: false,
-        data5: [],
+
         storeName: '',
         groupList: [],
         dataLeft: [],
@@ -345,8 +345,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setPermissionLevelId']),
-      ...mapGetters(['getPermissionLevelId']),
+      ...mapActions(['setPermissionLevelId','setPermissionTree']),
+      ...mapGetters(['getPermissionLevelId','getPermissionTree']),
       search(){
         if(this.storeName === ''){
           //this.showRoleList(this.p = {page: 1, size: 20, total: 0})
@@ -627,34 +627,22 @@
       recur(data) {
         data.forEach((map) => {
           if(map.id === this.getPermissionLevelId()){
-            this.levelName = map.levelname
+            this.levelName = map.levelname;
+            this.$set(map, "selected", true);
+          }else {
+            this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", true);
-            this.$set(map, "selected", false);
+            this.$set(map, "show", false);
+
             this.recur(map.child)
-          }
-        })
-      },
-      showLevel() {
-        getLevel().then((res) => {
-          if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
-            if(this.getPermissionLevelId() === ''){
-              this.setPermissionLevelId({levelId:res.data.data[0].id});
-            }
-            this.getGroupList(this.p,this.getPermissionLevelId());
-
-            this.recur(this.data5);
-            this.recurSelected(this.data5, this.getPermissionLevelId())
-          } else {
-
           }
         })
       },
       recurSelected(data, levelId) {
         data.forEach((map) => {
           if (map.id === levelId) {
+            this.levelName = map.levelname;
             this.$set(map, "selected", true);
           } else {
             this.$set(map, "selected", false);
@@ -664,6 +652,21 @@
           }
         })
       },
+      showLevel() {
+        getLevel().then((res) => {
+          if (res.data.errcode === 0) {
+            this.setPermissionTree({list:res.data.data});
+            if(this.getPermissionLevelId() === ''){
+              this.setPermissionLevelId({levelId:res.data.data[0].id});
+            }
+            this.getGroupList(this.p,this.getPermissionLevelId());
+            this.recur(res.data.data);
+          } else {
+
+          }
+        })
+      },
+
 
       getGroupList(p, level_id) {
         getApi.getGroupList(p, level_id).then((res) => {
@@ -684,7 +687,6 @@
         })
       },
 
-
       getPage(page) {
         this.p.page = page;
         this.getGroupList(this.p,this.getPermissionLevelId())
@@ -696,24 +698,28 @@
 
     },
     created() {
-      this.showLevel()
+      if(this.getPermissionTree().length === 0){
+        this.showLevel()
+      }else {
+        this.getGroupList(this.p, this.getPermissionLevelId());
+        this.recurSelected(this.getPermissionTree(), this.getPermissionLevelId())
+      }
     },
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.levelName = e.levelName;
         this.setPermissionLevelId({levelId:e.levelid});
-
         this.getGroupList(this.p,e.levelid);
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getPermissionTree(), e.levelid)
       });
 
       Hub.$emit('mountedOk','mountedOk');
 
     },
     updated() {
-      let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+        let bodyWidth = document.querySelector('.content div').clientWidth;
+        let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
+        this.tableWidth = bodyWidth - clientWidth;
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })
@@ -726,17 +732,7 @@
 </script>
 
 <style lang="less" scoped>
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
 
-  .m-storeCode {
-    font-size: 30px;
-  }
 
 
 </style>

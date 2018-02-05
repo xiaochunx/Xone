@@ -52,4 +52,29 @@ export default{
     // return state.treeArr;
     return window.JSON.parse(window.localStorage.getItem('treeArr'));
   },
+
+  getPermissionTree(state){
+    return state.permissionTree;
+  },
+  getBusinessConfTree(state){
+    return state.businessConfTree;
+  },
+  getPushStateTree(state){
+    return state.pushStateTree;
+  },
+  getRunningStateTree(state){
+    return state.runningStateTree;
+  },
+  getPrintConfTree(state){
+    return state.printConfTree;
+  },
+  getX2storeTree(state){
+    return state.x2storeTree;
+  },
+  getX1storeTree(state){
+    return state.x1storeTree;
+  },
+  getPublicTree(state){
+    return state.publicTree;
+  },
 }

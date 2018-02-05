@@ -46,7 +46,7 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:tableHeight + 'px'}">
-        <xo-pub-tree :data='data5' :count=0 style="width: max-content;"></xo-pub-tree>
+        <xo-pub-tree :data='getPushStateTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
@@ -135,7 +135,7 @@
         dialogVisible3: false,
 
         navList: [{name: "推送状态", url: ''}],
-        data5: [],
+
         storeName: '',
 
         storeData: [],
@@ -146,8 +146,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setPushStateLevelId']),
-      ...mapGetters(['getPushStateLevelId']),
+      ...mapActions(['setPushStateLevelId','setPushStateTree']),
+      ...mapGetters(['getPushStateLevelId','getPushStateTree']),
 
 
       close2() {
@@ -209,8 +209,6 @@
       },
 
 
-
-
       handleChecked(data) {
         let count = 0;
         this.storeData.forEach((data) => {
@@ -256,10 +254,14 @@
 
       recur(data) {
         data.forEach((map) => {
-
-          if (map.child) {
-            this.$set(map, "show", true);
+          if (map.id === this.getPushStateLevelId()) {
+            this.$set(map, "selected", true);
+          } else {
             this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            this.$set(map, "show", false);
+
             this.recur(map.child)
           }
         })
@@ -279,14 +281,16 @@
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
+
+            this.setPushStateTree({list:res.data.data});
+
             if (this.getPushStateLevelId() === '') {
               this.setPushStateLevelId({levelId: res.data.data[0].id});
             }
 
             this.showResouce(this.p, this.getPushStateLevelId());
-            this.recur(this.data5);
-            this.recurSelected(this.data5, this.getPushStateLevelId())
+            this.recur(res.data.data);
+
           } else {
 
           }
@@ -327,11 +331,11 @@
       },
     },
     created() {
-      this.showLevel();
-
-
-
-
+      if(this.getPushStateTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.p,this.getPushStateLevelId());
+      }
     },
 
     mounted() {
@@ -339,13 +343,14 @@
 
         this.showResouce(this.p, e.levelid);
         this.setPushStateLevelId({levelId: e.levelid});
-        this.recurSelected(this.data5, e.levelid)
+        this.recurSelected(this.getPushStateTree(), e.levelid)
       });
 
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+      let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
+      this.tableWidth = bodyWidth - clientWidth;
       this.$nextTick(() => {
         getScrollHeight().then((h) => {
           this.tableHeight = h;
