@@ -204,6 +204,26 @@
             v-model="refundForm.remark">
           </el-input>
         </el-form-item>
+
+        <el-form-item label=""  prop="user_name" :rules="{required: true, message: '请输入账号名称', trigger: 'blur'}">
+          <el-input
+            type="account"
+            :rows="2"
+            placeholder="请输入账号名称"
+            v-model="refundForm.user_name">
+          </el-input>
+        </el-form-item>
+
+
+        <el-form-item label=""  prop="password" :rules="{required: true, message: '请输入密码', trigger: 'blur'}">
+          <el-input
+            type="password"
+            :rows="2"
+            placeholder="请输入密码"
+            v-model="refundForm.password">
+          </el-input>
+        </el-form-item>
+
       </el-form>
 
 
@@ -266,6 +286,8 @@
         refundForm:{
           refund_money: '',
           remark: '',
+          user_name: '',
+          password: '',
         },
         refundOrderNo: '',
         actualRefundMoney: ''
@@ -391,7 +413,9 @@
                 order_no: this.refundOrderNo,
                 money: this.refundForm.refund_money,
                 memo: this.refundForm.remark,
-                operate: JSON.parse(localStorage.getItem('user'))
+                operate: JSON.parse(localStorage.getItem('user')),
+                user_name: this.refundForm.user_name,
+                password: this.refundForm.password
               };
               oneTwoApi(params).then((res) => {
                 this.dialogVisible = false;
