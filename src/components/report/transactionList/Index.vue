@@ -85,31 +85,31 @@
 
             </div>
 
-            <!--<div class=" margin_r_10">-->
-              <!--<div>扫码支付形式</div>-->
-              <!--<el-select v-model="scavengingForm" clearable filterable placeholder="请选择支付形式">-->
-                <!--<el-option-->
-                  <!--v-for="item in payInfo"-->
-                  <!--:key="item.scanId"-->
-                  <!--:label="item.scavengingFormName"-->
-                  <!--:value="item.scanId">-->
-                <!--</el-option>-->
-              <!--</el-select>-->
+            <div class=" margin_r_10">
+              <div>扫码支付形式</div>
+              <el-select v-model="scavengingForm" clearable filterable placeholder="请选择支付形式">
+                <el-option
+                  v-for="item in payInfo"
+                  :key="item.scanId"
+                  :label="item.scavengingFormName"
+                  :value="item.scanId">
+                </el-option>
+              </el-select>
 
-            <!--</div>-->
+            </div>
 
-            <!--<div class=" margin_r_10">-->
-              <!--<div>收款终端</div>-->
-              <!--<el-select v-model="receive_terminal" clearable filterable placeholder="请选择收款终端">-->
-                <!--<el-option-->
-                  <!--v-for="item in terminalInfo"-->
-                  <!--:key="item.receiveId"-->
-                  <!--:label="item.receiveTerminalName"-->
-                  <!--:value="item.receiveId">-->
-                <!--</el-option>-->
-              <!--</el-select>-->
+            <div class=" margin_r_10">
+              <div>收款终端</div>
+              <el-select v-model="receive_terminal" clearable filterable placeholder="请选择收款终端">
+                <el-option
+                  v-for="item in terminalInfo"
+                  :key="item.receiveId"
+                  :label="item.receiveTerminalName"
+                  :value="item.receiveId">
+                </el-option>
+              </el-select>
 
-            <!--</div>-->
+            </div>
 
             <div class=" margin_r_10">
               <div>商家单号</div>
@@ -143,10 +143,10 @@
         <el-table-column header-align="center" align="center" prop="iway" label="支付方式"
                          width="100"></el-table-column>
 
-        <!--<el-table-column header-align="center" align="center" prop="scavengingForm" label="扫码支付形式"-->
-                         <!--width="130"></el-table-column>-->
-        <!--<el-table-column header-align="center" align="center" prop="receive_terminal" label="收款终端"-->
-                         <!--width="100"></el-table-column>-->
+        <el-table-column header-align="center" align="center" prop="scavengingForm" label="扫码支付形式"
+                         width="130"></el-table-column>
+        <el-table-column header-align="center" align="center" prop="receive_terminal" label="收款终端"
+                         width="100"></el-table-column>
 
         <el-table-column header-align="center" align="center" prop="ichannel" label="支付通道"
                          width="100"></el-table-column>

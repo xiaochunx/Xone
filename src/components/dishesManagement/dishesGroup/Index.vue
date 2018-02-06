@@ -194,7 +194,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code1" placeholder="请输入名称" :disabled="show"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入第三方名称" :disabled="show"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -208,7 +208,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" placeholder="请输入编码" :disabled="show"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入第三方编码" :disabled="show"></el-input>
                   </div>
                 </el-col>
               </el-row>

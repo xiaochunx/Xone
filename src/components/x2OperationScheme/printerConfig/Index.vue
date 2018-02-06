@@ -157,7 +157,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px;position: relative">
-                    <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入第三方名称"></el-input>
                     <div class="third" v-if="index === 0">
                       第三方编码
                       <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334"
@@ -178,7 +178,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -274,7 +274,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px;position: relative">
-                    <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入第三方名称"></el-input>
                     <div class="third" v-if="index === 0">
                       第三方编码
                       <el-tooltip content="指外部编码，例如需要该打印模板和其他 比如美团的打印机，则填写内容为： 名称：美团，编码（输入美团模板的编号）12334"
@@ -295,7 +295,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>

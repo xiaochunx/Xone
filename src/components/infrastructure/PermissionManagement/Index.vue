@@ -70,8 +70,8 @@
       width="50%">
       <el-form ref="formRules" :model="formUserGroup" label-width="100px">
 
-        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formUserGroup.name" placeholder="请输入内容"></el-input>
+        <el-form-item label="名称:" prop="name" :rules="{required: true, message: '请输入用户组名称', trigger: 'blur'}">
+          <el-input v-model="formUserGroup.name" placeholder="请输入用户组名称"></el-input>
         </el-form-item>
 
         <div v-for="(domain, index) in formUserGroup.third_code" class="flex_r">
@@ -80,7 +80,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入第三方名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -94,7 +94,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -144,8 +144,8 @@
       width="50%">
       <el-form ref="formRules2" :model="formUser" label-width="100px">
 
-        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="formUser.nickname" placeholder="请输入名称"></el-input>
+        <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入用户名称', trigger: 'blur'}">
+          <el-input v-model="formUser.nickname" placeholder="请输入用户名称"></el-input>
         </el-form-item>
         <el-form-item label="手机号:" prop="phone" :rules="{validator: checkPhone,required: true, trigger: 'blur'}">
           <el-input v-model="formUser.phone" :maxlength="11"  placeholder="请输入手机号"></el-input>
@@ -156,7 +156,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code1" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入第三方名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -170,7 +170,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>

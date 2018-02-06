@@ -16,7 +16,7 @@
 <template>
   <div>
 
-    <div v-for='(item,index) in data' style="line-height: 36px;">
+    <div v-for='(item,index) in data' style="line-height: 36px;min-width: 200px">
       <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}" v-if="item.type < type">
 
         <span :style="{display:(item.child && item.child.length !== 0)?'none':'inline-block'}"

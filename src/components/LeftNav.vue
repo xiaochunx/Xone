@@ -106,15 +106,7 @@
          //      },
          //    ]
          //  },
-         //  {
-         //    name: '商户资料核实',
-         //    children: [
-         //      {
-         //        name: '商户审核',
-         //        route: '/businessInformation/businessList'
-         //      },
-         //    ]
-         //  },
+
         ],
         ListHeight: 0,
         leftData:[]

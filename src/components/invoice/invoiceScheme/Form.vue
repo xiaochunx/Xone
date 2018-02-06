@@ -87,9 +87,9 @@
 
     <div class="flex_sb margin_b_10" style="border-bottom: 1px solid #bfcbd9">
       <div style="color: red">增值服务（付费使用）</div>
-      <div @click="showIncrement = !showIncrement" class="pointer">展开
-        <i class="el-icon-arrow-down"  v-if="showIncrement"></i>
-        <i class="el-icon-arrow-up"  v-if="!showIncrement"></i>
+      <div @click="showInvoice()" class="pointer">展开
+        <i class="el-icon-arrow-down"  v-if="showIncrement.check"></i>
+        <i class="el-icon-arrow-up"  v-if="!showIncrement.check"></i>
       </div>
     </div>
     <transition
@@ -102,7 +102,7 @@
       v-on:after-leave="afterLeave"
       v-on:leave-cancelled="leaveCancelled"
     >
-      <div v-if="showIncrement" class="heightTran">
+      <div v-if="showIncrement.check" class="heightTran">
         <el-form-item label-width="140px" label="">
           <div class="flex_a">
             <el-switch
@@ -205,18 +205,32 @@
 </template>
 <script>
 
-
+  import {oneTwoApi} from '@/api/api.js'
   export default {
     name:"xoForm",
-    props:["clientFormData","purchaserList","showName","myRef","getAddInvoicePower"],
+    props:["clientFormData","purchaserList","showName","myRef","showIncrement"],
     data() {
       return {
         showOption:false,
-        showIncrement:false
+        getAddInvoicePower:false//获取是否有增值服务权限
       };
     },
     methods: {
+      showInvoice(){
+        this.showIncrement.check = !this.showIncrement.check;
+        if(this.showIncrement.check){
+          //获取是否有增值服务权限
+          let params = {
+            redirect: "x1.invoice.getAddInvoicePower",
 
+          };
+          oneTwoApi(params).then((res) => {
+            (res.errcode === 0)? this.getAddInvoicePower = true: this.getAddInvoicePower = false;
+
+          })
+        }
+
+      },
       delLogo(){
         this.clientFormData.logo_url = ""
       },
@@ -300,7 +314,8 @@
     },
     updated(){
 
-    }
+    },
+
   }
 
 </script>

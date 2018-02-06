@@ -91,7 +91,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code1" placeholder="请输入名称" :disabled="showName === '查看'"></el-input>
+                    <el-input v-model="domain.code1" placeholder="请输入第三方名称" :disabled="showName === '查看'"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -105,7 +105,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.code2" placeholder="请输入编码" :disabled="showName === '查看'"></el-input>
+                    <el-input v-model="domain.code2" placeholder="请输入第三方编码" :disabled="showName === '查看'"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -166,7 +166,7 @@
 
             <div v-show="showName !== '新增方案'">
 
-              <xo-form :clientFormData="clientForm_first3" :showName="showName" :purchaserList="clientForm_first3.purchasers" ref="xoClientFormEdit" myRef="xoClientFormEdit" :getAddInvoicePower="getAddInvoicePower"></xo-form>
+              <xo-form :clientFormData="clientForm_first3" :showName="showName" :purchaserList="clientForm_first3.purchasers" ref="xoClientFormEdit" myRef="xoClientFormEdit" :showIncrement="showIncrement"></xo-form>
 
               <div class="flex margin_t_10" v-if="showName !== '查看'">
                 <el-button  @click="showFrist = true" v-if="showName === '新增方案'">返回</el-button>
@@ -228,7 +228,7 @@
     </div>
     <div v-show="!showFrist">
 
-      <xo-form :clientFormData="clientForm_first2" :showName="showName" :purchaserList="purchaserList" ref="xoClientFormAdd" myRef="xoClientFormAdd" :getAddInvoicePower="getAddInvoicePower"></xo-form>
+      <xo-form :clientFormData="clientForm_first2" :showName="showName" :purchaserList="purchaserList" ref="xoClientFormAdd" myRef="xoClientFormAdd" :showIncrement="showIncrement"></xo-form>
 
         <div class="flex margin_t_10" v-if="showName !== '查看'">
           <el-button  @click="showFrist = true">返回</el-button>
@@ -439,7 +439,8 @@
         areaList: [],
         inputArea0: '',
         inputArea: '',
-        getAddInvoicePower:false//获取是否有增值服务权限
+        showIncrement:{check:false},
+
       }
     },
     watch: {},
@@ -745,6 +746,7 @@
         this.multipleSelection = []
       },
       close1(){
+        this.showIncrement = {check:false};
         this.$refs['clientForm'].resetFields();
         this.$refs['clientForm_first'].resetFields();
         this.$refs.xoClientFormAdd.$refs['xoClientFormAdd'].resetFields();
@@ -1194,18 +1196,6 @@
 
         }
       })
-
-      //获取是否有增值服务权限
-      let params1 = {
-        redirect: "x1.invoice.getAddInvoicePower",
-
-      };
-      oneTwoApi(params1).then((res) => {
-        (res.errcode === 0)? this.getAddInvoicePower = true: this.getAddInvoicePower = false;
-
-      })
-
-
     },
     mounted() {
       Hub.$emit('mountedOk','mountedOk');

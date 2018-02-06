@@ -7,7 +7,7 @@
 
       <div class="flex_es">
         <div>
-          <el-button size="small" @click="batchAdd()" :disabled="!getShowStoreTree().showAdd" v-show="getTreeArr['批量新增']">批量新增</el-button>
+          <el-button size="small" @click="batchAdd()" :disabled="!getShowStoreTree().showAdd" v-show="getTreeArr['批量新增']">新增门店</el-button>
           <el-button size="small" @click="delSelected()" v-show="getTreeArr['删除']">批量删除</el-button>
           <el-button size="small" @click="isSwitch()" v-show="getTreeArr['批量开启、关闭']">批量开启/关闭</el-button>
         </div>
@@ -144,7 +144,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.name" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -158,7 +158,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.providerid" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.providerid" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -267,9 +267,9 @@
     </el-dialog>
 
 
-    <!--批量新增-->
+    <!--新增门店-->
     <el-dialog
-      title="批量新增"
+      title="新增门店"
       :visible.sync="dialogVisible2"
       width="50%" size="tiny">
       <div class="flex_f flex">

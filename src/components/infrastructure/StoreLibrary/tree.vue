@@ -48,7 +48,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.name" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -62,7 +62,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.providerid" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.providerid" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -186,7 +186,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.name" placeholder="请输入名称"></el-input>
+                    <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -200,7 +200,7 @@
               <el-row>
                 <el-col>
                   <div style="width:150px">
-                    <el-input v-model="domain.providerid" placeholder="请输入编码"></el-input>
+                    <el-input v-model="domain.providerid" placeholder="请输入第三方编码"></el-input>
                   </div>
                 </el-col>
               </el-row>
@@ -223,7 +223,7 @@
       </el-form>
     </el-dialog>
 
-    <div v-for='(item,index) in data' style="line-height: 36px;">
+    <div v-for='(item,index) in data' style="line-height: 36px;min-width: 200px">
       <div class="tree-node" :style="{'padding-left':  count *  20  + 'px','background':(item.selected)?'#edf7ff':''}">
         <!--<i @click.stop.self='item.show=!item.show' v-if='item.child && item.child.length != 0'-->
         <!--:style="{transform:(item.show)?'rotate(90deg)':'rotate(0deg)'}"-->

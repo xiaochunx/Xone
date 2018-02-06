@@ -58,6 +58,7 @@ import OperationPlan from '../components/operate/OperationPlan/Index.vue'
 /************************** 公众号管理 ***************************/
 import PublicManagement from '@/components/infrastructure/PublicManagement/Index.vue'
 
+import TemplateMessageConf from '@/components/infrastructure/PublicManagement/TemplateMessageConf/Index.vue'
 
 /************************** 菜品管理 ***************************/
 import storeDishesManage from '@/components/dishesManagement/storeDishesManage/Index.vue'
@@ -338,6 +339,13 @@ export default new Router({
           meta: { auth: true },
           name: '公众号管理',
           component: PublicManagement
+        },
+        //模板消息配置
+        {
+          path: '/infrastructure/PublicManagement/TemplateMessageConf/:id',
+          meta: { auth: true },
+          name: '公众号管理/模板消息配置',
+          component: TemplateMessageConf
         },
 
         /**********************运营***************************/

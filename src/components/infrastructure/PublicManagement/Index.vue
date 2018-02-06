@@ -44,10 +44,11 @@
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="op_manage"
                            label="操作人">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作" width="70">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="操作" width="180">
             <template slot-scope="scope">
               <el-button size="mini" type="primary" @click="edit(scope.row)">修改</el-button>
 
+              <el-button size="mini" type="primary" @click="conf(scope.row)">模板消息配置</el-button>
             </template>
           </el-table-column>
 
@@ -149,6 +150,9 @@
       edit(row) {
         this.form.code = row.nick_name;
         this.dialogVisible = true
+      },
+      conf(row){
+        this.$router.push({path: `/infrastructure/PublicManagement/TemplateMessageConf/${row.id}`})
       },
       recur(data) {
         data.forEach((map) => {
