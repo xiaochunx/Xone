@@ -14,6 +14,8 @@ import 'babel-polyfill'
 import 'element-ui/lib/theme-default/index.css'
 import 'font-awesome/css/font-awesome.css'
 
+import '@/plugins/dataFormat/index.js'
+
 // 修改vue的原型对象
 Vue.prototype.$http = Axios;
 
