@@ -20,9 +20,9 @@ import '@/plugins/dataFormat/index.js'
 Vue.prototype.$http = Axios;
 
 
- // let url = 'http://test0.kuan1.cn';  // 测试环境
+ let url = 'http://test0.kuan1.cn';  // 测试环境
 // let url = 'http://x0test.kuan1.cn'; // 开发环境
-let url = 'http://x.kuan1.cn';      // 正式环境
+// let url = 'http://x.kuan1.cn';      // 正式环境
 // let url = 'http://bs.com';          // 本地环境
 
 Vue.prototype.$jqUrl = `${url}/kybase/`;
