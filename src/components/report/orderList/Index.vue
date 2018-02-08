@@ -48,9 +48,9 @@
             <el-select v-model="storeId" clearable filterable placeholder="请选择" size="small" @change="handleStoreId">
               <el-option
                 v-for="item in storeData"
-                :key="item.id"
-                :label="item.storeName"
-                :value="item.id">
+                :key="item.base_store_id"
+                :label="item.storename"
+                :value="item.base_store_id">
               </el-option>
             </el-select>
           </div>
@@ -404,8 +404,14 @@
       this.orderList('','',this.p);
     },
     mounted() {
-      getStoreListAll().then((res)=>{
-        this.storeData = res.data.data
+      let params = {
+        redirect: "x2.store.index",
+        noPage:1
+      };
+      oneTwoApi(params).then((res) => {
+        if(res.errcode === 0){
+          this.storeData = res.data.list;
+        }
       });
       Hub.$emit('mountedOk','mountedOk');
     },

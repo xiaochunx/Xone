@@ -709,7 +709,7 @@
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.setPermissionLevelId({levelId:e.levelid});
-        this.getGroupList(this.p,e.levelid);
+        this.getGroupList(this.p = {page: 1, size: this.p.size, total: 0},e.levelid);
         this.recurSelected(this.getPermissionTree(), e.levelid)
       });
 

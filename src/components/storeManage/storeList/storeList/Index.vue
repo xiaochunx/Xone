@@ -590,7 +590,7 @@
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '');
+        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '');
 
         this.setX1StoreLevelId({levelId:e.levelid});
         this.recurSelected(this.getX1storeTree(), e.levelid)

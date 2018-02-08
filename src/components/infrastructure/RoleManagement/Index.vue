@@ -521,10 +521,7 @@
       }
     },
     created() {
-      this.storeData.forEach((map) => {
-        this.$set(map, 'select', false)
-      })
-      this.showRoleList(this.p)
+      this.showRoleList(this.p);
       getApi.roleType().then((res)=>{
         this.roleType = res.data.data
       })

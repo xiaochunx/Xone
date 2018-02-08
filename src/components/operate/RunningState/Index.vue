@@ -460,7 +460,7 @@
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.showResouce(this.p = {page: 1, size: 20, total: 0}, e.levelid);
+        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid);
         this.setRunningStateLevelId({levelId:e.levelid});
         this.recurSelected(this.getRunningStateTree(), e.levelid)
       });

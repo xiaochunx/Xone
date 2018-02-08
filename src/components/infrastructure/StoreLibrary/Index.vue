@@ -853,7 +853,7 @@
         this.recurSelected(this.getStoreTreeList(),e.levelid)
       });
       Hub.$on('getBsList', (e) => {
-        this.getBsList(this.p = {page: 1, size: 20, total: 0}, e.levelid,this.searchName = '')
+        this.getBsList(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '')
       })
 
       Hub.$emit('mountedOk','mountedOk');

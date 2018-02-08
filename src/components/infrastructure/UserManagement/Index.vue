@@ -87,7 +87,7 @@
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="editAccount(scope.row)">修改</el-button>
-          <el-button size="small" @click="passWord(scope.row)">修改密码</el-button>
+          <el-button size="small" @click="passWord(scope.row)" v-show="getTreeArr['修改密码']">修改密码</el-button>
           <el-button size="small" @click="showStore(scope.row)">关联门店</el-button>
           <el-button size="small" type="danger" @click="del(scope.row)">删除</el-button>
         </template>
@@ -104,6 +104,7 @@
       title="编辑用户"
       :visible.sync="dialogVisible"
       @close="close"
+      @open="open"
       width="50%">
       <el-form ref="formRules" :model="formUserEdit" label-width="100px">
         <el-form-item label="名称:" prop="nickname" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
@@ -260,6 +261,13 @@
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
+      open(){
+        getApi2.getRoleList().then((res)=>{
+          if(res.data.errcode === 0){
+            this.roleList = res.data.data.list
+          }
+        });
+      },
       close(){
         this.$refs['formRules'].resetFields();
       },
@@ -428,12 +436,6 @@
     created() {
 
       this.userList(this.p,this.nickname,this.phone,this.levelId,this.groupId);
-
-      getApi2.getRoleList().then((res)=>{
-        if(res.data.errcode === 0){
-          this.roleList = res.data.data.list
-        }
-      });
 
       getLevel().then((res) => {
         if (res.data.errcode === 0) {

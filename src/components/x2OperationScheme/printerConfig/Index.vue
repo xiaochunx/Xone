@@ -1042,7 +1042,7 @@
       },
       handleStore() {
         console.log(this.storeData_id)
-        this.getPrintData(this.p)
+        this.getPrintData(this.p = {page: 1, size: this.p.size, total: 0})
       },
       getPrintData(p) {
         //获取打印机列表

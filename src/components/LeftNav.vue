@@ -97,15 +97,7 @@
          //
          //    ]
          //  },
-         //  {
-         //    name: 'x2运营方案',
-         //    children: [
-         //      {
-         //        name: '推送状态',
-         //        route: '/x2OperationScheme/pushState'
-         //      },
-         //    ]
-         //  },
+
 
         ],
         ListHeight: 0,

@@ -13,6 +13,10 @@
       </el-form-item>
     </el-tooltip>
 
+    <el-form-item label="口碑后台门店ID">
+      <el-input v-model="ruleForm.storeId"></el-input>
+    </el-form-item>
+
     <div v-for="(domain, index) in ruleForm.domains" class="flex_r">
       <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
         <div>
@@ -95,6 +99,7 @@
         message:"qwe",
         ruleForm: {
           Merchants: '',
+          storeId:'',
           accountName: '',    // 账户名称
           payOptions: [],    // 支付方式
           checkboxGroup: [],
@@ -184,6 +189,7 @@
                 paymentChannel: this.ruleForm.Payment,      // 支付通道
                 paymentMethod: paymentMethod,               // 支付方式
                 merchants: this.ruleForm.Merchants,         // 商户号/ID
+                storeId:this.ruleForm.storeId,
               };
 
               oneTwoApi(params).then((res) => {

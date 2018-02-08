@@ -487,7 +487,7 @@
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.showResouce(this.p, e.levelid);
+        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid);
         this.setX2StoreLevelId({levelId: e.levelid});
         this.recurSelected(this.getX2storeTree(), e.levelid)
       });
