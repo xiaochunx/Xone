@@ -38,7 +38,6 @@
 
 
     <footer>
-      <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
     </footer>
 
     <!--弹窗新增/修改-->
@@ -65,7 +64,7 @@
         </el-form-item>
 
         <el-form-item label="消息模板类型" prop="title" :rules="{required: true, message: '请选择消息模板类型', trigger: 'change'}">
-          <el-select v-model="form.title" placeholder="请选择消息模板类型" @change="handleTemplate">
+          <el-select v-model="form.title" placeholder="请选择消息模板类型" @change="handleTemplate" @visible-change="canSelect">
             <el-option
               v-for="item in templateList"
               :key="item.id"
@@ -75,14 +74,12 @@
           </el-select>
         </el-form-item>
 
-
-        <el-form-item v-for="(item,index) in form.templateDataList" :key="item.value" :label="item.value"
-                      :prop="'templateDataList.' + index + '.selectName'"
-        :rules="{required: true, message: '必填项', trigger: 'change'}"
-                      >
+        <el-form-item v-for="(item,index) in form.data" :key="item.value" :label="item.key"
+        :prop="'data.' + index + '.value'"
+        :rules="{required: true, message: '必填项', trigger: 'change'}">
 
           <div class="flex_r">
-            <el-select v-model="item.selectName" placeholder="请选择" @change="changeValue(item.value,item.selectName)">
+            <el-select v-model="item.value" placeholder="请选择">
               <el-option
                 v-for="item1 in messageTemplateList"
                 :key="item1.id"
@@ -91,17 +88,14 @@
               </el-option>
             </el-select>
 
-            <el-color-picker class="margin_l_10" v-model="form.data[item.value].color">
+            <el-color-picker class="margin_l_10" v-model="item.color">
             </el-color-picker>
           </div>
-
-          <el-input class="margin_t_10" v-if="item.selectName==='custom'" v-model="form.textTemp[item.value]"  style="width: 193px"></el-input>
-
+          <!--<el-form-item label="" :prop="'data.' + index + '.custom'" :rules="{required: true, message: 'xx', trigger: 'blue'}">-->
+          <!--</el-form-item>-->
+          <el-input class="margin_t_10" v-if="item.value==='custom'" v-model="item.custom"  style="width: 193px"></el-input>
 
         </el-form-item>
-
-
-
 
         <el-form-item label="状态:">
 
@@ -123,7 +117,12 @@
       title=""
       :visible.sync="dialogVisible2"
       width="30%" size="tiny">
-      <div>f</div>
+      <el-input
+        type="textarea"
+        :rows="8"
+        placeholder="请输入内容"
+        v-model="previewList">
+      </el-input>
     </el-dialog>
   </div>
 </template>
@@ -153,10 +152,7 @@
           template_id:'',
           title:'',
           status: true,
-          data:{},
-          colorTemp:{},
-          textTemp:{},
-          templateDataList:[],
+          data:[],
         },
         dialogVisible: false,
         dialogVisible2: false,
@@ -164,40 +160,87 @@
         navList: [{name: "基础设置", url: ''}, {name: "公众号管理", url: '/infrastructure/PublicManagement'}, {name: "模板消息配置", url: ''}],
         name: '',
         templateList:[],
-
+        selectOK:false,
         templateDataTemp:{},
         storeData: [],
-        p: {page: 1, size: 20, total: 0},
+        previewList:'',
         messageTemplateList:[]
 
       }
     },
     watch: {},
     methods: {
-      handleTemplate(e){
-        // this.templateList.forEach((item)=>{
-        //   if(item.name === e){
-        //     this.form.template_id = item.id
-        //   }
-        // })
-        this.form.template_id = e;
-        this.form.templateDataList = this.templateDataTemp[e];
-        this.form.templateDataList.forEach((item)=>{
-          this.$set(item,'selectName','');
-          this.form.data[item.value]= {name:item.name,value:'',color:'#20a0ff'}
-        })
-      },
-      changeValue(i,data){
-        console.log(i)
-        console.log(data)
-        this.form.data[i].value = data
+      submitFrom(formRules) {
+        this.$refs[formRules].validate((valid) => {
+          if (valid) {
+            console.log(this.form)
 
+            let title,status,redirect;
+            this.templateList.forEach((item)=>{
+              if(item.id === this.form.template_id){
+                title = item.name
+              }
+            });
+            status =  this.form.status === true ? this.form.status = 1 : this.form.status = 0;
+
+            if(this.name === '新增'){
+              redirect = 'x1.privateTemplate.add'
+            } else {
+              redirect = 'x1.privateTemplate.update'
+            }
+
+            let params = {
+              redirect: redirect,
+              id:this.form.id,
+              wx_id: this.$route.params.id,
+              type:this.form.type,
+              status:status,
+              title:title,
+              data:window.JSON.stringify(this.form.data),
+              template_id:this.form.template_id,
+            };
+            oneTwoApi(params).then((res) => {
+              if(res.errcode === 0){
+                this.$message('操作成功');
+                this.dialogVisible = false;
+                this.showResouce(this.$route.params.id)
+              }
+            })
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
-      changeColor(i,data){
-        this.form.data[i].color = data
+      canSelect(e){
+        (e === true)?this.selectOK = true:this.selectOK = false
       },
+      handleTemplate(e){
+        if(e !== ""){
+          if(this.selectOK === true){
+            this.form.template_id = e;
+            this.form.data= [];
+            this.templateDataTemp[e].forEach((item)=>{
+              this.form.data.push({key:item.value,value: "", name: item.name, color: "#20a0ff", custom: ""})
+            })
+          }
+        }
+      },
+
       show(){
-        this.dialogVisible2 = true
+        this.dialogVisible2 = true;
+        //预览模板
+        let params = {
+          redirect: "x1.privateTemplate.preview",
+          data:window.JSON.stringify(this.form.data)
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.previewList = res.data.preview
+
+          }
+        })
       },
 
       dialogOpen() {
@@ -214,7 +257,8 @@
 
         //获取所有消息模板
         let params1 = {
-          redirect: "x1.privateTemplate.getTemplateList"
+          redirect: "x1.privateTemplate.getTemplateList",
+          wx_id:this.$route.params.id
         };
         oneTwoApi(params1).then((res) => {
           if(res.errcode === 0){
@@ -239,46 +283,16 @@
           template_id:'',
           title:'',
           status: true,
-          data:{},
-          colorTemp:{},
-          textTemp:{},
-          templateDataList:[],
+          data:[],
         };
+        this.previewList = '';
         this.$refs['formRules'].resetFields();
       },
-      submitFrom(formRules) {
-        this.$refs[formRules].validate((valid) => {
-          if (valid) {
-            if(this.name === '新增'){
-              console.log(this.form)
-              // let params = {
-              //   redirect: "x1.privateTemplate.add",
-              //   wx_id: this.$route.params.id,
-              //   type:'',
-              //   status:'',
-              //   title:'',
-              //   data:'',
-              //   template_id:'',
-              // };
-              // oneTwoApi(params).then((res) => {
-              //   if(res.errcode === 0){
-              //
-              //   }
-              // })
-            } else {
 
-            }
-
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
       delTemplate(id){
         //删除模板
         let params = {
-          redirect: "x2.privateTemplate.del",
+          redirect: "x1.privateTemplate.del",
           id: id,
         };
         oneTwoApi(params).then((res) => {
@@ -293,7 +307,7 @@
       },
 
       del(id,status){
-        if(status === 1){
+        if(status === '开启'){
           this.$confirm(
             '该模板消息正在使用中，如删除顾客在微信中会收不到模板消息提醒哦～', '删除', {
               confirmButtonText: '删除',
@@ -325,9 +339,7 @@
       handle(name,row) {
         this.name = name;
         this.dialogVisible = true;
-        this. templateDataList = [{name: "",
-          selectName: "",
-          value: ""}];
+
         if(name === '修改'){
           //模板详情
           let params = {
@@ -337,27 +349,20 @@
           };
           oneTwoApi(params).then((res) => {
             if(res.errcode === 0){
-              this.form = res.data;
+              res.data.status = (res.data.status === 1)? res.data.status = true:res.data.status = false;
+               this.form = res.data;
 
             }
           })
         }
       },
-      getPage(page) {
-        this.p.page = page;
-        // this.showRoleList(this.p,this.searchName);
-      },
-      getPageSize(size) {
-        this.p.size = size;
-        // this.showRoleList(this.p,this.searchName);
-      },
+
 
       showResouce(id) {
         //获取消息模板列表
         let params = {
           redirect: "x1.privateTemplate.getList",
           id: id,
-
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){

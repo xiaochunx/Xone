@@ -87,8 +87,9 @@
               <el-form-item label-width="200px" label="饿了么门店名称" class="margin_b_10">
                 <div>{{dataList[0]?dataList[0].wm_store_name:""}}</div>
               </el-form-item>
-            <el-button type="primary" size="small" @click="unBindData('el')">解除绑定</el-button>
-
+              <el-form-item label-width="200px" label="" class="margin_b_10">
+                <el-button type="primary" size="small" @click="unBindData('el')">解除绑定</el-button>
+              </el-form-item>
 
             <!--<el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">-->
               <!--<el-switch v-model="send_message"></el-switch>-->
@@ -139,9 +140,9 @@
               <el-form-item label-width="200px" label="百度门店名称" class="margin_b_10">
                 <div>{{dataList[0]?dataList[0].wm_store_name:""}}</div>
               </el-form-item>
-
-              <el-button type="primary" size="small" @click="unBindData('bd')">解除绑定</el-button>
-
+              <el-form-item label-width="200px" label="" class="margin_b_10">
+                <el-button type="primary" size="small" @click="unBindData('bd')">解除绑定</el-button>
+              </el-form-item>
               <!--<el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">-->
                 <!--<el-switch v-model="send_message"></el-switch>-->
               <!--</el-form-item>-->

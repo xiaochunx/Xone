@@ -148,7 +148,7 @@
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">
           <template slot-scope="scope">
-            <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.brand"
+            <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.brand" clearable filterable
                        @change="myChange(scope.row,'brand','brandClass')" placeholder="请选择">
               <el-option
                 v-for="item in brandList"
@@ -163,20 +163,20 @@
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店地址" width="600">
           <template slot-scope="scope">
             <div class="flex_a">
-              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.provinceid"
+              <el-select :class="{isSelected:scope.row.provinceClass === true}" v-model="scope.row.provinceid" clearable filterable
                          @change="myChange(scope.row,'provinceid','provinceClass','isProvince')" placeholder="请选择省">
                 <el-option v-for="item in provinceList" :key="item.id" :label="item.address" :value="item.id">
                 </el-option>
               </el-select>
               <div class="margin_l_10">
-                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.cityid"
+                <el-select :class="{isSelected:scope.row.cityClass === true}" v-model="scope.row.cityid" clearable filterable
                            @change="myChange(scope.row,'cityid','cityClass','isCity')" placeholder="请选择市">
                   <el-option v-for="item in scope.row.cityList" :key="item.id" :label="item.address"
                              :value="item.id"></el-option>
                 </el-select>
               </div>
               <div class="margin_l_10">
-                <el-select :class="{isSelected:scope.row.areaClass === true}" v-model="scope.row.areaid"
+                <el-select :class="{isSelected:scope.row.areaClass === true}" v-model="scope.row.areaid" clearable filterable
                            @change="myChange(scope.row,'areaid','areaClass')" placeholder="请选择区">
                   <el-option v-for="item in scope.row.areaList" :key="item.id" :label="item.address"
                              :value="item.id"></el-option>

@@ -196,7 +196,7 @@
 
       },
       showResouce(id) {
-        this.$http.get(`index.php?controller=level&action=brand&token=${this.$localStorage.get('token')}&id=${id}`).then((res)=>{
+        this.$http.get(`index.php?controller=level&action=brandList&token=${this.$localStorage.get('token')}&id=${id}`).then((res)=>{
           res.data.data.forEach((item)=>{
             if(item.is_pay_invoice === 0){
               item.is_pay_invoice = false

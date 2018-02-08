@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">
+    <el-form-item label-width="200px" label="款易APP发送订单语音提醒" class="margin_b_10">
       <el-switch v-model="send_message"></el-switch>
     </el-form-item>
     <el-form-item label-width="200px" label="自动接单" class="margin_b_10">

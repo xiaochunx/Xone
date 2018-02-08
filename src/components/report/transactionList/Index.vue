@@ -187,25 +187,8 @@
       @close="close"
       width="30%">
 
-      <el-form label-position="right" ref="refundForm" :model="refundForm">
-        <el-form-item label=""  prop="refund_money" :rules="{validator: checkRefund,required: true, trigger: 'blur'}">
-          <el-input
-            type="number"
-            min="0"
-            v-model="refundForm.refund_money"
-            placeholder="请输入退款金额"></el-input>
-        </el-form-item>
-
-        <el-form-item label=""  prop="remark" :rules="{required: true, message: '请输入备注内容', trigger: 'blur'}">
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入备注内容"
-            v-model="refundForm.remark">
-          </el-input>
-        </el-form-item>
-
-        <el-form-item label=""  prop="user_name" :rules="{required: true, message: '请输入账号名称', trigger: 'blur'}">
+      <el-form label-position="right" label-width="80px" ref="refundForm" :model="refundForm">
+        <el-form-item label="账号："  prop="user_name" :rules="{required: true, message: '请输入账号名称', trigger: 'blur'}">
           <el-input
             type="account"
             :rows="2"
@@ -215,7 +198,7 @@
         </el-form-item>
 
 
-        <el-form-item label=""  prop="password" :rules="{required: true, message: '请输入密码', trigger: 'blur'}">
+        <el-form-item label="密码："  prop="password" :rules="{required: true, message: '请输入密码', trigger: 'blur'}">
           <el-input
             type="password"
             :rows="2"
@@ -223,6 +206,40 @@
             v-model="refundForm.password">
           </el-input>
         </el-form-item>
+
+        <el-form-item label="支付金额">
+          <el-input
+            type="number"
+            v-model="actualRefundMoney"
+            placeholder="" disabled></el-input>
+        </el-form-item>
+
+        <el-form-item label="退款金额"  prop="refund_money" :rules="{validator: checkRefund,required: true, trigger: 'blur'}">
+          <el-input
+            type="number"
+            min="0"
+            v-model="refundForm.refund_money"
+            placeholder="请输入退款金额"></el-input>
+        </el-form-item>
+
+        <el-form-item label="退款原因"  prop="remark" :rules="{required: true, message: '请输入备注内容', trigger: 'change'}">
+          <!--<el-input-->
+            <!--type="textarea"-->
+            <!--:rows="2"-->
+            <!--placeholder="请输入备注内容"-->
+            <!--v-model="refundForm.remark">-->
+          <!--</el-input>-->
+          <el-radio-group v-model="refundForm.remark">
+            <el-radio label="收错钱">收错钱</el-radio>
+            <el-radio label="退菜">退菜</el-radio>
+            <el-radio label="不想吃了">不想吃了</el-radio>
+            <el-radio label="爱吃不吃">爱吃不吃</el-radio>
+            <el-radio label="其他">其他</el-radio>
+          </el-radio-group>
+
+        </el-form-item>
+
+
 
       </el-form>
 
@@ -290,7 +307,8 @@
           password: '',
         },
         refundOrderNo: '',
-        actualRefundMoney: ''
+        actualRefundMoney: '',
+
       }
     },
 
@@ -398,9 +416,9 @@
         this.actualRefundMoney = value.pay_money;
       },
       makeSureRefund(){
-        if (this.refund_money > this.actualRefundMoney){
+        if (this.refundForm.refund_money > this.actualRefundMoney){
           this.$message({
-            message: '退款金额不能大于实际金额',
+            message: '退款金额不能大于支付金额',
             type: 'warning'
           });
         }else {

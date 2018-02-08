@@ -204,7 +204,7 @@
         getApi.checkRegist(this.id,1,levelId).then((res)=>{
           if(res.data.errcode === 0){
             this.$message('操作成功');
-
+            this.dialogVisible1 = false;
             this.showResouce(this.p, this.activeName)
           }
         })
@@ -227,7 +227,7 @@
             getApi.checkRegist(this.id,2,this.rejectForm.text).then((res)=>{
               if(res.data.errcode === 0){
                 this.$message('操作成功');
-
+                this.dialogVisible2 = false;
                 this.showResouce(this.p, this.activeName)
               }
             })
@@ -239,7 +239,7 @@
         });
       },
       show(id) {
-        getApi.companyRegistInfo(id).then(()=>{
+        getApi.companyRegistInfo(id).then((res)=>{
           if(res.data.errcode === 0){
             this.dialogVisible = true;
             this.registInfo = res.data.data
