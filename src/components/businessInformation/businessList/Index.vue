@@ -32,7 +32,7 @@
             </el-table-column>
             <el-table-column label-class-name="table_head" header-align="center" align="center" prop="addTime"
                              label="提交时间"></el-table-column>
-            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statusName"
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statusFormate"
                              label="状态"></el-table-column>
             <el-table-column label-class-name="table_head" header-align="center" align="center"
                              label="操作" width="160">
@@ -76,7 +76,7 @@
             </el-table-column>
             <el-table-column label-class-name="table_head" header-align="center" align="center" prop="addTime"
                              label="提交时间"></el-table-column>
-            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statusName"
+            <el-table-column label-class-name="table_head" header-align="center" align="center" prop="statusFormate"
                              label="状态"></el-table-column>
             <el-table-column label-class-name="table_head" header-align="center" align="center"
                              label="操作" width="160">
@@ -274,19 +274,6 @@
       showResouce(p,activeName){
         getApi.companyRegistList(p,activeName).then((res)=>{
           if(res.data.errcode === 0){
-            res.data.data.list.forEach((item)=>{
-              switch (item.status){
-                case 0:
-                  item.statusName = "已审核";
-                  break;
-                case 1:
-                  item.statusName = "待审核";
-                  break;
-                case 2:
-                  item.statusName = "被驳回";
-                  break;
-              }
-            });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count
           }

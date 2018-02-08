@@ -619,7 +619,7 @@
         dialogVisible3: false,
         dialogVisible4: false,
         navList: [{name: "打印机配置", url: ''}],
-        printData: [{}],
+        printData: [],
         storeData: [],
         storeData_id: '',
         p: {page: 1, size: 20, total: 0},

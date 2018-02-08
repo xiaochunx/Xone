@@ -105,19 +105,19 @@
       <div class="flex_a">
         <div>所在地</div>
         <div class="margin_l_10">
-          <el-select v-model="providerId" filterable placeholder="请选择省" @change="myChange(providerId,'provider')">
+          <el-select v-model="providerId" filterable clearable placeholder="请选择省" @change="myChange(providerId,'provider')">
             <el-option v-for="item in providerList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
 
         <div class="margin_l_10">
-          <el-select v-model="cityId" filterable placeholder="请选择市" @change="myChange(cityId,'city')">
+          <el-select v-model="cityId" filterable clearable placeholder="请选择市" @change="myChange(cityId,'city')">
             <el-option v-for="item in cityList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
 
         <div class="margin_l_10">
-          <el-select v-model="areaId" filterable placeholder="请选择区">
+          <el-select v-model="areaId" filterable clearable placeholder="请选择区">
             <el-option v-for="item in areaList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>

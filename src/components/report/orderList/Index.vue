@@ -67,8 +67,14 @@
             </el-select>
           </div>
 
-        </div>
 
+
+        </div>
+        <div class=" margin_r_10 margin_t_10">
+
+          <el-button size="small" type="primary" @click="out()">导出</el-button>
+
+        </div>
       </div>
 
       <!--<div class="margin_t_10">-->
@@ -397,8 +403,25 @@
             this.p.total = res.data.count;
           }
         })
+      },
+      out(){
+        let params = {
+          redirect: "x2a.order.exportorder",
+          begTime: this.start_stamp,
+          endTime:this.end_stamp,
+          status:this.status,
+          storeId:this.storeId,
+          source:this.source,
+          page:this.p.page,
+          pagesize:this.p.size,
+          export:1
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            window.location.href = res.data
+          }
+        });
       }
-
     },
     created() {
       this.orderList('','',this.p);
