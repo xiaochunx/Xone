@@ -93,8 +93,8 @@
   import {getLevel} from '../../utility/communApi'
   import getApi from './publicManagement.service'
   import publicTree from './publicTree'
-  import Hub from '../../utility/commun'
   import { mapActions,mapGetters } from 'vuex';
+  import Hub from '../../utility/commun'
   export default {
     computed: {
       ...mapGetters([
@@ -214,7 +214,6 @@
         this.showResouce(this.getPublicLevelId());
         this.recurSelected(this.getPublicTree(), this.getPublicLevelId())
       }
-
     },
     mounted() {
       Hub.$on('showAddPub', (e) => {

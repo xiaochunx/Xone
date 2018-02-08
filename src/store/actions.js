@@ -69,4 +69,11 @@ export default {
   setPublicTree({commit},obj){
     commit(types.PUBLICTREE,obj);
   },
+
+  setScatterMapTree({commit},obj){
+    commit(types.SCATTERMAPTREE,obj);
+  },
+  setScatterMapTreeLevelId({commit},obj){
+    commit(types.SCATTERMAPTREELEVELID,obj);
+  }
 }

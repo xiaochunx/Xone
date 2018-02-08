@@ -77,4 +77,10 @@ export default{
   getPublicTree(state){
     return state.publicTree;
   },
+  getScatterMapTree(state){
+    return state.scatterMapTree;
+  },
+  getScatterMapTreeLevelId(state){
+    return state.scatterMapTreeLevelId;
+  }
 }

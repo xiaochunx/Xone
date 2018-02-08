@@ -28,6 +28,9 @@ const state = {
   pushStateLevelId:'',//推送状态levelid
   businessConfTree:[],//商户配置树
   businessConfLevelId:'',//商户配置levelid
+
+  scatterMapTree: [], // 散点地图树
+  scatterMapTreeLevelId: '', // 散点地图树levelid
 };
 
 const mutations = {
@@ -97,6 +100,13 @@ const mutations = {
   },
   [types.PUBLICTREE](state, obj){
     state.publicTree = obj.list
+  },
+  // 散点树
+  [types.SCATTERMAPTREE](state,obj){
+    state.scatterMapTree = obj.list;
+  },
+  [types.SCATTERMAPTREELEVELID](state, obj){
+    state.scatterMapTreeLevelId = obj.levelId;
   },
 };
 

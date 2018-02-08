@@ -85,6 +85,7 @@ import storeManagement from '@/components/x2OperationScheme/storeManagement/Inde
 import storeManagementTakeOut from '@/components/x2OperationScheme/storeManagement/takeOut/Index.vue'
 import printerConfig from '@/components/x2OperationScheme/printerConfig/Index.vue'
 import pushState from '@/components/x2OperationScheme/pushState/Index.vue'
+import scatterMap from '@/components/x2OperationScheme/scatterMap/index.vue'
 
 
 /************************** 商户资料核实 ***************************/
@@ -244,6 +245,13 @@ export default new Router({
           meta: { auth: true },
           name: '统计报表/订单统计',
           component: orderCount,
+        },
+        {
+          // 散点地图
+          path: '/report/scatterMap',
+          meta: { auth: true },
+          name: 'x2运营数据/散点地图',
+          component: scatterMap,
         },
 
         /**********************基础设置***************************/
