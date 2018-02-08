@@ -62,9 +62,9 @@
             <el-select v-model="storeId" clearable filterable placeholder="请选择" size="small" @change="handleChange(3)">
               <el-option
                 v-for="item in storeList"
-                :key="item.id"
+                :key="item.base_store_id"
                 :label="item.storename"
-                :value="item.id">
+                :value="item.base_store_id">
               </el-option>
             </el-select>
           </div>
@@ -179,6 +179,7 @@
           }
         })
       },
+
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
@@ -194,7 +195,6 @@
 
           }
         })
-
       },
       showResouce(levelId) {
         //获取门店列表
@@ -213,6 +213,7 @@
           }
         })
       },
+
       scatterMap() {
 
         document.querySelector('.map').innerHTML = '';
@@ -276,19 +277,14 @@
       },
 
       search(){
-        console.log(this.beginTime);
-        console.log(this.endTime);
         this.orderList();
       },
 
       initializeMap(){
-        var arr = this.latArr;        // 模拟数据
-        var msgArr = [];        // 消息数组
-
+        // 创建空地图
         var map = new BMap.Map("container");          // 创建地图实例
         var point = new BMap.Point(95.369272, 29.773890);  // 创建点坐标
         map.centerAndZoom(point, 6);                 // 初始化地图，设置中心点坐标和地图级别
-
         map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
       },
 
@@ -305,13 +301,11 @@
           levelId: this.getPrintConfLevelId()
         };
         oneTwoApi(params).then((res) => {
+          console.log(res);
           if (res.errcode === 0) {
             console.log(res);
-
             this.latArr = res.data;
             this.scatterMap();
-            // this.tableData = res.data.list;
-            // this.p.total = res.data.count;
           }
         })
       },
@@ -339,7 +333,8 @@
       });
       Hub.$emit('mountedOk', 'mountedOk');
       // 初始化地图
-      this.initializeMap();
+      // this.initializeMap();
+      this.orderList();
     },
     destroyed() {
       Hub.$off("showAdd");
