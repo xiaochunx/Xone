@@ -402,7 +402,7 @@
       del() {
 
       },
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if (map.id === this.getRunningStateLevelId()) {
             this.$set(map, "selected", true);
@@ -410,24 +410,14 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
+          }
+        })
+      },
 
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
-          }
-        })
-      },
       showResouce(p,id,storename = '') {
         getApi.getService(p,id,storename).then((res) => {
           this.storeData = res.data.data.list;
@@ -442,7 +432,7 @@
               this.setRunningStateLevelId({levelId:res.data.data[0].id});
             }
             this.showResouce(this.p, this.getRunningStateLevelId());
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
           }
         });
       },
@@ -455,14 +445,12 @@
       }else {
         this.showResouce(this.p,this.getRunningStateLevelId());
       }
-
-
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid);
         this.setRunningStateLevelId({levelId:e.levelid});
-        this.recurSelected(this.getRunningStateTree(), e.levelid)
+        this.recur(this.getRunningStateTree(),false);
       });
       Hub.$emit('mountedOk','mountedOk');
     },

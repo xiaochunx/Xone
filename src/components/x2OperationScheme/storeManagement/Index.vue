@@ -407,7 +407,7 @@
         }
       },
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if (map.id === this.getX2StoreLevelId()) {
             this.$set(map, "selected", true);
@@ -415,23 +415,14 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
-            this.recur(map.child)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
-          }
-        })
-      },
+
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
@@ -440,7 +431,7 @@
               this.setX2StoreLevelId({levelId: res.data.data[0].id});
             }
             this.showResouce(this.p, this.getX2StoreLevelId());
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
           } else {
 
           }
@@ -489,7 +480,8 @@
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid);
         this.setX2StoreLevelId({levelId: e.levelid});
-        this.recurSelected(this.getX2storeTree(), e.levelid)
+        this.recur(this.getX2storeTree(),false);
+
       });
       Hub.$emit('mountedOk','mountedOk');
     },

@@ -977,7 +977,7 @@
         this.formPrintTemp.thirdCode.push({code1: '', code2: ''});
       },
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if (map.id === this.getPrintConfLevelId()) {
             this.levelName = map.levelname;
@@ -986,24 +986,14 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
+          }
+        })
+      },
 
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
-          }
-        })
-      },
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
@@ -1013,7 +1003,7 @@
             }
             this.levelName = res.data.data[0].levelname;
             this.showResouce(res.data.data[0].id);
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
 
           } else {
 
@@ -1069,6 +1059,7 @@
         this.showLevel()
       }else {
         this.showResouce(this.getPrintConfLevelId());
+        this.recur(this.getPrintConfTree(),false);
       }
 
       //获取打印机类型
@@ -1087,10 +1078,9 @@
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.setPrintConfLevelId({levelId: e.levelid});
-        this.levelName = e.levelName;
         this.showResouce(e.levelid);
         this.storeData_id = "";
-        this.recurSelected(this.getPrintConfTree(), e.levelid)
+        this.recur(this.getPrintConfTree(),false);
       });
       Hub.$emit('mountedOk', 'mountedOk');
     },

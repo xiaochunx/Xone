@@ -8,7 +8,7 @@
     </div>
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto" :style="{height:(windowH - 200) + 'px'}">
-        <xo-pub-tree :data='getPrintConfTree()' :count=0 style="width: max-content;"></xo-pub-tree>
+        <xo-pub-tree :data='getScatterMapTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
@@ -140,8 +140,8 @@
     },
     watch: {},
     methods: {
-      ...mapActions(['setPrintConfLevelId', 'setPrintConfTree']),
-      ...mapGetters(['getPrintConfLevelId', 'getPrintConfTree']),
+      ...mapActions(['setScatterMapTreeLevelId', 'setScatterMapTree']),
+      ...mapGetters(['getScatterMapTreeLevelId', 'getScatterMapTree']),
 
       getPage(page) {
         this.p.page = page;
@@ -152,30 +152,19 @@
         this.getPrintData(this.p);
       },
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
-          if (map.id === this.getPrintConfLevelId()) {
+          if (map.id === this.getScatterMapTreeLevelId()) {
             this.levelName = map.levelname;
             this.$set(map, "selected", true);
           } else {
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
-
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
@@ -183,13 +172,13 @@
       showLevel() {
         getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
-            this.setPrintConfTree({list: res.data.data});
-            if (this.getPrintConfLevelId() === '') {
-              this.setPrintConfLevelId({levelId: res.data.data[0].id});
+            this.setScatterMapTree({list: res.data.data});
+            if (this.getScatterMapTreeLevelId() === '') {
+              this.setScatterMapTreeLevelId({levelId: res.data.data[0].id});
             }
             this.levelName = res.data.data[0].levelname;
             this.showResouce(res.data.data[0].id);
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
 
           } else {
 
@@ -298,7 +287,7 @@
           status: this.status,
           storeId: this.storeId,
           source: this.source,
-          levelId: this.getPrintConfLevelId()
+          levelId: this.getScatterMapTreeLevelId()
         };
         oneTwoApi(params).then((res) => {
           console.log(res);
@@ -314,10 +303,10 @@
       this.windowH = document.body.clientHeight;
 
       // this.layoutSubviews();
-      if (this.getPrintConfTree().length === 0) {
+      if (this.getScatterMapTree().length === 0) {
         this.showLevel()
       } else {
-        this.showResouce(this.getPrintConfLevelId());
+        this.showResouce(this.getScatterMapTreeLevelId());
       }
     },
 
@@ -326,9 +315,10 @@
       Hub.$on('showAdd', (e) => {
         this.storeData_id = "";
         this.levelName = e.levelName;
-        this.setPrintConfLevelId({levelId: e.levelid});
+        this.setScatterMapTreeLevelId({levelId: e.levelid});
         this.showResouce(e.levelid);
-        this.recurSelected(this.getPrintConfTree(), e.levelid);
+        this.recur(this.getScatterMapTree(),false);
+
         this.orderList();
       });
       Hub.$emit('mountedOk', 'mountedOk');

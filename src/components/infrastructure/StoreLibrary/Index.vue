@@ -797,24 +797,18 @@
         }
         return img && isLt5M;
       },
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
-          if (map.child) {
-            this.$set(map, "show", false);
-            this.$set(map, "selected", false);
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data,levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
+          if (map.id === this.getShowStoreTree().levelid) {
             this.$set(map, "selected", true);
-          }else {
+          } else {
             this.$set(map, "selected", false);
           }
-          if(map.child ){
-            this.recurSelected(map.child,levelId)
+          if (map.child) {
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
@@ -824,8 +818,7 @@
             this.setShowStoreTree({obj:{levelid: res.data.data[0].id, type: '', showAdd: false}});
             this.setStoreTreeList({list:res.data.data});
             this.getBsList(this.p, this.getShowStoreTree().levelid);
-            this.recur(res.data.data);
-            this.recurSelected(res.data.data,this.getShowStoreTree().levelid)
+            this.recur(res.data.data,true);
           } else {
 
           }
@@ -850,17 +843,14 @@
       });
       Hub.$on('showPermissionTree', (e) => {
         this.setShowStoreTree({obj:e});
-        this.recurSelected(this.getStoreTreeList(),e.levelid)
+        this.recur(this.getStoreTreeList(),false);
       });
       Hub.$on('getBsList', (e) => {
         this.getBsList(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '')
-      })
-
+      });
       Hub.$emit('mountedOk','mountedOk');
-
     },
     updated() {
-
       getScrollHeight().then((h) => {
         this.tableHeight = h;
       })

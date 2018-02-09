@@ -105,13 +105,13 @@
       <div class="flex_a">
         <div>所在地</div>
         <div class="margin_l_10">
-          <el-select v-model="providerId" filterable clearable placeholder="请选择省" @change="myChange(providerId,'provider')">
+          <el-select v-model="providerId" filterable clearable placeholder="请选择省" @change="myChange(providerId)" @visible-change="canSelectProvider">
             <el-option v-for="item in providerList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
 
         <div class="margin_l_10">
-          <el-select v-model="cityId" filterable clearable placeholder="请选择市" @change="myChange(cityId,'city')">
+          <el-select v-model="cityId" filterable clearable placeholder="请选择市" @change="myChange(cityId)" @visible-change="canSelectCity">
             <el-option v-for="item in cityList" :key="item.id" :label="item.address" :value="item.id"></el-option>
           </el-select>
         </div>
@@ -182,7 +182,9 @@
         areaId: '',
         areaList: [],
         inputArea: '',
-        multipleSelection: []
+        multipleSelection: [],
+        selectProvider:false,
+        selectCity:false
       }
     },
     components: {
@@ -213,15 +215,20 @@
             type: 'warning'
           });
         } else {
-          this.searchList = list
-          this.searchListTemp = list
+          this.searchList = list;
+          this.searchListTemp = list;
           this.dialogFormVisible = false
         }
-
-
       },
-      myChange(id, name) {
-        if (name === "provider") {
+
+      canSelectProvider(e){
+        (e === true)? this.selectProvider = true: this.selectProvider = false
+      },
+      canSelectCity(e){
+        (e === true)? this.selectCity = true: this.selectCity = false
+      },
+      myChange(id) {
+        if (this.selectProvider === true) {
           this.cityId = "";
           this.areaId = "";
           this.areaList = [];
@@ -229,7 +236,7 @@
             this.cityList = res.data.data
           })
         }
-        if (name === "city" && this.cityId !== "") {
+        if (this.selectCity === true) {
           this.areaId = "";
           this.areaList = [];
           getArea(id).then((res) => {

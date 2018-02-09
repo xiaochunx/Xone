@@ -48,17 +48,6 @@
               <el-button type="primary" size="small" @click="unBindData('mt')">解除绑定</el-button>
               </el-form-item>
 
-
-              <!--<el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">-->
-                <!--<el-switch v-model="send_message"></el-switch>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label-width="200px" label="自动接单" class="margin_b_10">-->
-                <!--<el-switch v-model="auth_accept"></el-switch>-->
-              <!--</el-form-item>-->
-
-              <!--<div class="flex">-->
-                <!--<el-button type="primary" @click="save(dataList[0].id,auth_accept,send_message)">保存</el-button>-->
-              <!--</div>-->
               <xo-bind-page :send_message="send_message" :auth_accept="auth_accept" :dataList="dataList"></xo-bind-page>
             </div>
           </el-form>
@@ -91,16 +80,7 @@
                 <el-button type="primary" size="small" @click="unBindData('el')">解除绑定</el-button>
               </el-form-item>
 
-            <!--<el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">-->
-              <!--<el-switch v-model="send_message"></el-switch>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label-width="200px" label="自动接单" class="margin_b_10">-->
-              <!--<el-switch v-model="auth_accept"></el-switch>-->
-            <!--</el-form-item>-->
 
-            <!--<div class="flex">-->
-              <!--<el-button type="primary" @click="save(dataList[0].id,auth_accept,send_message)">保存</el-button>-->
-            <!--</div>-->
               <xo-bind-page :send_message="send_message" :auth_accept="auth_accept" :dataList="dataList"></xo-bind-page>
             </div>
           </el-form>
@@ -143,16 +123,7 @@
               <el-form-item label-width="200px" label="" class="margin_b_10">
                 <el-button type="primary" size="small" @click="unBindData('bd')">解除绑定</el-button>
               </el-form-item>
-              <!--<el-form-item label-width="200px" label="款易APP发送订单提醒" class="margin_b_10">-->
-                <!--<el-switch v-model="send_message"></el-switch>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label-width="200px" label="自动接单" class="margin_b_10">-->
-                <!--<el-switch v-model="auth_accept"></el-switch>-->
-              <!--</el-form-item>-->
 
-              <!--<div class="flex">-->
-                <!--<el-button type="primary" @click="save(dataList[0].id,auth_accept,send_message)">保存</el-button>-->
-              <!--</div>-->
               <xo-bind-page :send_message="send_message" :auth_accept="auth_accept" :dataList="dataList"></xo-bind-page>
             </div>
 
@@ -195,9 +166,9 @@
         auth_accept:false,
         send_message:false,
         dataList:[],
-        showMt:false,
-        showEl:false,
-        showBd:false,
+        showMt:'',
+        showEl:'',
+        showBd:'',
         navList: [{name: "门店管理", url: '/x2OperationScheme/storeManagement'},{name: "外卖平台映射", url: ''}],
 
         test:""
@@ -345,6 +316,10 @@
       },
 
       handleClick(event) {
+        this.showMt = '';
+        this.showEl = '';
+        this.showBd = '';
+        // this.dataList = [];
         switch (this.activeName){
           case "mt":
             this.getWmData('mt');

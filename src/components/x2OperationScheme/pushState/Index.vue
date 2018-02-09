@@ -256,7 +256,7 @@
         }
       },
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if (map.id === this.getPushStateLevelId()) {
             this.$set(map, "selected", true);
@@ -264,21 +264,10 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
-
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
@@ -292,14 +281,11 @@
               this.setPushStateLevelId({levelId: res.data.data[0].id});
             }
             this.showResouce(this.p, this.getPushStateLevelId(), this.type, this.status_id);
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
           } else {
 
           }
         })
-
-      },
-      getdata() {
 
       },
 
@@ -349,7 +335,7 @@
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid, this.type, this.status_id);
         this.setPushStateLevelId({levelId: e.levelid});
-        this.recurSelected(this.getPushStateTree(), e.levelid)
+        this.recur(this.getPushStateTree(),false);
       });
       Hub.$emit('mountedOk','mountedOk');
     },

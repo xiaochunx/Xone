@@ -5,7 +5,6 @@
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
 
-
     </div>
 
     <div class="flex_r">
@@ -20,28 +19,24 @@
             {{name}}
           </div>
           <div class="flex_a">
-
             <el-input class="margin_r_10" size="small" v-model="storeName" placeholder="请输入品牌编码/名称搜索"></el-input>
-
             <el-button size="small" @click="search()">搜索</el-button>
-
           </div>
         </div>
 
         <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
           <el-table :data="storeData" border :height="tableHeight -40">
-            <el-table-column header-align="center" align="center" label-class-name="mySelect" label="序号"
-                             width="100">
+            <el-table-column header-align="center" align="center" label-class-name="mySelect" label="序号" width="100">
               <template slot-scope="scope">
                 <div>{{scope.$index + 1 }}</div>
               </template>
             </el-table-column>
-
             <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
-                             label="品牌编码"
-            ></el-table-column>
+                             label="品牌编码">
+            </el-table-column>
             <el-table-column label-class-name="table_head" header-align="center" align="center" prop="levelname"
-                             label="品牌名称"></el-table-column>
+                             label="品牌名称">
+            </el-table-column>
             <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="100">
               <template slot-scope="scope">
                 <div v-show="getTreeArr['修改']" @click.prevent="handleSwitch(scope.row.id,scope.row.is_pay_invoice)">
@@ -152,31 +147,23 @@
 
       },
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if(map.id === this.getBusinessConfLevelId()){
+            this.name = map.levelname;
             this.$set(map, "selected", true);
           }else {
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
-            this.recur(map.child)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
-          }
-        })
-      },
+
       showLevel() {
         getLevel().then((res) => {
           if (res.data.errcode === 0) {
@@ -188,7 +175,7 @@
             this.levelId = res.data.data[0].id;
             this.name = res.data.data[0].levelname;
             this.showResouce(res.data.data[0].id);
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
           } else {
 
           }
@@ -198,11 +185,7 @@
       showResouce(id) {
         this.$http.get(`index.php?controller=level&action=brandList&token=${this.$localStorage.get('token')}&id=${id}`).then((res)=>{
           res.data.data.forEach((item)=>{
-            if(item.is_pay_invoice === 0){
-              item.is_pay_invoice = false
-            }else {
-              item.is_pay_invoice = true
-            }
+            (item.is_pay_invoice === 0) ? item.is_pay_invoice = false : item.is_pay_invoice = true
           });
           this.storeData = res.data.data
         })
@@ -214,16 +197,18 @@
         this.showLevel()
       }else {
         this.showResouce(this.getBusinessConfLevelId());
+        this.recur(this.getBusinessConfTree(),false);
       }
     },
 
     mounted() {
       Hub.$on('showAddPub', (e) => {
-        this.name = e.levelName;
+        this.storeData = [];
+
         this.levelId = e.levelid;
         this.showResouce(e.levelid);
         this.setBusinessConfLevelId({levelId: e.levelid});
-        this.recurSelected(this.getBusinessConfTree(), e.levelid)
+        this.recur(this.getBusinessConfTree(),false);
       });
       Hub.$emit('mountedOk', 'mountedOk');
     },

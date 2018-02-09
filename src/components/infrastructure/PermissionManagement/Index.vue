@@ -624,7 +624,7 @@
         });
       },
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if(map.id === this.getPermissionLevelId()){
             this.levelName = map.levelname;
@@ -633,22 +633,10 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
-
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.levelName = map.levelname;
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
@@ -660,7 +648,7 @@
               this.setPermissionLevelId({levelId:res.data.data[0].id});
             }
             this.getGroupList(this.p,this.getPermissionLevelId());
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
           } else {
 
           }
@@ -702,7 +690,7 @@
         this.showLevel()
       }else {
         this.getGroupList(this.p, this.getPermissionLevelId());
-        this.recurSelected(this.getPermissionTree(), this.getPermissionLevelId())
+        this.recur(this.getPermissionTree(),false);
       }
     },
 
@@ -710,7 +698,7 @@
       Hub.$on('showAdd', (e) => {
         this.setPermissionLevelId({levelId:e.levelid});
         this.getGroupList(this.p = {page: 1, size: this.p.size, total: 0},e.levelid);
-        this.recurSelected(this.getPermissionTree(), e.levelid)
+        this.recur(this.getPermissionTree(),false);
       });
 
       Hub.$emit('mountedOk','mountedOk');

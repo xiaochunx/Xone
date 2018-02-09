@@ -154,7 +154,7 @@
       conf(row){
         this.$router.push({path: `/infrastructure/PublicManagement/TemplateMessageConf/${row.id}`})
       },
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if(map.id === this.getPublicLevelId()){
             this.type = map.type;
@@ -163,25 +163,14 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
+          }
+        })
+      },
 
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.type = map.type;
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
-          }
-        })
-      },
       showResouce(id){
         getApi.getGzhInfo(id).then((res)=>{
           if(res.data.errcode === 0){
@@ -199,7 +188,7 @@
             }
 
             this.setPublicTree({list:res.data.data});
-            this.recur(res.data.data);
+            this.recur(res.data.data,true);
 
           }
         });
@@ -207,12 +196,11 @@
 
     },
     created() {
-
       if(this.getPublicTree().length === 0){
         this.showLevel();
       }else {
         this.showResouce(this.getPublicLevelId());
-        this.recurSelected(this.getPublicTree(), this.getPublicLevelId())
+        this.recur(this.getPublicTree(),false);
       }
     },
     mounted() {
@@ -221,10 +209,9 @@
         this.type = e.type;
         this.setPublicLevelId({levelId: e.levelid});
         this.showResouce(e.levelid);
-        this.recurSelected(this.getPublicTree(), e.levelid)
+        this.recur(this.getPublicTree(),false);
       });
       Hub.$emit('mountedOk','mountedOk');
-
     },
     destroyed(){
       Hub.$off("showAddPub");

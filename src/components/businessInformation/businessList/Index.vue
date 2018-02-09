@@ -38,11 +38,11 @@
                              label="操作" width="160">
               <template slot-scope="scope">
                 <div v-show="getTreeArr['审核']">
-                  <div v-if="scope.row.status !== 2">
+                  <div v-show="scope.row.status !== 2">
                     <el-button size="small" type="primary" @click="activate(scope.row.id)">激活</el-button>
                     <el-button size="small" @click="reject(scope.row.id)">驳回</el-button>
                   </div>
-                  <div v-if="scope.row.status === 2">
+                  <div v-show="scope.row.status === 2">
                     <el-button size="small" type="primary" @click="activate(scope.row.id)">重新激活</el-button>
                   </div>
                 </div>
@@ -88,7 +88,6 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-
 
 
     <footer>
@@ -219,6 +218,7 @@
         this.id = ''
       },
       handleClick(tab, event) {
+        this.storeData = [];
         this.showResouce(this.p = {page: 1, size: 20, total: 0}, this.activeName)
       },
       rejectSubmit(formName) {

@@ -541,8 +541,7 @@
         })
       },
 
-
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
           if (map.id === this.getX1StoreLevelId()) {
             this.$set(map, "selected", true);
@@ -550,33 +549,21 @@
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.$set(map, "show", false);
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
-            this.$set(map, "selected", true);
-          } else {
-            this.$set(map, "selected", false);
-          }
-          if (map.child) {
-            this.recurSelected(map.child, levelId)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
       showLevel() {
         getLeft('x1').then((res) => {
-
           this.setX1storeTree({list:res.data.data});
-
           if(this.getX1StoreLevelId() === ''){
             this.setX1StoreLevelId({levelId:res.data.data[0].id});
           }
           this.showResouce(this.p, this.getX1StoreLevelId());
-          this.recur(res.data.data);
+          this.recur(res.data.data,true);
 
         });
       }
@@ -591,9 +578,8 @@
     mounted() {
       Hub.$on('showAdd', (e) => {
         this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '');
-
         this.setX1StoreLevelId({levelId:e.levelid});
-        this.recurSelected(this.getX1storeTree(), e.levelid)
+        this.recur(this.getX1storeTree(),false);
       });
 
       Hub.$emit('mountedOk','mountedOk');
