@@ -146,75 +146,43 @@
             <el-col :span="24">
               <el-form-item label="选择门店">
                 <el-row>
-                  <el-col :span="24" class="smallContentMsg">
-                    <el-radio class="radio" v-model="form.shop" label="1">全部门店</el-radio>
-                    <el-radio class="radio" v-model="form.shop" label="2">部分门店</el-radio>
-                    <!--<router-link to="/iPayment/issuedRecord/newIssued/newAdd">
-                      <el-button size="small">新增</el-button>
-                    </router-link>-->
+                  <el-col :span="24">
+                    <el-col :span="16">
+                      <el-input v-model="storeName" placeholder="门店名称"></el-input>
+                    </el-col>
+                    <el-col :span="4" :offset="1">
+                      <el-button type="primary" @click="search(storeName)">搜索</el-button>
+                    </el-col>
                   </el-col>
 
-                  <el-col :span="24" v-if="form.shop == 2">
-                    <el-col style="width: 500px">
+                </el-row>
+                <el-row class="margin_t_10">
+                  <el-col :span="24">
+                    <el-col class="flex_a">
+                      <div class="margin_r_10 fr_body">
+                        <div class="fr flex_a">
+                          组织结构
+                        </div>
+                        <el-tree class="tree "
+                                 :data="dataLeft"
+                                 :props="defaultProps"
+                                 @node-click="nodeClick"
+                                 node-key="id"
+                                 default-expand-all
+                                 :highlight-current="true"
+                                 :expand-on-click-node="false">
+                        </el-tree>
+                      </div>
+
                       <el-transfer v-model="selectStore" :data="allStore"
                                    :props="{
                                       key: 'id',
-                                      label: 'name'
+                                      label: 'storeName'
                                     }"
                                    :titles="['全部门店', '已选门店']"
                       ></el-transfer>
                     </el-col>
-                    <el-col :span="8">
-                      <el-col :span="24">
-                        <el-select v-model="province" placeholder="请选择省" clearable @change="changeProvince"
-                                   style="width: 120px;">
-                          <el-option
-                            v-for="item in provinceOptions"
-                            :key="item.id"
-                            :label="item.address"
-                            :value="item.id"
-                          >
-                          </el-option>
-                        </el-select>
 
-                        <el-select v-model="city" placeholder="请选择市" clearable @change="changeCity"
-                                   style="width: 120px;">
-                          <el-option
-                            v-for="item in cityOptions"
-                            :key="item.id"
-                            :label="item.address"
-                            :value="item.id">
-                          </el-option>
-                        </el-select>
-
-                        <el-select v-model="area" placeholder="请选择区" clearable style="width: 120px;">
-                          <el-option
-                            v-for="item in areaOptions"
-                            :key="item.id"
-                            :label="item.address"
-                            :value="item.id">
-                          </el-option>
-                        </el-select>
-                      </el-col>
-                      <el-col :span="24">&nbsp;</el-col>
-                      <el-col :span="24">
-                        <el-col :span="6">
-                          <el-input v-model="storeName" placeholder="门店名称"></el-input>
-                        </el-col>
-                        <el-col :span="17" :offset="1">
-                          <el-select v-model="tag" placeholder="请选择标签" clearable style="width: 120px;">
-                            <el-option
-                              v-for="item in tagOptions"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id">
-                            </el-option>
-                          </el-select>
-                          &nbsp;
-                          <el-button type="primary" @click="search">搜索</el-button>
-                        </el-col>
-                      </el-col>
-                    </el-col>
                   </el-col>
                 </el-row>
               </el-form-item>
@@ -326,7 +294,7 @@
   import xoNavPath from './NavPath.vue'
   import {mapGetters, mapActions} from 'vuex'
   import {oneTwoApi, payMethods, payMent, accessRegion} from '@/api/api.js'
-
+  import {getLeft} from '../../../utility/communApi'
   export default {
     data() {
       return {
@@ -336,7 +304,6 @@
           options: [],
           value: '',
           storeInfo: '',
-          shop: '1',
           rules: '1',
           runTime: '1',
           runTimeValue: '',
@@ -365,23 +332,18 @@
         paymentOptions: [],   // 支付通道选项
         allStore: [],
         selectStore: [],
-        provinceOptions: [],
-        cityOptions: [],
-        areaOptions: [],
-        tagOptions: [],
-        area: '',
-        city: '',
-        province: '',
         storeName: '',
-        tag: '',
-        rules: {}
+        dataLeft:[],
+        rules: {},
+        defaultProps: {
+          value:'id',
+          children: 'child',
+          label: 'levelname'
+        },
       }
     },
     props: {
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+
     },
     components: {
       xoNavPath
@@ -393,6 +355,9 @@
       ]),
     },
     methods: {
+      nodeClick(item) {
+        this.search('',item.id)
+      },
       removeDomain(item, status) {
         if (status == 'account') {
           var index = this.form.account.indexOf(item);
@@ -552,64 +517,20 @@
           }
         }
       },
-      changeProvince(value) {
-        var params = {
-          pid: value
+
+
+      search(storeName = '',levelId = '') {
+        let params = {
+          redirect: 'x1.store.storeList',
+          levelId: levelId,
+          storeName: storeName,
+          page: 1,
+          pagesize:1000
         };
-
-        console.log(params);
-
-        // 初始化地区
-        accessRegion(params).then((res) => {
-          console.log(res);
-          if (res.errcode == 0) {
-            this.cityOptions = res.data;
-          }
-        }).catch((err) => {
-        })
-      },
-      changeCity(value) {
-        var params = {
-          pid: value
-        };
-
-        console.log(value);
-        // 初始化地区
-        accessRegion(params).then((res) => {
-          if (res.errcode == 0) {
-            this.areaOptions = res.data;
-          }
-        }).catch((err) => {
-        })
-      },
-      regionApi(value) {
-        var params = {
-          pid: value
-        };
-
-        // 初始化地区
-        accessRegion(params).then((res) => {
-          console.log(res);
-          if (res.errcode == 0) {
-            this.provinceOptions = res.data;
-          }
-        }).catch((err) => {
-        })
-      },
-      search() {
-        var params = {
-          redirect: 'x1.store.searchStore',
-          areaId: this.area,
-          storeName: this.storeName,
-          labelId: this.tag,
-        };
-
         oneTwoApi(params).then((res) => {
-          console.log(res);
-          if (res.errcode == 0) {
-            this.allStore = res.data;
+          if (res.errcode === 0) {
+            this.allStore = res.data.list;
           }
-        }).catch((err) => {
         })
       },
       submitSave() {
@@ -657,7 +578,7 @@
           redirect: 'x1.accountmanage.saveAccountUse',
           account: account,
           reserveAcc: reserveAcc,
-          shop: this.form.shop,                  // 下发门店
+          shop: 2,                  // 下发门店
           selectStore: selectStore,              // 选中门店id
           rules: this.form.rules,
           runTime: this.form.runTime,
@@ -694,6 +615,13 @@
         })
       }
     },
+    created(){
+      getLeft('x1').then((res) => {
+        if (res.data.errcode === 0) {
+          this.dataLeft = res.data.data
+        }
+      });
+    },
     mounted() {
       // 高度调整
       var totalH = window.innerHeight - this.getTopHeight;
@@ -720,25 +648,6 @@
         console.log(err);
       });
 
-
-
-
-      var param = {
-        redirect: 'x1.store.storeLabelList',
-      };
-
-      // 获取门店标签列表
-      oneTwoApi(param).then((res) => {
-        if (res.errcode == 0) {
-          console.log(res);
-          this.tagOptions = res.data.list;
-        }
-      }).catch((err) => {
-
-      });
-
-      // 初始化地理位置
-      this.regionApi();
     }
   }
 </script>
@@ -795,5 +704,26 @@
 
   .el-transfer-panel__body {
     box-sizing: content-box;
+  }
+
+  .fr {
+    height: 36px;
+    background: #fbfdff;
+    border-top: 1px solid #d1dbe5;
+    border-left: 1px solid #d1dbe5;
+    border-right: 1px solid #d1dbe5;
+    box-sizing: border-box;
+    padding-left: 20px;
+  }
+
+  .fr_body {
+    box-shadow: 0 2px 4px rgba(0,0,0,.12), 0 0 6px rgba(0,0,0,.04);
+  }
+
+  .tree {
+    width: 300px;
+    height: 284px;
+    overflow-y: auto;
+    box-sizing: border-box;
   }
 </style>

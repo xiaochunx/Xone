@@ -49,7 +49,7 @@
       width="30%" >
       <el-form ref="formRules" :model="form" label-width="180px">
         <el-form-item label="业务类型" prop="type" :rules="{type:'number',required: true, message: '请选择业务类型', trigger: 'change'}">
-          <el-select v-model="form.type" placeholder="请选择">
+          <el-select v-model="form.type" placeholder="请选择" class="form_width">
             <el-option
               v-for="item in typeList"
               :key="item.id"
@@ -60,11 +60,11 @@
         </el-form-item>
 
         <el-form-item label="消息模板ID">
-          <el-input v-model="form.template_id" disabled style="width: 193px"></el-input>
+          <el-input v-model="form.template_id" disabled class="form_width"></el-input>
         </el-form-item>
 
         <el-form-item label="消息模板类型" prop="title" :rules="{required: true, message: '请选择消息模板类型', trigger: 'change'}">
-          <el-select v-model="form.title" placeholder="请选择消息模板类型" @change="handleTemplate" @visible-change="canSelect">
+          <el-select v-model="form.title" placeholder="请选择消息模板类型" @change="handleTemplate" @visible-change="canSelect" class="form_width">
             <el-option
               v-for="item in templateList"
               :key="item.id"
@@ -93,7 +93,7 @@
           </div>
           <!--<el-form-item label="" :prop="'data.' + index + '.custom'" :rules="{required: true, message: 'xx', trigger: 'blue'}">-->
           <!--</el-form-item>-->
-          <el-input class="margin_t_10" v-if="item.value==='custom'" v-model="item.custom"  style="width: 193px"></el-input>
+          <el-input class="margin_t_10 " v-if="item.value==='custom'" v-model="item.custom"  style="width: 193px"></el-input>
 
         </el-form-item>
 
@@ -105,6 +105,10 @@
             off-color="#ff4949">
           </el-switch>
         </el-form-item>
+        <el-form-item label="跳转地址">
+          <el-input v-model="form.url" class="form_width"></el-input>
+        </el-form-item>
+
         <div class="margin_t_10">
           <el-button type="primary" @click="show()">预览</el-button>
           <el-button type="primary" @click="submitFrom('formRules')">确认</el-button>
@@ -153,6 +157,7 @@
           title:'',
           status: true,
           data:[],
+          url:''
         },
         dialogVisible: false,
         dialogVisible2: false,
@@ -198,6 +203,7 @@
               title:title,
               data:window.JSON.stringify(this.form.data),
               template_id:this.form.template_id,
+              url:this.form.url,
             };
             oneTwoApi(params).then((res) => {
               if(res.errcode === 0){
@@ -284,6 +290,7 @@
           title:'',
           status: true,
           data:[],
+          url:''
         };
         this.previewList = '';
         this.$refs['formRules'].resetFields();
@@ -393,7 +400,9 @@
 </script>
 
 <style scoped lang="less">
-
+.form_width{
+  width: 260px;
+}
 
 
 </style>

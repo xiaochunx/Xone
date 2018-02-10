@@ -723,7 +723,6 @@
         };
         oneTwoApi(params1).then((res) => {
           if (res.errcode === 0) {
-
             this.confTemplateList = res.data
           }
         })
@@ -754,11 +753,8 @@
             if (this.name === "新增打印机") {
               //新增打印机
               let status;
-              if (this.formPrint.status === false) {
-                status = 0
-              } else {
-                status = 1
-              }
+              (this.formPrint.status === false) ? status = 0 : status = 1;
+
               let params = {
                 redirect: "x2a.printer.create",
                 storeid: this.storeData_id,
@@ -804,11 +800,8 @@
 
       updatePrint(Str){
         let status;
-        if (this.formPrint.status === false) {
-          status = 0
-        } else {
-          status = 1
-        }
+        (this.formPrint.status === false) ? status = 0 : status = 1;
+
         let params = {
           redirect: "x2a.printer.update",
           id: this.formPrint.id,
@@ -852,11 +845,8 @@
           if (res.errcode === 0) {
             res.data.forEach((item) => {
               item.sn = item.sn + "";
-              if (item.status === 0) {
-                item.status = false
-              } else {
-                item.status = true
-              }
+              (item.status === 0) ? item.status = false : item.status = true;
+
               let list = [];
               item.templates.forEach((item1) => {
                 list.push(item1.id)
@@ -1031,7 +1021,6 @@
 
       },
       handleStore() {
-        console.log(this.storeData_id)
         this.getPrintData(this.p = {page: 1, size: this.p.size, total: 0})
       },
       getPrintData(p) {
@@ -1051,8 +1040,6 @@
           }
         })
       }
-
-
     },
     created() {
       if(this.getPrintConfTree().length === 0){
@@ -1071,8 +1058,6 @@
           this.printType = res.data
         }
       });
-
-
     },
 
     mounted() {
