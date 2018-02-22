@@ -13,7 +13,7 @@
       </el-form-item>
 
 
-      <el-form-item prop="checkPass" label="密码:" label-width="60px">
+      <el-form-item prop="checkPass" label="密码:" label-width="60px" @keydown.native.13="handleSubmit2">
         <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="密码"></el-input>
       </el-form-item>
 
