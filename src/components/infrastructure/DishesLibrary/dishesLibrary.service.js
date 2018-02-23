@@ -37,8 +37,8 @@ let getProductList = (p,levelid,searchName) => {
   })
 };
 
-//获取一条菜品
-let getOne = (id) => {
+//获取菜品详情
+let getView = (id) => {
   return new Promise((resolve, reject) => {
     axios.get(`index.php?controller=product&action=view&token=${get('token')}&id=${id}`).then((res)=>{
       resolve(res)
@@ -96,7 +96,19 @@ let updateXlsDishesFile = (brandid,fileurl,over) => {
   })
 };
 
-export default {getLevel,getProductList,getOne,getBrand,updateProduct,delProduct,updateXlsDishesFile}
+//批量修改菜品
+
+let batchChange = (data) => {
+  return new Promise((resolve, reject) => {
+    let formData = new FormData();
+    formData.append("data", window.JSON.stringify(data) );
+    axios.post(`index.php?controller=product&action=batchChange&token=${get('token')}`,formData).then((res)=>{
+      resolve(res)
+    })
+  })
+};
+
+export default {getLevel,getProductList,getView,getBrand,updateProduct,delProduct,updateXlsDishesFile,batchChange}
 
 
 

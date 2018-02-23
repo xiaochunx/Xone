@@ -75,5 +75,11 @@ export default {
   },
   setScatterMapTreeLevelId({commit},obj){
     commit(types.SCATTERMAPTREELEVELID,obj);
-  }
+  },
+  setDishesLibraryTree({commit},obj){
+    commit(types.DISHESLIBRARYTREE,obj);
+  },
+  setDishesLibraryLevelId({commit},obj){
+    commit(types.DISHESLIBRARYLEVELID,obj);
+  },
 }

@@ -340,7 +340,6 @@
         fileList: [],
         fileurl: '',
         selectGroupList:[],
-        multipleSelection:[]
       }
     },
     watch: {},
@@ -363,14 +362,9 @@
       },
 
       handleChecked(data) {
-        let list1 = [];
         let list =  this.groupList.filter((item)=>{
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.groupList.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -381,11 +375,6 @@
 
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.groupList.length){
           this.groupList.forEach((map) => {
             this.$set(map, 'select', true)
@@ -472,21 +461,26 @@
       },
       isSwitch() {
         this.storeStatusValue = false;
-        if (this.multipleSelection.length === 0) {
-          this.$message('请勾选用户组');
-        } else {
+        if (this.groupList.some((item) => {return item.select === true}) === true) {
           this.dialogVisible1 = true
+        } else {
+          this.$message('请勾选用户组');
         }
       },
       //批量状态设置
       changeStoresStatus() {
-        let status;
+        let status,list = [];
         if (this.storeStatusValue) {
           status = 1
         } else {
           status = 0
         }
-        getApi.settingBatchUserGroup(this.multipleSelection.join(','),status).then((res) => {
+        this.groupList.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        getApi.settingBatchUserGroup(list.join(','),status).then((res) => {
           if (res.data.errcode === 0) {
             this.$message('操作成功');
             this.getGroupList(this.p,this.getPermissionLevelId());
@@ -670,7 +664,6 @@
             });
             this.groupList = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.multipleSelection = [];
           }
         })
       },

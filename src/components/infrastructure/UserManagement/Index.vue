@@ -11,7 +11,7 @@
             <div>
               用户姓名
             </div>
-            <el-input v-model="nickname" placeholder="请输入姓名">
+            <el-input v-model="nickname" size="small" placeholder="请输入姓名">
             </el-input>
           </div>
 
@@ -19,7 +19,7 @@
             <div>
               用户手机号
             </div>
-            <el-input v-model="phone" placeholder="请输入手机号">
+            <el-input v-model="phone" size="small" placeholder="请输入手机号">
             </el-input>
           </div>
           <div class="margin_r_10">
@@ -27,6 +27,7 @@
               所属组织
             </div>
             <el-cascader
+              size="small"
             :props="defaultProps"
             :options="dataLevel"
             v-model="selectedOptions"
@@ -39,7 +40,7 @@
             <div>
               用户组
             </div>
-            <el-select v-model="groupId" clearable filterable placeholder="请选择" @visible-change="vc">
+            <el-select size="small" v-model="groupId" clearable filterable placeholder="请选择" @visible-change="vc">
               <el-option
                 v-for="item in groupList"
                 :key="item.id"
@@ -51,14 +52,14 @@
 
         </div>
 
-        <el-button @click="search()">搜索</el-button>
+        <el-button @click="search()" size="small">搜索</el-button>
 
       </div>
 
     </div>
     <el-table :data="userData" border :height="tableHeight" >
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
-        width="100">
+        width="70">
         <template slot-scope="scope">
           <div>
             {{scope.$index + 1}}
@@ -67,7 +68,7 @@
       </el-table-column>
 
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="phone" label="用户账号"
-                       width="100"></el-table-column>
+                       width="140"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="nickname"
                        label="用户姓名"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="role"
@@ -83,7 +84,7 @@
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="group"
                        label="所属用户组"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status"
-                       label="用户状态"></el-table-column>
+                       label="用户状态" width="100"></el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="320">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="editAccount(scope.row)">修改</el-button>

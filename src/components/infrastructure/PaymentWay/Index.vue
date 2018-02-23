@@ -99,7 +99,6 @@
 
         payWayList: [],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection:[],
         searchName:''
       }
     },
@@ -190,7 +189,6 @@
             });
             this.payWayList = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.multipleSelection = [];
           }else {
 
           }
@@ -198,14 +196,9 @@
       },
 
       handleChecked(data) {
-        let list1 = [];
         let list =  this.payWayList.filter((item)=>{
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.payWayList.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -215,11 +208,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.payWayList.length){
           this.payWayList.forEach((map) => {
             this.$set(map, 'select', true)

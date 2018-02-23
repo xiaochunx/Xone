@@ -21,7 +21,7 @@
         <!--</el-table-column>-->
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
           <template slot-scope="scope">
-            <div v-for="(domain, index) in scope.row.productcodes" class="flex_a padding_10">
+            <div v-for="(domain, index) in scope.row.productcodes" class="flex_r padding_10">
               <div style="width:150px">
                 <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
               </div>
@@ -144,16 +144,8 @@
     },
     watch: {},
     methods: {
-
-
       myChange(map, name, className, str) {
-        console.log(map);
-
-        if (map[name] !== "") {
-          map[className] = false
-        } else {
-          map[className] = true
-        }
+        (map[name] !== "") ? map[className] = false : map[className] = true
       },
       checkSubmit() {
         for (let map of this.dishesData) {
@@ -198,10 +190,7 @@
             delete item.brandClass;
             delete item.priceClass;
           });
-
-          console.log(this.dishesData);
           getApi.addDishes(this.$route.params.levelid, this.dishesData).then((res) => {
-            console.log(res)
             if (res.data.errcode === 0) {
               this.$alert('添加成功', '', {
                 confirmButtonText: '确定',
@@ -273,11 +262,8 @@
             {name: '',  providerid: ''}
           ],
         })
-
       }
-
       getApi.getBrand(this.$route.params.levelid).then((res) => {
-        console.log(res)
         this.brandList = res.data.data
       })
     },
@@ -291,15 +277,5 @@
 </script>
 
 <style scoped lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      line-height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
 
-  .m-storeCode {
-    font-size: 30px;
-  }
 </style>

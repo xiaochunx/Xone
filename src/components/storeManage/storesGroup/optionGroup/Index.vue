@@ -182,7 +182,6 @@
         areaId: '',
         areaList: [],
         inputArea: '',
-        multipleSelection: [],
         selectProvider:false,
         selectCity:false
       }
@@ -251,30 +250,22 @@
           redirect: "x1.store.searchStore",
           areaId: this.areaId,
           storeName: this.inputArea,
-
         };
         oneTwoApi(params).then((res) => {
           if (res.errcode === 0) {
-
             res.data.forEach((map) => {
               this.$set(map, 'select', false)
             });
             this.storeData = res.data;
-            this.multipleSelection = []
           }
         })
 
       },
 
       handleChecked(data) {
-        let list1 = [];
         let list = this.storeData.filter((item) => {
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.storeData.length) {
           list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -284,11 +275,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item) => {
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if (val.length === this.storeData.length) {
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
@@ -318,11 +304,17 @@
         this.$refs[formRules].validate((valid) => {
           if (valid) {
             // 新增门店标签
+            let list = [];
+            this.searchList.forEach((item) => {
+              if (item.select) {
+                list.push(item.id)
+              }
+            });
             let params = {
               redirect: "x1.store.addStoreLabel",
               name: this.form.name,
               thirdCode: window.JSON.stringify(this.form.thirdPartyCoding),
-              storeIds: this.multipleSelection.join(","),
+              storeIds: list.join(","),
             };
             oneTwoApi(params).then((res) => {
               if (res.errcode === 0) {

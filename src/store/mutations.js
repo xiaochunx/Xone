@@ -28,7 +28,8 @@ const state = {
   pushStateLevelId:'',//推送状态levelid
   businessConfTree:[],//商户配置树
   businessConfLevelId:'',//商户配置levelid
-
+  dishesLibraryTree:[],//菜品库树
+  dishesLibraryLevelId:'',//菜品库levelid
   scatterMapTree: [], // 散点地图树
   scatterMapTreeLevelId: '', // 散点地图树levelid
 };
@@ -107,6 +108,12 @@ const mutations = {
   },
   [types.SCATTERMAPTREELEVELID](state, obj){
     state.scatterMapTreeLevelId = obj.levelId;
+  },
+  [types.DISHESLIBRARYTREE](state,obj){
+    state.dishesLibraryTree = obj.list;
+  },
+  [types.DISHESLIBRARYLEVELID](state, obj){
+    state.dishesLibraryLevelId = obj.levelId
   },
 };
 

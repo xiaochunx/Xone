@@ -186,7 +186,6 @@
         ],
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection: [],
         baseStore: {},//点击新增时的门店
       }
     },
@@ -330,18 +329,21 @@
 
       //批量状态设置
       changeStoresStatus() {
-        let storeStatusValue;
+        let storeStatusValue,list = [];
         if (this.storeStatusValue) {
           storeStatusValue = 1
         } else {
           storeStatusValue = 0
         }
         //批量修改状态
-
-
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.base_store_id)
+          }
+        });
         let params = {
           redirect: "x2.store.batchChange",
-          storeIds: this.multipleSelection.join(','),
+          storeIds: list.join(','),
           is_open: storeStatusValue,
 
         };
@@ -354,31 +356,17 @@
         })
       },
       isSwitch() {
-        let list = [];
-
-        this.storeData.forEach((item) => {
-          if (item.select) {
-            list.push(item.id)
-          }
-        });
-        if (list.length === 0) {
-          this.$message('请勾选门店');
-        } else {
+        if (this.storeData.some((item) => {return item.select === true}) === true) {
           this.dialogVisible1 = true
+        } else {
+          this.$message('请勾选门店');
         }
-
-
       },
 
       handleChecked(data) {
-        let list1 = [];
         let list = this.storeData.filter((item) => {
-          if(item.select === true){
-            list1.push(item.base_store_id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.storeData.length) {
           list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -391,11 +379,6 @@
 
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item) => {
-          list.push(item.base_store_id)
-        });
-        this.multipleSelection = list;
         if (val.length === this.storeData.length) {
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
@@ -462,8 +445,7 @@
               })
             }
             this.storeData = res.data.list;
-             this.p.total = res.data.count;
-            this.multipleSelection = []
+            this.p.total = res.data.count;
           }
         })
       },

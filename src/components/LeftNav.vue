@@ -29,29 +29,34 @@
       return {
         leftList: [
 
-         // {
-          //   name: '统计报表',
-          //   children: [
-          //     // {
-          //     //   name: '结算记录',
-          //     //   route: '/report/settlementRecord'
-          //     // },
-          //     // {
-          //     //   name: '差异账单查询',
-          //     //   route: '/report/billQuery'
-          //     // }
-          //   ]
-          // },
-          // {
-          //   name: '基础设置',
-          //   children: [
+         {
+            name: '统计报表',
+            children: [
+              // {
+              //   name: '结算记录',
+              //   route: '/report/settlementRecord'
+              // },
+              // {
+              //   name: '差异账单查询',
+              //   route: '/report/billQuery'
+              // }
+              {
+                name: '菜品销售排行',
+                route: '/report/salesRanking'
+              }
 
-          //    // {
-          //    //   name: '菜品库',
-          //    //   route: '/infrastructure/DishesLibrary'
-          //    // },
-          //   ]
-          // },
+            ]
+          },
+          {
+            name: '基础设置',
+            children: [
+
+             {
+               name: '菜品库',
+               route: '/infrastructure/DishesLibrary'
+             },
+            ]
+          },
          //
          //  {
          //    name: '菜品管理',

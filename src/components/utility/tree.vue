@@ -47,11 +47,14 @@
       ...mapActions(['setTreeArr']),
       test(item) {
         if(item.router !== ''){
-          this.$router.push(item.router);
-          this.$nextTick(()=>{
-            this.setTreeArr({obj:getArr(item.arr)})
-          })
-
+          if(item.router.indexOf("http") === 0){
+            window.open(item.router,"_blank")
+          }else {
+            this.$router.push(item.router);
+            this.$nextTick(()=>{
+              this.setTreeArr({obj:getArr(item.arr)})
+            })
+          }
         }
 
         item.show = !item.show

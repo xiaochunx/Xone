@@ -273,7 +273,6 @@
         }],
         p: {page: 1, size: 20, total: 0},
         baseStore: {},//点击新增时的门店
-        multipleSelection:[]
       }
     },
     watch: {},
@@ -281,14 +280,9 @@
       ...mapActions(['setX1StoreLevelId','setX1storeTree']),
       ...mapGetters(['getX1StoreLevelId','getX1storeTree']),
       handleChecked(data) {
-        let list1 = [];
         let list =  this.storeData.filter((item)=>{
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.storeData.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -298,11 +292,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.storeData.length){
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
@@ -375,20 +364,11 @@
       },
 
       isSwitch() {
-        let list = [];
-
-        this.storeData.forEach((item)=>{
-          if(item.select){
-            list.push(item.id)
-          }
-        });
-        if(list.length === 0){
-          this.$message('请勾选门店');
-        } else {
+        if(this.storeData.some((item) => {return item.select === true}) === true){
           this.dialogVisible1 = true
+        } else {
+          this.$message('请勾选门店');
         }
-
-
       },
       //状态设置
       changeStatus(data) {
@@ -409,15 +389,18 @@
       },
       //批量状态设置
       changeStoresStatus() {
-        let storeStatusValue;
+        let storeStatusValue,list = [];
         if (this.storeStatusValue) {
           storeStatusValue = 1
         } else {
           storeStatusValue = 0
         }
-
-          getApi.storesStatus(this.multipleSelection.join(','), storeStatusValue).then((res) => {
-
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+          getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
             if(res.data.errcode === 0){
               this.$message('操作成功');
               this.showResouce(this.p, this.getX1StoreLevelId());
@@ -435,8 +418,14 @@
       },
 
       delSelected() {
+        let list = [];
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
 
-        if(this.multipleSelection.length === 0){
+        if(list.length === 0){
           this.$message('请勾选门店');
         }else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
@@ -444,7 +433,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.del(this.multipleSelection.join(",")).then((res)=>{
+            getApi.del(list.join(",")).then((res)=>{
 
               this.$message({
                 type: 'info',
@@ -522,19 +511,12 @@
         getApi.getList(p,levelId, storeName).then((res) => {
           if (res.data.errcode === 0) {
             res.data.data.list.forEach((data) => {
-              data.inputChecked = true
-              data.select = false
-
-              if(data.status === 1){
-                data.status = true
-              }else {
-                data.status = false
-
-              }
+              data.inputChecked = true;
+              data.select = false;
+              (data.status === 1)? data.status = true: data.status = false
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.multipleSelection = []
           } else {
 
           }

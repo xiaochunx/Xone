@@ -35,6 +35,7 @@ import Invoice from '../components/report/invoice/Index.vue'
 /************************** x2统计报表 ***************************/
 import orderList from '../components/report/orderList/Index.vue'
 import orderCount from '../components/report/orderCount/Index.vue'
+import salesRanking from '../components/report/salesRanking/index.vue'
 /************************** 基础设置 ***************************/
 
 import BusinessConf from '@/components/infrastructure/BusinessConf/Index.vue'
@@ -253,7 +254,13 @@ export default new Router({
           name: 'x2运营数据/散点地图',
           component: scatterMap,
         },
-
+        {
+          // 菜品销售排行
+          path: '/report/salesRanking',
+          meta: { auth: true },
+          name: 'x2运营数据/菜品销售排行',
+          component: salesRanking,
+        },
         /**********************基础设置***************************/
         // 基础设置/商户配置
         {

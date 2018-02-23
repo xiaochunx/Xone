@@ -82,5 +82,11 @@ export default{
   },
   getScatterMapTreeLevelId(state){
     return state.scatterMapTreeLevelId;
-  }
+  },
+  getDishesLibraryTree(state){
+    return state.dishesLibraryTree;
+  },
+  getDishesLibraryLevelId(state){
+    return state.dishesLibraryLevelId;
+  },
 }

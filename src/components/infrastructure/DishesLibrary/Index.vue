@@ -9,7 +9,7 @@
       <div class="flex_sb">
         <div class="flex_1">
           <el-button size="small" @click="addDishes()">+新增菜品</el-button>
-          <el-button size="small" @click="test()">批量编辑</el-button>
+          <el-button size="small" @click="batchEdit()">批量编辑</el-button>
           <el-button size="small" @click="delSelected()">批量删除</el-button>
         </div>
         <div class="flex_1 flex_ec">
@@ -28,27 +28,22 @@
     <div class="flex_r">
 
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <el-tree
-          :data="data5"
-          :props="defaultProps"
-          @node-click="nodeClick"
-          node-key="id"
-          default-expand-all
-          :highlight-current="true"
-          :expand-on-click-node="false"
-        >
-        </el-tree>
+        <xo-pub-tree :data='getDishesLibraryTree()' :count=0 style="width: max-content;"></xo-pub-tree>
+
       </div>
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
 
-        <el-table :data="dishesData" border :height="tableHeight">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
+        <el-table :data="dishesData" border :height="tableHeight" @select-all="handleSelectionChange" ref="multipleTable">
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
             <template slot-scope="scope">
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
-
             </template>
           </el-table-column>
+
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                            label="菜品编码"
                            width="100"></el-table-column>
@@ -93,128 +88,6 @@
       </div>
     </el-dialog>
 
-    <!--编辑-->
-    <el-dialog
-      title="编辑"
-      :visible.sync="dialogVisible"
-      width="50%">
-      <el-form ref="formRules" :model="oneList" label-width="100px">
-        <el-form-item label="编码:" prop="id">
-          <el-input v-model="oneList.id" placeholder="请输入内容" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item label="名称:" prop="product_name" :rules="{required: true, message: '请输入名称', trigger: 'blur'}">
-          <el-input v-model="oneList.product_name" placeholder="请输入内容"></el-input>
-        </el-form-item>
-
-
-        <div v-for="(domain, index) in oneList.productcodes" class="flex_r">
-          <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
-            <div>
-              <el-row>
-                <el-col>
-                  <div style="width:150px">
-                    <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </el-form-item>
-          <div class="m-rank">
-            <div class="m-rank-child"></div>
-          </div>
-          <el-form-item label-width="0" :key="domain.key">
-            <div>
-              <el-row>
-                <el-col>
-                  <div style="width:150px">
-                    <el-input v-model="domain.providerid" placeholder="请输入第三方编码"></el-input>
-                  </div>
-                </el-col>
-              </el-row>
-            </div>
-          </el-form-item>
-          <div class="flex_a" style="margin-bottom: 22px">
-            <div class="m-storeCode margin_l_10" @click="addDomain()">
-              <i class="fa fa-plus-circle" aria-hidden="true"></i>
-            </div>
-            <div v-if="(oneList.productcodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
-                 @click.prevent="removeDomain(domain)">
-              <i class="fa fa-minus-circle" aria-hidden="true"></i>
-            </div>
-          </div>
-        </div>
-
-        <el-form-item label="价格:" prop="price" :rules="{required: true, message: '请输入价格', trigger: 'blur'}">
-          <el-input v-model="oneList.price" placeholder="请输入内容"></el-input>
-        </el-form-item>
-
-        <el-form-item label="所属品牌:" prop="levelid"
-                      :rules="{type:'number',required: true, message: '请输入价格', trigger: 'change'}">
-
-          <el-select v-model="oneList.levelid" placeholder="请选择">
-            <el-option
-              v-for="item in brandList"
-              :key="item.id"
-              :label="item.levelname"
-              :value="item.id">
-            </el-option>
-          </el-select>
-
-        </el-form-item>
-
-
-        <el-form-item label="上传图片1">
-          <el-upload
-            class="avatar-uploader margin_r_10"
-            :action="$updateUrl"
-            name='filename'
-            :show-file-list="false"
-            :on-success="(res, file,list)=>{
-                  return handleAvatarSuccess1(res, file,list)
-                }"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="oneList.imgurl_1" :src="oneList.imgurl_1" class="avatar">
-            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="上传图片2">
-          <el-upload
-            class="avatar-uploader margin_r_10"
-            :action="$updateUrl"
-            name='filename'
-            :show-file-list="false"
-            :on-success="(res, file,list)=>{
-                  return handleAvatarSuccess2(res, file,list)
-                }"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="oneList.imgurl_2" :src="oneList.imgurl_2" class="avatar">
-            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="上传图片1">
-          <el-upload
-            class="avatar-uploader margin_r_10"
-            :action="$updateUrl"
-            name='filename'
-            :show-file-list="false"
-            :on-success="(res, file,list)=>{
-                  return handleAvatarSuccess3(res, file,list)
-                }"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="oneList.imgurl_3" :src="oneList.imgurl_3" class="avatar">
-            <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
-          </el-upload>
-        </el-form-item>
-
-        <div class="margin_t_10">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="editOne('formRules')">确认</el-button>
-        </div>
-      </el-form>
-
-    </el-dialog>
-
     <!--导入菜品-->
     <el-dialog
       title="导入门店"
@@ -251,6 +124,7 @@
             name="filename"
             :on-change="handleChange"
             :on-success="handleAvatarSuccessXls"
+            :on-remove="removeXls"
             :before-upload="beforeAvatarUploadXls"
             :file-list="fileList"
             :multiple="false"
@@ -270,6 +144,125 @@
       </div>
     </el-dialog>
 
+
+    <!--批量编辑-->
+    <el-dialog
+      title="编辑"
+      :visible.sync="dialogVisible1"
+      size="large"
+      width="80%">
+      <el-table :data="brandEditList" border style="width: 100%;">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.id" disabled placeholder="请输入内容"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="菜品名称" width="200">
+          <template slot-scope="scope">
+            <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.product_name"
+                      @change="myChange(scope.row,'product_name','nameClass')" placeholder="请输入内容"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
+          <template slot-scope="scope">
+            <div v-for="(domain, index) in scope.row.productcodes" class="flex_r padding_10">
+              <div style="width:150px">
+                <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
+              </div>
+              <div class="m-rank">
+                <div class="m-rank-child"></div>
+              </div>
+              <div style="width:150px">
+                <el-input v-model="domain.providerid" placeholder="请输入第三方编码"></el-input>
+              </div>
+              <div class="flex_sb" style="width:80px">
+                <div class="m-storeCode margin_l_10" @click="addDomain(scope.row.productcodes)">
+                  <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                </div>
+                <div v-if="(scope.row.productcodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+                     @click.prevent="removeDomain(scope.row.productcodes,index)">
+                  <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">
+          <template slot-scope="scope">
+            <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.levelid"
+                       @change="myChange(scope.row,'levelid','brandClass')" placeholder="请选择">
+              <el-option
+                v-for="item in brandList"
+                :key="item.id"
+                :label="item.levelname"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="参考价格" width="200">
+          <template slot-scope="scope">
+            <el-input :class="{isInput:scope.row.priceClass === true}" v-model="scope.row.price"
+                      @change="myChange(scope.row,'price','priceClass')" placeholder="请输入内容"></el-input>
+          </template>
+        </el-table-column>
+
+        <el-table-column label-class-name="table_head" header-align="center" align="center" label="图片" width="600">
+          <template slot-scope="scope">
+            <div class="flex_r">
+              <el-upload
+                class="avatar-uploader margin_r_10"
+                :action="$updateUrl"
+                name='filename'
+                :show-file-list="false"
+                :on-success="(res, file,list)=>{
+                  return handleAvatarSuccess1(res, file,list,scope.row)
+                }"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="scope.row.imgurl_1" :src="scope.row.imgurl_1" class="avatar">
+                <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
+              </el-upload>
+
+              <el-upload
+                class="avatar-uploader margin_r_10"
+                :action="$updateUrl"
+                name='filename'
+                :show-file-list="false"
+                :on-success="(res, file,list)=>{
+                  return handleAvatarSuccess2(res, file,list,scope.row)
+                }"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="scope.row.imgurl_2" :src="scope.row.imgurl_2" class="avatar">
+                <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
+              </el-upload>
+
+              <el-upload
+                class="avatar-uploader"
+                :action="$updateUrl"
+                name='filename'
+                :show-file-list="false"
+                :on-success="(res, file,list)=>{
+                  return handleAvatarSuccess3(res, file,list,scope.row)
+                }"
+                :before-upload="beforeAvatarUpload">
+                <img v-if="scope.row.imgurl_3" :src="scope.row.imgurl_3" class="avatar">
+                <div v-else class="avatar-uploader-icon"><i class="el-icon-plus"></i></div>
+              </el-upload>
+            </div>
+          </template>
+        </el-table-column>
+
+
+      </el-table>
+
+      <div class="flex margin_t_10">
+        <el-button type="primary" @click="submitFrom()">保存</el-button>
+        <el-button @click="dialogVisible1 = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -277,32 +270,36 @@
 
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import getApi from './dishesLibrary.service'
-  import {getLeft, getArea} from '../../utility/communApi'
-
+  import {getLeft} from '../../utility/communApi'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
   export default {
     components: {},
+    computed: {
+      ...mapGetters([
+        'getTreeArr'
+      ]),
+    },
     data() {
       return {
         tableHeight: 0,
         navList: [{name: "菜品管理", url: ''}, {name: "菜品库", url: ''}],
         selectedAll: false,
-        dialogVisible: false,
+        dialogVisible1:false,
         dialogVisible2: false,
         dialogVisible4: false,
         searchName: '',
         dishesData: [],
         p: {page: 1, size: 20, total: 0},
-        data5: [],
         tableWidth: 0,
         defaultProps: {
           children: 'child',
           label: 'levelname'
         },
-        levelName: '',
-        levelId: -1,//左边树ID
         number: 1,
-        oneList: {},//一条菜品
+        firstLevleId:'',
         brandList: [],
+        brandEditList:[],
         dataLeft: [],
         fileList: [],
         fileurl: '',
@@ -312,16 +309,97 @@
     },
     watch: {},
     methods: {
+      ...mapActions(['setDishesLibraryTree','setDishesLibraryLevelId']),
+      ...mapGetters(['getDishesLibraryTree','getDishesLibraryLevelId']),
       search() {
         if (this.searchName === '') {
-          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.levelId)
+          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.getDishesLibraryLevelId())
         } else {
-          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.levelId, this.searchName)
+          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.getDishesLibraryLevelId(), this.searchName)
 
         }
       },
-      test() {
-        console.log(this)
+      submitFrom(){
+        outer:
+          for (let map of this.brandEditList) {
+            if (map.product_name === "" || map.price === "" || map.levelid === "") {
+              this.va = "";
+              break
+            }
+            this.va = "ok"
+          }
+        console.log(this.va)
+
+        if (this.va === "ok") {
+          this.brandEditList.forEach((item) => {
+            delete item.nameClass;
+            delete item.brandClass;
+            delete item.priceClass;
+            delete item.created_at;
+            delete item.updated_at;
+            delete item.x2;
+          });
+          if(this.brandEditList.length === 1){
+            getApi.updateProduct(this.brandEditList[0]).then((res) => {
+              if (res.data.errcode === 0) {
+                this.showProductList(this.p, this.getDishesLibraryLevelId());
+                this.$message("操作成功");
+                this.dialogVisible1 = false
+              }
+            })
+          }else {
+            getApi.batchChange(this.brandEditList).then((res) => {
+              if (res.data.errcode === 0) {
+                this.showProductList(this.p, this.getDishesLibraryLevelId());
+                this.$message("操作成功");
+                this.dialogVisible1 = false
+              }
+            })
+          }
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '请填写所需选项'
+          });
+        }
+      },
+      myChange(map, name, className, str) {
+        (map[name] !== "") ? map[className] = false : map[className] = true
+      },
+      getBrand(){
+        getApi.getBrand(this.firstLevleId).then((res) => {
+          this.brandList = res.data.data
+        });
+      },
+      edit(id) {
+        this.dialogVisible1 = true;
+        this.getBrand();
+        getApi.getView(id).then((res) => {
+          if (res.data.errcode === 0) {
+            this.brandEditList = res.data.data;
+          }
+        })
+      },
+      batchEdit() {
+        let list = [];
+        this.dishesData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        if (list.length === 0) {
+          this.$message('请勾选门店');
+        } else {
+          this.dialogVisible1 = true;
+          this.getBrand();
+          getApi.getView(list.join(",")).then((res) => {
+            if (res.data.errcode === 0) {
+              this.brandEditList = res.data.data;
+
+            }
+          })
+
+        }
       },
       open4() {
       },
@@ -350,7 +428,6 @@
         }
 
         getApi.updateXlsDishesFile(this.brandid, this.fileurl, over).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
             this.$message({
               type: 'info',
@@ -362,12 +439,11 @@
         })
 
       },
+      removeXls(file, fileList){
+        this.fileurl = ""
+      },
       handleAvatarSuccessXls(res, file) {
-        console.log(res)
-        console.log(file)
-
         this.fileurl = file.response.data.file_url
-
       },
       beforeAvatarUploadXls(file) {
         const isLt5M = file.size / 1024 / 1024 < 5;
@@ -377,8 +453,7 @@
         return isLt5M;
       },
       importXls() {
-        getLeft('x1').then((res) => {
-          console.log(res)
+        getLeft('x2').then((res) => {
           if (res.data.errcode === 0) {
             this.dataLeft = res.data.data;
             this.dialogVisible4 = true
@@ -403,147 +478,73 @@
         }
         return img && isLt5M;
       },
-      handleAvatarSuccess1(res, file, list) {
-        this.oneList.imgurl_1 = file.response.data.file_url;
+      handleAvatarSuccess1(res, file,list,item) {
+        item.imgurl_1 = file.response.data.file_url;
       },
-      handleAvatarSuccess2(res, file, list) {
-        this.oneList.imgurl_2 = file.response.data.file_url;
+      handleAvatarSuccess2(res, file,list,item) {
+        item.imgurl_2 = file.response.data.file_url;
       },
-      handleAvatarSuccess3(res, file, list) {
-        this.oneList.imgurl_3 = file.response.data.file_url;
+      handleAvatarSuccess3(res, file,list,item) {
+        item.imgurl_3 = file.response.data.file_url;
       },
-      removeDomain(item) {
-        var index = this.oneList.productcodes.indexOf(item)
-        if (index !== -1) {
-          this.oneList.productcodes.splice(index, 1)
-        }
+
+      removeDomain(list, i) {
+        list.splice(i, 1)
       },
-      addDomain() {
-        this.oneList.productcodes.push({name: '', providerid: ''});
+      addDomain(list) {
+        list.push({name: '',  providerid: ''});
       },
       goToAddDishes() {
         if (this.number < 1) {
           this.$message('需要最少一道菜');
         } else {
-          this.$router.push({path: `/infrastructure/DishesLibrary/addDishes/${this.number}/${this.levelId}`})
+          this.$router.push({path: `/infrastructure/DishesLibrary/addDishes/${this.number}/${this.getDishesLibraryLevelId()}`})
         }
       },
       addDishes() {
-        if (this.levelName === "") {
-          this.$message('请选择门店库');
-        } else {
-          this.dialogVisible2 = true;
-
-        }
+        this.dialogVisible2 = true;
       },
       nodeClickDishes(data, data1, data2) {
         this.brandid = data.id;
       },
-      nodeClick(data, data1, data2) {
-        console.log(data.levelname)
 
-        this.levelName = data.levelname;
-        this.levelId = data.id;
-        this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.levelId, this.searchName = '')
-
-      },
       getPage(page) {
         this.p.page = page;
-        this.showProductList(this.p, this.levelId, this.searchName);
+        this.showProductList(this.p, this.getDishesLibraryLevelId(), this.searchName);
       },
       getPageSize(size) {
         this.p.size = size;
-        this.showProductList(this.p, this.levelId, this.searchName);
+        this.showProductList(this.p, this.getDishesLibraryLevelId(), this.searchName);
       },
 
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.dishesData.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.dishesData.forEach((data) => {
-            data.select = false
-          })
+      handleSelectionChange(val) {
+        if(val.length === this.dishesData.length){
+          this.dishesData.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.dishesData.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
         }
       },
+
       handleChecked(data) {
-        let count = 0;
-        this.dishesData.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
+        let list =  this.dishesData.filter((item)=>{
+          return item.select === true
         });
 
-        if (count === this.dishesData.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+        if (list.length === this.dishesData.length) {
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
 
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
-                attrs: {id: "all"},
-                'class': {},
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-                  }
-                }
-              }, ['全选']
-            )
-          ]
-        );
 
-      },
-      editOne(formRules) {
-        this.$refs[formRules].validate((valid) => {
-          if (valid) {
-            console.log(this.oneList)
-            getApi.updateProduct(this.oneList).then((res) => {
-              console.log(res)
-              if (res.data.errcode === 0) {
-                this.showProductList(this.p, this.levelId);
-                this.dialogVisible = false
-              }
-            })
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
 
-      edit(id) {
-        getApi.getOne(id).then((res) => {
-          console.log(res)
-          if (res.data.errcode === 0) {
-            this.oneList = res.data.data[0];
-            getApi.getBrand(this.levelId).then((res) => {
-              console.log(res)
-              this.brandList = res.data.data
-            })
-            this.dialogVisible = true
-          }
-        })
-      },
       del(id) {
         this.$confirm('此操作将删除该条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -551,13 +552,12 @@
           type: 'warning'
         }).then(() => {
           getApi.delProduct(id).then((res) => {
-            console.log(res)
             if (res.data.errcode === 0) {
               this.$message({
                 type: 'info',
                 message: '删除成功'
               });
-              this.showProductList(this.p, this.levelId);
+              this.showProductList(this.p, this.getDishesLibraryLevelId());
             } else {
               this.$message({
                 type: 'info',
@@ -588,13 +588,12 @@
             type: 'warning'
           }).then(() => {
             getApi.delProduct(list.join(",")).then((res) => {
-              console.log(res)
               if (res.data.errcode === 0) {
                 this.$message({
                   type: 'info',
                   message: '删除成功'
                 });
-                this.showProductList(this.p, this.levelId);
+                this.showProductList(this.p, this.getDishesLibraryLevelId());
               }
             })
           }).catch(() => {
@@ -604,26 +603,43 @@
 
 
       },
-
+      recur(data,bool) {
+        data.forEach((map) => {
+          if (map.id === this.getDishesLibraryLevelId()) {
+            this.$set(map, "selected", true);
+          } else {
+            this.$set(map, "selected", false);
+          }
+          if (map.child) {
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
+          }
+        })
+      },
       showLevel() {
         getApi.getLevel('', 1).then((res) => {
           if (res.data.errcode === 0) {
-            this.data5 = res.data.data;
-            console.log(this.data5)
-          } else {
+            this.setDishesLibraryTree({list:res.data.data});
+
+            if(this.getDishesLibraryLevelId() === ''){
+              this.setDishesLibraryLevelId({levelId:res.data.data[0].id});
+            }
+            this.firstLevleId = res.data.data[0].id;
+            this.showProductList(this.p, this.getDishesLibraryLevelId());
+            this.recur(res.data.data,true);
           }
         })
       },
 
       showProductList(p, levelid, searchName = '') {
         getApi.getProductList(p, levelid, searchName).then((res) => {
-          console.log(res)
           if (res.data.errcode === 0) {
-
             for (let map of res.data.data.list) {
               this.$set(map, 'select', false)
             }
-            this.dishesData = res.data.data.list
+            this.dishesData = res.data.data.list;
             this.p.total = res.data.data.count
           }
         })
@@ -631,14 +647,24 @@
 
     },
     created() {
-
-      this.showProductList(this.p, this.levelId);
-
-      this.showLevel()
-
+      if(this.getDishesLibraryTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showProductList(this.p, this.getDishesLibraryLevelId());
+        getApi.getLevel('', 1).then((res) => {
+            if (res.data.errcode === 0) {
+              this.firstLevleId = res.data.data[0].id;
+            }
+        })
+      }
     },
     mounted() {
-
+      Hub.$on('showAdd', (e) => {
+        this.showProductList(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid);
+        this.setDishesLibraryLevelId({levelId:e.levelid});
+        this.recur(this.getDishesLibraryTree(),false);
+      });
+      Hub.$emit('mountedOk','mountedOk');
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
@@ -647,55 +673,13 @@
         this.tableHeight = h;
       })
     },
-
+    destroyed(){
+      Hub.$off("showAdd");
+    }
   }
 </script>
 
 <style scoped lang="less">
-  .m-rank {
-    width: 40px;
-    .m-rank-child {
-      height: 18px;
-      border-bottom: 1px solid #000;
-    }
-  }
-
-  .m-storeCode {
-    font-size: 30px;
-  }
-
-  .m-storeList {
-    height: 50px;
-    line-height: 50px;
-  }
-
-  .m-newStore {
-    position: absolute;
-    right: 20px;
-    top: 50px;
-    width: 99px;
-  }
-
-  .m-t {
-    text-align: center;
-  }
-
-  .m-store {
-    padding: 20px 0;
-  }
-
-  .m-store table tr td {
-    padding: 10px 0;
-    border-bottom: 1px dashed #000;
-  }
-
-  .m-store table tr:nth-child(1) {
-    height: 50px;
-  }
-
-  .m-store table tr:nth-child(1) td {
-    border-bottom: 1px solid #000;
-  }
 
 
 </style>

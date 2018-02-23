@@ -278,21 +278,15 @@
         p: {page: 1, size: 20, total: 0},
         roleId:'',
         searchName:'',
-        multipleSelection:[]
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
       handleChecked(data) {
-        let list1 = [];
         let list =  this.storeData.filter((item)=>{
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.storeData.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -302,11 +296,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.storeData.length){
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
@@ -472,7 +461,14 @@
         this.dialogVisible = true
       },
       del() {
-        if (this.multipleSelection.length === 0) {
+
+        let list = [];
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        if (list.length === 0) {
           this.$message('请勾选角色');
         } else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
@@ -480,7 +476,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.delRole(this.multipleSelection.join(",")).then((res) => {
+            getApi.delRole(list.join(",")).then((res) => {
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
@@ -513,7 +509,6 @@
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.multipleSelection = [];
           }else {
 
           }

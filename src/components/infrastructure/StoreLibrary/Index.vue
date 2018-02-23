@@ -23,14 +23,6 @@
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow: auto;" :style="{height:tableHeight + 'px'}">
-        <!--<el-tree-->
-        <!--:data="data5"-->
-        <!--:props="defaultProps"-->
-        <!--node-key="id"-->
-        <!--default-expand-all-->
-        <!--:expand-on-click-node="false"-->
-        <!--:render-content="renderContent">-->
-        <!--</el-tree>-->
 
         <tree :data='getStoreTreeList()' :count=0 style="width: max-content;"></tree>
 
@@ -408,7 +400,6 @@
         dataLeft:[],
         fileList: [],
         fileurl:'',
-        multipleSelection:[]
       }
     },
     watch: {},
@@ -425,14 +416,18 @@
       //批量状态设置
       changeStoresStatus() {
 
-        let storeStatusValue;
+        let storeStatusValue,list= [];
         if (this.storeStatusValue) {
           storeStatusValue = 1
         } else {
           storeStatusValue = 0
         }
-
-        getApi.storesStatus(this.multipleSelection.join(','), storeStatusValue).then((res) => {
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        getApi.storesStatus(list.join(','), storeStatusValue).then((res) => {
           if(res.data.errcode === 0){
             this.$message('操作成功');
             this.getBsList(this.p,this.getShowStoreTree().levelid);
@@ -442,12 +437,10 @@
       },
       isSwitch(){
         this.storeStatusValue = false;
-
-
-        if(this.multipleSelection.length === 0){
-          this.$message('请勾选门店');
-        }else {
+        if(this.storeData.some((item) => {return item.select === true}) === true){
           this.dialogVisible1 = true
+        }else {
+          this.$message('请勾选门店');
         }
       },
       handleChange(file, fileList) {
@@ -522,8 +515,13 @@
 
       },
       delSelected() {
-
-        if(this.multipleSelection.length === 0){
+        let list = [];
+        this.storeData.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        if(list.length === 0){
           this.$message('请勾选门店');
         }else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
@@ -531,7 +529,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            getApi.delBsOne(this.multipleSelection.join(",")).then((res)=>{
+            getApi.delBsOne(list.join(",")).then((res)=>{
               if(res.data.errcode === 0){
                 this.$message({
                   type: 'info',
@@ -638,14 +636,9 @@
       },
 
       handleChecked(data) {
-        let list1 = [];
         let list =  this.storeData.filter((item)=>{
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.storeData.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -655,11 +648,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.storeData.length){
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
@@ -755,7 +743,6 @@
             });
             this.storeData = res.data.data.list;
             this.p.total = res.data.data.count;
-            this.multipleSelection = []
           } else {
 
           }

@@ -148,7 +148,6 @@
 
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection: [],
 
       }
     },
@@ -157,10 +156,10 @@
       ...mapActions(['setPushStateLevelId', 'setPushStateTree']),
       ...mapGetters(['getPushStateLevelId', 'getPushStateTree']),
       batch() {
-        if (this.multipleSelection.length === 0) {
-          this.$message('请选择门店');
-        } else {
+        if (this.storeData.some((item) => {return item.select === true}) === true) {
           this.dialogVisible = true
+        } else {
+          this.$message('请选择门店');
         }
       },
       close() {
@@ -203,7 +202,13 @@
       },
       handleAll(e) {
         if(this.radio2 !== ''){
-          let ids = this.multipleSelection.join(',');
+          let list = [];
+          this.storeData.forEach((item) => {
+            if (item.select) {
+              list.push(item.id)
+            }
+          });
+          let ids = list.join(',');
           this.changePushStatus(ids, e)
         }
 
@@ -219,15 +224,9 @@
       },
 
       handleChecked(data) {
-        let list1 = [];
         let list = this.storeData.filter((item) => {
-          if (item.select === true) {
-            list1.push(item.id)
-          }
           return item.select === true
         });
-
-        this.multipleSelection = list1;
         if (list.length === this.storeData.length) {
           list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -240,11 +239,6 @@
 
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item) => {
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if (val.length === this.storeData.length) {
           this.storeData.forEach((map) => {
             this.$set(map, 'select', true)
@@ -318,7 +312,6 @@
             });
             this.storeData = res.data.list;
             this.p.total = res.data.count;
-            this.multipleSelection = []
           }
         })
       },
