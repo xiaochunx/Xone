@@ -363,7 +363,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     components: {
@@ -836,11 +836,14 @@
         this.getBsList(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '')
       });
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated() {
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
+
     },
     destroyed(){
       Hub.$off("treeEventEditDel");

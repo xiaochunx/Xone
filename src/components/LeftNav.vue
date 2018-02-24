@@ -1,5 +1,5 @@
 <template>
-  <div id="xoMenu" :style="{height:ListHeight+'px'}">
+  <div id="xoMenu" :style="{height:getBodyHeight+'px'}">
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" theme="dark" :width="300">
 
       <!--后期加上-->
@@ -43,20 +43,15 @@
               {
                 name: '菜品销售排行',
                 route: '/report/salesRanking'
-              }
+              },
 
+              {
+                name: '日报推送',
+                route: '/report/dailyPush'
+              },
             ]
           },
-          {
-            name: '基础设置',
-            children: [
 
-             {
-               name: '菜品库',
-               route: '/infrastructure/DishesLibrary'
-             },
-            ]
-          },
          //
          //  {
          //    name: '菜品管理',
@@ -91,26 +86,28 @@
          //      },
          //    ]
          //  },
-         //  {
-         //    name: 'x2统计报表',
-         //    children: [
-         //
-         //      // {
-         //      //   name: '订单统计',
-         //      //   route: '/report/orderCount'
-         //      // },
-         //
-         //    ]
-         //  },
+          {
+            name: 'x2统计报表',
+            children: [
 
+              {
+                name: '订单统计',
+                route: '/report/orderCount'
+              },
 
+            ]
+          },
         ],
-        ListHeight: 0,
         leftData:[]
       }
     },
+    computed: {
+      ...mapGetters([
+        'getTopHeight','getBodyHeight'
+      ]),
+    },
     methods: {
-      ...mapActions(['setTreeArr']),
+      ...mapActions(['setTreeArr','setBodyHeight']),
       ...mapGetters(['getTreeArr']),
       recur(data,path) {
         data.forEach((map) => {
@@ -160,7 +157,8 @@
 
     },
     mounted(){
-      this.ListHeight = window.innerHeight - this.getTopHeight;
+      let bodyHeight = window.innerHeight - this.getTopHeight;
+      this.setBodyHeight(bodyHeight);
       Hub.$on('mountedOk', (e) => {
         this.recur(this.leftData,this.$route.path)
       });
@@ -173,11 +171,7 @@
     destroyed(){
       Hub.$off("mountedOk");
     },
-    computed: {
-      ...mapGetters([
-          'getTopHeight'
-      ]),
-    }
+
   }
 </script>
 <style>

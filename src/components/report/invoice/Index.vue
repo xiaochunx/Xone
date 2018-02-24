@@ -150,7 +150,7 @@
     },
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     methods: {
@@ -244,11 +244,14 @@
       });
       this.getInvoiceList(this.p,this.store_id,this.dateSelected[0] ,this.dateSelected[1],'');
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated() {
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
+
     },
 
   }

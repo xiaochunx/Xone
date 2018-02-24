@@ -288,7 +288,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     components: {
@@ -695,15 +695,16 @@
       });
 
       Hub.$emit('mountedOk','mountedOk');
-
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated() {
         let bodyWidth = document.querySelector('.content div').clientWidth;
         let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
         this.tableWidth = bodyWidth - clientWidth;
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
     },
     destroyed() {
 

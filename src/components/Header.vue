@@ -57,7 +57,7 @@
       ...mapActions(['setStoreTreeList', 'setShowStoreTree', 'setPermissionLevelId', 'setPermissionTree',
         'setBusinessConfTree', 'setBusinessConfLevelId', 'setPushStateTree', 'setPushStateLevelId', 'setRunningStateTree',
       'setRunningStateLevelId','setPrintConfTree','setPrintConfLevelId','setX2storeTree','setX2StoreLevelId','setX1storeTree',
-        'setX1StoreLevelId','setPublicTree','setPublicLevelId']),
+        'setX1StoreLevelId','setPublicTree','setPublicLevelId','setDishesLibraryTree','setDishesLibraryLevelId']),
       loginOut: function () {
         this.$http.get(`?controller=user&action=logout&token=${this.$localStorage.get("token")}`).then((res) => {
           if (res.data.errcode === 0) {
@@ -89,6 +89,9 @@
 
             this.setPublicTree({list: []});
             this.setPublicLevelId({levelId: ''});
+
+            this.setDishesLibraryTree({list: []});
+            this.setDishesLibraryLevelId({levelId: ''});
             this.$router.push("/login")
           } else {
             this.$message(res.data.errmsg)

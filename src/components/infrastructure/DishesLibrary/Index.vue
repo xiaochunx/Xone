@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="getTreeArr['菜品库']">
 
     <div class="bodyTop padding_b_10">
       <div class="padding_b_10">
@@ -8,11 +8,11 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <el-button size="small" @click="addDishes()">+新增菜品</el-button>
-          <el-button size="small" @click="batchEdit()">批量编辑</el-button>
-          <el-button size="small" @click="delSelected()">批量删除</el-button>
+          <el-button size="small" @click="addDishes()" v-show="getTreeArr['新增菜品']">+新增菜品</el-button>
+          <el-button size="small" @click="batchEdit()" v-show="getTreeArr['修改菜品']">批量编辑</el-button>
+          <el-button size="small" @click="delSelected()" v-show="getTreeArr['删除菜品']">批量删除</el-button>
         </div>
-        <div class="flex_1 flex_ec">
+        <div class="flex_1 flex_ce">
 
           <div class="margin_l_10 margin_r_10" style="width: 200px">
             <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
@@ -32,7 +32,6 @@
 
       </div>
       <div class="padding_l_10" :style="{width:tableWidth + 'px'}">
-
         <el-table :data="dishesData" border :height="tableHeight" @select-all="handleSelectionChange" ref="multipleTable">
           <el-table-column
             header-align="center" align="center"
@@ -43,20 +42,25 @@
               <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
             </template>
           </el-table-column>
-
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
-                           label="菜品编码"
-                           width="100"></el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id" label="菜品编码"
+                           width="100">
+          </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="product_name"
-                           label="名称"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="level" label="所属品牌"
-          ></el-table-column>
+                           label="名称">
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="level" label="所属品牌">
+          </el-table-column>
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="productcodes" label="第三方编码">
+            <template slot-scope="scope">
+              <div v-for="(item,index) in scope.row.productcodes">
+                {{item.name}} -- {{item.providerid}}
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="180">
             <template slot-scope="scope">
-
-              <el-button size="small" type="primary" @click="edit(scope.row.id)">编辑</el-button>
-              <el-button size="small" type="danger" @click="del(scope.row.id)">删除</el-button>
-
+              <el-button size="small" type="primary" @click="edit(scope.row.id)" v-show="getTreeArr['修改菜品']">编辑</el-button>
+              <el-button size="small" type="danger" @click="del(scope.row.id)" v-show="getTreeArr['删除菜品']">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -277,7 +281,7 @@
     components: {},
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     data() {
@@ -665,13 +669,16 @@
         this.recur(this.getDishesLibraryTree(),false);
       });
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
       this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
+
     },
     destroyed(){
       Hub.$off("showAdd");

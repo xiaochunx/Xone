@@ -179,7 +179,7 @@
     components: {},
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     data() {
@@ -286,13 +286,14 @@
     },
     mounted(){
       Hub.$emit('mountedOk','mountedOk');
-    },
-    updated() {
-      this.$nextTick(() => {
-        getScrollHeight().then((h) => {
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
           this.tableHeight = h;
         })
       })
+    },
+    updated() {
+
     },
   }
 </script>

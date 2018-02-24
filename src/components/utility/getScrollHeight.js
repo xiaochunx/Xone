@@ -1,3 +1,4 @@
+
 let getStyle = (obj, attr) => {
   if (obj.currentStyle) {
     return obj.currentStyle[attr];
@@ -6,9 +7,9 @@ let getStyle = (obj, attr) => {
     return window.getComputedStyle(obj, null)[attr];
   }
 };
-let getScrollHeight = () => {
+let getScrollHeight = (bodyHeight) => {
   return new Promise((resolve, reject) => {
-    let bodyHeight = document.querySelector('#getContentHeight').clientHeight;
+
     let bodyTopHeight = document.querySelector('.bodyTop').clientHeight;
     let footHeight = document.querySelector('footer').clientHeight;
 

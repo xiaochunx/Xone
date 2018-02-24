@@ -98,7 +98,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     components: {
@@ -212,15 +212,17 @@
         this.recur(this.getPublicTree(),false);
       });
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     destroyed(){
       Hub.$off("showAddPub");
     },
     updated() {
 
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
     },
   }
 </script>

@@ -218,7 +218,7 @@
     components: {},
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     data() {
@@ -453,11 +453,14 @@
         this.recur(this.getRunningStateTree(),false);
       });
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated() {
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
+
     },
     destroyed(){
       Hub.$off("showAdd");

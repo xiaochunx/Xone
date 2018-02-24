@@ -36,8 +36,10 @@ import Invoice from '../components/report/invoice/Index.vue'
 import orderList from '../components/report/orderList/Index.vue'
 import orderCount from '../components/report/orderCount/Index.vue'
 import salesRanking from '../components/report/salesRanking/index.vue'
-/************************** 基础设置 ***************************/
+import dailyPush from '../components/report/dailyPush/index.vue'
+import operateDaily from '../components/report/dailyPush/operateDaily/index.vue'
 
+/************************** 基础设置 ***************************/
 import BusinessConf from '@/components/infrastructure/BusinessConf/Index.vue'
 import PaymentManagement from '@/components/infrastructure/PaymentManagement/Index.vue'
 import PaymentWay from '@/components/infrastructure/PaymentWay/Index.vue'
@@ -260,6 +262,20 @@ export default new Router({
           meta: { auth: true },
           name: 'x2运营数据/菜品销售排行',
           component: salesRanking,
+        },
+        {
+          // 日报推送
+          path: '/report/dailyPush',
+          meta: { auth: true },
+          name: 'x2运营数据/日报推送',
+          component: dailyPush,
+        },
+        {
+          // 操作日报推送
+          path: '/report/dailyPush/operateDaily/:data',
+          meta: { auth: true },
+          name: 'x2运营数据/操作日报推送',
+          component: operateDaily,
         },
         /**********************基础设置***************************/
         // 基础设置/商户配置

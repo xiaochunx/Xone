@@ -5,7 +5,7 @@
       <el-col :span="4">
         <xo-left-nav></xo-left-nav>
       </el-col>
-      <el-col :span="20" id="getContentHeight" style="overflow-y: scroll" :style="{height:bodyHeight +'px'}">
+      <el-col :span="20" id="getContentHeight" style="overflow-y: scroll" :style="{height:getBodyHeight +'px'}">
         <div class="content">
           <!--路由视图-->
           <router-view v-loading="getLoadingStatus"></router-view>
@@ -32,13 +32,12 @@
       return {
         msg: 'Welcome to Your Vue.js App',
         ListHeight: 0,
-        bodyHeight: 0
       }
     },
     computed: {
       ...mapGetters([
         'getTopHeight',
-        'getLoadingStatus'
+        'getLoadingStatus','getBodyHeight'
       ]),
       getMsg() {
         return this.msg;
@@ -62,12 +61,6 @@
 
     },
     mounted() {
-
-      this.$nextTick(() => {
-        let clientHeight = document.querySelector('#xoMenu').clientHeight;
-        this.bodyHeight = clientHeight;
-      })
-
 
       this.ListHeight = this.getTopHeight;
     },

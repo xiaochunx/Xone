@@ -93,7 +93,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
       beginTime(){
         if (this.time1 != ''){
@@ -240,11 +240,7 @@
         let bodyWidth = document.querySelector('.content div').clientWidth;
         let clientWidth = this.$refs.tree ? this.$refs.tree.clientWidth : 0;
         this.tableWidth = bodyWidth - clientWidth;
-        this.$nextTick(() => {
-          getScrollHeight().then((h) => {
-            this.tableHeight = h;
-          })
-        });
+
       },
 
       handleChange(value) {
@@ -325,6 +321,11 @@
       // 初始化地图
       // this.initializeMap();
       this.orderList();
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     destroyed() {
       Hub.$off("showAdd");

@@ -7,6 +7,9 @@ export default {
   topHeight({commit}, height){
     commit(types.TOPHEIGHT,height);
   },
+  setBodyHeight({commit}, height){
+    commit(types.BODYHEIGHT,height);
+  },
   NavPathChange({commit},path){
     commit(types.NAVPATHCHANGE,path);
   },

@@ -78,7 +78,7 @@
     },
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     data() {
@@ -211,17 +211,17 @@
         this.recur(this.getBusinessConfTree(),false);
       });
       Hub.$emit('mountedOk', 'mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
       let clientWidth = this.$refs.tree? this.$refs.tree.clientWidth : 0;
       this.tableWidth = bodyWidth - clientWidth;
-      this.$nextTick(() => {
-        getScrollHeight().then((h) => {
-          this.tableHeight = h;
-        })
 
-      })
 
     },
     destroyed() {

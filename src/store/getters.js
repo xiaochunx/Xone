@@ -9,6 +9,9 @@ export default{
   getTopHeight(state){
     return state.height;
   },
+  getBodyHeight(state){
+    return state.bodyHeight;
+  },
   getNavPath(state){
     return state.navPath;
   },

@@ -5,7 +5,8 @@ import getters from './getters'
 import * as types from './type'
 
 const state = {
-  height: 0,
+  height: 0,//顶部高度
+  bodyHeight: 0,//内容高度
   navPath: [],
   isLoading: false,
   treeArr:{},//页面权限
@@ -37,6 +38,9 @@ const state = {
 const mutations = {
   [types.TOPHEIGHT](state, height){
     state.height = height;
+  },
+  [types.BODYHEIGHT](state, height){
+    state.bodyHeight = height;
   },
   [types.NAVPATHCHANGE](state,path){
     state.navPath = path;

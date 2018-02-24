@@ -64,7 +64,7 @@
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     components:{
@@ -148,13 +148,16 @@
       })
     },
     updated(){
-      getScrollHeight().then((h)=>{
-        this.tableHeight = h;
-      })
+
     },
     mounted() {
       this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p);
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     destroyed(){
 
