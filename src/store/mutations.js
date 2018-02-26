@@ -33,6 +33,8 @@ const state = {
   dishesLibraryLevelId:'',//菜品库levelid
   scatterMapTree: [], // 散点地图树
   scatterMapTreeLevelId: '', // 散点地图树levelid
+  salesRankingTree:[],//菜品销售排行树
+  salesRankingLevelId:''//菜品销售排行levelid
 };
 
 const mutations = {
@@ -118,6 +120,12 @@ const mutations = {
   },
   [types.DISHESLIBRARYLEVELID](state, obj){
     state.dishesLibraryLevelId = obj.levelId
+  },
+  [types.SALESRANKINGTREE](state,obj){
+    state.salesRankingTree = obj.list;
+  },
+  [types.SALESRANKINGLEVELID](state, obj){
+    state.salesRankingLevelId = obj.levelId
   },
 };
 

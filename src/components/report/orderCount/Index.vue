@@ -18,12 +18,12 @@
 
           <div class=" margin_r_10">
             <div>请选择门店</div>
-            <el-select v-model="order_id" clearable placeholder="请选择门店" size="small">
+            <el-select v-model="storeId" clearable filterable placeholder="请选择" size="small">
               <el-option
-                v-for="item in getWayInfo"
-                :key="item.id"
-                :label="item.memo"
-                :value="item.id">
+                v-for="item in storeData"
+                :key="item.base_store_id"
+                :label="item.storename"
+                :value="item.base_store_id">
               </el-option>
             </el-select>
 
@@ -54,37 +54,39 @@
           </div>
           <div class=" margin_r_10">
             <div>平台</div>
-            <el-radio v-model="radio" :label="1">全部</el-radio>
-            <el-radio v-model="radio" :label="2">款易</el-radio>
-            <el-radio v-model="radio" :label="3">美团外卖</el-radio>
-            <el-radio v-model="radio" :label="4">饿了么外卖</el-radio>
-            <el-radio v-model="radio" :label="5">百度外卖</el-radio>
+            <el-radio-group v-model="radio" style="height: 30px" class="flex_a">
+              <el-radio  label="">全部</el-radio>
+              <el-radio  label="mt">美团外卖</el-radio>
+              <el-radio  label="el">饿了么外卖</el-radio>
+              <el-radio  label="bd">百度外卖</el-radio>
+            </el-radio-group>
+
           </div>
         </div>
 
       </div>
 
       <div class="margin_t_10">
-        <el-button @click="search()">查询</el-button>
-        <el-button type="primary" @click="out()">导出</el-button>
-        <el-button type="primary" @click="">切换到原始数据</el-button>
+        <el-button @click="search()" size="small">查询</el-button>
+        <el-button type="primary" @click="out()" size="small">导出</el-button>
+
       </div>
     </div>
 
     <el-table :data="tableData" border :height="tableHeight">
 
-      <el-table-column header-align="center" align="center" prop="order_no" label="日期" ></el-table-column>
+      <el-table-column header-align="center" align="center" prop="date" label="日期" ></el-table-column>
 
-      <el-table-column header-align="center" align="center" prop="account" label="订单金额"></el-table-column>
-      <el-table-column header-align="center" align="center" prop="pay_money" label="支付单数" ></el-table-column>
+      <el-table-column header-align="center" align="center" prop="order_price" label="订单金额"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="order_num" label="支付单数" ></el-table-column>
 
-      <el-table-column header-align="center" align="center" prop="receive_money" label="支付金额" ></el-table-column>
+      <el-table-column header-align="center" align="center" prop="pay_money" label="支付金额" ></el-table-column>
 
-      <el-table-column header-align="center" align="center" prop="add_time" label="实收金额"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="shop_money" label="实收金额"></el-table-column>
 
     </el-table>
     <footer>
-      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
+      <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
     </footer>
 
   </div>
@@ -93,14 +95,13 @@
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
 
-  import {getStoreListAll, getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {mapActions, mapGetters} from 'vuex';
-
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     components: {},
@@ -109,9 +110,9 @@
         width: 0,
         tableHeight: 0,
         navList: [{name: "统计报表", url: ''}, {name: "交易列表", url: ''}],
-        order_id: '',
-        radio:1,
-        getWayInfo:[],
+        radio:"",
+        storeData:[],
+        storeId:'',
         tableData: [],
         time_start: '',
         time_end: '',
@@ -129,33 +130,69 @@
         if (d === undefined) {
           this.start_stamp = ""
         } else {
-          this.start_stamp = new Date(this.time_start) * 1;
+          this.start_stamp = new Date(this.time_start) /1000 ;
         }
       },
       timeEnd(d) {
         if (d === undefined) {
           this.end_stamp = ""
         } else {
-          this.end_stamp = new Date(this.time_end) * 1;
+          this.end_stamp = new Date(this.time_end) /1000;
         }
 
       },
       out() {
-
+        let params = {
+          redirect: "x2a.order.orderstat",
+          storeId:this.storeId,
+          begTime: this.start_stamp,
+          endTime:this.end_stamp,
+          source:this.radio,
+          export:1
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            //window.location.href = res.data
+          }
+        });
       },
       search() {
 
-        if (this.start_stamp > this.end_stamp) {
-          this.$message({
-            message: '开始时间不能大于结束时间',
-            type: 'warning'
-          });
-        } else {
-          //ok
-          console.log(this.start_stamp, this.end_stamp)
+        // if (this.start_stamp > this.end_stamp) {
+        //   this.$message({
+        //     message: '开始时间不能大于结束时间',
+        //     type: 'warning'
+        //   });
+        // } else {
+        //   //ok
+        //
+        //
+        // }
 
-        }
 
+        // if(this.storeId === ''){
+        //     this.$message({
+        //       message: '请选择门店',
+        //       type: 'warning'
+        //     });
+        // } else {
+        //
+        // }
+
+        let params = {
+          redirect: "x2a.order.orderstat",
+          storeId:this.storeId,
+          begTime: this.start_stamp,
+          endTime:this.end_stamp,
+          source:this.radio,
+
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.tableData = res.data.list;
+
+          }
+        })
 
       },
       getPage(page) {
@@ -169,25 +206,29 @@
 
       },
 
-      getRadioDate(d) {
-        this.dateSelected = d
-      },
-
-
     },
     created() {
-
+      let params = {
+        redirect: "x2.store.index",
+        noPage:1
+      };
+      oneTwoApi(params).then((res) => {
+        if(res.errcode === 0){
+          this.storeData = res.data.list;
+        }
+      });
     },
     mounted() {
-
+      Hub.$emit('mountedOk','mountedOk');
+      getScrollHeight(this.getBodyHeight).then((h) => {
+        this.tableHeight = h;
+      })
     },
     destroyed() {
 
     },
     updated() {
-      getScrollHeight().then((h) => {
-        this.tableHeight = h;
-      })
+
     },
 
   }

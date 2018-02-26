@@ -92,4 +92,11 @@ export default{
   getDishesLibraryLevelId(state){
     return state.dishesLibraryLevelId;
   },
+
+  getSalesRankingTree(state){
+    return state.salesRankingTree;
+  },
+  getSalesRankingLevelId(state){
+    return state.salesRankingLevelId;
+  },
 }

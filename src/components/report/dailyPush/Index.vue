@@ -19,15 +19,15 @@
             <div>{{scope.$index + 1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="power_attr" label="接收人邮箱" >
+        <el-table-column header-align="center" align="center" prop="sendto" label="接收人邮箱" >
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="power_name" label="接收门店">
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="add_time_formated" label="接收时间" >
+        <el-table-column header-align="center" align="center" prop="sendtime" label="接收时间" >
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="remark" label="操作" >
           <template slot-scope="scope">
-            <el-button type="text" @click="operate('edit')" >修改</el-button>
+            <el-button type="text" @click="operate(scope.row.id)" >修改</el-button>
             <el-button type="text" @click="del(scope.row.id)" >删除</el-button>
           </template>
         </el-table-column>
@@ -41,13 +41,13 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
-
   import { mapActions,mapGetters } from 'vuex';
   import Hub from '../../utility/commun'
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     computed: {
       ...mapGetters([
-        'getTreeArr'
+        'getTreeArr','getBodyHeight'
       ]),
     },
     components:{
@@ -57,7 +57,7 @@
         width:0,
         tableHeight:0,
         navList:[{name:"基础设置",url:''},{name:"日报推送",url:''}],
-        tableData: [{}],
+        tableData: [],
         p: {page: 1, size: 20, total: 0},
         searchName:'',
       }
@@ -66,24 +66,19 @@
     methods: {
       ...mapActions(['setTreeArr']),
       operate(name){
-        if(name === 'add'){
-          this.$router.push({path: `/report/dailyPush/operateDaily/${name}`})
-        }else {
-
-        }
-
+        this.$router.push({path: `/report/dailyPush/operateDaily/${name}`})
       },
       search() {
-
+        this.showResouce(this.p= {page: 1, size: 20, total: 0},this.searchName)
 
       },
       getPage(page) {
         this.p.page = page;
-        //this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p)
+        this.showResouce(this.p)
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.getAdminLogList(this.dateSelected[0] ,this.dateSelected[1],this.user_name,this.power_attr,this.name,this.p)
+        this.showResouce(this.p)
       },
       del(id){
         this.$confirm(
@@ -93,25 +88,53 @@
             type: 'warning'
           }).then(() => {
 
-          //this.delTemplate(id)
+          let params = {
+            redirect: "x2a.reportmail.delete",
+            id: id,
+          };
+          oneTwoApi(params).then((res) => {
+            if(res.errcode === 0){
+              this.showResouce(this.p)
+            }
+          });
+
+
 
         }).catch(() => {
           //
         });
       },
 
+      showResouce(p,sendto = ''){
+        let params = {
+          redirect: "x2a.reportmail.index",
+          sendto: sendto,
+          page: p.page,
+          pagesize:p.size
+        };
+
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.tableData = res.data.list;
+            this.p.total = res.data.count;
+          }
+        });
+      },
+
     },
     created(){
-
+      this.showResouce(this.p)
     },
     updated(){
-      getScrollHeight().then((h)=>{
-        this.tableHeight = h;
-      })
+
     },
     mounted() {
-
       Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     destroyed(){
 

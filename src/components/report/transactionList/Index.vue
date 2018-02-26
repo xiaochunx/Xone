@@ -17,7 +17,7 @@
           <div class="flex_a">
             <div class=" margin_r_10">
               <div>门店</div>
-              <el-select v-model="store_id" clearable filterable placeholder="请选择">
+              <el-select v-model="store_id" clearable filterable placeholder="请选择" size="small">
                 <el-option
                   v-for="item in storeData"
                   :key="item.id"
@@ -29,7 +29,7 @@
 
             <div class=" margin_r_10">
               <div>支付方式</div>
-              <el-select v-model="iway" clearable filterable placeholder="请选择支付方式">
+              <el-select v-model="iway" clearable filterable placeholder="请选择支付方式" size="small">
                 <el-option
                   v-for="item in getWayInfo"
                   :key="item.id"
@@ -42,7 +42,7 @@
 
             <div class=" margin_r_10">
               <div>支付通道</div>
-              <el-select v-model="ichannel" clearable filterable placeholder="请选择通道列表">
+              <el-select v-model="ichannel" clearable filterable placeholder="请选择通道列表" size="small">
                 <el-option
                   v-for="item in getChannelInfo"
                   :key="item.id"
@@ -68,7 +68,7 @@
             <div class=" margin_r_10">
               <div>交易状态
               </div>
-              <el-select v-model="pay_status" clearable filterable placeholder="请选择">
+              <el-select v-model="pay_status" clearable filterable placeholder="请选择" size="small">
                 <el-option
                   v-for="item in transactionStatus"
                   :key="item.id"
@@ -81,13 +81,13 @@
 
             <div class=" margin_r_10">
               <div>支付单号</div>
-              <el-input v-model="order_no" placeholder="请输入内容"></el-input>
+              <el-input v-model="order_no" placeholder="请输入支付单号" size="small"></el-input>
 
             </div>
 
             <div class=" margin_r_10">
               <div>扫码支付形式</div>
-              <el-select v-model="scavengingForm" clearable filterable placeholder="请选择支付形式">
+              <el-select v-model="scavengingForm" clearable filterable placeholder="请选择支付形式" size="small">
                 <el-option
                   v-for="item in payInfo"
                   :key="item.scanId"
@@ -100,7 +100,7 @@
 
             <div class=" margin_r_10">
               <div>收款终端</div>
-              <el-select v-model="receive_terminal" clearable filterable placeholder="请选择收款终端">
+              <el-select v-model="receive_terminal" clearable filterable placeholder="请选择收款终端" size="small">
                 <el-option
                   v-for="item in terminalInfo"
                   :key="item.receiveId"
@@ -113,13 +113,13 @@
 
             <div class=" margin_r_10">
               <div>商家单号</div>
-              <el-input v-model="out_order_no" placeholder="请输入内容"></el-input>
+              <el-input v-model="out_order_no" placeholder="请输入商家单号" size="small"></el-input>
             </div>
           </div>
 
           <div class="flex_ec">
-            <el-button @click="search()">查询</el-button>
-            <el-button type="primary" @click="out()" v-show="getTreeArr['导出']">导出</el-button>
+            <el-button @click="search()" size="small">查询</el-button>
+            <el-button type="primary" @click="out()" v-show="getTreeArr['导出']" size="small">导出</el-button>
           </div>
         </div>
     </div>

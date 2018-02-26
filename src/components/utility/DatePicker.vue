@@ -1,22 +1,14 @@
 <template>
   <div>
-    <el-radio-group v-model="radio">
+    <el-radio-group v-model="radio" size="small">
       <el-radio-button v-for="(item,index) in radioList" :key="item.id" :label="item.label">{{item.name}}
       </el-radio-button>
     </el-radio-group>
     <span class="time">时间：</span>
-    <el-date-picker
-      v-model="time_start"
-      @change="timeStart"
-      type="datetime"
-      placeholder="选择开始日期时间">
+    <el-date-picker v-model="time_start" @change="timeStart" type="datetime" placeholder="选择开始日期时间" size="small">
     </el-date-picker>
     <span>至</span>
-    <el-date-picker
-      v-model="time_end"
-      @change="timeEnd"
-      type="datetime"
-      placeholder="选择结束日期时间">
+    <el-date-picker v-model="time_end" @change="timeEnd" type="datetime" placeholder="选择结束日期时间" size="small">
     </el-date-picker>
   </div>
 </template>

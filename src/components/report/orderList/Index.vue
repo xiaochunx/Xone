@@ -328,7 +328,7 @@
         if (d === undefined) {
           this.start_stamp = ""
         } else {
-          this.start_stamp = (new Date(this.time_start) * 1 +'').substr(0,10);
+          this.start_stamp = new Date(this.time_start) /1000;
         }
         this.orderList(this.start_stamp,this.end_stamp,this.p)
       },
@@ -336,7 +336,7 @@
         if (d === undefined) {
           this.end_stamp = ""
         } else {
-          this.end_stamp = (new Date(this.time_end) * 1 + '').substr(0,10);
+          this.end_stamp = new Date(this.time_end) /1000;
         }
         this.orderList(this.start_stamp,this.end_stamp,this.p)
       },

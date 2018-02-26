@@ -85,4 +85,10 @@ export default {
   setDishesLibraryLevelId({commit},obj){
     commit(types.DISHESLIBRARYLEVELID,obj);
   },
+  setSalesRankingTree({commit},obj){
+    commit(types.SALESRANKINGTREE,obj);
+  },
+  setSalesRankingLevelId({commit},obj){
+    commit(types.SALESRANKINGLEVELID,obj);
+  },
 }

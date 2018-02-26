@@ -17,7 +17,7 @@
           <div class="flex_a">
             <div class=" margin_r_10">
               <div>门店</div>
-              <el-select v-model="store_id" clearable filterable placeholder="请选择" @change="selectStore">
+              <el-select v-model="store_id" clearable filterable placeholder="请选择" @change="selectStore" size="small">
                 <el-option
                   v-for="item in storeData"
                   :key="item.id"
@@ -30,8 +30,8 @@
           </div>
 
           <div class="flex_ec">
-            <el-button @click="search()">查询</el-button>
-            <el-button type="primary" @click="out()" v-show="getTreeArr['导出']">导出</el-button>
+            <el-button @click="search()" size="small">查询</el-button>
+            <el-button type="primary" @click="out()" v-show="getTreeArr['导出']" size="small">导出</el-button>
           </div>
         </div>
     </div>
