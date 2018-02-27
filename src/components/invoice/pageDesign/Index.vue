@@ -35,7 +35,7 @@
 
       <!--</el-tab-pane>-->
       <el-tab-pane label="发票信息" name="second">
-        <div class="flex_r" style="height: 500px">
+        <div class="flex_r" >
           <div class="flex_1">
             <h2>内容设置</h2>
             <h3>基本信息</h3>
@@ -78,14 +78,72 @@
 
           <div class="flex_1 margin_l_10">
             <h2 class="margin_b_10">预览效果</h2>
-            <img src="../../../assets/pageDesign/2.jpeg" alt="" style="height: 500px">
+
+            <div class="preview">
+              <div class="top">
+                <img src="../../../assets/pageDesign/top.png" alt="" >
+              </div>
+              <div class="flex top_sub">
+                <img :src="form2.log_img" alt="" class="img_1">
+                <img src="../../../assets/pageDesign/info.png" alt="" class="img_2">
+              </div>
+              <div class="body" >
+                <div class="flex title">
+                  填写发条信息
+                </div>
+
+                <div class="content">
+                  <div class="content_top" :style="{'border-top':'2px solid' + form2.theme_color}">
+                    <div class="text_1">
+                      发票金额
+                    </div>
+                    <div class="flex_es text_2">
+                      <span>开票时间</span>
+                      <span>2017-11-28</span>
+                    </div>
+                  </div>
+
+                  <div :style="{'color':form2.theme_color}" class="flex_a middle">
+                    <i class="fa fa-star" aria-hidden="true"></i> 号发必填
+                  </div>
+
+                  <div class="context">
+                    <div class="flex_r context_top">
+                      <div class="flex_1 flex left" :style="{'border': '1px solid' + form2.theme_color}">
+                        个人
+                      </div>
+                      <div class="flex_1 flex right">
+                        企业
+                      </div>
+                    </div>
+                    <div class="flex_a context_top" >
+                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="color m_l">请输入发票抬头</span>
+                    </div>
+                    <div class="flex_a context_top" >
+                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="color m_l">请输入邮箱</span>
+                    </div>
+                    <div class="flex_a context_top" >
+                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="color m_l">请输入纳税人识别号</span>
+                    </div>
+                    <div class="flex_a context_top" >
+                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="color m_l">请输入地址</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
 
       </el-tab-pane>
       <el-tab-pane label="文字公告" name="third">
-        <div class="flex_r" style="height: 500px">
+        <div class="flex_r" >
           <div class="flex_1">
             <h2>内容设置</h2>
             <h3>基本信息</h3>
@@ -139,12 +197,22 @@
 
           </div>
 
-          <div class="flex_1 margin_l_10">
+          <div class="flex_1 margin_l_10" >
             <h2 class="margin_b_10">预览效果</h2>
-            <img src="../../../assets/pageDesign/3.jpeg" alt="" style="height: 500px">
+            <div style="position: relative">
+              <img src="../../../assets/pageDesign/3.jpeg" alt="" style="height: 500px">
+              <div class="title">
+                {{form3.title}}
+              </div>
+              <textarea class="textarea" v-model="form3.content">
+              </textarea>
+              <div class="date">
+                {{form3.date}}
+              </div>
+            </div>
+
           </div>
         </div>
-
 
       </el-tab-pane>
 
@@ -152,7 +220,6 @@
 
     <el-button @click="submit()">提交</el-button>
     <el-button @click="reset()">重置</el-button>
-
 
   </div>
 </template>
@@ -360,6 +427,90 @@
 </script>
 
 <style scoped lang="less">
+  @border:1px solid #F3F3F3;
+  .preview{
+    width: 280px;
+    .top{
+      width: 100%;height: 47px;
+      img{
+      width: inherit
+      }
+    }
+    .top_sub{
+      height: 50px;position: relative;border-right: @border;border-left: @border;box-sizing: border-box;
+      .img_1{
+        width: 40px;height: 40px;border-radius: 40px;
+      }
+      .img_2{
+        width: 30px;height: 30px;position: absolute;right: 5px;top: 10px;
+      }
+    }
+    .body{
+      box-shadow: inset 0 2px 1px 0 #ccc;border-bottom: @border;
+      .title{
+        height: 60px;font-size: 17px;
+      }
+      .content{
+        margin:0 20px 20px 20px ;
+        .content_top{
+          border-bottom: @border;border-left: @border;border-right: @border;
+          .text_1{
+            padding: 10px;border-bottom: @border
+          }
+          .text_2{
+            padding: 10px
+          }
+        }
+        .middle{
+          height: 40px
+        }
+        .context{
+          width: inherit;border:@border;
+          .context_top{
+            height: 40px;border-bottom:@border;
+            .left{
+              margin: 6px;
+            }
+            .right{
+              margin: 6px;border: @border;
+            }
+            .m_l{
+              margin-left: 6px
+            }
+          }
+        }
 
+      }
+    }
+  }
 
+    .color{
+      color:#ACACAC
+    }
+  .title{
+    position: absolute;
+    top: 123px;
+    text-align: center;
+    left: 14px;
+    width: 250px;
+    font-size: 23px;
+    overflow: hidden;
+  }
+  .textarea{
+    position: absolute;
+    left: 14px;
+    top: 150px;
+    width: 250px;
+    height: 200px;
+    border: none;
+  }
+  .date{
+    position: absolute;
+    bottom: 123px;
+    text-align: right;
+    left: 14px;
+    width: 245px;
+    font-size: 16px;
+    overflow: hidden;
+  }
 </style>

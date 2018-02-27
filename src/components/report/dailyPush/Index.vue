@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll_of" >
+  <div class="scroll_of" v-show="getTreeArr['日报推送']">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -9,7 +9,7 @@
           <el-input size="small" class="margin_r_10" v-model="searchName" style="width: 200px" placeholder="请输入接收人邮箱搜索">
           </el-input>
           <el-button size="small" @click="search()">搜索</el-button>
-          <el-button size="small" @click="operate('add')" type="primary" icon="plus">新增推送</el-button>
+          <el-button size="small" @click="operate('add')" type="primary" icon="plus" v-show="getTreeArr['新建日报推送']">新增推送</el-button>
         </div>
 
     </div>
@@ -21,14 +21,14 @@
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="sendto" label="接收人邮箱" >
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="power_name" label="接收门店">
+        <el-table-column header-align="center" align="center" prop="stores_str" label="接收门店" :show-overflow-tooltip=true>
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="sendtime" label="接收时间" >
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="remark" label="操作" >
           <template slot-scope="scope">
-            <el-button type="text" @click="operate(scope.row.id)" >修改</el-button>
-            <el-button type="text" @click="del(scope.row.id)" >删除</el-button>
+            <el-button type="text" @click="operate(scope.row.id)" v-show="getTreeArr['修改日报推送']">修改</el-button>
+            <el-button type="text" @click="del(scope.row.id)" v-show="getTreeArr['删除日报推送']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,6 +115,10 @@
 
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
+            res.data.list.forEach((item)=>{
+              item.storesTemp = item.stores.map(item1=>item1.storename);
+              item.stores_str = item.storesTemp.join(',');
+            });
             this.tableData = res.data.list;
             this.p.total = res.data.count;
           }

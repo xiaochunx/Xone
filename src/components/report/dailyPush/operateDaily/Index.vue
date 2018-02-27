@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <xo-nav-path :navList="navList"></xo-nav-path>
     <el-card :style="{height:getBodyHeight -77 +'px'}" style="overflow-y: scroll" class="margin_t_10">
@@ -38,21 +37,17 @@
               </el-tree>
             </div>
             <el-transfer v-model="selectStore" :data="allStore"
-                         :props="{key: 'id',label: 'storename'}"
+                         :props="{key: 'base_store_id',label: 'storename'}"
                          :titles="['全部门店', '已选门店']">
             </el-transfer>
           </div>
         </el-form-item>
         <el-form-item label="接收时间" prop="sendtime" :rules="{type:'date',required: true, message: '请选择时间', trigger: 'change'}">
-
           <el-time-picker
             v-model="form.sendtime"
             placeholder="选择时间">
           </el-time-picker>
         </el-form-item>
-
-
-
       </el-form>
 
       <div class="flex">
@@ -115,31 +110,37 @@
       submitForm(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-
             if(this.selectStore.length === 0){
                   this.$message({
                     message: '已选门店框无门店，请选择门店！',
                     type: 'warning'
                   });
             }else {
+              let params;
               if(this.$route.params.data === 'add'){
-                let params = {
+                 params = {
                   redirect: "x2a.reportmail.create",
                   storeid:this.selectStore.join(','),
                   sendto: this.form.sendto,
                   sendtime: new Date(this.form.sendtime).Format('hh:mm:ss')
                 };
-                console.log(params)
-                oneTwoApi(params).then((res) => {
-                  if(res.errcode === 0){
-                    this.$message('操作成功');
-                    this.$router.go(-1)
-                  }
-                });
 
               }else {
-
+                 params = {
+                  redirect: "x2a.reportmail.update",
+                  id:this.$route.params.data,
+                  storeid:this.selectStore.join(','),
+                  sendto: this.form.sendto,
+                  sendtime: new Date(this.form.sendtime).Format('hh:mm:ss')
+                };
               }
+              oneTwoApi(params).then((res) => {
+                if(res.errcode === 0){
+                  this.$message('操作成功');
+                  this.$router.go(-1)
+                }
+              });
+
             }
 
           } else {
@@ -170,9 +171,7 @@
           }
         })
       },
-      operate(name){
 
-      },
 
     },
     created(){
@@ -181,7 +180,22 @@
         this.navList[2].name = "新增"
       } else {
         this.title = "修改";
-        this.navList[2].name = "修改"
+        this.navList[2].name = "修改";
+        let params = {
+          redirect: 'x2a.reportmail.view',
+          id: this.$route.params.data,
+
+        };
+        oneTwoApi(params).then((res) => {
+          if (res.errcode === 0) {
+            this.form.sendto = res.data[0].sendto;
+            let [hh,mm,ss] = res.data[0].sendtime.split(':');
+            this.form.sendtime = new Date(2018, 1, 1, hh, mm,ss);
+            this.allStore = res.data[0].stores;
+            let list = res.data[0].stores.map(item=>item.base_store_id);
+            this.selectStore = list;
+          }
+        })
       }
       getLeft('x2').then((res) => {
         if (res.data.errcode === 0) {

@@ -18,21 +18,19 @@
 
     </div>
     <el-table :data="storeData" border :height="tableHeight"  >
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type" width="100" label="业务类型">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type" label="业务类型">
       </el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="template_id" label="消息模板ID" >
       </el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="title" width="120" label="消息模板类型">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="title" label="消息模板类型">
       </el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态" width="100">
       </el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="260">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="140">
         <template slot-scope="scope">
-          <el-button  type="text" @click="show(scope.row.id)" >预览</el-button>
-          <el-button  type="text" @click="handleStatus(scope.row)" >{{scope.row.handleStatus}}</el-button>
-          <el-button  type="text" @click="handle('修改',scope.row)" >修改</el-button>
-          <el-button  type="text" @click="handleUrl(scope.row.id)" >设置跳转链接</el-button>
-          <!--<el-button size="small" @click="del(scope.row.id,scope.row.status)" >删除</el-button>-->
+
+          <el-button size="small" type="primary" @click="handle('修改',scope.row)" >修改</el-button>
+          <el-button size="small" @click="del(scope.row.id,scope.row.status)" >删除</el-button>
 
         </template>
       </el-table-column>
@@ -49,7 +47,7 @@
       @open="dialogOpen"
       @close="dialogClose"
       width="30%" >
-      <el-form ref="formRules" :model="form" label-width="120px">
+      <el-form ref="formRules" :model="form" label-width="180px">
         <el-form-item label="业务类型" prop="type" :rules="{type:'number',required: true, message: '请选择业务类型', trigger: 'change'}">
           <el-select v-model="form.type" placeholder="请选择" class="form_width">
             <el-option
@@ -76,122 +74,43 @@
           </el-select>
         </el-form-item>
 
-        <!--<el-form-item v-for="(item,index) in form.data" :key="item.value" :label="item.key"-->
-        <!--:prop="'data.' + index + '.value'"-->
-        <!--:rules="{required: true, message: '必填项', trigger: 'change'}">-->
-          <!--<div class="flex_r">-->
-            <!--<el-select v-model="item.value" placeholder="请选择">-->
-              <!--<el-option-->
-                <!--v-for="item1 in messageTemplateList"-->
-                <!--:key="item1.id"-->
-                <!--:label="item1.name"-->
-                <!--:value="item1.id">-->
-              <!--</el-option>-->
-            <!--</el-select>-->
+        <el-form-item v-for="(item,index) in form.data" :key="item.value" :label="item.key"
+                      :prop="'data.' + index + '.value'"
+                      :rules="{required: true, message: '必填项', trigger: 'change'}">
 
-            <!--<el-color-picker class="margin_l_10" v-model="item.color">-->
-            <!--</el-color-picker>-->
-          <!--</div>-->
-        <!--</el-form-item>-->
+          <div class="flex_r">
+            <el-select v-model="item.value" placeholder="请选择">
+              <el-option
+                v-for="item1 in messageTemplateList"
+                :key="item1.id"
+                :label="item1.name"
+                :value="item1.id">
+              </el-option>
+            </el-select>
 
-<div class="flex_r">
-  <div>
-    <el-form-item label="欢迎语">
-      <div class="flex_r">
-        <el-input v-model="form.template_id" class="form_width_1">
+            <el-color-picker class="margin_l_10" v-model="item.color">
+            </el-color-picker>
+          </div>
+          <!--<el-form-item label="" :prop="'data.' + index + '.custom'" :rules="{required: true, message: 'xx', trigger: 'blue'}">-->
+          <!--</el-form-item>-->
+          <el-input class="margin_t_10 " v-if="item.value==='custom'" v-model="item.custom"  style="width: 193px"></el-input>
 
-        </el-input>
-        <el-color-picker class="margin_l_10" v-model="form.color">
-        </el-color-picker>
-      </div>
-    </el-form-item>
-    <el-form-item label="门店">
-      <div class="flex_r">
-        <el-input v-model="form.template_id" disabled class="form_width_1">
+        </el-form-item>
 
-        </el-input>
-        <el-color-picker class="margin_l_10" v-model="form.color">
-        </el-color-picker>
-      </div>
-    </el-form-item>
-    <el-form-item label="订单编号">
-      <div class="flex_r">
-        <el-input v-model="form.template_id" disabled class="form_width_1">
+        <el-form-item label="状态:">
 
-        </el-input>
-        <el-color-picker class="margin_l_10" v-model="form.color">
-        </el-color-picker>
-      </div>
-    </el-form-item>
-    <el-form-item label="订单状态">
-      <div class="flex_r">
-        <el-input v-model="form.template_id" disabled class="form_width_1">
-
-        </el-input>
-        <el-color-picker class="margin_l_10" v-model="form.color">
-        </el-color-picker>
-      </div>
-    </el-form-item>
-    <el-form-item label="支付时间">
-      <div class="flex_r">
-        <el-input v-model="form.template_id" disabled class="form_width_1">
-
-        </el-input>
-        <el-color-picker class="margin_l_10" v-model="form.color">
-        </el-color-picker>
-      </div>
-    </el-form-item>
-    <el-form-item label="其它">
-      <div class="flex_r">
-        <el-input v-model="form.template_id" class="form_width_1">
-
-        </el-input>
-        <el-color-picker class="margin_l_10" v-model="form.color">
-        </el-color-picker>
-      </div>
-    </el-form-item>
-  </div>
-  <el-card class="margin_l_10 flex_1" style="width: 240px;height: 325px">
-    <div class="margin_b_10">内容预览:</div>
-
-
-        <div class="margin_b_10">
-          <span>欢迎语</span>
-        </div>
-
-
-      <div class="margin_b_10">
-        <span>门店:</span>
-        <span>款易测试店</span>
-      </div>
-
-      <div class="margin_b_10">
-        <span>订单编号:</span>
-        <span>ky0394858686</span>
-      </div>
-
-      <div class="margin_b_10">
-        <span>订单状态:</span>
-        <span>已支付</span>
-      </div>
-
-      <div class="margin_b_10">
-        <span>支付时间:</span>
-        <span>2018-01-01 14:04:35</span>
-      </div>
-
-        <div>XXX</div>
-
-
-
-  </el-card>
-</div>
-
-
-
-
+          <el-switch
+            v-model="form.status"
+            on-color="#13ce66"
+            off-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="跳转地址">
+          <el-input v-model="form.url" class="form_width"></el-input>
+        </el-form-item>
 
         <div class="margin_t_10">
+          <el-button type="primary" @click="show()">预览</el-button>
           <el-button type="primary" @click="submitFrom('formRules')">确认</el-button>
           <el-button @click="dialogVisible = false">取消</el-button>
         </div>
@@ -201,30 +120,13 @@
     <el-dialog
       title=""
       :visible.sync="dialogVisible2"
-      width="30%" size="tiny" @close="closePreview">
+      width="30%" size="tiny">
       <el-input
         type="textarea"
         :rows="8"
         placeholder="请输入内容"
         v-model="previewList">
       </el-input>
-    </el-dialog>
-
-    <el-dialog
-      title=""
-      :visible.sync="dialogVisible3"
-      width="30%" size="tiny" @close="closeUrl">
-
-      <el-form :model="form">
-        <el-form-item label="">
-          <el-input v-model="form.url" class="form_width">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div class="margin_t_10">
-        <el-button type="primary" @click="submitFrom3()">确认</el-button>
-        <el-button @click="dialogVisible3 = false">取消</el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -259,7 +161,6 @@
         },
         dialogVisible: false,
         dialogVisible2: false,
-        dialogVisible3:false,
         tableHeight: 0,
         navList: [{name: "基础设置", url: ''}, {name: "公众号管理", url: '/infrastructure/PublicManagement'}, {name: "模板消息配置", url: ''}],
         name: '',
@@ -268,92 +169,12 @@
         templateDataTemp:{},
         storeData: [],
         previewList:'',
-        messageTemplateList:[],
-        url:''
+        messageTemplateList:[]
+
       }
     },
     watch: {},
     methods: {
-      handleStatus(data){
-        if(data.status === "开启"){
-          this.$confirm(
-            '该模板消息正在使用中，如关闭则顾客在微信中会收不到相应的模板消息提醒哦～', '关闭', {
-              confirmButtonText: '关闭',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-            this.updateStatus(data.id,0)
-          }).catch(() => {
-            //
-          });
-        } else {
-          this.updateStatus(data.id,1)
-        }
-      },
-      updateStatus(id,Int){
-        let params = {
-          redirect: "x1.privateTemplate.getInfo",
-          id: id,
-        };
-        oneTwoApi(params).then((res) => {
-          if(res.errcode === 0){
-            let params1 = {
-              redirect: "x1.privateTemplate.update",
-              id:res.data.id,
-              wx_id: this.$route.params.id,
-              type:res.data.type,
-              status:Int,
-              title:res.data.title,
-              data:window.JSON.stringify(res.data.data),
-              template_id:res.data.template_id,
-              url:res.data.url,
-            };
-            oneTwoApi(params1).then((res) => {
-              if(res.errcode === 0){
-                this.$message('操作成功');
-                this.showResouce(this.$route.params.id)
-              }
-            })
-          }
-        })
-      },
-      submitFrom3(){
-        let params = {
-          redirect: "x1.privateTemplate.update",
-          id:this.form.id,
-          wx_id: this.$route.params.id,
-          type:this.form.type,
-          status:this.form.status,
-          title:this.form.title,
-          data:window.JSON.stringify(this.form.data),
-          template_id:this.form.template_id,
-          url:this.form.url,
-        };
-        oneTwoApi(params).then((res) => {
-          if(res.errcode === 0){
-            this.$message('操作成功');
-            this.dialogVisible3 = false;
-            this.showResouce(this.$route.params.id)
-          }
-        })
-      },
-      handleUrl(id){
-        this.dialogVisible3 = true;
-        //模板详情
-        let params = {
-          redirect: "x1.privateTemplate.getInfo",
-          id: id,
-        };
-        oneTwoApi(params).then((res) => {
-          if(res.errcode === 0){
-            this.form = res.data
-
-          }
-        })
-      },
-      closeUrl(){
-        this.url = ''
-      },
       submitFrom(formRules) {
         this.$refs[formRules].validate((valid) => {
           if (valid) {
@@ -412,34 +233,20 @@
           }
         }
       },
-      closePreview(){
-        this.previewList = ''
-      },
-      show(id){
-        this.dialogVisible2 = true;
-        //模板详情
-        let params = {
-          redirect: "x1.privateTemplate.getInfo",
-          id: id,
 
+      show(){
+        this.dialogVisible2 = true;
+        //预览模板
+        let params = {
+          redirect: "x1.privateTemplate.preview",
+          data:window.JSON.stringify(this.form.data)
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
-            //预览模板
-            let params1 = {
-              redirect: "x1.privateTemplate.preview",
-              data:window.JSON.stringify(res.data.data)
-            };
-            oneTwoApi(params1).then((res) => {
-              if(res.errcode === 0){
-                this.previewList = res.data.preview
-
-              }
-            })
+            this.previewList = res.data.preview
 
           }
         })
-
       },
 
       dialogOpen() {
@@ -515,7 +322,7 @@
               type: 'warning'
             }).then(() => {
 
-              this.delTemplate(id)
+            this.delTemplate(id)
 
           }).catch(() => {
             //
@@ -550,7 +357,7 @@
           oneTwoApi(params).then((res) => {
             if(res.errcode === 0){
               res.data.status = (res.data.status === 1)? res.data.status = true:res.data.status = false;
-               this.form = res.data;
+              this.form = res.data;
 
             }
           })
@@ -567,13 +374,7 @@
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
             this.storeData = res.data;
-            res.data.forEach((item)=>{
-              if(item.status === "开启"){
-                item.handleStatus = "关闭"
-              }else {
-                item.handleStatus = "开启"
-              }
-            })
+            // this.p.total = res.data.count
           }
         })
 
@@ -599,12 +400,9 @@
 </script>
 
 <style scoped lang="less">
-.form_width{
-  width: 260px;
-}
+  .form_width{
+    width: 260px;
+  }
 
-.form_width_1{
-  width: 195px;
-}
 
 </style>

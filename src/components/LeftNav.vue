@@ -44,11 +44,6 @@
                 name: '菜品销售排行',
                 route: '/report/salesRanking'
               },
-
-              {
-                name: '日报推送',
-                route: '/report/dailyPush'
-              },
             ]
           },
 
@@ -86,17 +81,6 @@
          //      },
          //    ]
          //  },
-          {
-            name: 'x2统计报表',
-            children: [
-
-              {
-                name: '订单统计',
-                route: '/report/orderCount'
-              },
-
-            ]
-          },
         ],
         leftData:[]
       }

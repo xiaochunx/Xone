@@ -6,7 +6,7 @@
 </style>
 
 <template>
-  <div class="scroll_of">
+  <div class="scroll_of" v-show="getTreeArr['订单统计']">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -86,7 +86,7 @@
 
     </el-table>
     <footer>
-      <!--<xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>-->
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
 
   </div>
@@ -125,7 +125,6 @@
     },
 
     methods: {
-      ...mapActions(['setTreeArr']),
       timeStart(d) {
         if (d === undefined) {
           this.start_stamp = ""
@@ -152,7 +151,7 @@
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
-            //window.location.href = res.data
+            window.location.href = res.data
           }
         });
       },
@@ -169,42 +168,35 @@
         //
         // }
 
+        this.showResouce(this.p = {page: 1, size: 20, total: 0})
 
-        // if(this.storeId === ''){
-        //     this.$message({
-        //       message: '请选择门店',
-        //       type: 'warning'
-        //     });
-        // } else {
-        //
-        // }
+      },
+      getPage(page) {
+        this.p.page = page;
+        this.showResouce(this.p)
+      },
+      getPageSize(size) {
+        this.p.size = size;
+        this.showResouce(this.p)
+      },
 
+      showResouce(p){
         let params = {
           redirect: "x2a.order.orderstat",
           storeId:this.storeId,
           begTime: this.start_stamp,
           endTime:this.end_stamp,
           source:this.radio,
-
+          page: p.page,
+          pageSize:p.size
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
             this.tableData = res.data.list;
-
+            this.p.total = res.data.count;
           }
         })
-
-      },
-      getPage(page) {
-        this.p.page = page;
-
-
-      },
-      getPageSize(size) {
-        this.p.size = size;
-
-
-      },
+      }
 
     },
     created() {
@@ -217,6 +209,7 @@
           this.storeData = res.data.list;
         }
       });
+      this.showResouce(this.p)
     },
     mounted() {
       Hub.$emit('mountedOk','mountedOk');
