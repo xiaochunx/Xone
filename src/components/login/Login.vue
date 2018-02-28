@@ -1,5 +1,5 @@
 <template>
-  <div class="banner">
+  <div class="banner flex">
 
     <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left"
              class="demo-ruleForm login-container demo-form-inline">
@@ -145,7 +145,6 @@
   .banner {
     width: 100%;
     height: 100%;
-    padding-top: 185px;
   }
 
   .login-container {

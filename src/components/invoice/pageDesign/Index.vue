@@ -60,15 +60,16 @@
               <el-form-item label="主题选择：">
 
                 <div class="margin_b_10" style="width: 178px;height: 30px"
-                     :style="{'background-color':form2.theme_color}"></div>
+                     :style="{'background-color':color}"></div>
 
-                <div class="flex_r">
+                <el-color-picker v-model="color"></el-color-picker>
+               <!-- <div class="flex_r">
                   <div v-for="(item,index) in colorList" @click="colorHandle(index)" class="pointer flex"
                        style="width: 30px;height: 30px" :style="{'background-color':item.color}">
                     <img src="../../../assets/selected.png" v-if="item.selected" alt="">
 
                   </div>
-                </div>
+                </div>-->
 
               </el-form-item>
 
@@ -88,12 +89,12 @@
                 <img src="../../../assets/pageDesign/info.png" alt="" class="img_2">
               </div>
               <div class="body" >
-                <div class="flex title">
+               <!-- <div class="flex title">
                   填写发条信息
-                </div>
+                </div>-->
 
                 <div class="content">
-                  <div class="content_top" :style="{'border-top':'2px solid' + form2.theme_color}">
+                  <div class="content_top" :style="{'border-top':'2px solid' + color}">
                     <div class="text_1">
                       发票金额
                     </div>
@@ -103,13 +104,13 @@
                     </div>
                   </div>
 
-                  <div :style="{'color':form2.theme_color}" class="flex_a middle">
+                  <div :style="{'color':color}" class="flex_a middle">
                     <i class="fa fa-star" aria-hidden="true"></i> 号发必填
                   </div>
 
                   <div class="context">
                     <div class="flex_r context_top">
-                      <div class="flex_1 flex left" :style="{'border': '1px solid' + form2.theme_color}">
+                      <div class="flex_1 flex left" :style="{'border': '1px solid' + color}">
                         个人
                       </div>
                       <div class="flex_1 flex right">
@@ -117,19 +118,19 @@
                       </div>
                     </div>
                     <div class="flex_a context_top" >
-                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="m_l" :style="{'color':color}"><i class="fa fa-star" aria-hidden="true"></i></span>
                       <span class="color m_l">请输入发票抬头</span>
                     </div>
                     <div class="flex_a context_top" >
-                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="m_l" :style="{'color':color}"><i class="fa fa-star" aria-hidden="true"></i></span>
                       <span class="color m_l">请输入邮箱</span>
                     </div>
                     <div class="flex_a context_top" >
-                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="m_l" :style="{'color':color}"><i class="fa fa-star" aria-hidden="true"></i></span>
                       <span class="color m_l">请输入纳税人识别号</span>
                     </div>
                     <div class="flex_a context_top" >
-                      <span class="m_l" :style="{'color':form2.theme_color}"><i class="fa fa-star" aria-hidden="true"></i></span>
+                      <span class="m_l" :style="{'color':color}"><i class="fa fa-star" aria-hidden="true"></i></span>
                       <span class="color m_l">请输入地址</span>
                     </div>
                   </div>
@@ -238,6 +239,7 @@
       return {
         activeName2: 'second',
         selectEdit:1,
+        color: '#3F9CCF',       // 默认颜色
         colorList: [
           {id: 0, color: '#3F9CCF', selected: false},
           {id: 1, color: '#3B6894', selected: false},
@@ -328,12 +330,15 @@
             redirect: "x1.invoice.updateDecorate",
             id: this.$route.params.id,
             log_img: this.form2.log_img,
-            theme_color: this.form2.theme_color,
+            // theme_color: this.form2.theme_color,
+            theme_color: this.color,
             title: this.form3.title,
             content: this.form3.content,
             date: this.form3.date,
             prompt_type: 1
           };
+
+          console.log(params);
           oneTwoApi(params).then((res) => {
             if (res.errcode === 0) {
               this.$alert('提交成功', '', {
@@ -349,7 +354,7 @@
             redirect: "x1.invoice.updateDecorate",
             id: this.$route.params.id,
             log_img: this.form2.log_img,
-            theme_color: this.form2.theme_color,
+            theme_color: this.color,
             prompt_content: this.form3.prompt_content,
             prompt_type: 2
           };
@@ -363,14 +368,14 @@
               });
             }
           })
-
         }
-
       },
       reset() {
         this.colorList.forEach((item) => {
           item.selected = false
         });
+
+        this.color = '#3F9CCF';
         this.form2 = {
           log_img: '',
           theme_color: ''
@@ -398,10 +403,16 @@
             }
           });
           if(res.data.prompt_type === 1){
-            this.selectEdit = 1
+            this.selectEdit = 1;
+            this.color = '#3F9CCF';
           }else {
-            this.selectEdit = 2
+            this.selectEdit = 2;
+            this.color = '#3B6894';
           }
+
+          if (res.data.theme_color == '' || res.data.theme_color == undefined){}else {this.color = res.data.theme_color;}
+
+
           this.form2.log_img = res.data.log_img;
           this.form2.theme_color = res.data.theme_color;
           this.form3.title = res.data.title;
