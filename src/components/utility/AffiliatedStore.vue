@@ -44,7 +44,6 @@
             key: 'id',
             label: 'storename'
           }"
-        @change="handleChangeTran"
         :render-content="renderFunc"
         :titles="['全部门店', '已选门店']"
         :data="storeDataOld">
@@ -120,9 +119,6 @@
         })
 
       },
-      handleChangeTran(value){
-        console.log(value);
-      },
       nodeClick(item) {
         this.getBsList(item.id);
       },
@@ -152,12 +148,8 @@
       },
       open2(){
         getApi.getUserStore(this.uid).then((res)=>{
-          console.log(res)
           if(res.data.errcode === 0){
-            let list = [];
-            res.data.data.list.forEach((item)=>{
-              list.push(item.id)
-            });
+            let list = res.data.data.list.map(item=>item.id);
             this.storeDataOld = res.data.data.list;
             this.storeDataSelected = res.data.data.list;
             this.storeDataNew = list

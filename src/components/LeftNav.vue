@@ -29,23 +29,19 @@
       return {
         leftList: [
 
-         {
-            name: '统计报表',
-            children: [
-              // {
-              //   name: '结算记录',
-              //   route: '/report/settlementRecord'
-              // },
-              // {
-              //   name: '差异账单查询',
-              //   route: '/report/billQuery'
-              // }
-              {
-                name: '菜品销售排行',
-                route: '/report/salesRanking'
-              },
-            ]
-          },
+         // {
+         //    name: '统计报表',
+         //    children: [
+         //      // {
+         //      //   name: '结算记录',
+         //      //   route: '/report/settlementRecord'
+         //      // },
+         //      // {
+         //      //   name: '差异账单查询',
+         //      //   route: '/report/billQuery'
+         //      // }
+         //    ]
+         //  },
 
          //
          //  {

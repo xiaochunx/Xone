@@ -393,14 +393,13 @@
         selectedAll:false,
         showName:'',
         show:true,
-        multipleSelection:[],
+
       }
     },
     watch: {},
     methods: {
       open(){
-        // this.multipleSelection = []
-        // console.log(this.multipleSelection)
+
       },
       handleCheckAll1(bool){
         if (bool.target.checked === true) {
@@ -549,21 +548,10 @@
       },
 
       handleChecked(data) {
-        let count = 0;
-        this.storeData1.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
         let list =  this.storeData1.filter((item)=>{
           return item.select === true
         });
-        let list1 = [];
-        list.forEach((item)=>{
-          list1.push(item.id)
-        });
-        this.multipleSelection = list1;
-        if (count === this.storeData1.length) {
+        if (list.length === this.storeData1.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
           })
@@ -572,11 +560,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.storeData1.length){
           this.storeData1.forEach((map) => {
             this.$set(map, 'select', true)

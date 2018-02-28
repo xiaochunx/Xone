@@ -24,34 +24,28 @@
                        width="100">
       </el-table-column>
 
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name"
-                       label="名称"></el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type"
-                       label="发票类型"></el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service"
-                       label="发票服务商"></el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status"
-                       label="状态"></el-table-column>
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="name" label="名称">
+      </el-table-column>
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="type" label="发票类型">
+      </el-table-column>
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service" label="发票服务商">
+      </el-table-column>
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
+      </el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="在用门店">
         <template slot-scope="scope">
-
           <el-button size="small" @click="show(scope.row)" v-show="getTreeArr['查看门店']">查看门店</el-button>
-
         </template>
       </el-table-column>
-
-
       <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="280">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="edit('修改',scope.row)" v-show="getTreeArr['修改']">修改</el-button>
           <el-button size="small" @click="edit('查看',scope.row)" v-show="getTreeArr['详情']">查看</el-button>
           <el-button size="small" @click="down(scope.row)" v-show="getTreeArr['下发']">下发</el-button>
           <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
-
         </template>
       </el-table-column>
     </el-table>
-
 
     <footer>
       <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
@@ -248,8 +242,7 @@
       </el-radio-group>
 
       <div class="flex_a margin_t_10" v-if="storeRadio === 1">
-        <el-input size="small" placeholder="门店标签名称" class="margin_r_10" style="width: 200px"
-                  v-model="inputArea0"></el-input>
+        <el-input size="small" placeholder="门店标签名称" class="margin_r_10" style="width: 200px" v-model="inputArea0"></el-input>
         <el-button size="small" @click="searchStore()">搜索</el-button>
       </div>
 
@@ -324,12 +317,9 @@
           <el-button type="primary" @click="submitFrom1()">确定</el-button>
           <el-button @click="dialogFormVisible2 = false">取消</el-button>
         </div>
-
       </div>
 
-
     </el-dialog>
-
   </div>
 </template>
 
@@ -428,8 +418,6 @@
         roleType: [],
         storeData: [],
         p: {page: 1, size: 20, total: 0},
-        multipleSelection0: [],
-        multipleSelection: [],
         searchName: '',
         providerId: '',
         providerList: [],
@@ -509,14 +497,10 @@
         this.getStoreData()
       },
       handleChecked0(data) {
-        let list1 = [];
         let list = this.storeData0.filter((item) => {
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection0 = list1;
+
         if (list.length === this.storeData0.length) {
           list.forEach((item) => {
             this.$refs.multipleTable0.toggleRowSelection(item)
@@ -526,11 +510,6 @@
         }
       },
       handleSelectionChange0(val) {
-        let list = [];
-        val.forEach((item) => {
-          list.push(item.id)
-        });
-        this.multipleSelection0 = list;
         if (val.length === this.storeData0.length) {
           this.storeData0.forEach((map) => {
             this.$set(map, 'select', true)
@@ -542,14 +521,9 @@
         }
       },
       handleChecked(data) {
-        let list1 = [];
         let list = this.storeData1.filter((item) => {
-          if(item.select === true){
-            list1.push(item.id)
-          }
           return item.select === true
         });
-        this.multipleSelection = list1;
         if (list.length === this.storeData1.length) {
           list.forEach((item) => {
             this.$refs.multipleTable.toggleRowSelection(item)
@@ -559,11 +533,6 @@
         }
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item) => {
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if (val.length === this.storeData1.length) {
           this.storeData1.forEach((map) => {
             this.$set(map, 'select', true)
@@ -588,8 +557,6 @@
               this.$set(map, 'select', false)
             });
             this.storeData0 = res.data.list;
-            this.multipleSelection0 = []
-
           }
         })
       },
@@ -606,14 +573,18 @@
               this.$set(map, 'select', false)
             });
             this.storeData1 = res.data;
-            this.multipleSelection = []
-
           }
         })
 
       },
       submitFrom0() {
-        if (this.multipleSelection0.length === 0) {
+        let list = [];
+        this.storeData0.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        if (list.length === 0) {
           this.$message({
             type: 'warning',
             message: '请选择门店标签'
@@ -621,22 +592,11 @@
           return
         }
 
-        let str = "";
-        this.storeData0.forEach((item)=>{
-          this.multipleSelection0.forEach((item1)=>{
-            if(item.id === item1){
-              str += item.stores + ","
-            }
-          })
-        });
-
-       let store_id =  str.substr(0,str.lastIndexOf(","));
-
         // 下发方案
         let params = {
           redirect: "x1.invoice.issuedInvoice",
           id: this.id,
-          store_id: store_id,
+          store_id: list.join(','),
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
@@ -646,19 +606,24 @@
 
       },
       submitFrom1() {
-        if (this.multipleSelection.length === 0) {
+        let list = [];
+        this.storeData1.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        if (list.length === 0) {
           this.$message({
             type: 'warning',
             message: '请选择门店'
           });
           return
         }
-
         // 下发方案
         let params = {
           redirect: "x1.invoice.issuedInvoice",
           id: this.id,
-          store_id: this.multipleSelection.join(','),
+          store_id: list.join(','),
         };
         oneTwoApi(params).then((res) => {
           if(res.errcode === 0){
@@ -690,8 +655,6 @@
                 this.$set(map, 'select', false)
               });
               this.storeData0 = res.data.list;
-              this.multipleSelection0 = []
-
             }
           })
         }else {
@@ -707,8 +670,6 @@
                 this.$set(map, 'select', false)
               });
               this.storeData1 = res.data;
-              this.multipleSelection = []
-
             }
           })
         }
@@ -742,8 +703,6 @@
         this.inputArea = '';
         this.storeData0 = [];
         this.storeData1 = [];
-        this.multipleSelection0 = [];
-        this.multipleSelection = []
       },
       close1(){
         this.showIncrement = {check:false};

@@ -373,8 +373,6 @@
         selectedOptions:[],
         uid:'',
         username:'',
-        multipleSelection:[],
-
       }
     },
     watch: {},
@@ -399,21 +397,10 @@
 
 
       handleChecked(data) {
-        let count = 0;
-        this.userList.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
-        });
         let list =  this.userList.filter((item)=>{
           return item.select === true
         });
-        let list1 = [];
-        list.forEach((item)=>{
-          list1.push(item.id)
-        });
-        this.multipleSelection = list1;
-        if (count === this.userList.length) {
+        if (list.length === this.userList.length) {
           list.forEach((item)=>{
             this.$refs.multipleTable.toggleRowSelection(item)
           })
@@ -423,11 +410,6 @@
 
       },
       handleSelectionChange(val) {
-        let list = [];
-        val.forEach((item)=>{
-          list.push(item.id)
-        });
-        this.multipleSelection = list;
         if(val.length === this.userList.length){
           this.userList.forEach((map) => {
             this.$set(map, 'select', true)
@@ -457,14 +439,18 @@
       },
       //批量状态设置
       changeStoresStatus() {
-        let type;
+        let type,list = [];
         if (this.storeStatusValue) {
           type = "on"
         } else {
           type = "off"
         }
-
-        getApi.settingBatch(this.multipleSelection.join(','),type).then((res) => {
+        this.userList.forEach((item) => {
+          if (item.select) {
+            list.push(item.id)
+          }
+        });
+        getApi.settingBatch(list.join(','),type).then((res) => {
           if (res.data.errcode === 0) {
             this.$message('操作成功');
             this.getUserFromGroup();
@@ -654,7 +640,6 @@
             item.select = false
           }
           this.userList = res.data.data.list;
-          this.multipleSelection = []
         })
       },
 

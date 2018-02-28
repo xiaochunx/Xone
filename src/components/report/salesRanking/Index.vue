@@ -1,5 +1,5 @@
 <template>
-  <div class="scroll_of" >
+  <div class="scroll_of" v-show="getTreeArr['菜品销售排行']">
     <div class="bodyTop">
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
@@ -78,7 +78,7 @@
             <el-table-column header-align="center" align="center" prop="date" label="日期" width="160"></el-table-column>
             <el-table-column header-align="center" align="center" prop="category" label="品类" ></el-table-column>
             <el-table-column header-align="center" align="center" prop="name" label="菜品" ></el-table-column>
-            <el-table-column header-align="center" align="center" prop="total_num" label="规格属性" ></el-table-column>
+            <el-table-column header-align="center" align="center" prop="sku" label="规格属性" ></el-table-column>
             <el-table-column header-align="center" align="center" prop="totalNum" label="销售数量" ></el-table-column>
             <el-table-column header-align="center" align="center" prop="numPct" label="销量占比" ></el-table-column>
             <el-table-column header-align="center" align="center" prop="totalPrice" label="销售金额" ></el-table-column>
@@ -139,7 +139,7 @@
       ...mapGetters(['getSalesRankingTree','getSalesRankingLevelId']),
 
       handleStoreId(){
-        //this.orderList(this.start_stamp,this.end_stamp,this.p)
+
       },
       timeStart(d) {
         if (d === undefined) {
@@ -147,7 +147,7 @@
         } else {
           this.start_stamp = new Date(this.time_start) /1000;
         }
-        this.orderList(this.start_stamp,this.end_stamp,this.p)
+
       },
       timeEnd(d) {
         if (d === undefined) {
@@ -155,21 +155,9 @@
         } else {
           this.end_stamp = new Date(this.time_end) /1000;
         }
-        this.orderList(this.start_stamp,this.end_stamp,this.p)
-      },
-      out(){
-        let params = {
-          //redirect: "x1.order.orderCount",
-
-        };
-        oneTwoApi(params).then((res) => {
-          if(res.errcode === 0){
-            window.location.href = res.data
-          }
-        })
-
 
       },
+
       search() {
         this.showResouce(this.p= {page: 1, size: 20, total: 0},this.getSalesRankingLevelId());
 
@@ -177,12 +165,11 @@
 
       getPage(page) {
         this.p.page = page;
-
+        this.showResouce(this.p,this.getSalesRankingLevelId());
       },
       getPageSize(size) {
         this.p.size = size;
-
-
+        this.showResouce(this.p,this.getSalesRankingLevelId());
       },
       recur(data,bool) {
         data.forEach((map) => {
@@ -264,7 +251,12 @@
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
-
+        this.storeId = '';
+        this.radio = '';
+        this.time_start = '';
+        this.start_stamp = '';
+        this.time_end = '';
+        this.end_stamp = '';
         this.showResouce(this.p={page: 1, size: 20, total: 0},e.levelid);
         this.getStoreData(e.levelid);
         this.setSalesRankingLevelId({levelId: e.levelid});

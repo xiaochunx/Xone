@@ -213,8 +213,10 @@
     },
     mounted() {
       Hub.$emit('mountedOk','mountedOk');
-      getScrollHeight(this.getBodyHeight).then((h) => {
-        this.tableHeight = h;
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
       })
     },
     destroyed() {
