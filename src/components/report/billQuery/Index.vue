@@ -13,37 +13,37 @@
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-      <xo-datePicker @getRadioDate="getRadioDate" @getStartTime="getStartTime" @getEndTime="getEndTime"></xo-datePicker>
+      <xo-datePicker @getRadioDate="getRadioDate"></xo-datePicker>
 
         <div class="flex_es padding_t_10">
           <div  class="flex_a">
             <div class="margin_r_10">
               <div>门店</div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="store_id" clearable filterable placeholder="请选择" size="small">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in storeData"
+                  :key="item.id"
+                  :label="item.storeName"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
             <div class=" margin_r_10">
               <div>支付方式</div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="iway" clearable filterable placeholder="请选择支付方式" size="small">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                  v-for="item in getWayInfo"
+                  :key="item.id"
+                  :label="item.memo"
+                  :value="item.id">
                 </el-option>
               </el-select>
             </div>
           </div>
 
           <div class="flex_ec">
-            <el-button>查询</el-button>
-            <el-button type="primary">导出</el-button>
+            <el-button size="small" @click="search()">查询</el-button>
+            <el-button type="primary" size="small" @click="out()">导出</el-button>
           </div>
         </div>
 
@@ -66,9 +66,8 @@
 
       </el-table>
 
-    <!--<xo-footer :pageData=pageState @childEvent="getPage" @childEventPageSize="getPageSize"></xo-footer>-->
     <footer>
-      <xo-pagination></xo-pagination>
+      <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
 
   </div>
@@ -76,62 +75,80 @@
 
 <script>
   import {getScrollHeight} from '../../utility/getScrollHeight'
+  import Hub from '../../utility/commun'
+  import { mapActions,mapGetters } from 'vuex';
+  import {getStoreListAll} from '../../utility/communApi'
+  import getApi1 from '../transactionList/transactionList.service';
   export default {
     components:{
 
+    },
+    computed: {
+      ...mapGetters([
+        'getTreeArr','getBodyHeight'
+      ]),
     },
     data() {
       return {
         width:0,
         tableHeight:0,
         navList:[{name:"统计报表",url:''},{name:"差异账单查询",url:''}],
+        store_id:'',
+        iway:'',
+        storeData:[],
+        getWayInfo:[],
+        p: {page: 1, size: 20, total: 0},
+        tableData: [],
+        dateSelected: [],
+      }
+    },
 
-        input1:'',
-        input2:'',
-        options: [{
-          value: '选项1',
-          label: '11'
-        }, {
-          value: '选项2',
-          label: '22'
-        }],
-        value: '',
-        tableData: [{
-          no: '1',
-          settlementLot: '2',
-          account: '3'
-        },{
-          no: '1',
-          settlementLot: '2',
-          account: '3'
-        }]
-      }
-    },
-    computed:{
-      pageState(){
-        return {page:1}
-      }
-    },
     methods: {
-      getPage(){},
-      getPageSize(){},
-      getRadioDate(d){
-        console.log(d)
+      search(){
+
       },
-      getStartTime(d){
-        console.log(d)
+      out(){
+
       },
-      getEndTime(d){
-        console.log(d)
+      getPage(page) {
+        this.p.page = page;
+
+        //this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
+
       },
+      getPageSize(size) {
+        this.p.size = size;
+
+       // this.orderList(this.dateSelected[0] ,this.dateSelected[1],store,this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
+
+      },
+      getRadioDate(d) {
+        this.dateSelected = d
+      },
+
     },
     created(){
+      getApi1.getWayInfo().then((res) => {
+        this.getWayInfo = res.data.data
+      });
+      getStoreListAll().then((res)=>{
 
+
+        //this.orderList(this.dateSelected[0] ,this.dateSelected[1],this.store_id_list.join(','),this.iway,this.ichannel,this.account,this.pay_status,this.order_no,this.out_order_no,this.scavengingForm,this.receive_terminal,this.p)
+
+        this.storeData = res.data.data
+      });
+    },
+    mounted() {
+      Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(()=>{
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
+      })
     },
     updated(){
-      getScrollHeight().then((h)=>{
-        this.tableHeight = h;
-      })
+
     },
 
   }

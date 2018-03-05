@@ -46,7 +46,7 @@
 
           <div class=" margin_r_10 margin_t_10">
             <span>选择来源</span>
-            <el-select v-model="source" clearable filterable placeholder="请选择订单状态" size="small" @change="handleChange(2)">
+            <el-select v-model="source" clearable filterable placeholder="请选择来源" size="small" @change="handleChange(2)">
               <el-option
                 v-for="item in soucesList"
                 :key="item.id"
@@ -130,10 +130,7 @@
         storeId: '',
         latArr: [],
 
-        statusList: [{id: 1, name: '待受理'}, {id: 2, name: '已受理-烹饪中'}, {id: 3, name: '已受理-正在配送'}, {
-          id: 4,
-          name: '已拒单'
-        }, {id: 5, name: '已经完成'}, {id: 6, name: '已退单'}, {id: 7, name: '删除'}],
+        statusList: [{id:1,name:'未接单'},{id:2,name:'已接单'},{id:3,name:'配送中'},{id:4,name:'订单取消'},{id:5,name:'已完成'},{id:6,name:'已退款'},{id:8,name:'完成前退款中'},{id:10,name:'完成后退款中'}],
         soucesList: [{id: 'el', name: '饿了么'}, {id: 'mt', name: '美团外卖'}, {id: 'bd', name: '百度外卖'}],
         storeList: [],
       }

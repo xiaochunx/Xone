@@ -92,11 +92,41 @@ export default{
   getDishesLibraryLevelId(state){
     return state.dishesLibraryLevelId;
   },
-
   getSalesRankingTree(state){
     return state.salesRankingTree;
   },
   getSalesRankingLevelId(state){
     return state.salesRankingLevelId;
+  },
+  getSettlementRecordTree(state){
+    return state.settlementRecordTree;
+  },
+  getSettlementRecordLevelId(state){
+    return state.settlementRecordLevelId;
+  },
+  getDishesSpecTree(state){
+    return state.dishesSpecTree;
+  },
+  getDishesSpecLevelId(state){
+    return state.dishesSpecLevelId;
+  },
+  getBoxSettingTree(state){
+    return state.boxSettingTree;
+  },
+  getBoxSettingLevelId(state){
+    return state.boxSettingLevelId;
+  },
+  getDishesCategoryTree(state){
+    return state.dishesCategoryTree;
+  },
+  getDishesCategoryLevelId(state){
+    return state.dishesCategoryLevelId;
+  },
+
+  getStoreDishesManageTree(state){
+    return state.storeDishesManageTree;
+  },
+  getStoreDishesManageLevelId(state){
+    return state.storeDishesManageLevelId;
   },
 }

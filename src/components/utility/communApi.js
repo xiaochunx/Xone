@@ -101,4 +101,22 @@ let getArr = (arr) => {
 };
 
 
-export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios}
+
+let recur = (data,bool,id,that) => {
+  data.forEach((map) => {
+    if(map.id === id){
+      that.name = map.levelname;
+      that.$set(map, "selected", true);
+    }else {
+      that.$set(map, "selected", false);
+    }
+    if (map.child) {
+      if(bool){
+        that.$set(map, "show", false);
+      }
+      recur(map.child,bool,id,that)
+    }
+  })
+};
+
+export {getLeft,getLevel,getArea,get,getWayInfo,getChannelInfo,getList,getArr,getStoreListAll,axios,recur}

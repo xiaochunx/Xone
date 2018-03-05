@@ -559,7 +559,7 @@
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '');
+        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.storeName = '');
         this.setX1StoreLevelId({levelId:e.levelid});
         this.recur(this.getX1storeTree(),false);
       });

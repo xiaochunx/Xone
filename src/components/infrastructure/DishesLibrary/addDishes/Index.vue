@@ -6,22 +6,20 @@
     </div>
 
     <div class="margin_t_10 width_100">
-      <el-table :data="dishesData" border :height="tableHeight" style="width: 100%;">
+      <el-form ref="formRules" :model="form">
+      <el-table :data="form.dishesData" border :height="tableHeight" style="width: 100%;">
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="菜品名称" width="200">
           <template slot-scope="scope">
-            <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.product_name"
-                      @change="myChange(scope.row,'product_name','nameClass')" placeholder="请输入内容"></el-input>
+            <el-form-item label="" :prop="'dishesData.' + scope.$index + '.product_name'" :rules="{required: true, validator: checkName, trigger: 'blur'}">
+            <el-input v-model="scope.row.product_name" placeholder="请输入菜品名称">
+            </el-input>
+            </el-form-item>
           </template>
         </el-table-column>
-        <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">-->
-        <!--<template scope="scope">-->
-        <!--<el-input :class="{isInput:scope.row.codeClass === true}" v-model="scope.row.storecodeid"-->
-        <!--@change="myChange(scope.row,'storecodeid','codeClass')" placeholder="请输入内容"></el-input>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
+
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
           <template slot-scope="scope">
-            <div v-for="(domain, index) in scope.row.productcodes" class="flex_r padding_10">
+            <div v-for="(domain, index) in scope.row.productcodes" class="flex_r p_b_22">
               <div style="width:150px">
                 <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
               </div>
@@ -44,29 +42,31 @@
           </template>
         </el-table-column>
 
-        <el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">
-          <template slot-scope="scope">
-            <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.levelid"
-                       @change="myChange(scope.row,'levelid','brandClass')" placeholder="请选择">
-              <el-option
-                v-for="item in brandList"
-                :key="item.id"
-                :label="item.levelname"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
+        <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">-->
+          <!--<template slot-scope="scope">-->
+            <!--<el-select v-model="scope.row.levelid"-->
+                       <!--placeholder="请选择">-->
+              <!--<el-option-->
+                <!--v-for="item in brandList"-->
+                <!--:key="item.id"-->
+                <!--:label="item.levelname"-->
+                <!--:value="item.id">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
 
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="参考价格" width="200">
           <template slot-scope="scope">
-            <el-input :class="{isInput:scope.row.priceClass === true}" v-model="scope.row.price"
-                      @change="myChange(scope.row,'price','priceClass')" placeholder="请输入内容"></el-input>
+              <el-form-item label="" :prop="'dishesData.' + scope.$index + '.price'" :rules="{required: true, validator: checkNumber, trigger: 'blur'}">
+                <el-input v-model="scope.row.price" placeholder="请输入参考价格" >
+                </el-input>
+              </el-form-item>
           </template>
         </el-table-column>
 
-        <el-table-column label-class-name="table_head" header-align="center" align="center" label="图片" width="600">
+        <el-table-column label-class-name="table_head" header-align="center" align="center" :render-header="header" width="600">
           <template slot-scope="scope">
             <div class="flex_r">
               <el-upload
@@ -113,9 +113,9 @@
 
 
       </el-table>
-
+      </el-form>
       <div class="flex margin_t_10">
-        <el-button type="primary" @click="submitFrom()">保存</el-button>
+        <el-button type="primary" @click="submitFrom('formRules')">保存</el-button>
         <el-button @click="$router.go(-1)">取消</el-button>
       </div>
     </div>
@@ -137,76 +137,56 @@
         tableHeight: 0,
         navList: [{name: "菜品库", url: '/infrastructure/DishesLibrary'}, {name: "新增菜品", url: ''}],
         brandList: [],
-        dishesData: [],
+        form:{dishesData: []},
         va: "",
         index: ''
       }
     },
     watch: {},
     methods: {
-      myChange(map, name, className, str) {
-        (map[name] !== "") ? map[className] = false : map[className] = true
-      },
-      checkSubmit() {
-        for (let map of this.dishesData) {
-          if (map.product_name === "") {
-            map.nameClass = true
+      checkName(rule, value, callback){
+        if (value === '') {
+          callback(new Error('请输入菜品名称'));
+        }else {
+          if(value.trim()){
+            callback()
+          }else {
+            callback(new Error('菜品名称格式错误'));
           }
-          if (map.levelid === "") {
-            map.brandClass = true
-          }
-
-          if (map.price === "") {
-            map.priceClass = true
-          }
-
         }
       },
-      submitFrom() {
-        this.checkSubmit();
-        outer:
-          for (let map of this.dishesData) {
-            if (map.product_name === "" || map.price === "" || map.levelid === "") {
-              this.va = "";
-              break
-            }
-
-//            for (let map1 of map.productcodes) {
-//              if (map1.name === "" || map1.providerid === "") {
-//                this.va = "";
-//                break outer
-//              }
-//              this.va = "ok"
-//            }
-            this.va = "ok"
+      checkNumber(rule, value, callback){
+        let re = /^0{1}([.]([1-9][0-9]?)|[.][0-9][1-9])$|^[1-9]\d*([.]{1}[0-9]{1,2})?$/;
+        if (value === '') {
+          callback(new Error('请输入价格'));
+        }else {
+          if(re.test(value)){
+            callback()
+          }else {
+            callback(new Error('价格格式错误'));
           }
-        console.log(this.va)
-
-
-        if (this.va === "ok") {
-
-          this.dishesData.forEach((item) => {
-            delete item.nameClass;
-            delete item.brandClass;
-            delete item.priceClass;
-          });
-          getApi.addDishes(this.$route.params.levelid, this.dishesData).then((res) => {
-            if (res.data.errcode === 0) {
-              this.$alert('添加成功', '', {
-                confirmButtonText: '确定',
-                callback: action => {
-                  this.$router.go(-1)
-                }
-              })
-            }
-
-          })
-        } else {
-          this.$message({
-            type: 'warning',
-            message: '请填写所需选项'
-          });
         }
+      },
+
+      submitFrom(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            getApi.addDishes(this.$route.params.levelid, this.form.dishesData).then((res) => {
+              if (res.data.errcode === 0) {
+                this.$alert('添加成功', '', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    this.$router.go(-1)
+                  }
+                })
+              }
+
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
 
       },
 
@@ -228,10 +208,10 @@
           img = true
         } else {
           img = false;
-          this.$message.error('上传头像图片只能是 JPG,PNG 格式!');
+          this.$message.error('上传菜品图片只能是 JPG,PNG 格式!');
         }
         if (!isLt5M) {
-          this.$message.error('上传头像图片大小不能超过 5MB!');
+          this.$message.error('上传菜品图片大小不能超过5M！');
         }
         return img && isLt5M;
       },
@@ -244,16 +224,34 @@
       handleAvatarSuccess3(res, file,list,item) {
         item.imgurl_3 = file.response.data.file_url;
       },
+      header(h) {
+        return h(
+          'span',
+          {attrs:{style:'font-size: 15px;'}},
+          ['图片',
+            h('el-tooltip', {
+                attrs: {content: "上传菜品图片只支持JPG和PNG格式，大小为5M以内的图片", placement: "top"},
+              }, [
+                h('span', {
+                    attrs: {type: "text"},
+                  }, [ h(
+                  'i', {
+                    attrs: {class: "fa fa-question-circle-o"}
+                  }
+                  )]
+                )
+              ]
+            )
+          ]
+        );
+      },
     },
     created() {
       for (let i = 0; i < this.$route.params.number; i++) {
-        this.dishesData.push({
+        this.form.dishesData.push({
           product_name: "",
-          nameClass: false,
-          levelid: '',//品牌
-          brandClass: false,
+          levelid: this.$route.params.levelid,//品牌
           price: "",
-          priceClass: false,
           imgurl_1:'',
           imgurl_2:'',
           imgurl_3:'',
@@ -263,9 +261,9 @@
           ],
         })
       }
-      getApi.getBrand(this.$route.params.levelid).then((res) => {
-        this.brandList = res.data.data
-      })
+      // getApi.getBrand(this.$route.params.levelid).then((res) => {
+      //   this.brandList = res.data.data
+      // })
     },
     mounted() {
 
@@ -277,5 +275,7 @@
 </script>
 
 <style scoped lang="less">
-
+ .p_b_22{
+   padding-bottom: 22px;
+ }
 </style>

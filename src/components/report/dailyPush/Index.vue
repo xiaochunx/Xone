@@ -21,7 +21,13 @@
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="sendto" label="接收人邮箱" >
         </el-table-column>
-        <el-table-column header-align="center" align="center" prop="stores_str" label="接收门店" :show-overflow-tooltip=true>
+        <el-table-column header-align="center" align="center" prop="stores_str" label="接收门店">
+          <template slot-scope="scope">
+            <div v-for="(item,index) in scope.row.stores">
+              <span v-if="index < 3">{{item.storename}}</span>
+            </div>
+            <el-button type="text" size="small" v-if="scope.row.stores.length > 3" @click="more(scope.row.stores)">查看更多</el-button>
+          </template>
         </el-table-column>
         <el-table-column header-align="center" align="center" prop="sendtime" label="接收时间" >
         </el-table-column>
@@ -36,6 +42,17 @@
     <footer>
       <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
     </footer>
+
+    <el-dialog title="" :visible.sync="dialogFormVisible" size="tiny" @close="close">
+      <el-table :data="stores" border >
+        <el-table-column header-align="center" align="center" prop="storename" label="门店" >
+        </el-table-column>
+      </el-table>
+
+
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -56,15 +73,24 @@
       return {
         width:0,
         tableHeight:0,
+        dialogFormVisible:false,
         navList:[{name:"基础设置",url:''},{name:"日报推送",url:''}],
         tableData: [],
         p: {page: 1, size: 20, total: 0},
         searchName:'',
+        stores:[]
       }
     },
 
     methods: {
       ...mapActions(['setTreeArr']),
+      close(){
+        this.stores = []
+      },
+      more(stores){
+        this.dialogFormVisible =true;
+        this.stores = stores
+      },
       operate(name){
         this.$router.push({path: `/report/dailyPush/operateDaily/${name}`})
       },

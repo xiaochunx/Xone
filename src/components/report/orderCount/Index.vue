@@ -74,16 +74,21 @@
     </div>
 
     <el-table :data="tableData" border :height="tableHeight">
-
       <el-table-column header-align="center" align="center" prop="date" label="日期" ></el-table-column>
-
       <el-table-column header-align="center" align="center" prop="order_price" label="订单金额"></el-table-column>
       <el-table-column header-align="center" align="center" prop="order_num" label="支付单数" ></el-table-column>
-
       <el-table-column header-align="center" align="center" prop="pay_money" label="支付金额" ></el-table-column>
-
       <el-table-column header-align="center" align="center" prop="shop_money" label="实收金额"></el-table-column>
 
+      <el-table-column header-align="center" align="center" prop="income" label="预计收入" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="product_money" label="菜品金额" v-if="radio === 'el'"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="plat_part" label="平台补贴" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="shop_part" label="商家补贴" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="activity_fee" label="活动补贴" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="service_fee" label="服务费用" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="shop_fee" label="商家支出" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="deliver_Fee" label="配送费用" v-if="radio !== ''"></el-table-column>
+      <el-table-column header-align="center" align="center" prop="package_fee" label="餐盒费" v-if="radio !== ''"></el-table-column>
     </el-table>
     <footer>
       <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>

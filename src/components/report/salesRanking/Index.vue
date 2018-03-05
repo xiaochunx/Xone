@@ -4,7 +4,6 @@
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-
     </div>
 
     <div class="flex_r">
@@ -79,11 +78,11 @@
             <el-table-column header-align="center" align="center" prop="category" label="品类" ></el-table-column>
             <el-table-column header-align="center" align="center" prop="name" label="菜品" ></el-table-column>
             <el-table-column header-align="center" align="center" prop="sku" label="规格属性" ></el-table-column>
-            <el-table-column header-align="center" align="center" prop="totalNum" label="销售数量" ></el-table-column>
-            <el-table-column header-align="center" align="center" prop="numPct" label="销量占比" ></el-table-column>
-            <el-table-column header-align="center" align="center" prop="totalPrice" label="销售金额" ></el-table-column>
+            <el-table-column header-align="center" align="center" prop="totalNum" label="销售数量" sortable></el-table-column>
+            <el-table-column header-align="center" align="center" prop="numPct" label="销量占比" sortable></el-table-column>
+            <el-table-column header-align="center" align="center" prop="totalPrice" label="销售金额" sortable></el-table-column>
 
-            <el-table-column header-align="center" align="center" prop="pricePct" label="销售额占比" ></el-table-column>
+            <el-table-column header-align="center" align="center" prop="pricePct" label="销售额占比" sortable></el-table-column>
           </el-table>
 
         <footer>
@@ -257,7 +256,7 @@
         this.start_stamp = '';
         this.time_end = '';
         this.end_stamp = '';
-        this.showResouce(this.p={page: 1, size: 20, total: 0},e.levelid);
+        this.showResouce(this.p={page: 1, size: this.p.size, total: 0},e.levelid);
         this.getStoreData(e.levelid);
         this.setSalesRankingLevelId({levelId: e.levelid});
         this.recur(this.getSalesRankingTree(),false);

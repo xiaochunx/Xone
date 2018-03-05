@@ -8,14 +8,14 @@
 
       <div class="flex_sb">
         <div class="flex_1">
-          <el-button size="small" @click="addDishes()" v-show="getTreeArr['新增菜品']">+新增菜品</el-button>
+          <el-button size="small" @click="addDishes()" v-show="getTreeArr['新增菜品']" :disabled="showAdd !== 4 && showAdd !== 5">+新增菜品</el-button>
           <el-button size="small" @click="batchEdit()" v-show="getTreeArr['修改菜品']">批量编辑</el-button>
           <el-button size="small" @click="delSelected()" v-show="getTreeArr['删除菜品']">批量删除</el-button>
         </div>
         <div class="flex_1 flex_ce">
 
           <div class="margin_l_10 margin_r_10" style="width: 200px">
-            <el-input size="small" v-model="searchName" placeholder="请输入内容"></el-input>
+            <el-input size="small" v-model="searchName" placeholder="请输入菜品名称"></el-input>
           </div>
           <el-button size="small" @click="search()">搜索</el-button>
           <el-button size="small" @click="importXls()">导入</el-button>
@@ -110,13 +110,12 @@
 
         <div ref="tree" style="width: 100%;">
           <el-tree
-            :data="dataLeft"
+            :data="getDishesLibraryTree()"
             :props="defaultProps"
             @node-click="nodeClickDishes"
             node-key="id"
-            default-expand-all
             :highlight-current="true"
-            :expand-on-click-node="false"
+            :expand-on-click-node="true"
           >
           </el-tree>
         </div>
@@ -155,21 +154,24 @@
       :visible.sync="dialogVisible1"
       size="large"
       width="80%">
-      <el-table :data="brandEditList" border style="width: 100%;">
+      <el-form ref="formRules" :model="form">
+      <el-table :data="form.brandEditList" border style="width: 100%;">
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="门店编码" width="200">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.id" disabled placeholder="请输入内容"></el-input>
+            <el-input v-model="scope.row.id" disabled placeholder="" class="p_b_22"></el-input>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="菜品名称" width="200">
           <template slot-scope="scope">
-            <el-input :class="{isInput:scope.row.nameClass === true}" v-model="scope.row.product_name"
-                      @change="myChange(scope.row,'product_name','nameClass')" placeholder="请输入内容"></el-input>
+            <el-form-item label="" :prop="'brandEditList.' + scope.$index + '.product_name'" :rules="{required: true, validator: checkName, trigger: 'blur'}">
+              <el-input v-model="scope.row.product_name" placeholder="请输入内容">
+              </el-input>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="第三方编码" width="420">
           <template slot-scope="scope">
-            <div v-for="(domain, index) in scope.row.productcodes" class="flex_r padding_10">
+            <div v-for="(domain, index) in scope.row.productcodes" class="flex_r p_b_22">
               <div style="width:150px">
                 <el-input v-model="domain.name" placeholder="请输入第三方名称"></el-input>
               </div>
@@ -192,25 +194,27 @@
           </template>
         </el-table-column>
 
-        <el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">
-          <template slot-scope="scope">
-            <el-select :class="{isSelected:scope.row.brandClass === true}" v-model="scope.row.levelid"
-                       @change="myChange(scope.row,'levelid','brandClass')" placeholder="请选择">
-              <el-option
-                v-for="item in brandList"
-                :key="item.id"
-                :label="item.levelname"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
+        <!--<el-table-column label-class-name="table_head" header-align="center" align="center" label="所属品牌" width="200">-->
+          <!--<template slot-scope="scope">-->
+            <!--<el-select v-model="scope.row.levelid"-->
+                       <!-- placeholder="请选择">-->
+              <!--<el-option-->
+                <!--v-for="item in brandList"-->
+                <!--:key="item.id"-->
+                <!--:label="item.levelname"-->
+                <!--:value="item.id">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
 
 
         <el-table-column label-class-name="table_head" header-align="center" align="center" label="参考价格" width="200">
           <template slot-scope="scope">
-            <el-input :class="{isInput:scope.row.priceClass === true}" v-model="scope.row.price"
-                      @change="myChange(scope.row,'price','priceClass')" placeholder="请输入内容"></el-input>
+            <el-form-item label="" :prop="'brandEditList.' + scope.$index + '.price'" :rules="{required: true, validator: checkNumber, trigger: 'blur'}">
+              <el-input v-model="scope.row.price" placeholder="请输入参考价格">
+              </el-input>
+            </el-form-item>
           </template>
         </el-table-column>
 
@@ -259,11 +263,10 @@
           </template>
         </el-table-column>
 
-
       </el-table>
-
+      </el-form>
       <div class="flex margin_t_10">
-        <el-button type="primary" @click="submitFrom()">保存</el-button>
+        <el-button type="primary" @click="submitFrom('formRules')">保存</el-button>
         <el-button @click="dialogVisible1 = false">取消</el-button>
       </div>
     </el-dialog>
@@ -303,84 +306,98 @@
         number: 1,
         firstLevleId:'',
         brandList: [],
-        brandEditList:[],
+        form:{brandEditList:[]},
         dataLeft: [],
         fileList: [],
         fileurl: '',
         brandid: '',
         isOver: false,
+        showAdd:''
       }
     },
     watch: {},
     methods: {
       ...mapActions(['setDishesLibraryTree','setDishesLibraryLevelId']),
       ...mapGetters(['getDishesLibraryTree','getDishesLibraryLevelId']),
-      search() {
-        if (this.searchName === '') {
-          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.getDishesLibraryLevelId())
-        } else {
-          this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.getDishesLibraryLevelId(), this.searchName)
-
-        }
-      },
-      submitFrom(){
-        outer:
-          for (let map of this.brandEditList) {
-            if (map.product_name === "" || map.price === "" || map.levelid === "") {
-              this.va = "";
-              break
-            }
-            this.va = "ok"
-          }
-        console.log(this.va)
-
-        if (this.va === "ok") {
-          this.brandEditList.forEach((item) => {
-            delete item.nameClass;
-            delete item.brandClass;
-            delete item.priceClass;
-            delete item.created_at;
-            delete item.updated_at;
-            delete item.x2;
-          });
-          if(this.brandEditList.length === 1){
-            getApi.updateProduct(this.brandEditList[0]).then((res) => {
-              if (res.data.errcode === 0) {
-                this.showProductList(this.p, this.getDishesLibraryLevelId());
-                this.$message("操作成功");
-                this.dialogVisible1 = false
-              }
-            })
+      checkName(rule, value, callback){
+        if (value === '') {
+          callback(new Error('请输入菜品名称'));
+        }else {
+          if(value.trim()){
+            callback()
           }else {
-            getApi.batchChange(this.brandEditList).then((res) => {
-              if (res.data.errcode === 0) {
-                this.showProductList(this.p, this.getDishesLibraryLevelId());
-                this.$message("操作成功");
-                this.dialogVisible1 = false
-              }
-            })
+            callback(new Error('菜品名称格式错误'));
           }
-        } else {
-          this.$message({
-            type: 'warning',
-            message: '请填写所需选项'
-          });
         }
       },
-      myChange(map, name, className, str) {
-        (map[name] !== "") ? map[className] = false : map[className] = true
+      checkNumber(rule, value, callback){
+        let re = /^0{1}([.]([1-9][0-9]?)|[.][0-9][1-9])$|^[1-9]\d*([.]{1}[0-9]{1,2})?$/;
+        if (value === '') {
+          callback(new Error('请输入价格'));
+        }else {
+          if(re.test(value)){
+            callback()
+          }else {
+            callback(new Error('价格格式错误'));
+          }
+        }
       },
-      getBrand(){
-        getApi.getBrand(this.firstLevleId).then((res) => {
-          this.brandList = res.data.data
+      search() {
+        this.showProductList(this.p = {page: 1, size: 20, total: 0}, this.getDishesLibraryLevelId(), this.searchName)
+
+      },
+      submitFrom(formName){
+
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+
+            this.form.brandEditList.forEach((item) => {
+              delete item.created_at;
+              delete item.updated_at;
+              delete item.x2;
+            });
+            if(this.form.brandEditList.length === 1){
+              getApi.updateProduct(this.form.brandEditList[0]).then((res) => {
+                if (res.data.errcode === 0) {
+                  this.showProductList(this.p, this.getDishesLibraryLevelId());
+                  this.$message("操作成功");
+                  this.dialogVisible1 = false
+                }
+              })
+            }else {
+              getApi.batchChange(this.form.brandEditList).then((res) => {
+                if (res.data.errcode === 0) {
+                  this.showProductList(this.p, this.getDishesLibraryLevelId());
+                  this.$message("操作成功");
+                  this.dialogVisible1 = false
+                }
+              })
+            }
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
         });
+
+      },
+
+      getBrand(){
+        // getApi.getBrand(this.firstLevleId).then((res) => {
+        //   this.brandList = res.data.data
+        // });
       },
       edit(id) {
         this.dialogVisible1 = true;
         this.getBrand();
         getApi.getView(id).then((res) => {
           if (res.data.errcode === 0) {
-            this.brandEditList = res.data.data;
+            res.data.data.forEach((item)=>{
+              if(item.productcodes === null){
+                item.productcodes = [{name: '',  providerid: ''}]
+              }
+            });
+            this.form.brandEditList = res.data.data;
           }
         })
       },
@@ -392,13 +409,18 @@
           }
         });
         if (list.length === 0) {
-          this.$message('请勾选门店');
+          this.$message('请勾选菜品');
         } else {
           this.dialogVisible1 = true;
           this.getBrand();
           getApi.getView(list.join(",")).then((res) => {
             if (res.data.errcode === 0) {
-              this.brandEditList = res.data.data;
+              res.data.data.forEach((item)=>{
+                if(item.productcodes === null){
+                  item.productcodes = [{name: '',  providerid: ''}]
+                }
+              });
+              this.form.brandEditList = res.data.data;
 
             }
           })
@@ -457,13 +479,14 @@
         return isLt5M;
       },
       importXls() {
-        getLeft('x2').then((res) => {
-          if (res.data.errcode === 0) {
-            this.dataLeft = res.data.data;
-            this.dialogVisible4 = true
-          }
-
-        });
+        this.dialogVisible4 = true
+        // getLeft('x2').then((res) => {
+        //   if (res.data.errcode === 0) {
+        //     this.dataLeft = res.data.data;
+        //     this.dialogVisible4 = true
+        //   }
+        //
+        // });
       },
       beforeAvatarUpload(file) {
         const isPNG = file.type === 'image/png';
@@ -584,7 +607,7 @@
         });
 
         if (list.length === 0) {
-          this.$message('请勾选门店');
+          this.$message('请勾选菜品');
         } else {
           this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -611,6 +634,7 @@
         data.forEach((map) => {
           if (map.id === this.getDishesLibraryLevelId()) {
             this.$set(map, "selected", true);
+            this.showAdd = map.type
           } else {
             this.$set(map, "selected", false);
           }
@@ -626,7 +650,6 @@
         getApi.getLevel('', 1).then((res) => {
           if (res.data.errcode === 0) {
             this.setDishesLibraryTree({list:res.data.data});
-
             if(this.getDishesLibraryLevelId() === ''){
               this.setDishesLibraryLevelId({levelId:res.data.data[0].id});
             }
@@ -660,11 +683,14 @@
               this.firstLevleId = res.data.data[0].id;
             }
         })
+
+
+        this.recur(this.getDishesLibraryTree(),false);
       }
     },
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.showProductList(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid);
+        this.showProductList(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid,this.searchName = '');
         this.setDishesLibraryLevelId({levelId:e.levelid});
         this.recur(this.getDishesLibraryTree(),false);
       });
@@ -687,6 +713,8 @@
 </script>
 
 <style scoped lang="less">
-
+  .p_b_22{
+    padding-bottom: 22px;
+  }
 
 </style>

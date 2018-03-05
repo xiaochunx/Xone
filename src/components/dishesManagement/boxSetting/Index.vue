@@ -5,95 +5,76 @@
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-
-      <div class="flex_es">
-        <div>
-
-
-        </div>
-
-        <div class="flex_a">
-          <div class="margin_r_10">
-            <el-input size="small" v-model="dishesName" placeholder="请输入规格名称"></el-input>
-          </div>
-          <el-button size="small" @click="search()">搜索</el-button>
-          <el-button size="small" @click="option('新增')">+新增餐盒</el-button>
-
-        </div>
-      </div>
     </div>
 
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <public-tree :data='dataLeft' :count=0></public-tree>
+        <xo-pub-tree  :data='getBoxSettingTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
       <div class="padding_l_10 " :style="{width:tableWidth + 'px'}">
-        <el-table :data="storeData" border :height="tableHeight" style="width: 100%;">
+        <div class="flex_es margin_b_10">
+          <h3>
+            {{name}}
+          </h3>
+
+          <div class="flex_a">
+            <div class="margin_r_10">
+              <el-input size="small" v-model="dishesName" placeholder="请输入规格名称"></el-input>
+            </div>
+            <el-button size="small" @click="search()">搜索</el-button>
+            <el-button size="small" @click="option('新增')">+新增餐盒</el-button>
+
+          </div>
+        </div>
+
+        <el-table :data="tableData" border :height="tableHeight - 40" style="width: 100%;">
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="序号"
                            width="100">
             <template slot-scope="scope">
               {{scope.$index + 1 }}
             </template>
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="dishesCode"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="id"
                            label="编码" width="100"></el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="dishesGroup"
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="lunchboxname"
                            label="餐盒名称">
 
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="remarks" label="价格">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="price" label="价格">
           </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="remarks" label="备注">
-          </el-table-column>
-          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="bank" label="所属品牌">
+          <el-table-column label-class-name="table_head" header-align="center" align="center" prop="remark" label="备注">
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="200">
             <template slot-scope="scope">
 
-              <el-button size="small" @click="option('查看')">查看</el-button>
-              <el-button size="small" @click="option('编辑')">编辑</el-button>
-              <el-button size="small" type="danger" @click="del()">删除</el-button>
+              <el-button size="small" @click="option('查看',scope.row.id,scope.row.levelid)">查看</el-button>
+              <el-button size="small" @click="option('编辑',scope.row.id,scope.row.levelid)">编辑</el-button>
+              <el-button size="small" type="danger" @click="del(scope.row.id)">删除</el-button>
 
             </template>
           </el-table-column>
         </el-table>
-
-
         <footer>
           <xo-pagination :pageData=p @page="getPage" @pageSize="getPageSize"></xo-pagination>
         </footer>
       </div>
-
-
     </div>
-
-
 
     <!--编辑/查看-->
     <el-dialog :title="showName" :visible.sync="dialogFormVisible2">
       <el-form ref="formRules" :model="formEdit" label-width="100px">
 
-
-        <el-form-item label="品牌:">
-          <el-select v-model="formEdit.bank" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-
-        <el-form-item label="餐盒名称	:" prop="name" :rules="{required: true, message: '请输入餐盒名称', trigger: 'blur'}">
-          <el-input v-model="formEdit.name" placeholder="请输入餐盒名称" :disabled="show"></el-input>
+        <el-form-item label="餐盒名称	:" prop="lunchboxname" :rules="{required: true, message: '请输入餐盒名称', trigger: 'blur'}">
+          <el-input v-model="formEdit.lunchboxname" placeholder="请输入餐盒名称" :disabled="show"></el-input>
         </el-form-item>
         <el-form-item label="餐盒价格	:" >
           <el-input v-model="formEdit.price" placeholder="请输入餐盒价格" :disabled="show"></el-input>
         </el-form-item>
-        <div v-for="(domain, index) in formEdit.thirdPartyCoding" class="flex_r">
+        <el-form-item label="备注:" >
+          <el-input v-model="formEdit.remark" placeholder="请输入备注" :disabled="show"></el-input>
+        </el-form-item>
+        <div v-for="(domain, index) in formEdit.morecodes" class="flex_r">
           <el-form-item :label="index === 0?'第三方编码':''" :key="domain.key">
             <div>
               <el-row>
@@ -123,7 +104,7 @@
             <div class="m-storeCode margin_l_10" @click="addDomain">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
             </div>
-            <div v-if="(formEdit.thirdPartyCoding.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
+            <div v-if="(formEdit.morecodes.length>1) && (index !== 0)" class="m-storeCode margin_l_10"
                  @click.prevent="removeDomain(index)">
               <i class="fa fa-minus-circle" aria-hidden="true"></i>
             </div>
@@ -134,7 +115,7 @@
       </el-form>
 
       <div class="margin_t_10">
-        <el-button type="primary" v-if="!show">保存</el-button>
+        <el-button type="primary" v-if="!show" @click="submitFrom('formRules')">保存</el-button>
         <el-button @click="dialogFormVisible2 = false">取消</el-button>
       </div>
     </el-dialog>
@@ -148,12 +129,17 @@
   import {getLeft, getArr} from '../../utility/communApi'
   import Hub from '../../utility/commun'
   import {getScrollHeight} from '../../utility/getScrollHeight'
-  import publicTree from '../../infrastructure/PublicManagement/publicTree'
-  import {mapActions, mapGetters} from 'vuex';
 
+  import {mapActions, mapGetters} from 'vuex';
+  import {oneTwoApi} from '@/api/api.js';
   export default {
     components: {
-      publicTree
+
+    },
+    computed:{
+      ...mapGetters([
+        'getTreeArr','getBodyHeight'
+      ]),
     },
     data() {
       return {
@@ -163,81 +149,143 @@
         tableWidth: 0,
         tableHeight: 0,
         navList: [{name: "菜品管理", url: ''}, {name: "餐盒设置", url: ''}],
-
-        storeName: '',
-        storeData: [{
-          dishesCode: '837893',
-          dishesGroup: '大',
-          bank: '999',
-          remarks: 1,
-        }, {
-          dishesCode: '837894',
-          dishesGroup: '中',
-          remarks: 122,
-
-        }],
+        name:'',
+        tableData: [],
         p: {page: 1, size: 20, total: 0},
         formEdit:{
-          name: '123',
-          remarks: '45',
+          lunchboxname: '',
+          remark: '',
           price:'',
-          thirdPartyCoding: [
-            {code1: '11', code2: '22'}
+          morecodes: [
+            {code1: '', code2: ''}
           ],
         },
 
         showName:'',
         show:true,
-        options: [{
-          id: 1,
-          name: '黄金糕'
-        }, {
-          id: 2,
-          name: '双皮奶'
-        }],
+        options: [],
       }
     },
     watch: {},
     methods: {
+      ...mapActions(['setBoxSettingTree','setBoxSettingLevelId']),
+      ...mapGetters(['getBoxSettingTree','getBoxSettingLevelId']),
 
-
-
+      search(){
+        this.showResouce(this.p = {page: 1, size: 20, total: 0},);
+      },
       getPage(page) {
         this.p.page = page;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p);
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        this.showResouce(this.p);
       },
 
+      submitFrom(formName){
 
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if(this.showName === '新增'){
+              let params = {
+                redirect: "x2a.lunchbox.create",
+                levelid:this.getBoxSettingLevelId(),
+                lunchboxname:this.formEdit.lunchboxname,
+                morecodes:window.JSON.stringify(this.formEdit.morecodes),
+                remark:this.formEdit.remark,
+                price:this.formEdit.price
+              };
+              oneTwoApi(params).then((res) => {
+                if(res.errcode === 0){
+                  this.showResouce(this.p = {page: 1, size: 20, total: 0},this.dishesName = '');
+                  this.$message("操作成功");
+                  this.dialogFormVisible2 = false
+                }
+              })
+            }else {
+              let params = {
+                redirect: "x2a.lunchbox.update",
+                levelid:this.getBoxSettingLevelId(),
+                id:this.formEdit.id,
+                lunchboxname:this.formEdit.lunchboxname,
+                morecodes:window.JSON.stringify(this.formEdit.morecodes),
+                remark:this.formEdit.remark,
+                price:this.formEdit.price
+              };
+              oneTwoApi(params).then((res) => {
+                if(res.errcode === 0){
+                  this.showResouce(this.p,this.dishesName);
+                  this.$message("操作成功");
+                  this.dialogFormVisible2 = false
+                }
+              })
+            }
 
-      option(name) {
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+      },
+      showView(id,levelid){
+        let params = {
+          redirect: "x2a.lunchbox.view",
+          levelid:levelid,
+          id:id,
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.formEdit = res.data[0]
+          }
+        })
+      },
+      option(name,id,levelid) {
         this.showName = name;
-        if(name === "编辑" ||name === "新增"){
-          this.show = false
-        }else {
-          this.show = true
+        switch (name){
+          case "新增":
+            this.formEdit = {
+              lunchboxname: '',
+              remark: '',
+              price:'',
+              morecodes: [
+                {code1: '', code2: ''}
+              ],
+            };
+            this.show = false;
+            break;
+          case "编辑":
+            this.showView(id,levelid);
+            this.show = false;
+            break;
+          case "查看":
+            this.showView(id,levelid);
+            this.show = true;
+            break;
         }
+
         this.dialogFormVisible2 = true
       },
-      del() {
+      del(id) {
         this.$confirm('此操作将删除选择的数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // getApi.delChannel(row.id).then((res) => {
-          //   if (res.data.errcode === 0) {
-          //     this.$message({
-          //       type: 'info',
-          //       message: '删除成功'
-          //     });
-          //     this.getChannelList(this.p = {page: 1, size: 20, total: 0});
-          //   }
-          //
-          // })
+          let params = {
+            redirect: "x2a.lunchbox.delete",
+            levelid:this.getBoxSettingLevelId(),
+            id:id,
+
+          };
+          oneTwoApi(params).then((res) => {
+            if(res.errcode === 0){
+              this.showResouce(this.p,this.dishesName);
+              this.$message("操作成功");
+
+            }
+          })
 
         }).catch(() => {
           //
@@ -246,80 +294,94 @@
 
 
 
-      recur(data) {
+      recur(data,bool) {
         data.forEach((map) => {
-          if (map.id === this.$localStorage.get_s('publicLevelId')) {
-            this.type = map.type
-          }
-          if (map.child) {
-            this.$set(map, "show", true);
-            this.$set(map, "selected", false);
-            this.recur(map.child)
-          }
-        })
-      },
-      recurSelected(data, levelId) {
-        data.forEach((map) => {
-          if (map.id === levelId) {
+          if(map.id === this.getBoxSettingLevelId()){
+            this.name = map.levelname;
             this.$set(map, "selected", true);
-          } else {
+          }else {
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.recurSelected(map.child, levelId)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
       },
       removeDomain(index) {
-        this.formEdit.thirdPartyCoding.splice(index, 1)
+        this.formEdit.morecodes.splice(index, 1)
       },
       addDomain() {
-        this.formEdit.thirdPartyCoding.push( {code1: '', code2: ''});
+        this.formEdit.morecodes.push( {code1: '', code2: ''});
       },
+      showLevel() {
+        getLeft('x2').then((res) => {
+          if (res.data.errcode === 0) {
 
+            this.setBoxSettingTree({list:res.data.data});
+            if (this.getBoxSettingLevelId() === '') {
+              this.setBoxSettingLevelId({levelId: res.data.data[0].id});
+            }
+            this.showResouce(this.p,this.dishesName);
+            this.recur(res.data.data,true);
+          }
+        });
+      },
+      showResouce(p,dishesName = ''){
+        let params = {
+          redirect: "x2a.lunchbox.index",
+          levelid:this.getBoxSettingLevelId(),
+          lunchboxname:dishesName,
+          page: p.page,
+          pagesize:p.size
 
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            this.tableData = res.data.list;
+            this.p.total = res.data.count;
+          }
+        })
+      },
     },
     created() {
-      getLeft('x1').then((res) => {
-        if (res.data.errcode === 0) {
-          //this.showResouce(this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id);
-          this.levelName = res.data.data[0].levelname
-          this.dataLeft = res.data.data;
-          this.recur(this.dataLeft);
-          this.recurSelected(this.dataLeft, this.$localStorage.get_s('publicLevelId') ? this.$localStorage.get_s('publicLevelId') : res.data.data[0].id)
-        }
-      });
-
+      if(this.getBoxSettingTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.p,this.dishesName);
+        this.recur(this.getBoxSettingTree(),false);
+      }
 
     },
     mounted() {
-      Hub.$on('showAddPub', (e) => {
-        this.levelName = e.levelName;
-        this.type = e.type;
-        this.$localStorage.set_s('publicLevelId', e.levelid);
-        //this.showResouce(e.levelid);
-        this.recurSelected(this.dataLeft, e.levelid)
-      });
 
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj: getArr(e)})
-      });
-    },
-    updated() {
-      let bodyWidth = document.querySelector('.content div').clientWidth;
-      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+      Hub.$on('showAdd', (e) => {
 
+        this.setBoxSettingLevelId({levelId: e.levelid});
+        this.recur(this.getBoxSettingTree(),false);
+        this.showResouce(this.p={page: 1, size: this.p.size, total: 0},this.dishesName = '');
+      });
+      Hub.$emit('mountedOk','mountedOk');
       this.$nextTick(() => {
-        getScrollHeight().then((h) => {
+        getScrollHeight(this.getBodyHeight).then((h) => {
           this.tableHeight = h;
         })
 
       })
 
     },
+    updated() {
+      let bodyWidth = document.querySelector('.content div').clientWidth;
+      this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
+
+
+
+    },
     destroyed() {
-      Hub.$off("showAddPub");
-      Hub.$off("arr");
+      Hub.$off("showAdd");
+
     },
     render() {
 

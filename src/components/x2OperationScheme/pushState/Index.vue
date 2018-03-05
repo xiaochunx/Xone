@@ -326,7 +326,7 @@
 
     mounted() {
       Hub.$on('showAdd', (e) => {
-        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid, this.type, this.status_id);
+        this.showResouce(this.p = {page: 1, size: this.p.size, total: 0}, e.levelid, this.type, this.status_id,this.storeName = '');
         this.setPushStateLevelId({levelId: e.levelid});
         this.recur(this.getPushStateTree(),false);
       });

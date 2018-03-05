@@ -64,14 +64,13 @@ import PublicManagement from '@/components/infrastructure/PublicManagement/Index
 import TemplateMessageConf from '@/components/infrastructure/PublicManagement/TemplateMessageConf/Index.vue'
 
 /************************** 菜品管理 ***************************/
-import storeDishesManage from '@/components/dishesManagement/storeDishesManage/Index.vue'
+import dishesManageList from '@/components/dishesManagement/storeDishesManage/Index.vue'
 
 import editDishes from '@/components/dishesManagement/storeDishesManage/editDishes/Index.vue'
 
 import dishesGroup from '@/components/dishesManagement/dishesGroup/Index.vue'
 import addDishesGroup from '@/components/dishesManagement/dishesGroup/addDishesGroup/Index.vue'
 import dishesCategory from '@/components/dishesManagement/dishesCategory/Index.vue'
-import addCategory from '@/components/dishesManagement/dishesCategory/addCategory/Index.vue'
 import dishesSpec from '@/components/dishesManagement/dishesSpec/Index.vue'
 import dishesAttr from '@/components/dishesManagement/dishesAttr/Index.vue'
 import boxSetting from '@/components/dishesManagement/boxSetting/Index.vue'
@@ -79,6 +78,7 @@ import mealManage from '@/components/dishesManagement/mealManage/Index.vue'
 
 /************************** 发票方案 ***************************/
 import invoiceScheme from '@/components/invoice/invoiceScheme/Index.vue'
+import confInvoice from '@/components/invoice/invoiceScheme/confInvoice/Index.vue'
 import downRecord from '@/components/invoice/downRecord/Index.vue'
 import pageDesign from '@/components/invoice/pageDesign/Index.vue'
 
@@ -399,10 +399,10 @@ export default new Router({
 
         //门店菜品管理
         {
-          path: '/dishesManagement/storeDishesManage',
+          path: '/dishesManagement/dishesManageList',
           meta: { auth: true },
-          name: '菜品管理/门店菜品管理',
-          component: storeDishesManage
+          name: '菜品管理/菜品列表',
+          component: dishesManageList
         },
         //门店菜品管理/编辑
         {
@@ -418,13 +418,7 @@ export default new Router({
           name: '菜品管理/菜品品类',
           component: dishesCategory
         },
-        //新增品类
-        {
-          path: '/dishesManagement/dishesCategory/addCategory/:number',
-          meta: { auth: false },
-          name: '菜品管理/新增品类',
-          component: addCategory
-        },
+
         //菜品组
         {
           path: '/dishesManagement/dishesGroup',
@@ -475,6 +469,13 @@ export default new Router({
           meta: { auth: false },
           name: '发票方案',
           component: invoiceScheme
+        },
+        //发票方案/营销模板配置
+        {
+          path: '/invoice/invoiceScheme/confInvoice/:id',
+          meta: { auth: false },
+          name: '营销模板配置',
+          component: confInvoice
         },
         //下发记录
         {

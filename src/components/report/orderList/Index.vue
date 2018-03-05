@@ -313,7 +313,7 @@
         dateSelected: [],
         storeData: [],
         storeId:'',
-        statusList: [{id:1,name:'未接单'},{id:2,name:'已接单'},{id:3,name:'配送中'},{id:4,name:'订单取消'},{id:5,name:'已完成'},{id:6,name:'已退款'},{id:8,name:'完成前退款'},{id:10,name:'完成后退款'}],
+        statusList: [{id:1,name:'未接单'},{id:2,name:'已接单'},{id:3,name:'配送中'},{id:4,name:'订单取消'},{id:5,name:'已完成'},{id:6,name:'已退款'},{id:8,name:'完成前退款中'},{id:10,name:'完成后退款中'}],
         status: '',
         soucesList:[{id:'el',name:'饿了么'},{id:'mt',name:'美团外卖'},{id:'bd',name:'百度外卖'}],
         source:'',

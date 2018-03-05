@@ -17,7 +17,7 @@
 
         <el-form-item label="选择门店">
           <div class="flex_r">
-            <el-input v-model="storeName" placeholder="门店名称" style="width: 300px">
+            <el-input v-model="storeName" placeholder="请输入门店名称" style="width: 300px">
             </el-input>
             <el-button type="primary" @click="search(storeName)" class="margin_l_10">搜索</el-button>
           </div>
@@ -47,12 +47,24 @@
             v-model="form.sendtime"
             placeholder="选择时间">
           </el-time-picker>
+
+          <el-popover
+            ref="popover"
+            placement="top-start"
+            title="提示："
+            width="300"
+            trigger="hover">
+            <p>您将在每天的该时间点接收门店前一天的外卖营业日报</p>
+          </el-popover>
+          <el-button v-popover:popover style="border: none;position: relative" size="small"><i
+            class="fa fa-question-circle-o icon-style"></i></el-button>
         </el-form-item>
       </el-form>
 
       <div class="flex">
         <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
         <el-button type="primary" @click="reset('ruleForm')">重置</el-button>
+        <el-button @click="$router.go(-1)">取消</el-button>
       </div>
 
     </el-card>
@@ -236,5 +248,13 @@
     height: 284px;
     overflow-y: auto;
     box-sizing: border-box;
+  }
+  .icon-style {
+    font-size: 22px;
+    color: red;
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translateY(-70%) translateX(65%);
   }
 </style>

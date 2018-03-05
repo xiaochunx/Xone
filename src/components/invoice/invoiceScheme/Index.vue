@@ -30,19 +30,21 @@
       </el-table-column>
       <el-table-column label-class-name="table_head" header-align="center" align="center" prop="service" label="发票服务商">
       </el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" prop="status" label="状态" width="80">
       </el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" label="在用门店">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" label="在用门店" width="100">
         <template slot-scope="scope">
-          <el-button size="small" @click="show(scope.row)" v-show="getTreeArr['查看门店']">查看门店</el-button>
+          <el-button size="small" @click="show(scope.row)" v-show="getTreeArr['查看门店']" >查看门店</el-button>
         </template>
       </el-table-column>
-      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="280">
+      <el-table-column label-class-name="table_head" header-align="center" align="center" label="操作" width="400">
         <template slot-scope="scope">
           <el-button size="small" type="primary" @click="edit('修改',scope.row)" v-show="getTreeArr['修改']">修改</el-button>
           <el-button size="small" @click="edit('查看',scope.row)" v-show="getTreeArr['详情']">查看</el-button>
           <el-button size="small" @click="down(scope.row)" v-show="getTreeArr['下发']">下发</el-button>
           <el-button size="small" type="danger" @click="del(scope.row)" v-show="getTreeArr['删除']">删除</el-button>
+
+          <el-button size="small" @click="conf(scope.row.id)" >营销模板配置</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -434,6 +436,9 @@
     watch: {},
     methods: {
       ...mapActions(['setTreeArr']),
+      conf(id){
+        this.$router.push({path: `/invoice/invoiceScheme/confInvoice/${id}`})
+      },
       serviceHandle(id, bool){
         this.serviceList.forEach((item)=>{
           if (item.id === id) {

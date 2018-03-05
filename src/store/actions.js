@@ -91,4 +91,35 @@ export default {
   setSalesRankingLevelId({commit},obj){
     commit(types.SALESRANKINGLEVELID,obj);
   },
+  setSettlementRecordTree({commit},obj){
+    commit(types.SETTLEMENTRECORDTREE,obj);
+  },
+  setSettlementRecordLevelId({commit},obj){
+    commit(types.SETTLEMENTRECORDLEVELID,obj);
+  },
+  setDishesSpecTree({commit},obj){
+    commit(types.DISHESSPECTREE,obj);
+  },
+  setDishesSpecLevelId({commit},obj){
+    commit(types.DISHESSPECLEVELID,obj);
+  },
+  setBoxSettingTree({commit},obj){
+    commit(types.BOXSETTINGTREE,obj);
+  },
+  setBoxSettingLevelId({commit},obj){
+    commit(types.BOXSETTINGLEVELID,obj);
+  },
+  setDishesCategoryTree({commit},obj){
+    commit(types.DISHESCATEGORYTREE,obj);
+  },
+  setDishesCategoryLevelId({commit},obj){
+    commit(types.DISHESCATEGORYLEVELID,obj);
+  },
+
+  setStoreDishesManageTree({commit},obj){
+    commit(types.STOREDISHESMANAGETREE,obj);
+  },
+  setStoreDishesManageLevelId({commit},obj){
+    commit(types.STOREDISHESMANAGELEVELID,obj);
+  },
 }

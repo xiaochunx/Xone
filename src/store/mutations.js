@@ -34,7 +34,18 @@ const state = {
   scatterMapTree: [], // 散点地图树
   scatterMapTreeLevelId: '', // 散点地图树levelid
   salesRankingTree:[],//菜品销售排行树
-  salesRankingLevelId:''//菜品销售排行levelid
+  salesRankingLevelId:'',//菜品销售排行levelid
+  settlementRecordTree:[],//结算记录树
+  settlementRecordLevelId:'',//结算记录levelid
+  dishesSpecTree:[],//菜品规格树
+  dishesSpecLevelId:'',//菜品规格levelid
+  boxSettingTree:[],//餐盒树
+  boxSettingLevelId:'',//餐盒levelid
+  dishesCategoryTree:[],//菜品品类树
+  dishesCategoryLevelId:'',//菜品品类levelid
+
+  storeDishesManageTree:[],//菜品列表树
+  storeDishesManageLevelId:'',//菜品列表levelid
 };
 
 const mutations = {
@@ -126,6 +137,37 @@ const mutations = {
   },
   [types.SALESRANKINGLEVELID](state, obj){
     state.salesRankingLevelId = obj.levelId
+  },
+  [types.SETTLEMENTRECORDTREE](state,obj){
+    state.settlementRecordTree = obj.list;
+  },
+  [types.SETTLEMENTRECORDLEVELID](state, obj){
+    state.settlementRecordLevelId = obj.levelId
+  },
+  [types.DISHESSPECTREE](state,obj){
+    state.dishesSpecTree = obj.list;
+  },
+  [types.DISHESSPECLEVELID](state, obj){
+    state.dishesSpecLevelId = obj.levelId
+  },
+  [types.BOXSETTINGTREE](state,obj){
+    state.boxSettingTree = obj.list;
+  },
+  [types.BOXSETTINGLEVELID](state, obj){
+    state.boxSettingLevelId = obj.levelId
+  },
+  [types.DISHESCATEGORYTREE](state,obj){
+  state.dishesCategoryTree = obj.list;
+  },
+  [types.DISHESCATEGORYLEVELID](state, obj){
+    state.dishesCategoryLevelId = obj.levelId
+  },
+
+  [types.STOREDISHESMANAGETREE](state,obj){
+    state.storeDishesManageTree = obj.list;
+  },
+  [types.STOREDISHESMANAGELEVELID](state, obj){
+    state.storeDishesManageLevelId = obj.levelId
   },
 };
 

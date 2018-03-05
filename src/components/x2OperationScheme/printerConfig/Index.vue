@@ -901,13 +901,13 @@
 
       header(h) {
         return h(
-          'div',
-          {},
+          'span',
+          {attrs:{style:'font-size: 15px;'}},
           ['打印机编号',
             h('el-tooltip', {
                 attrs: {content: "打印机底部的编号，例如716800234", placement: "top"},
               }, [
-                h('div', {
+                h('span', {
                     attrs: {type: "text"},
                   }, [ h(
                   'i', {

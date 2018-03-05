@@ -5,40 +5,46 @@
       <div class="margin_b_10">
         <xo-nav-path :navList="navList"></xo-nav-path>
       </div>
-
-      <div class="flex_es">
-        <div>
-          <el-button size="small" @click="add()">批量新增</el-button>
-          <el-button size="small" @click="edit()">批量编辑</el-button>
-          <el-button size="small" @click="del()">批量删除</el-button>
-          <el-button size="small" @click="issued()">批量下发</el-button>
-        </div>
-
-        <div class="flex_a">
-          <div class="margin_r_10">
-            <el-input size="small" v-model="dishesName" placeholder="请输入菜品名称"></el-input>
-          </div>
-          <el-button size="small" @click="search()">搜索</el-button>
-
-        </div>
-      </div>
     </div>
 
 
     <div class="flex_r">
       <div ref="tree" style="min-width: 200px;overflow-y: auto" :style="{height:tableHeight + 'px'}">
-        <public-tree :data='dataLeft' :count=0 style="width: max-content;"></public-tree>
+        <xo-pub-tree  :data='getStoreDishesManageTree()' :count=0 style="width: max-content;"></xo-pub-tree>
       </div>
 
       <div class="padding_l_10 " :style="{width:tableWidth + 'px'}">
-        <el-table :data="dishesList" border :height="tableHeight" style="width: 100%;">
-          <el-table-column :render-header="selectAll" label-class-name="table_head" header-align="center" align="center"
-                           width="100">
-            <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.select" @change="handleChecked"></el-checkbox>
-              {{scope.$index + 1 }}
-            </template>
 
+        <div class="flex_es margin_b_10">
+
+          <div class="flex_a">
+            <h3 class="margin_r_10">
+              {{name}}
+            </h3>
+            <el-button size="small" @click="add()">批量新增</el-button>
+            <el-button size="small" @click="edit()">批量编辑</el-button>
+            <el-button size="small" @click="del()">批量删除</el-button>
+            <el-button size="small" @click="issued()">批量下发</el-button>
+          </div>
+
+          <div class="flex_a">
+            <div class="margin_r_10">
+              <el-input size="small" v-model="dishesName" placeholder="请输入菜品名称"></el-input>
+            </div>
+            <el-button size="small" @click="search()">搜索</el-button>
+
+          </div>
+        </div>
+
+        <el-table :data="tableData" border :height="tableHeight - 40" style="width: 100%;" @select-all="handleSelectionChange" ref="multipleTable">
+          <el-table-column
+            header-align="center" align="center"
+            type="selection"
+            label-class-name="mySelect"
+            width="100">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.select" @change="handleChecked">{{scope.$index + 1 }}</el-checkbox>
+            </template>
           </el-table-column>
           <el-table-column label-class-name="table_head" header-align="center" align="center" prop="storeCode"
                            label="编码"
@@ -155,19 +161,25 @@
   import Hub from '../../utility/commun'
   import {getScrollHeight} from '../../utility/getScrollHeight'
   import {mapActions, mapGetters} from 'vuex';
+  import {oneTwoApi} from '@/api/api.js';
 
   export default {
     components: {
-      publicTree
+
+    },
+    computed:{
+      ...mapGetters([
+        'getTreeArr','getBodyHeight'
+      ]),
     },
     data() {
       return {
         tableWidth: 0,
         tableHeight: 0,
-        navList: [{name: "菜品管理", url: ''}],
-        dataLeft: [],
+        navList: [{name: "菜品管理", url: ''},{name: "菜品列表", url: ''}],
+        name:'',
         dishesName: '',
-        dishesList: [{
+        tableData: [{
           storeCode: '83789',
           storeName: '菜品1',
           price: "1角",
@@ -207,13 +219,15 @@
     },
     watch: {},
     methods: {
+      ...mapActions(['setStoreDishesManageTree','setStoreDishesManageLevelId']),
+      ...mapGetters(['getStoreDishesManageTree','getStoreDishesManageLevelId']),
       getPage(page) {
         this.p.page = page;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        //this.showResouce(this.p,this.dishesName);
       },
       getPageSize(size) {
         this.p.size = size;
-        //this.showResouce(this.p, this.levelId,this.searchName);
+        //this.showResouce(this.p,this.dishesName);
       },
 
       edit() {
@@ -238,145 +252,112 @@
 
         store.append({id: id++, label: 'testtest' + id, children: []}, data);
       },
-
-      handleCheckAll(bool) {
-        if (bool.target.checked === true) {
-          this.dishesList.forEach((data) => {
-            data.select = true
-          })
-        } else {
-          this.dishesList.forEach((data) => {
-            data.select = false
-          })
+      handleSelectionChange(val) {
+        if(val.length === this.tableData.length){
+          this.tableData.forEach((map) => {
+            this.$set(map, 'select', true)
+          });
+        }else {
+          this.tableData.forEach((map) => {
+            this.$set(map, 'select', false)
+          });
         }
       },
+
       handleChecked(data) {
-        let count = 0;
-        this.dishesList.forEach((data) => {
-          if (data.select === true) {
-            count += data.select * 1
-          }
+        let list =  this.tableData.filter((item)=>{
+          return item.select === true
         });
 
-        if (count === this.dishesList.length) {
-          this.selectedAll = true;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.add('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = true
+        if (list.length === this.tableData.length) {
+          list.forEach((item)=>{
+            this.$refs.multipleTable.toggleRowSelection(item)
           })
-        } else {
-          this.selectedAll = false;
-          this.$nextTick(() => {
-            let all = document.querySelector('#all span');
-            all.classList.remove('is-checked');
-            let allInput = document.querySelector('#all span input');
-            allInput.checked = false
-          })
+        }else {
+          this.$refs.multipleTable.clearSelection();
         }
 
       },
-      selectAll(h) {
-        return h(
-          'div',
-          {},
-          [
-            h('el-checkbox', {
 
-                attrs: {id: "all"},
-                'class': {},
-                props: {
-                  selectedAll: this.selectedAll
-                },
+      showResouce(p,dishesName = ''){
+        let params = {
+          redirect: "x2a.sku.index",
+          levelid:this.getStoreDishesManageLevelId(),
+          skuname:dishesName,
 
-                domProps: {
-                  value: this.selectedAll
-                },
-                on: {
-                  change: this.handleCheckAll,
-                  input: (event) => {
-//                    this.selectedAll = event;
-//                    this.$emit('input', event)
-                  }
+          page: p.page,
+          pagesize:p.size
 
-                }
-              }, ['全选']
-            )
-          ]
-        );
-
-      },
-
-      recur(data) {
-        data.forEach((map) => {
-          if (map.id === this.$localStorage.get_s('publicLevelId')) {
-            this.type = map.type
-          }
-          if (map.child) {
-            this.$set(map, "show", true);
-            this.$set(map, "selected", false);
-            this.recur(map.child)
+        };
+        oneTwoApi(params).then((res) => {
+          if(res.errcode === 0){
+            // this.tableData = res.data.list;
+            // this.p.total = res.data.count;
           }
         })
       },
-      recurSelected(data, levelId) {
+      recur(data,bool) {
         data.forEach((map) => {
-          if (map.id === levelId) {
+          if(map.id === this.getStoreDishesManageLevelId()){
+            this.name = map.levelname;
             this.$set(map, "selected", true);
-          } else {
+          }else {
             this.$set(map, "selected", false);
           }
           if (map.child) {
-            this.recurSelected(map.child, levelId)
+            if(bool){
+              this.$set(map, "show", false);
+            }
+            this.recur(map.child,bool)
           }
         })
+      },
+      showLevel() {
+        getLeft('x2').then((res) => {
+          if (res.data.errcode === 0) {
+
+            this.setStoreDishesManageTree({list:res.data.data});
+            if (this.getStoreDishesManageLevelId() === '') {
+              this.setStoreDishesManageLevelId({levelId: res.data.data[0].id});
+            }
+            this.showResouce(this.p,this.dishesName);
+            this.recur(res.data.data,true);
+          }
+        });
       },
     },
     created() {
-      getLeft('x1').then((res) => {
-        if (res.data.errcode === 0) {
-          //this.showResouce(this.$localStorage.get_s('publicLevelId')?this.$localStorage.get_s('publicLevelId'):res.data.data[0].id);
-          this.dataLeft = res.data.data;
-          this.recur(this.dataLeft);
-          this.recurSelected(this.dataLeft, this.$localStorage.get_s('publicLevelId') ? this.$localStorage.get_s('publicLevelId') : res.data.data[0].id)
-        }
-      });
-
-
-      this.dishesList.forEach((map) => {
-        this.$set(map, 'select', false)
-      })
-
+      if(this.getStoreDishesManageTree().length === 0){
+        this.showLevel()
+      }else {
+        this.showResouce(this.p,this.dishesName);
+        this.recur(this.getStoreDishesManageTree(),false);
+      }
     },
 
     mounted() {
-      Hub.$on('showAddPub', (e) => {
-        this.levelName = e.levelName;
-        this.type = e.type;
-        this.$localStorage.set_s('publicLevelId', e.levelid);
-        //this.showResouce(e.levelid);
-        this.recurSelected(this.dataLeft, e.levelid)
+      Hub.$on('showAdd', (e) => {
+        this.setStoreDishesManageLevelId({levelId: e.levelid});
+        this.recur(this.getStoreDishesManageTree(),false);
+        this.showResouce(this.p={page: 1, size: this.p.size, total: 0},this.dishesName = '');
       });
+      Hub.$emit('mountedOk','mountedOk');
+      this.$nextTick(() => {
+        getScrollHeight(this.getBodyHeight).then((h) => {
+          this.tableHeight = h;
+        })
 
-      Hub.$on('arr', (e) => {
-        this.setTreeArr({obj: getArr(e)})
-      });
+      })
     },
     updated() {
       let bodyWidth = document.querySelector('.content div').clientWidth;
       this.tableWidth = bodyWidth - this.$refs.tree.clientWidth;
 
-      this.$nextTick(() => {
-        getScrollHeight().then((h) => {
-          this.tableHeight = h;
-        })
 
-      })
 
     },
     destroyed(){
-      Hub.$off("showAddPub");
+
     }
   }
 </script>

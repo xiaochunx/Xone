@@ -29,54 +29,54 @@
       return {
         leftList: [
 
-         // {
-         //    name: '统计报表',
-         //    children: [
-         //      // {
-         //      //   name: '结算记录',
-         //      //   route: '/report/settlementRecord'
-         //      // },
-         //      // {
-         //      //   name: '差异账单查询',
-         //      //   route: '/report/billQuery'
-         //      // }
-         //    ]
-         //  },
+         {
+            name: '统计报表',
+            children: [
+              {
+                name: '结算记录',
+                route: '/report/settlementRecord'
+              },
+              {
+                name: '差异账单查询',
+                route: '/report/billQuery'
+              }
+            ]
+          },
 
-         //
-         //  {
-         //    name: '菜品管理',
-         //    children: [
-         //      {
-         //        name: '菜品管理',
-         //        route: '/dishesManagement/storeDishesManage'
-         //      },
-         //      {
-         //        name: '菜品品类',
-         //        route: '/dishesManagement/dishesCategory'
-         //      },
-         //      {
-         //        name: '菜品组',
-         //        route: '/dishesManagement/dishesGroup'
-         //      },
-         //      {
-         //        name: '菜品规格',
-         //        route: '/dishesManagement/dishesSpec'
-         //      },
-         //      {
-         //        name: '菜品属性',
-         //        route: '/dishesManagement/dishesAttr'
-         //      },
-         //      {
-         //        name: '餐盒设置',
-         //        route: '/dishesManagement/boxSetting'
-         //      },
-         //      {
-         //        name: '套餐管理',
-         //        route: '/dishesManagement/mealManage'
-         //      },
-         //    ]
-         //  },
+
+          {
+            name: '菜品管理',
+            children: [
+              {
+                name: '菜品列表',
+                route: '/dishesManagement/dishesManageList'
+              },
+              {
+                name: '菜品品类',
+                route: '/dishesManagement/dishesCategory'
+              },
+              // {
+              //   name: '菜品组',
+              //   route: '/dishesManagement/dishesGroup'
+              // },
+              {
+                name: '菜品规格',
+                route: '/dishesManagement/dishesSpec'
+              },
+              // {
+              //   name: '菜品属性',
+              //   route: '/dishesManagement/dishesAttr'
+              // },
+              {
+                name: '餐盒设置',
+                route: '/dishesManagement/boxSetting'
+              },
+              // {
+              //   name: '套餐管理',
+              //   route: '/dishesManagement/mealManage'
+              // },
+            ]
+          },
         ],
         leftData:[]
       }
